@@ -33,6 +33,21 @@ namespace std
 			return res;
 		}
 	};
+
+	template <>
+	struct hash<Assignment::Vector3W>
+	{
+		size_t operator()(const Assignment::Vector3W& v) const
+		{
+			// http://stackoverflow.com/a/1646913/126995
+			size_t res = 17;
+			res = res * 31 + hash<float>()(v.x());
+			res = res * 31 + hash<float>()(v.y());
+			res = res * 31 + hash<float>()(v.z());
+			res = res * 31 + hash<float>()(v.w());
+			return res;
+		}
+	};
 }
 
 namespace Assignment
@@ -183,6 +198,7 @@ namespace Assignment
 			return Vector2(trans * (*this));
 		}
 
+		/// Calculates the reflection of a vector against a specified normal.
 		Vector2 getReflection(const Vector2& normal) const
 		{
 			return (*this) - (normal - (*this)) * normal * 2;
@@ -203,14 +219,14 @@ namespace Assignment
 		float _arr[3];
 
 	public:
-		Vector3(float x = 0, float y = 0, float z = 0)
+		Vector3(float x, float y, float z)
 		{
 			this->x(x);
 			this->y(y);
 			this->z(z);
 		}
 
-		Vector3(bool homogenous) : Vector3(0, 0, homogenous) { }
+		Vector3(bool homogenous = false) : Vector3(0, 0, homogenous) { }
 
 		Vector3(const Vector2& copy)
 		{
@@ -340,6 +356,20 @@ namespace Assignment
 			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
 		}
 
+		static Vector3 cross(const Vector3& x, const Vector3& y)
+		{
+			return x.cross(y);
+		}
+
+		Vector3 cross(const Vector3& other) const
+		{
+			Vector3 vect;
+			vect.x = y() * other.z() - z() * other.y();
+			vect.y = z() * other.x() - x() * other.z();
+			vect.z = x() * other.y() - y() * other.x();
+			return vect;
+		}
+
 		float length() const
 		{
 			return sqrt(powf(this->x(), 2) + powf(this->y(), 2) + powf(this->z(), 2));
@@ -368,6 +398,210 @@ namespace Assignment
 		}
 
 		~Vector3() { }
+	};
+
+	class Matrix4;
+	class Vector3W
+	{
+	private:
+		float _arr[4];
+
+	public:
+		Vector3W(float x, float y, float z, float w)
+		{
+			this->x(x);
+			this->y(y);
+			this->z(z);
+			this->w(w);
+		}
+
+		Vector3W(bool homogenous = false) : Vector3W(0, 0, 0, homogenous) { }
+
+		Vector3W(const Vector2& copy)
+		{
+			this->x(copy.x());
+			this->y(copy.y());
+			this->z(0);
+			this->w(0);
+		}
+
+		Vector3W(const Vector3& copy)
+		{
+			this->x(copy.x());
+			this->y(copy.y());
+			this->z(copy.z());
+			this->w(0);
+		}
+
+		Vector3W(const Vector3W& copy)
+		{
+			*this = copy;
+		}
+
+		Vector3W& operator += (const Vector3W& other)
+		{
+			(*this) = (*this) + other;
+			return *this;
+		}
+
+		Vector3W& operator -= (const Vector3W& other)
+		{
+			(*this) = (*this) - other;
+			return *this;
+		}
+
+		Vector3W& operator *= (const Vector3W& other)
+		{
+			*this = (*this) * other;
+			return *this;
+		}
+
+		Vector3W& operator *= (const float& other)
+		{
+			*this = (*this) * other;
+			return *this;
+		}
+
+		Vector3W operator + (const Vector3W& other) const
+		{
+			Vector3W vect;
+			vect.x(this->x() + other.x());
+			vect.y(this->y() + other.y());
+			vect.z(this->z() + other.z());
+			//vect.w(this->w() + other.w());
+			return vect;
+		}
+
+		Vector3W operator - (const Vector3W& other) const
+		{
+			Vector3W vect;
+			vect.x(this->x() - other.x());
+			vect.y(this->y() - other.y());
+			vect.z(this->z() - other.z());
+			//vect.w(this->w() - other.w());
+			return vect;
+		}
+
+		Vector3W operator * (const Vector3W& other) const
+		{
+			Vector3W vect;
+			vect.x(this->x() * other.x());
+			vect.y(this->y() * other.y());
+			vect.z(this->z() * other.z());
+			//vect.w(this->w() * other.w());
+			return vect;
+		}
+
+		Vector3W operator * (const float& other) const
+		{
+			Vector3W vect;
+			vect.x(this->x() * other);
+			vect.y(this->y() * other);
+			vect.z(this->z() * other);
+			//vect.w(this->w() * other);
+			return vect;
+		}
+
+		Vector3W& operator *= (const Matrix4& other)
+		{
+			(*this) = other * (*this);
+			return *this;
+		}
+
+		bool operator == (const Vector3W& other) const
+		{
+			return (std::hash<Vector3W>()(*this) == std::hash<Vector3W>()(other));
+		}
+
+		bool operator != (const Vector3W& other) const
+		{
+			return (std::hash<Vector3W>()(*this) != std::hash<Vector3W>()(other));
+		}
+
+		float& operator [] (const int& index)
+		{
+			if (index > 3)
+				throw new std::out_of_range("Vector index out of range");
+
+			return _arr[index];
+		}
+
+		float at(int y) const
+		{
+			if (y > 3)
+				throw new std::out_of_range("Vector index out of range");
+
+			return _arr[y];
+		}
+
+		const float& x() const { return this->_arr[0]; } //maybe add w func here?
+		void x(const float& x) { this->_arr[0] = x; }
+
+		const float& y() const { return _arr[1]; }
+		void y(const float& y) { this->_arr[1] = y; }
+
+		const float& z() const { return _arr[2]; }
+		void z(const float& z) { this->_arr[2] = z; }
+
+		const float& w() const { return _arr[1]; }
+		void w(const float& w) { this->_arr[1] = w; }
+
+		static float dist(const Vector3W& x, const Vector3W& y)
+		{
+			return (x - y).length();
+		}
+
+		static float dot(const Vector3W& x, const Vector3W& y)
+		{
+			return x.dot(y);
+		}
+
+		static float dot4(const Vector3W& x, const Vector3W& y)
+		{
+			return x.dot4(y);
+		}
+
+		float dot(const Vector3W& other) const
+		{
+			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
+		}
+
+		float dot4(const Vector3W& other) const
+		{
+			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z() + this->w() * other.w());
+		}
+
+		Vector3 cross(const Vector3& other) const
+		{
+			Vector3 vect;
+			vect.x = y() * other.z() - z() * other.y();
+			vect.y = z() * other.x() - x() * other.z();
+			vect.z = x() * other.y() - y() * other.x();
+			return vect;
+		}
+
+		float length() const
+		{
+			return sqrt(powf(this->x(), 2) + powf(this->y(), 2) + powf(this->z(), 2));
+		}
+
+		Vector3W norm() const
+		{
+			Vector3W v = (*this);
+			return v * (1 / v.length());
+		}
+
+		Vector3W getTransformed(const Matrix4& trans) const
+		{
+			return Vector3W(trans * (*this));
+		}
+
+		std::string to_string() const
+		{
+			return std::to_string(this->x()) + ";\n" + std::to_string(this->y()) + ";\n" + std::to_string(this->z()) + ";\n" + std::to_string(this->w()) + ";\n";
+		}
+
+		~Vector3W() { }
 	};
 
 	class Matrix2
@@ -593,21 +827,33 @@ namespace Assignment
 
 		float at(int n) const
 		{
+			if (n > 9)
+				throw new std::out_of_range("Matrix index out of range");
+
 			return at(n / 3, n % 3);
 		}
 
 		float at(int x, int y) const
 		{
+			if (x > 3 || y > 3)
+				throw new std::out_of_range("Matrix index out of range");
+
 			return _arr[y].at(x);
 		}
 
 		Vector3 row(int y) const
 		{
+			if (y > 3)
+				throw new std::out_of_range("Row index out of range");
+
 			return Vector3(at(0, y), at(1, y), at(2, y));
 		}
 
 		Vector3 col(int x) const
 		{
+			if (x > 3)
+				throw new std::out_of_range("Column index out of range");
+
 			return Vector3(at(x, 0), at(x, 1), at(x, 2));
 		}
 
@@ -667,6 +913,232 @@ namespace Assignment
 		friend Vector3;
 	};
 
+	class Matrix4
+	{
+	private:
+		Vector3W _arr[4];
+
+	public:
+		Matrix4()
+		{
+			clear();
+		}
+
+		Matrix4(const Matrix2& copy)
+		{
+			clear();
+
+			(*this)(0, 0) = copy.a();
+			(*this)(1, 0) = copy.b();
+			(*this)(0, 1) = copy.c();
+			(*this)(1, 1) = copy.d();
+		}
+
+		Matrix4(const Matrix3& copy)
+		{
+			clear();
+
+			(*this)(0, 0) = copy.at(0, 0);
+			(*this)(1, 0) = copy.at(1, 0);
+			(*this)(2, 0) = copy.at(2, 0);
+
+			(*this)(0, 1) = copy.at(0, 1);
+			(*this)(1, 1) = copy.at(1, 1);
+			(*this)(2, 1) = copy.at(2, 1);
+
+			(*this)(0, 2) = copy.at(0, 2);
+			(*this)(1, 2) = copy.at(1, 2);
+			(*this)(2, 2) = copy.at(2, 2);
+		}
+
+		Matrix4(const Matrix4& copy)
+		{
+			*this = copy;
+		}
+
+		Matrix4(Vector3W& a, Vector3W& b, Vector3W& c, Vector3W& d)
+		{
+			_arr[0] = a;
+			_arr[1] = b;
+			_arr[2] = c;
+			_arr[3] = d;
+		}
+
+		Matrix4 operator * (const Matrix4& other) const
+		{
+			Matrix4 mat;
+
+			mat(0, 0) = Vector3W::dot4(row(0), other.col(0));
+			mat(0, 1) = Vector3W::dot4(row(1), other.col(0));
+			mat(0, 2) = Vector3W::dot4(row(2), other.col(0));
+			mat(0, 3) = Vector3W::dot4(row(3), other.col(0));
+
+			mat(1, 0) = Vector3W::dot4(row(0), other.col(1));
+			mat(1, 1) = Vector3W::dot4(row(1), other.col(1));
+			mat(1, 2) = Vector3W::dot4(row(2), other.col(1));
+			mat(1, 3) = Vector3W::dot4(row(3), other.col(1));
+
+			mat(2, 0) = Vector3W::dot4(row(0), other.col(2));
+			mat(2, 1) = Vector3W::dot4(row(1), other.col(2));
+			mat(2, 2) = Vector3W::dot4(row(2), other.col(2));
+			mat(2, 3) = Vector3W::dot4(row(3), other.col(2));
+
+			mat(3, 0) = Vector3W::dot4(row(0), other.col(3));
+			mat(3, 1) = Vector3W::dot4(row(1), other.col(3));
+			mat(3, 2) = Vector3W::dot4(row(2), other.col(3));
+			mat(3, 3) = Vector3W::dot4(row(3), other.col(3));
+
+			return mat;
+		}
+
+		Matrix4& operator = (const Matrix4& other)
+		{
+			(*this)(0, 0) = other.at(0, 0);
+			(*this)(0, 1) = other.at(0, 1);
+			(*this)(0, 2) = other.at(0, 2);
+			(*this)(0, 3) = other.at(0, 3);
+
+			(*this)(1, 0) = other.at(1, 0);
+			(*this)(1, 1) = other.at(1, 1);
+			(*this)(1, 2) = other.at(1, 2);
+			(*this)(1, 3) = other.at(1, 3);
+
+			(*this)(2, 0) = other.at(2, 0);
+			(*this)(2, 1) = other.at(2, 1);
+			(*this)(2, 2) = other.at(2, 2);
+			(*this)(2, 3) = other.at(2, 3);
+
+			(*this)(3, 0) = other.at(3, 0);
+			(*this)(3, 1) = other.at(3, 1);
+			(*this)(3, 2) = other.at(3, 2);
+			(*this)(3, 3) = other.at(3, 3);
+
+			return *this;
+		}
+
+		Vector3W& operator *= (Vector3W& other) const
+		{
+			other = (*this) * other;
+			return other;
+		}
+
+		Vector3W operator * (const Vector3W& other) const
+		{
+			Vector3W vect;
+			vect.x(other.dot4(row(0)));
+			vect.y(other.dot4(row(1)));
+			vect.z(other.dot4(row(2)));
+			vect.w(other.dot4(row(3)));
+			return vect;
+		}
+
+		float& operator () (int i)
+		{
+			return _arr[i / 4][i % 4]; //maybe?? used to be 3
+		}
+
+		float& operator () (int x, int y)
+		{
+			return _arr[y][x];
+		}
+
+		float at(int n) const
+		{
+			if (n > 16)
+				throw new std::out_of_range("Matrix index out of range");
+
+			return at(n / 4, n % 4); //used to be 3
+		}
+
+		float at(int x, int y) const
+		{
+			if (x > 4 || y > 4)
+				throw new std::out_of_range("Matrix index out of range");
+
+			return _arr[y].at(x);
+		}
+
+		Vector3W row(int y) const
+		{
+			if (y > 4)
+				throw new std::out_of_range("Row index out of range");
+
+			return Vector3W(at(0, y), at(1, y), at(2, y), at(3, y));
+		}
+
+		Vector3W col(int x) const
+		{
+			if (x > 4)
+				throw new std::out_of_range("Column index out of range");
+
+			return Vector3W(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
+		}
+
+		void clear(bool identity = true)
+		{
+			for (int i = 0; i < 16; i++)
+			{
+				(*this)(i) = identity && (i % 4 == 0); //check this
+			}
+		}
+
+		Matrix4 getTransposed() const
+		{
+			Matrix4 mat;
+
+			mat(0, 0) = at(0, 0);
+			mat(0, 1) = at(1, 0);
+			mat(0, 2) = at(2, 0);
+			mat(0, 3) = at(3, 0);
+
+			mat(1, 0) = at(0, 1);
+			mat(1, 1) = at(1, 1);
+			mat(1, 2) = at(2, 1);
+			mat(1, 3) = at(3, 1);
+
+			mat(2, 0) = at(0, 2);
+			mat(2, 1) = at(1, 2);
+			mat(2, 2) = at(2, 2);
+			mat(2, 3) = at(3, 2);
+
+			mat(3, 0) = at(0, 3);
+			mat(3, 1) = at(1, 3);
+			mat(3, 2) = at(2, 3);
+			mat(3, 3) = at(3, 3);
+
+			return mat;
+		}
+
+		static Matrix4 getTranslation(const Vector3W& v)
+		{
+			Matrix4 mat = Matrix4();
+			mat(2, 0) = v.x();
+			mat(2, 1) = v.y();
+			mat(2, 2) = v.z();
+			mat(2, 3) = v.w();
+			return mat;
+		}
+
+		static Matrix4 getRotationMatrix(const float& rad)
+		{
+			Matrix2 mat = Matrix2::getRotationMatrix(rad);
+			return Matrix4(mat);
+		}
+
+		std::string to_string()
+		{
+			std::stringstream ss;
+			ss << at(0, 0) << ", " << at(1, 0) << ", " << at(2, 0) << ", " << at(3, 0) << ";\n";
+			ss << at(0, 1) << ", " << at(1, 1) << ", " << at(2, 1) << ", " << at(3, 1) << ";\n";
+			ss << at(0, 2) << ", " << at(1, 2) << ", " << at(2, 2) << ", " << at(3, 2) << ";\n";
+			ss << at(0, 3) << ", " << at(1, 3) << ", " << at(2, 3) << ", " << at(3, 3) << ";\n";
+			return ss.str();
+		}
+
+		~Matrix4() { }
+
+		friend Vector3W;
+	};
 
 
 }
