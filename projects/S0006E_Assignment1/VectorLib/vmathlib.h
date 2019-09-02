@@ -404,33 +404,28 @@ namespace Assignment
 	class Vector3W
 	{
 	private:
-		float _arr[4];
+		Vector3 _internal;
+		float _w;
 
 	public:
-		Vector3W(float x, float y, float z, float w)
+		Vector3W(float x, float y, float z, float w = 1)
 		{
-			this->x(x);
-			this->y(y);
-			this->z(z);
-			this->w(w);
+			_internal = Vector3(x, y, z);
+			_w = w;
 		}
 
-		Vector3W(bool homogenous = false) : Vector3W(0, 0, 0, homogenous) { }
+		Vector3W(float w = 1) : Vector3W(0, 0, 0, w) { }
 
 		Vector3W(const Vector2& copy)
 		{
-			this->x(copy.x());
-			this->y(copy.y());
-			this->z(0);
-			this->w(0);
+			_internal = Vector3(copy.x, copy.y, 0);
+			_w = 1;
 		}
 
 		Vector3W(const Vector3& copy)
 		{
-			this->x(copy.x());
-			this->y(copy.y());
-			this->z(copy.z());
-			this->w(0);
+			_internal = Vector3(copy.x, copy.y, copy.z);
+			_w = 1;
 		}
 
 		Vector3W(const Vector3W& copy)
@@ -464,42 +459,22 @@ namespace Assignment
 
 		Vector3W operator + (const Vector3W& other) const
 		{
-			Vector3W vect;
-			vect.x(this->x() + other.x());
-			vect.y(this->y() + other.y());
-			vect.z(this->z() + other.z());
-			//vect.w(this->w() + other.w());
-			return vect;
+			return Vector3W(_internal + other._internal);
 		}
 
 		Vector3W operator - (const Vector3W& other) const
 		{
-			Vector3W vect;
-			vect.x(this->x() - other.x());
-			vect.y(this->y() - other.y());
-			vect.z(this->z() - other.z());
-			//vect.w(this->w() - other.w());
-			return vect;
+			return Vector3W(_internal - other._internal);
 		}
 
 		Vector3W operator * (const Vector3W& other) const
 		{
-			Vector3W vect;
-			vect.x(this->x() * other.x());
-			vect.y(this->y() * other.y());
-			vect.z(this->z() * other.z());
-			//vect.w(this->w() * other.w());
-			return vect;
+			return Vector3W(_internal * other._internal);
 		}
 
 		Vector3W operator * (const float& other) const
 		{
-			Vector3W vect;
-			vect.x(this->x() * other);
-			vect.y(this->y() * other);
-			vect.z(this->z() * other);
-			//vect.w(this->w() * other);
-			return vect;
+			return Vector3W(_internal * other);
 		}
 
 		Vector3W& operator *= (const Matrix4& other)
@@ -523,28 +498,28 @@ namespace Assignment
 			if (index > 3)
 				throw new std::out_of_range("Vector index out of range");
 
-			return _arr[index];
+			return _internal[index];
 		}
 
-		float at(int y) const
+		float& at(const int& y) const
 		{
 			if (y > 3)
 				throw new std::out_of_range("Vector index out of range");
 
-			return _arr[y];
+			return _internal[y];
 		}
 
-		const float& x() const { return this->_arr[0]; } //maybe add w func here?
-		void x(const float& x) { this->_arr[0] = x; }
+		const float& x() const { return this->_internal[0] / w; } //maybe add w func here?
+		void x(const float& x) { this->_internal[0] = x; }
 
-		const float& y() const { return _arr[1]; }
-		void y(const float& y) { this->_arr[1] = y; }
+		const float& y() const { return _internal[1] / w; }
+		void y(const float& y) { this->_internal[1] = y; }
 
-		const float& z() const { return _arr[2]; }
-		void z(const float& z) { this->_arr[2] = z; }
+		const float& z() const { return _internal[2] / w; }
+		void z(const float& z) { this->_internal[2] = z; }
 
-		const float& w() const { return _arr[1]; }
-		void w(const float& w) { this->_arr[1] = w; }
+		const float& w() const { return _w; }
+		void w(const float& w) { this->_w = w; }
 
 		static float dist(const Vector3W& x, const Vector3W& y)
 		{
@@ -563,21 +538,17 @@ namespace Assignment
 
 		float dot(const Vector3W& other) const
 		{
-			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
+			return _internal.dot(other._internal);
 		}
 
 		float dot4(const Vector3W& other) const
 		{
-			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z() + this->w() * other.w());
+			return dot(other) + this->w() * other.w();
 		}
 
 		Vector3 cross(const Vector3& other) const
 		{
-			Vector3 vect;
-			vect.x = y() * other.z() - z() * other.y();
-			vect.y = z() * other.x() - x() * other.z();
-			vect.z = x() * other.y() - y() * other.x();
-			return vect;
+			return _internal.cross(other);
 		}
 
 		float length() const
