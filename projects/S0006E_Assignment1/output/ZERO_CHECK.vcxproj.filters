@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\efiilj-7-local\Documents\Source\ltu-lab-s0006e_env\projects\S0006E_Assignment1\output\CMakeFiles\b196baf3a46c57b063b166e15809c1f1\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{95AC8041-25B6-3DF4-978D-BB4F35A0DBAA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
