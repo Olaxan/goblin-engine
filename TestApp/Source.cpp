@@ -7,38 +7,38 @@ int main()
 	/// MAT2
 	std::cout << " === MAT2 === \n\n";
 
-	Assignment::Matrix2 a, b;
+	Assignment::Matrix2 mat2a, mat2b;
 
-	a = Assignment::Matrix2(0, 1, 2, 3);
-	b = Assignment::Matrix2(5, 6, 7, 8);
-	auto c = Assignment::Vector2(10, 12);
+	mat2a = Assignment::Matrix2(0, 1, 2, 3);
+	mat2b = Assignment::Matrix2(5, 6, 7, 8);
+	auto vec2a = Assignment::Vector2(10, 12);
 
-	std::cout << (a * b).to_string() << "\n";
-	std::cout << (a * c).to_string() << "\n";
-	std::cout << "Det (a): " << a.determinant() << "\n\n";
+	std::cout << (mat2a * mat2b).to_string() << "\n";
+	std::cout << (mat2a * vec2a).to_string() << "\n";
+	std::cout << "Det (a): " << mat2a.determinant() << "\n\n";
 
 	/// MAT3
 	std::cout << " === MAT3 === \n\n";
 
-	Assignment::Matrix3 d, e;
+	Assignment::Matrix3 mat3a, mat3b;
 	auto f = Assignment::Vector3(1, 2, 3);
 
 	for (int i = 0; i < 9; i++)
 	{
-		d(i) = i;
+		mat3a(i) = i;
 	}
 
-	std::cout << d.to_string() << "\n";
-	std::cout << d.getTransposed().to_string() << "\n";
-	std::cout << (d * d).to_string() << "\n";
+	std::cout << mat3a.to_string() << "\n";
+	std::cout << mat3a.getTransposed().to_string() << "\n";
+	std::cout << (mat3a * mat3a).to_string() << "\n";
 
-	e = Assignment::Matrix3(Assignment::Vector3(0, 2, 2), Assignment::Vector3(1, -1, 1), Assignment::Vector3(0, 1, 2));
+	mat3b = Assignment::Matrix3(Assignment::Vector3(0, 2, 2), Assignment::Vector3(1, -1, 1), Assignment::Vector3(0, 1, 2));
 
-	std::cout << e.to_string() << "\n";
-	std::cout << (e * e).to_string() << "\n";
-	std::cout << (d * f).to_string() << "\n";
-	std::cout << "Det (e): " << e.determinant() << "\n\n";
-	std::cout << e.inverse().to_string() << "\n";
+	std::cout << mat3b.to_string() << "\n";
+	std::cout << (mat3b * mat3b).to_string() << "\n";
+	std::cout << (mat3a * f).to_string() << "\n";
+	std::cout << "Det (e): " << mat3b.determinant() << "\n\n";
+	std::cout << mat3b.inverse().to_string() << "\n";
 
 	/// MAT4
 	std::cout << " === MAT4 === \n\n";
@@ -53,6 +53,21 @@ int main()
 	std::cout << g.getTransposed().to_string() << "\n";
 	std::cout << "Det (g): " << g.determinant() << "\n\n";
 	std::cout << g.inverse().to_string() << "\n";
+
+	/// ROT MAT
+	std::cout << " === ROT MAT === \n\n";
+
+	float pi = 3.14159265359;
+
+	auto rx = Assignment::Matrix4::getRotationX(pi / 3);
+	auto ry = Assignment::Matrix4::getRotationY(pi / 3);
+	auto rz = Assignment::Matrix4::getRotationZ(pi / 3);
+	auto rxyz = Assignment::Matrix4::getRotationXYZ(pi / 3, Assignment::Vector3(1, 2, 3));
+
+	std::cout << rx.to_string() << "\n";
+	std::cout << ry.to_string() << "\n";
+	std::cout << rz.to_string() << "\n";
+	std::cout << rxyz.to_string() << "\n";
 
 	return 0;
 }
