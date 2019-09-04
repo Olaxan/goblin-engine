@@ -226,7 +226,9 @@ namespace Assignment
 
 		std::string to_string() const
 		{
-			return std::to_string(this->x()) + ";\n" + std::to_string(this->y()) + ";\n" + std::to_string(this->z()) + ";\n";
+			std::stringstream ss;
+			ss << x() << ";\n" << y() << ";\n" << z() << ";\n" << w() << ";\n";
+			return ss.str();
 		}
 
 		~Vector4() { }

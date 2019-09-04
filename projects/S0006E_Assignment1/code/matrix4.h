@@ -54,7 +54,7 @@ namespace Assignment
 			*this = copy;
 		}
 
-		Matrix4(Vector4& a, Vector4& b, Vector4& c, Vector4& d)
+		Matrix4(Vector4 a, Vector4 b, Vector4 c, Vector4 d)
 		{
 			_arr[0] = a;
 			_arr[1] = b;
@@ -333,17 +333,20 @@ namespace Assignment
 			return at(0) * a.determinant() - at(1) * b.determinant() + at(2) * c.determinant() - at(3) * d.determinant();
 		}
 
-		Matrix4 getInverse() const
+		Matrix4 inverse() const
 		{
-			float det = determinant();
 			Matrix4 inv;
+			float det = determinant();
 
 			if (det == 0)
 				return inv;
 
 			for (int i = 0; i < 16; i++)
 			{
-				inv(i) = minor(i / 4, i % 4).determinant() * -(i % 2 == 0);
+				inv(i) = minor(i % 4, i / 4).determinant();
+
+				if (i % 2 != 0)
+					inv(i) *= -1;
 			}
 
 			inv = inv.getTransposed();

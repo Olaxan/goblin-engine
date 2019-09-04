@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <iostream>
 #include <string>
 #include <cmath>
 #include <stdexcept>
@@ -36,7 +37,7 @@ namespace Assignment
 			*this = copy;
 		}
 
-		Matrix3(Vector3& x, Vector3& y, Vector3& z)
+		Matrix3(Vector3 x, Vector3 y, Vector3 z)
 		{
 			_arr[0] = x;
 			_arr[1] = y;
@@ -197,24 +198,6 @@ namespace Assignment
 			return Matrix3(mat);
 		}
 
-		Matrix3 getInverse() const
-		{
-			Matrix3 inv;
-			float det = determinant();
-
-			if (det == 0)
-				return inv;
-
-			for (int i = 0; i < 9; i++)
-			{
-				inv(i) = minor(i / 3, i % 3).determinant() * -(i % 2 == 0);
-			}
-
-			inv = inv.getTransposed();
-
-			return inv / det;
-		}
-
 		Matrix2 minor(int x, int y) const
 		{
 			Matrix2 mat;
@@ -244,6 +227,27 @@ namespace Assignment
 			c = minor(2, 0);
 
 			return at(0) * a.determinant() - at(1) * b.determinant() + at(2) * c.determinant();
+		}
+
+		Matrix3 inverse() const
+		{
+			Matrix3 inv;
+			float det = determinant();
+
+			if (det == 0)
+				return inv;
+
+			for (int i = 0; i < 9; i++)
+			{
+				inv(i) = minor(i % 3, i / 3).determinant();
+
+				if (i % 2 != 0)
+					inv(i) *= -1;
+			}
+
+			inv = inv.getTransposed();
+
+			return inv / det;
 		}
 
 		std::string to_string()
