@@ -48,13 +48,6 @@ int main()
 
 	std::cout << g.to_string() << "\n";
 
-	for (int i = 0; i < 16; i++)
-	{
-		std::cout << "(" << i << ") det: " << g.minor(i & 4, i / 4).determinant() << "\n\n" << g.minor(i & 4, i / 4).to_string() << "\n";
-	}
-
-	std::cout << "\n///////\n";
-
 	std::cout << (g * g).to_string() << "\n";
 	std::cout << (g * h).to_string() << "\n";
 	std::cout << g.getTransposed().to_string() << "\n";
