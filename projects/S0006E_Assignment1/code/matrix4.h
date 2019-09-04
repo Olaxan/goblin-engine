@@ -344,10 +344,16 @@ namespace Assignment
 			for (int i = 0; i < 16; i++)
 			{
 				inv(i) = minor(i % 4, i / 4).determinant();
-
-				if (i % 2 != 0)
-					inv(i) *= -1;
 			}
+
+			inv(1) *= -1;
+			inv(3) *= -1;
+			inv(4) *= -1;
+			inv(6) *= -1;
+			inv(9) *= -1;
+			inv(11) *= -1;
+			inv(12) *= -1;
+			inv(14) *= -1;
 
 			inv = inv.getTransposed();
 
