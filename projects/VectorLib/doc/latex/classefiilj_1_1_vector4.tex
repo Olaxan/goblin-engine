@@ -1,0 +1,641 @@
+\hypertarget{classefiilj_1_1_vector4}{}\doxysection{efiilj\+::Vector4 Class Reference}
+\label{classefiilj_1_1_vector4}\index{efiilj::Vector4@{efiilj::Vector4}}
+
+
+Class to represent a 4-\/dimensional homogeneous vector.  
+
+
+
+
+{\ttfamily \#include $<$vector4.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4_a4f2b9debc5d529f12775b005e5adc05c}{Vector4}} (float x, float y, float z, float w)
+\begin{DoxyCompactList}\small\item\em Creates a new 4D vector with the specified values. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4_a4f45ab034c5851c829f0ba5e869ba011}{Vector4}} (float w=1)
+\begin{DoxyCompactList}\small\item\em Creates a homogeneous 3D vector with the specified w value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4_a9fc11246ff19a058c6efa76c4cf815f5}{Vector4}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&copy)
+\begin{DoxyCompactList}\small\item\em Inserts the specified \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} into the top of a new \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4_a89bfdac14c8031908730aef80232d791}{Vector4}} (const \mbox{\hyperlink{classefiilj_1_1_vector3}{Vector3}} \&copy)
+\begin{DoxyCompactList}\small\item\em Inserts the specified \mbox{\hyperlink{classefiilj_1_1_vector3}{Vector3}} into the top of a new \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4_a94b36bd6dcc874679d0f95db6834df73}{Vector4}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&copy)
+\begin{DoxyCompactList}\small\item\em Constructs a copy of the specified vector. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a985de03d9366d77475cf753e7cfcb423}\label{classefiilj_1_1_vector4_a985de03d9366d77475cf753e7cfcb423}} 
+const float \& {\bfseries x} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a895e920f4f3429c3d79959a470cab0b0}\label{classefiilj_1_1_vector4_a895e920f4f3429c3d79959a470cab0b0}} 
+void {\bfseries x} (const float \&x)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a21b9d41b1b1c104ce67079434576e700}\label{classefiilj_1_1_vector4_a21b9d41b1b1c104ce67079434576e700}} 
+const float \& {\bfseries y} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a2122ec7c41ed9c2d590814cdefc8f633}\label{classefiilj_1_1_vector4_a2122ec7c41ed9c2d590814cdefc8f633}} 
+void {\bfseries y} (const float \&y)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_af9bc82c3d358cc88d9d38384e1b49690}\label{classefiilj_1_1_vector4_af9bc82c3d358cc88d9d38384e1b49690}} 
+const float \& {\bfseries z} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_ac66357985a8b13f8babd13e8ee366c30}\label{classefiilj_1_1_vector4_ac66357985a8b13f8babd13e8ee366c30}} 
+void {\bfseries z} (const float \&z)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_acaeb149c466127dd65e3a94765f1e29a}\label{classefiilj_1_1_vector4_acaeb149c466127dd65e3a94765f1e29a}} 
+const float \& {\bfseries w} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector4_ad11c7eb725f09fa5ee69b09ef15a24fb}\label{classefiilj_1_1_vector4_ad11c7eb725f09fa5ee69b09ef15a24fb}} 
+void {\bfseries w} (const float \&w)
+\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_a3fe91bf799650c75676b981f17d9c30f}{operator+}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Adds two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances together, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_ab8b2271ae81457fa09014afd3fafddcf}{operator-\/}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Subtracts a \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} from this, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_abe3cbde4a666bba948cc5df0ee26c2c4}{operator$\ast$}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances together, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_a5a148ae05d59eecddeddd64c529cb958}{operator$\ast$}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_a80d2f76ffbfaefadac2f314f93166d96}{operator/}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classefiilj_1_1_vector4_afcab564135479d15403fb28c560e9faa}{operator==}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Tests two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances for equality. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classefiilj_1_1_vector4_a27c33e49aeed568f288c31b9408aaf42}{operator!=}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Tests two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances for inequality. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \& \mbox{\hyperlink{classefiilj_1_1_vector4_a2e7c3921ae3af79a927e6736d8f8aa59}{operator+=}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other)
+\begin{DoxyCompactList}\small\item\em Adds another \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} to this, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \& \mbox{\hyperlink{classefiilj_1_1_vector4_a530694316e1706ba70e797a6c6d5c5bf}{operator-\/=}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other)
+\begin{DoxyCompactList}\small\item\em Subtracts another \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} from this, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \& \mbox{\hyperlink{classefiilj_1_1_vector4_a6e17ab86ab386aa0ec08e91de75ac343}{operator$\ast$=}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other)
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with another, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \& \mbox{\hyperlink{classefiilj_1_1_vector4_adc75f1741b03b0346e33126d62732300}{operator$\ast$=}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \& \mbox{\hyperlink{classefiilj_1_1_vector4_a2739fdb303998b7c4343677956e313a8}{operator/=}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result as a reference. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{classefiilj_1_1_vector4_a06747b2f70d13b4f5add52772c1d6660}{operator\mbox{[}$\,$\mbox{]}}} (const int \&index)
+\begin{DoxyCompactList}\small\item\em Accesses a value at the specified index in the vector, from top to bottom. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector4_a7d862e3140d19b5cc98a2048adface5c}{at}} (int y) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the n\+:th vector index, from top to bottom. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector4_a989ed0ffa1f202838fb5399684fa62ac}{dot}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Calculates the 3D dot product between this vector and another. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector4_a421893c49cd748e6d6de161492873156}{dot4}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Calculates the 4D dot product between this vector and another. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_a47f0ed95e05db978eda3e16cd4dffdfd}{cross}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Calculates the 3D cross product between this vector and another. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector4_a12b9191e5d921835bc9ea2af815a23e5}{length}} () const
+\begin{DoxyCompactList}\small\item\em Returns the 3D length of this point from the origin (0, 0, 0). The fourth coordinate (w) is not taken into account. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_aa72ca089b26ef467c019a6186714b4e2}{norm}} () const
+\begin{DoxyCompactList}\small\item\em Normalizes the vector, turning it into a unit vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_a8903b1310be51fb0a262b8a6b95a405d}{get\+Reflection}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&normal) const
+\begin{DoxyCompactList}\small\item\em Calculates the reflection of a vector against a specified normal. The fourth coordinate (w) is not taken into account. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classefiilj_1_1_vector4_aa34b9e23214ad6a752fdc6d84b57672f}{to\+\_\+string}} () const
+\begin{DoxyCompactList}\small\item\em Returns a formatted multi-\/line string representation of the vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static float \mbox{\hyperlink{classefiilj_1_1_vector4_a8003c04f0c5219705b14dc9b760e2d94}{dist}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&x, const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the 3D distance between two vectors (points). The fourth coordinate (w) is not taken into account. \end{DoxyCompactList}\item 
+static float \mbox{\hyperlink{classefiilj_1_1_vector4_aa5cbdee464869eebd87c9496d9706c66}{dot}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&x, const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the 3D dot product between two vectors. The fourth coordinate (w) is not taken into account. \end{DoxyCompactList}\item 
+static float \mbox{\hyperlink{classefiilj_1_1_vector4_a170b3d814b258c3d627bea08232eb91a}{dot4}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&x, const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the 4D dot product between two vectors. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_vector4_a1c99e82458d348c1cf5e5f12054337f8}{cross}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&x, const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the 3D cross product between two vectors. The fourth coordinate (w) is not taken into account. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to represent a 4-\/dimensional homogeneous vector. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a4f2b9debc5d529f12775b005e5adc05c}\label{classefiilj_1_1_vector4_a4f2b9debc5d529f12775b005e5adc05c}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!Vector4@{Vector4}}
+\index{Vector4@{Vector4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{Vector4()}{Vector4()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector4\+::\+Vector4 (\begin{DoxyParamCaption}\item[{float}]{x,  }\item[{float}]{y,  }\item[{float}]{z,  }\item[{float}]{w }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a new 4D vector with the specified values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & First value\\
+\hline
+{\em y} & Second value\\
+\hline
+{\em z} & Third value\\
+\hline
+{\em w} & Fourth value\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a4f45ab034c5851c829f0ba5e869ba011}\label{classefiilj_1_1_vector4_a4f45ab034c5851c829f0ba5e869ba011}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!Vector4@{Vector4}}
+\index{Vector4@{Vector4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{Vector4()}{Vector4()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector4\+::\+Vector4 (\begin{DoxyParamCaption}\item[{float}]{w = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a homogeneous 3D vector with the specified w value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em w} & The scaling value for the vector, default 1 (for normal cartesian coordinate systems)\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a9fc11246ff19a058c6efa76c4cf815f5}\label{classefiilj_1_1_vector4_a9fc11246ff19a058c6efa76c4cf815f5}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!Vector4@{Vector4}}
+\index{Vector4@{Vector4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{Vector4()}{Vector4()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector4\+::\+Vector4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Inserts the specified \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} into the top of a new \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The vector of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a89bfdac14c8031908730aef80232d791}\label{classefiilj_1_1_vector4_a89bfdac14c8031908730aef80232d791}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!Vector4@{Vector4}}
+\index{Vector4@{Vector4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{Vector4()}{Vector4()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector4\+::\+Vector4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector3}{Vector3}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Inserts the specified \mbox{\hyperlink{classefiilj_1_1_vector3}{Vector3}} into the top of a new \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The vector of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a94b36bd6dcc874679d0f95db6834df73}\label{classefiilj_1_1_vector4_a94b36bd6dcc874679d0f95db6834df73}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!Vector4@{Vector4}}
+\index{Vector4@{Vector4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{Vector4()}{Vector4()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector4\+::\+Vector4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a copy of the specified vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The vector of which to create a copy\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a7d862e3140d19b5cc98a2048adface5c}\label{classefiilj_1_1_vector4_a7d862e3140d19b5cc98a2048adface5c}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!at@{at}}
+\index{at@{at}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector4\+::at (\begin{DoxyParamCaption}\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the n\+:th vector index, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The vector index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at the specified position in the vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a47f0ed95e05db978eda3e16cd4dffdfd}\label{classefiilj_1_1_vector4_a47f0ed95e05db978eda3e16cd4dffdfd}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!cross@{cross}}
+\index{cross@{cross}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{cross()}{cross()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::cross (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the 3D cross product between this vector and another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other vector to calculate cross product with\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The cross product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a1c99e82458d348c1cf5e5f12054337f8}\label{classefiilj_1_1_vector4_a1c99e82458d348c1cf5e5f12054337f8}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!cross@{cross}}
+\index{cross@{cross}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{cross()}{cross()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::cross (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{x,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the 3D cross product between two vectors. The fourth coordinate (w) is not taken into account. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first vector\\
+\hline
+{\em y} & The second vector\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The cross product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a8003c04f0c5219705b14dc9b760e2d94}\label{classefiilj_1_1_vector4_a8003c04f0c5219705b14dc9b760e2d94}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!dist@{dist}}
+\index{dist@{dist}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{dist()}{dist()}}
+{\footnotesize\ttfamily static float efiilj\+::\+Vector4\+::dist (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{x,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the 3D distance between two vectors (points). The fourth coordinate (w) is not taken into account. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first point\\
+\hline
+{\em y} & The second point\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The distance between points as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a989ed0ffa1f202838fb5399684fa62ac}\label{classefiilj_1_1_vector4_a989ed0ffa1f202838fb5399684fa62ac}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!dot@{dot}}
+\index{dot@{dot}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector4\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the 3D dot product between this vector and another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other vector to calculate dot product with\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_aa5cbdee464869eebd87c9496d9706c66}\label{classefiilj_1_1_vector4_aa5cbdee464869eebd87c9496d9706c66}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!dot@{dot}}
+\index{dot@{dot}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static float efiilj\+::\+Vector4\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{x,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the 3D dot product between two vectors. The fourth coordinate (w) is not taken into account. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first vector\\
+\hline
+{\em y} & The second vector\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a421893c49cd748e6d6de161492873156}\label{classefiilj_1_1_vector4_a421893c49cd748e6d6de161492873156}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!dot4@{dot4}}
+\index{dot4@{dot4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{dot4()}{dot4()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector4\+::dot4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the 4D dot product between this vector and another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other vector to calculate dot product with\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a170b3d814b258c3d627bea08232eb91a}\label{classefiilj_1_1_vector4_a170b3d814b258c3d627bea08232eb91a}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!dot4@{dot4}}
+\index{dot4@{dot4}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{dot4()}{dot4()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static float efiilj\+::\+Vector4\+::dot4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{x,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the 4D dot product between two vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first vector\\
+\hline
+{\em y} & The second vector\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a8903b1310be51fb0a262b8a6b95a405d}\label{classefiilj_1_1_vector4_a8903b1310be51fb0a262b8a6b95a405d}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!getReflection@{getReflection}}
+\index{getReflection@{getReflection}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{getReflection()}{getReflection()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::get\+Reflection (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{normal }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the reflection of a vector against a specified normal. The fourth coordinate (w) is not taken into account. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em normal} & The normal to calculate reflection against\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The resulting reflection vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a12b9191e5d921835bc9ea2af815a23e5}\label{classefiilj_1_1_vector4_a12b9191e5d921835bc9ea2af815a23e5}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!length@{length}}
+\index{length@{length}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{length()}{length()}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector4\+::length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the 3D length of this point from the origin (0, 0, 0). The fourth coordinate (w) is not taken into account. 
+
+\begin{DoxyReturn}{Returns}
+The vector length as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_aa72ca089b26ef467c019a6186714b4e2}\label{classefiilj_1_1_vector4_aa72ca089b26ef467c019a6186714b4e2}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!norm@{norm}}
+\index{norm@{norm}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{norm()}{norm()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::norm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalizes the vector, turning it into a unit vector. 
+
+\begin{DoxyReturn}{Returns}
+The resulting unit vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a27c33e49aeed568f288c31b9408aaf42}\label{classefiilj_1_1_vector4_a27c33e49aeed568f288c31b9408aaf42}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily bool efiilj\+::\+Vector4\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tests two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances for inequality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if not equal, false otherwise
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a5a148ae05d59eecddeddd64c529cb958}\label{classefiilj_1_1_vector4_a5a148ae05d59eecddeddd64c529cb958}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_abe3cbde4a666bba948cc5df0ee26c2c4}\label{classefiilj_1_1_vector4_abe3cbde4a666bba948cc5df0ee26c2c4}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances together, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_adc75f1741b03b0346e33126d62732300}\label{classefiilj_1_1_vector4_adc75f1741b03b0346e33126d62732300}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}\& efiilj\+::\+Vector4\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a6e17ab86ab386aa0ec08e91de75ac343}\label{classefiilj_1_1_vector4_a6e17ab86ab386aa0ec08e91de75ac343}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}\& efiilj\+::\+Vector4\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with another, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a3fe91bf799650c75676b981f17d9c30f}\label{classefiilj_1_1_vector4_a3fe91bf799650c75676b981f17d9c30f}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator+@{operator+}}
+\index{operator+@{operator+}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances together, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a2e7c3921ae3af79a927e6736d8f8aa59}\label{classefiilj_1_1_vector4_a2e7c3921ae3af79a927e6736d8f8aa59}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator+=()}{operator+=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}\& efiilj\+::\+Vector4\+::operator+= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds another \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} to this, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_ab8b2271ae81457fa09014afd3fafddcf}\label{classefiilj_1_1_vector4_ab8b2271ae81457fa09014afd3fafddcf}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::operator-\/ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtracts a \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} from this, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a530694316e1706ba70e797a6c6d5c5bf}\label{classefiilj_1_1_vector4_a530694316e1706ba70e797a6c6d5c5bf}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator-\/=@{operator-\/=}}
+\index{operator-\/=@{operator-\/=}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator-\/=()}{operator-=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}\& efiilj\+::\+Vector4\+::operator-\/= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtracts another \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} from this, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a80d2f76ffbfaefadac2f314f93166d96}\label{classefiilj_1_1_vector4_a80d2f76ffbfaefadac2f314f93166d96}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator/@{operator/}}
+\index{operator/@{operator/}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Vector4\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a2739fdb303998b7c4343677956e313a8}\label{classefiilj_1_1_vector4_a2739fdb303998b7c4343677956e313a8}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator/=()}{operator/=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}\& efiilj\+::\+Vector4\+::operator/= (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} with a scalar, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_afcab564135479d15403fb28c560e9faa}\label{classefiilj_1_1_vector4_afcab564135479d15403fb28c560e9faa}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator==@{operator==}}
+\index{operator==@{operator==}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool efiilj\+::\+Vector4\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tests two \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} instances for equality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if equal, false otherwise
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_a06747b2f70d13b4f5add52772c1d6660}\label{classefiilj_1_1_vector4_a06747b2f70d13b4f5add52772c1d6660}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily float\& efiilj\+::\+Vector4\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{const int \&}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Accesses a value at the specified index in the vector, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at the specified position in the vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector4_aa34b9e23214ad6a752fdc6d84b57672f}\label{classefiilj_1_1_vector4_aa34b9e23214ad6a752fdc6d84b57672f}} 
+\index{efiilj::Vector4@{efiilj::Vector4}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!efiilj::Vector4@{efiilj::Vector4}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily std\+::string efiilj\+::\+Vector4\+::to\+\_\+string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a formatted multi-\/line string representation of the vector. 
+
+\begin{DoxyReturn}{Returns}
+A formatted multi-\/line string representation of the vector
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/efiilj-\/7-\/local/\+Documents/\+Source/ltu-\/lab-\/s0006e\+\_\+env/projects/\+Vector\+Lib/code/vector4.\+h\end{DoxyCompactItemize}

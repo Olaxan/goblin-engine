@@ -1,0 +1,570 @@
+\hypertarget{classefiilj_1_1_matrix4}{}\doxysection{efiilj\+::Matrix4 Class Reference}
+\label{classefiilj_1_1_matrix4}\index{efiilj::Matrix4@{efiilj::Matrix4}}
+
+
+Class to represent a 4-\/dimensional matrix.  
+
+
+
+
+{\ttfamily \#include $<$matrix4.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4_a1501e80a299d9d506941b0dbf1688e4b}{Matrix4}} ()
+\begin{DoxyCompactList}\small\item\em Creates a new identity \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4_aa27718952929cf9d94ab537da69300ea}{Matrix4}} (const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&copy)
+\begin{DoxyCompactList}\small\item\em Inserts the specified \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} into the top-\/left corner of an 4x4 identity matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4_a9a6fbe45a8d0fc8e4904918d9ae5662f}{Matrix4}} (const \mbox{\hyperlink{classefiilj_1_1_matrix3}{Matrix3}} \&copy)
+\begin{DoxyCompactList}\small\item\em Inserts the specified \mbox{\hyperlink{classefiilj_1_1_matrix3}{Matrix3}} into the top-\/left corner of an 4x4 identity matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4_a00327524a07bb759b471924a72f08062}{Matrix4}} (const \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \&copy)
+\begin{DoxyCompactList}\small\item\em Constructs a copy of the specified matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4_ab6a8a34fe81e0c3b6a0e986d040b99f7}{Matrix4}} (\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} a, \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} b, \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} c, \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} d)
+\begin{DoxyCompactList}\small\item\em Creates a \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} from the specified row vectors, from top to bottom. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \& \mbox{\hyperlink{classefiilj_1_1_matrix4_a7b9e533e05fb4ba4213b0c524cb98e59}{operator=}} (const \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \&other)
+\begin{DoxyCompactList}\small\item\em Sets the matrix to equal the specified matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_ada7f33875dc23b4f4391d50b61ad70dc}{operator$\ast$}} (const \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with another \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_ad4c38115d6dc274fd1bd1870da589e3f}{operator$\ast$}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with a scalar. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_ac03fdfc35ea3cf8b51ec2b3170d8bb7f}{operator$\ast$}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with a \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a678933942cec74b9a9f71c48303d3304}{operator/}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix division with a scalar. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \& \mbox{\hyperlink{classefiilj_1_1_matrix4_a5af187679655af8e5f26c71277af8521}{operator$\ast$=}} (\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies this matrix with a vector and returns the result. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{classefiilj_1_1_matrix4_a16fc7aab6a0db73f0a6e78ddcfd35c7f}{operator()}} (int i)
+\begin{DoxyCompactList}\small\item\em Returns the (non-\/const) value at the n\+:th position in the matrix, from top-\/left to bottom-\/right. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{classefiilj_1_1_matrix4_a1757c4be51af69d3529f9360a18f38d8}{operator()}} (int x, int y)
+\begin{DoxyCompactList}\small\item\em Returns the (non-\/const) value at matrix position x, y. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_matrix4_aa29371bda2070975f38fb4427b54ebad}{at}} (int n) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the n\+:th matrix index, from top-\/left to bottom-\/right. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_matrix4_a7803279835b93b4466aa1292163d5398}{at}} (int x, int y) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the matrix position x, y. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a7e09f3be4d7b7156e13cae70fef09bac}{row}} (int y) const
+\begin{DoxyCompactList}\small\item\em Returns the row at specified y-\/position as a 4D-\/vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a07639de419f8902c1512c0bae6da184c}{col}} (int x) const
+\begin{DoxyCompactList}\small\item\em Returns the column at specified x-\/position as a 4D-\/vector. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classefiilj_1_1_matrix4_af6fa0c850ce2a28ddaa9f792d1afaf55}{clear}} (bool identity=true)
+\begin{DoxyCompactList}\small\item\em Clears the matrix, optionally creating an identity matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{classefiilj_1_1_matrix4_af88c33eb9341988d50346c581d5f8e7e}{minor}} (int x, int y) const
+\begin{DoxyCompactList}\small\item\em Returns the minor matrix of the specified cell, excluding its row and column. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_matrix4_aba466b1f33ea39d0259a78db7cf96f86}{determinant}} () const
+\begin{DoxyCompactList}\small\item\em Returns the matrix determinant. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a5c71ea60165e06a1d940ae7bb4060031}{transpose}} () const
+\begin{DoxyCompactList}\small\item\em Returns a transposed copy of the matrix (shifted along the diagonal). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_abaa25c015424209e99ebc7c5034cac1b}{inverse}} () const
+\begin{DoxyCompactList}\small\item\em Returns the inverse of the matrix, or an identity if none exists. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classefiilj_1_1_matrix4_a042ed24d39fa3fe5c76dd101104ef42a}{to\+\_\+string}} ()
+\begin{DoxyCompactList}\small\item\em Returns a formatted multi-\/line string representation of the matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a36b30778f4497793a5a00b9a842896c7}{get\+Translation}} (const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&v)
+\begin{DoxyCompactList}\small\item\em Constructs a translation matrix from the specified 4D-\/vector. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a19d9d6912adb71dd004183743b7169e4}{get\+RotationX}} (const float \&rad)
+\begin{DoxyCompactList}\small\item\em Returns a rotation matrix for a specified rotation around the x-\/axis. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_aefb8e7715d4511c63ab258c5d82d9185}{get\+RotationY}} (const float \&rad)
+\begin{DoxyCompactList}\small\item\em Returns a rotation matrix for a specified rotation around the y-\/axis. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a8855dc9ccd2d23c8e780db01a0f66cf3}{get\+RotationZ}} (const float \&rad)
+\begin{DoxyCompactList}\small\item\em Returns a rotation matrix for a specified rotation around the x-\/axis. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \mbox{\hyperlink{classefiilj_1_1_matrix4_a38d548e99669cfd3de1feaf27bac9fb1}{get\+Rotation\+X\+YZ}} (const float \&rad, const \mbox{\hyperlink{classefiilj_1_1_vector3}{Vector3}} axis)
+\begin{DoxyCompactList}\small\item\em Returns a rotation matrix for a specified rotation around the x-\/axis. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a3a28fe3d986ad279cc195616b98cf815}\label{classefiilj_1_1_matrix4_a3a28fe3d986ad279cc195616b98cf815}} 
+friend {\bfseries Vector4}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to represent a 4-\/dimensional matrix. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a1501e80a299d9d506941b0dbf1688e4b}\label{classefiilj_1_1_matrix4_a1501e80a299d9d506941b0dbf1688e4b}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!Matrix4@{Matrix4}}
+\index{Matrix4@{Matrix4}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{Matrix4()}{Matrix4()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix4\+::\+Matrix4 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a new identity \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}}. 
+
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_aa27718952929cf9d94ab537da69300ea}\label{classefiilj_1_1_matrix4_aa27718952929cf9d94ab537da69300ea}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!Matrix4@{Matrix4}}
+\index{Matrix4@{Matrix4}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{Matrix4()}{Matrix4()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix4\+::\+Matrix4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Inserts the specified \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} into the top-\/left corner of an 4x4 identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The matrix of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a9a6fbe45a8d0fc8e4904918d9ae5662f}\label{classefiilj_1_1_matrix4_a9a6fbe45a8d0fc8e4904918d9ae5662f}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!Matrix4@{Matrix4}}
+\index{Matrix4@{Matrix4}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{Matrix4()}{Matrix4()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix4\+::\+Matrix4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix3}{Matrix3}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Inserts the specified \mbox{\hyperlink{classefiilj_1_1_matrix3}{Matrix3}} into the top-\/left corner of an 4x4 identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The matrix of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a00327524a07bb759b471924a72f08062}\label{classefiilj_1_1_matrix4_a00327524a07bb759b471924a72f08062}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!Matrix4@{Matrix4}}
+\index{Matrix4@{Matrix4}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{Matrix4()}{Matrix4()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix4\+::\+Matrix4 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a copy of the specified matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The matrix of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_ab6a8a34fe81e0c3b6a0e986d040b99f7}\label{classefiilj_1_1_matrix4_ab6a8a34fe81e0c3b6a0e986d040b99f7}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!Matrix4@{Matrix4}}
+\index{Matrix4@{Matrix4}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{Matrix4()}{Matrix4()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix4\+::\+Matrix4 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}}]{a,  }\item[{\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}}]{b,  }\item[{\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}}]{c,  }\item[{\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} from the specified row vectors, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First row\\
+\hline
+{\em b} & Second row\\
+\hline
+{\em c} & Third row\\
+\hline
+{\em d} & Fourth row\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_aa29371bda2070975f38fb4427b54ebad}\label{classefiilj_1_1_matrix4_aa29371bda2070975f38fb4427b54ebad}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!at@{at}}
+\index{at@{at}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Matrix4\+::at (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the n\+:th matrix index, from top-\/left to bottom-\/right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The matrix index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix index n
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a7803279835b93b4466aa1292163d5398}\label{classefiilj_1_1_matrix4_a7803279835b93b4466aa1292163d5398}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!at@{at}}
+\index{at@{at}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Matrix4\+::at (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the matrix position x, y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix x-\/position, column\\
+\hline
+{\em y} & Matrix y-\/poisition, row\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix position x, y
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_af6fa0c850ce2a28ddaa9f792d1afaf55}\label{classefiilj_1_1_matrix4_af6fa0c850ce2a28ddaa9f792d1afaf55}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!clear@{clear}}
+\index{clear@{clear}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void efiilj\+::\+Matrix4\+::clear (\begin{DoxyParamCaption}\item[{bool}]{identity = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clears the matrix, optionally creating an identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em identity} & Whether to create an empty matrix, or an identity matrix\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a07639de419f8902c1512c0bae6da184c}\label{classefiilj_1_1_matrix4_a07639de419f8902c1512c0bae6da184c}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!col@{col}}
+\index{col@{col}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{col()}{col()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Matrix4\+::col (\begin{DoxyParamCaption}\item[{int}]{x }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the column at specified x-\/position as a 4D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The column index to return\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The column at the specified x-\/position
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_aba466b1f33ea39d0259a78db7cf96f86}\label{classefiilj_1_1_matrix4_aba466b1f33ea39d0259a78db7cf96f86}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!determinant@{determinant}}
+\index{determinant@{determinant}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{determinant()}{determinant()}}
+{\footnotesize\ttfamily float efiilj\+::\+Matrix4\+::determinant (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the matrix determinant. 
+
+\begin{DoxyReturn}{Returns}
+The determinant of the matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a19d9d6912adb71dd004183743b7169e4}\label{classefiilj_1_1_matrix4_a19d9d6912adb71dd004183743b7169e4}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!getRotationX@{getRotationX}}
+\index{getRotationX@{getRotationX}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{getRotationX()}{getRotationX()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::get\+RotationX (\begin{DoxyParamCaption}\item[{const float \&}]{rad }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a rotation matrix for a specified rotation around the x-\/axis. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & The rotation in radians\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A rotation matrix for the rotation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a38d548e99669cfd3de1feaf27bac9fb1}\label{classefiilj_1_1_matrix4_a38d548e99669cfd3de1feaf27bac9fb1}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!getRotationXYZ@{getRotationXYZ}}
+\index{getRotationXYZ@{getRotationXYZ}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{getRotationXYZ()}{getRotationXYZ()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::get\+Rotation\+X\+YZ (\begin{DoxyParamCaption}\item[{const float \&}]{rad,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector3}{Vector3}}}]{axis }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a rotation matrix for a specified rotation around the x-\/axis. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & The rotation in radians\\
+\hline
+{\em axis} & The axis for rotation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A rotation matrix for the rotation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_aefb8e7715d4511c63ab258c5d82d9185}\label{classefiilj_1_1_matrix4_aefb8e7715d4511c63ab258c5d82d9185}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!getRotationY@{getRotationY}}
+\index{getRotationY@{getRotationY}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{getRotationY()}{getRotationY()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::get\+RotationY (\begin{DoxyParamCaption}\item[{const float \&}]{rad }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a rotation matrix for a specified rotation around the y-\/axis. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & The rotation in radians\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A rotation matrix for the rotation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a8855dc9ccd2d23c8e780db01a0f66cf3}\label{classefiilj_1_1_matrix4_a8855dc9ccd2d23c8e780db01a0f66cf3}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!getRotationZ@{getRotationZ}}
+\index{getRotationZ@{getRotationZ}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{getRotationZ()}{getRotationZ()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::get\+RotationZ (\begin{DoxyParamCaption}\item[{const float \&}]{rad }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a rotation matrix for a specified rotation around the x-\/axis. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & The rotation in radians\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A rotation matrix for the rotation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a36b30778f4497793a5a00b9a842896c7}\label{classefiilj_1_1_matrix4_a36b30778f4497793a5a00b9a842896c7}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!getTranslation@{getTranslation}}
+\index{getTranslation@{getTranslation}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{getTranslation()}{getTranslation()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::get\+Translation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Constructs a translation matrix from the specified 4D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & The vector to use for translation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new translation matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_abaa25c015424209e99ebc7c5034cac1b}\label{classefiilj_1_1_matrix4_abaa25c015424209e99ebc7c5034cac1b}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!inverse@{inverse}}
+\index{inverse@{inverse}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{inverse()}{inverse()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::inverse (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the inverse of the matrix, or an identity if none exists. 
+
+\begin{DoxyReturn}{Returns}
+The inverse of the current matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_af88c33eb9341988d50346c581d5f8e7e}\label{classefiilj_1_1_matrix4_af88c33eb9341988d50346c581d5f8e7e}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!minor@{minor}}
+\index{minor@{minor}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{minor()}{minor()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix3}{Matrix3}} efiilj\+::\+Matrix4\+::minor (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the minor matrix of the specified cell, excluding its row and column. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The x-\/coordinate of the cell\\
+\hline
+{\em y} & The y-\/coordinate of the cell\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A 3x3 matrix excluding the specified row and column
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a16fc7aab6a0db73f0a6e78ddcfd35c7f}\label{classefiilj_1_1_matrix4_a16fc7aab6a0db73f0a6e78ddcfd35c7f}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator()@{operator()}}
+\index{operator()@{operator()}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float\& efiilj\+::\+Matrix4\+::operator() (\begin{DoxyParamCaption}\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (non-\/const) value at the n\+:th position in the matrix, from top-\/left to bottom-\/right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The matrix index to query\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix index n
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a1757c4be51af69d3529f9360a18f38d8}\label{classefiilj_1_1_matrix4_a1757c4be51af69d3529f9360a18f38d8}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator()@{operator()}}
+\index{operator()@{operator()}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float\& efiilj\+::\+Matrix4\+::operator() (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (non-\/const) value at matrix position x, y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix x-\/position, column\\
+\hline
+{\em y} & Matrix y-\/poisition, row\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix position x, y
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_ad4c38115d6dc274fd1bd1870da589e3f}\label{classefiilj_1_1_matrix4_ad4c38115d6dc274fd1bd1870da589e3f}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_ada7f33875dc23b4f4391d50b61ad70dc}\label{classefiilj_1_1_matrix4_ada7f33875dc23b4f4391d50b61ad70dc}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with another \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_ac03fdfc35ea3cf8b51ec2b3170d8bb7f}\label{classefiilj_1_1_matrix4_ac03fdfc35ea3cf8b51ec2b3170d8bb7f}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Matrix4\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with a \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a5af187679655af8e5f26c71277af8521}\label{classefiilj_1_1_matrix4_a5af187679655af8e5f26c71277af8521}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}}\& efiilj\+::\+Matrix4\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies this matrix with a vector and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a678933942cec74b9a9f71c48303d3304}\label{classefiilj_1_1_matrix4_a678933942cec74b9a9f71c48303d3304}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator/@{operator/}}
+\index{operator/@{operator/}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix division with a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a7b9e533e05fb4ba4213b0c524cb98e59}\label{classefiilj_1_1_matrix4_a7b9e533e05fb4ba4213b0c524cb98e59}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!operator=@{operator=}}
+\index{operator=@{operator=}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}}\& efiilj\+::\+Matrix4\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the matrix to equal the specified matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The matrix which values are to be copied\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the current matrix, after modification
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a7e09f3be4d7b7156e13cae70fef09bac}\label{classefiilj_1_1_matrix4_a7e09f3be4d7b7156e13cae70fef09bac}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!row@{row}}
+\index{row@{row}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{row()}{row()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector4}{Vector4}} efiilj\+::\+Matrix4\+::row (\begin{DoxyParamCaption}\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the row at specified y-\/position as a 4D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & The row index to return\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The row at the specified y-\/position
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a042ed24d39fa3fe5c76dd101104ef42a}\label{classefiilj_1_1_matrix4_a042ed24d39fa3fe5c76dd101104ef42a}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily std\+::string efiilj\+::\+Matrix4\+::to\+\_\+string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a formatted multi-\/line string representation of the matrix. 
+
+\begin{DoxyReturn}{Returns}
+A formatted multi-\/line string representation of the matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix4_a5c71ea60165e06a1d940ae7bb4060031}\label{classefiilj_1_1_matrix4_a5c71ea60165e06a1d940ae7bb4060031}} 
+\index{efiilj::Matrix4@{efiilj::Matrix4}!transpose@{transpose}}
+\index{transpose@{transpose}!efiilj::Matrix4@{efiilj::Matrix4}}
+\doxysubsubsection{\texorpdfstring{transpose()}{transpose()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix4}{Matrix4}} efiilj\+::\+Matrix4\+::transpose (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a transposed copy of the matrix (shifted along the diagonal). 
+
+\begin{DoxyReturn}{Returns}
+Transposed copy of the current matrix
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/efiilj-\/7-\/local/\+Documents/\+Source/ltu-\/lab-\/s0006e\+\_\+env/projects/\+Vector\+Lib/code/matrix4.\+h\end{DoxyCompactItemize}

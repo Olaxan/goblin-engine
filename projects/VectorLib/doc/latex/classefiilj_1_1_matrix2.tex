@@ -1,0 +1,456 @@
+\hypertarget{classefiilj_1_1_matrix2}{}\doxysection{efiilj\+::Matrix2 Class Reference}
+\label{classefiilj_1_1_matrix2}\index{efiilj::Matrix2@{efiilj::Matrix2}}
+
+
+Class to represent a 2-\/dimensional matrix.  
+
+
+
+
+{\ttfamily \#include $<$matrix2.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2_a3e2f3a4d6e1270d86bce7a33bd8d3eee}{Matrix2}} ()
+\begin{DoxyCompactList}\small\item\em Creates a new identity \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2_a963b09d79ba63524e427025e75c7c352}{Matrix2}} (const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&copy)
+\begin{DoxyCompactList}\small\item\em Constructs a copy of the specified \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2_a5309816ba2325419bfef584dbd1697c9}{Matrix2}} (float a, float b, float c, float d)
+\begin{DoxyCompactList}\small\item\em Creates a matrix from the specified a, b, c, d values (from top-\/left to bottom-\/right). \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_afe8b53066b9cc2fa5fd7aa3f80f0efa8}\label{classefiilj_1_1_matrix2_afe8b53066b9cc2fa5fd7aa3f80f0efa8}} 
+const float \& {\bfseries a} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_ab3a0c2f9f62a5462b2547339c555ef3c}\label{classefiilj_1_1_matrix2_ab3a0c2f9f62a5462b2547339c555ef3c}} 
+void {\bfseries a} (const float \&a)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a634758353889b20c71752bc2e359baa8}\label{classefiilj_1_1_matrix2_a634758353889b20c71752bc2e359baa8}} 
+const float \& {\bfseries b} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a5a338fe2e088d89b4f5d4279ef68c52a}\label{classefiilj_1_1_matrix2_a5a338fe2e088d89b4f5d4279ef68c52a}} 
+void {\bfseries b} (const float \&b)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_ab626deacbb9434c47a320bdb2199457c}\label{classefiilj_1_1_matrix2_ab626deacbb9434c47a320bdb2199457c}} 
+const float \& {\bfseries c} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a422183f8bad2e55ee965224de72daa75}\label{classefiilj_1_1_matrix2_a422183f8bad2e55ee965224de72daa75}} 
+void {\bfseries c} (const float \&c)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_ae04a06d79dbf85bb3458bdba628fdc63}\label{classefiilj_1_1_matrix2_ae04a06d79dbf85bb3458bdba628fdc63}} 
+const float \& {\bfseries d} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a07d34de21bc419663e8ea62f95df75c5}\label{classefiilj_1_1_matrix2_a07d34de21bc419663e8ea62f95df75c5}} 
+void {\bfseries d} (const float \&d)
+\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \& \mbox{\hyperlink{classefiilj_1_1_matrix2_aab839c096d7a74050ceabfacb06c5445}{operator=}} (const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&other)
+\begin{DoxyCompactList}\small\item\em Sets the matrix to equal the specified matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_aaefe7fd766c9c71582431edb04446408}{operator$\ast$}} (const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with another \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_a5c53b29d51e62abf91e44254f4a90bf0}{operator$\ast$}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with a scalar. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_acb4c9d0dddd3b331e2c1a3a409df427a}{operator$\ast$}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with a \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_a30848efbc0539dcaa7c9e42845e699c2}{operator/}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix division with a scalar. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{classefiilj_1_1_matrix2_ae3357c9cb9b6768d05fac3844ef48ce1}{operator$\ast$=}} (\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies this matrix with a vector and returns the result. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{classefiilj_1_1_matrix2_ad39f9dd5ba62f552eedd8a85568132f8}{operator()}} (int n)
+\begin{DoxyCompactList}\small\item\em Returns the (non-\/const) value at the n\+:th position in the matrix, from top-\/left to bottom-\/right. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{classefiilj_1_1_matrix2_a88bfd6a9d7e21fce5ccaa388d55e9fda}{operator()}} (int x, int y)
+\begin{DoxyCompactList}\small\item\em Returns the (non-\/const)value at matrix position x, y. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_matrix2_a796a98e8194f3899cc09847d639fc994}{at}} (int n) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the n\+:th matrix index, from top-\/left to bottom-\/right. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_matrix2_a00c1e3a0e793b7babb5900b2b192c5de}{at}} (int x, int y) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at matrix position x, y. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_a4fb6b75674ff39a29fa477de5a138ab7}{row}} (int y) const
+\begin{DoxyCompactList}\small\item\em Returns the row at specified y-\/position as a 3D-\/vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_aaceca56ca18ca7effd55f5a0a647e559}{col}} (int x) const
+\begin{DoxyCompactList}\small\item\em Returns the column at specified x-\/position as a 3D-\/vector. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classefiilj_1_1_matrix2_a8c752d51f1542927eacc02dbb1369ccf}{clear}} (bool identity=true)
+\begin{DoxyCompactList}\small\item\em Clears the matrix, optionally creating an identity matrix. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_matrix2_a2ac5580a7d1124635ef271c6c851f67a}{determinant}} () const
+\begin{DoxyCompactList}\small\item\em Returns the matrix determinant. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_ab2a6b6988ed6a78ff3a156de4888c185}{transpose}} () const
+\begin{DoxyCompactList}\small\item\em Returns a transposed copy of the matrix (shifted along the diagonal). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_a1a4c02acaaa0ce8c0b9befd8db410ed1}{inverse}} () const
+\begin{DoxyCompactList}\small\item\em Returns the inverse of the matrix, or an identity if none exists. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classefiilj_1_1_matrix2_a68e3845c57b40fdd95a75d465bf68704}{to\+\_\+string}} ()
+\begin{DoxyCompactList}\small\item\em Returns a formatted multi-\/line string representation of the matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{classefiilj_1_1_matrix2_af1647532f9eabc93e803c26897526a7f}{get\+Rotation\+Matrix}} (const float \&rad)
+\begin{DoxyCompactList}\small\item\em Returns a rotation matrix for the specified rotation in 2D-\/space. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a179940779f172c98016cf22d09fb96ac}\label{classefiilj_1_1_matrix2_a179940779f172c98016cf22d09fb96ac}} 
+friend {\bfseries Vector2}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to represent a 2-\/dimensional matrix. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a3e2f3a4d6e1270d86bce7a33bd8d3eee}\label{classefiilj_1_1_matrix2_a3e2f3a4d6e1270d86bce7a33bd8d3eee}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!Matrix2@{Matrix2}}
+\index{Matrix2@{Matrix2}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{Matrix2()}{Matrix2()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix2\+::\+Matrix2 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a new identity \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}. 
+
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a963b09d79ba63524e427025e75c7c352}\label{classefiilj_1_1_matrix2_a963b09d79ba63524e427025e75c7c352}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!Matrix2@{Matrix2}}
+\index{Matrix2@{Matrix2}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{Matrix2()}{Matrix2()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix2\+::\+Matrix2 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a copy of the specified \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The matrix of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a5309816ba2325419bfef584dbd1697c9}\label{classefiilj_1_1_matrix2_a5309816ba2325419bfef584dbd1697c9}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!Matrix2@{Matrix2}}
+\index{Matrix2@{Matrix2}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{Matrix2()}{Matrix2()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily efiilj\+::\+Matrix2\+::\+Matrix2 (\begin{DoxyParamCaption}\item[{float}]{a,  }\item[{float}]{b,  }\item[{float}]{c,  }\item[{float}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a matrix from the specified a, b, c, d values (from top-\/left to bottom-\/right). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Top left\\
+\hline
+{\em b} & Top right\\
+\hline
+{\em c} & Bottom left\\
+\hline
+{\em d} & Bottom right\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a796a98e8194f3899cc09847d639fc994}\label{classefiilj_1_1_matrix2_a796a98e8194f3899cc09847d639fc994}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!at@{at}}
+\index{at@{at}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Matrix2\+::at (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the n\+:th matrix index, from top-\/left to bottom-\/right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The matrix index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix index n
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a00c1e3a0e793b7babb5900b2b192c5de}\label{classefiilj_1_1_matrix2_a00c1e3a0e793b7babb5900b2b192c5de}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!at@{at}}
+\index{at@{at}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Matrix2\+::at (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at matrix position x, y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix x-\/position, column\\
+\hline
+{\em y} & Matrix y-\/poisition, row\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix position x, y
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a8c752d51f1542927eacc02dbb1369ccf}\label{classefiilj_1_1_matrix2_a8c752d51f1542927eacc02dbb1369ccf}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!clear@{clear}}
+\index{clear@{clear}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void efiilj\+::\+Matrix2\+::clear (\begin{DoxyParamCaption}\item[{bool}]{identity = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clears the matrix, optionally creating an identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em identity} & Whether to create an empty matrix, or an identity matrix\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_aaceca56ca18ca7effd55f5a0a647e559}\label{classefiilj_1_1_matrix2_aaceca56ca18ca7effd55f5a0a647e559}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!col@{col}}
+\index{col@{col}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{col()}{col()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Matrix2\+::col (\begin{DoxyParamCaption}\item[{int}]{x }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the column at specified x-\/position as a 3D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The column index to return\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The column at the specified x-\/position
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a2ac5580a7d1124635ef271c6c851f67a}\label{classefiilj_1_1_matrix2_a2ac5580a7d1124635ef271c6c851f67a}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!determinant@{determinant}}
+\index{determinant@{determinant}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{determinant()}{determinant()}}
+{\footnotesize\ttfamily float efiilj\+::\+Matrix2\+::determinant (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the matrix determinant. 
+
+\begin{DoxyReturn}{Returns}
+The determinant of the matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_af1647532f9eabc93e803c26897526a7f}\label{classefiilj_1_1_matrix2_af1647532f9eabc93e803c26897526a7f}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!getRotationMatrix@{getRotationMatrix}}
+\index{getRotationMatrix@{getRotationMatrix}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{getRotationMatrix()}{getRotationMatrix()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} efiilj\+::\+Matrix2\+::get\+Rotation\+Matrix (\begin{DoxyParamCaption}\item[{const float \&}]{rad }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a rotation matrix for the specified rotation in 2D-\/space. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & The rotation in radians\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A rotation matrix for the 2D rotation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a1a4c02acaaa0ce8c0b9befd8db410ed1}\label{classefiilj_1_1_matrix2_a1a4c02acaaa0ce8c0b9befd8db410ed1}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!inverse@{inverse}}
+\index{inverse@{inverse}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{inverse()}{inverse()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} efiilj\+::\+Matrix2\+::inverse (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the inverse of the matrix, or an identity if none exists. 
+
+\begin{DoxyReturn}{Returns}
+The inverse of the current matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_ad39f9dd5ba62f552eedd8a85568132f8}\label{classefiilj_1_1_matrix2_ad39f9dd5ba62f552eedd8a85568132f8}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator()@{operator()}}
+\index{operator()@{operator()}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float\& efiilj\+::\+Matrix2\+::operator() (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (non-\/const) value at the n\+:th position in the matrix, from top-\/left to bottom-\/right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The matrix index to query\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix index n
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a88bfd6a9d7e21fce5ccaa388d55e9fda}\label{classefiilj_1_1_matrix2_a88bfd6a9d7e21fce5ccaa388d55e9fda}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator()@{operator()}}
+\index{operator()@{operator()}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float\& efiilj\+::\+Matrix2\+::operator() (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (non-\/const)value at matrix position x, y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix x-\/position, column\\
+\hline
+{\em y} & Matrix y-\/poisition, row\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix position x, y
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a5c53b29d51e62abf91e44254f4a90bf0}\label{classefiilj_1_1_matrix2_a5c53b29d51e62abf91e44254f4a90bf0}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} efiilj\+::\+Matrix2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_aaefe7fd766c9c71582431edb04446408}\label{classefiilj_1_1_matrix2_aaefe7fd766c9c71582431edb04446408}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} efiilj\+::\+Matrix2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with another \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_acb4c9d0dddd3b331e2c1a3a409df427a}\label{classefiilj_1_1_matrix2_acb4c9d0dddd3b331e2c1a3a409df427a}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Matrix2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with a \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_ae3357c9cb9b6768d05fac3844ef48ce1}\label{classefiilj_1_1_matrix2_ae3357c9cb9b6768d05fac3844ef48ce1}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}\& efiilj\+::\+Matrix2\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies this matrix with a vector and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a30848efbc0539dcaa7c9e42845e699c2}\label{classefiilj_1_1_matrix2_a30848efbc0539dcaa7c9e42845e699c2}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator/@{operator/}}
+\index{operator/@{operator/}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} efiilj\+::\+Matrix2\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix division with a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_aab839c096d7a74050ceabfacb06c5445}\label{classefiilj_1_1_matrix2_aab839c096d7a74050ceabfacb06c5445}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!operator=@{operator=}}
+\index{operator=@{operator=}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}}\& efiilj\+::\+Matrix2\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the matrix to equal the specified matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The matrix which values are to be copied\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the current matrix, after modification
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a4fb6b75674ff39a29fa477de5a138ab7}\label{classefiilj_1_1_matrix2_a4fb6b75674ff39a29fa477de5a138ab7}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!row@{row}}
+\index{row@{row}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{row()}{row()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Matrix2\+::row (\begin{DoxyParamCaption}\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the row at specified y-\/position as a 3D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & The row index to return\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The row at the specified y-\/position
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_a68e3845c57b40fdd95a75d465bf68704}\label{classefiilj_1_1_matrix2_a68e3845c57b40fdd95a75d465bf68704}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily std\+::string efiilj\+::\+Matrix2\+::to\+\_\+string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a formatted multi-\/line string representation of the matrix. 
+
+\begin{DoxyReturn}{Returns}
+A formatted multi-\/line string representation of the matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_matrix2_ab2a6b6988ed6a78ff3a156de4888c185}\label{classefiilj_1_1_matrix2_ab2a6b6988ed6a78ff3a156de4888c185}} 
+\index{efiilj::Matrix2@{efiilj::Matrix2}!transpose@{transpose}}
+\index{transpose@{transpose}!efiilj::Matrix2@{efiilj::Matrix2}}
+\doxysubsubsection{\texorpdfstring{transpose()}{transpose()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_matrix2}{Matrix2}} efiilj\+::\+Matrix2\+::transpose (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a transposed copy of the matrix (shifted along the diagonal). 
+
+\begin{DoxyReturn}{Returns}
+Transposed copy of the current matrix
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/efiilj-\/7-\/local/\+Documents/\+Source/ltu-\/lab-\/s0006e\+\_\+env/projects/\+Vector\+Lib/code/matrix2.\+h\end{DoxyCompactItemize}

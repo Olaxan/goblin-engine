@@ -1,0 +1,490 @@
+\hypertarget{classefiilj_1_1_vector2}{}\doxysection{efiilj\+::Vector2 Class Reference}
+\label{classefiilj_1_1_vector2}\index{efiilj::Vector2@{efiilj::Vector2}}
+
+
+Class to represent a 2-\/dimensional point vector.  
+
+
+
+
+{\ttfamily \#include $<$vector2.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2_a680c7008028d268c86d57a2b415a2996}{Vector2}} (float x=0, float y=0)
+\begin{DoxyCompactList}\small\item\em Creates a new 2D vector with the specified values. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2_a7854e73ce49bbdd216ab2630a382bde6}{Vector2}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&copy)
+\begin{DoxyCompactList}\small\item\em Constructs a copy of the specified \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector2_aafc86046a8215acc59e28ddcc8a3b4ab}\label{classefiilj_1_1_vector2_aafc86046a8215acc59e28ddcc8a3b4ab}} 
+const float \& {\bfseries x} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a408867f9a20deddb76277dbf630dce0c}\label{classefiilj_1_1_vector2_a408867f9a20deddb76277dbf630dce0c}} 
+void {\bfseries x} (const float \&x)
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a1a4238047406198ef80944622bb53791}\label{classefiilj_1_1_vector2_a1a4238047406198ef80944622bb53791}} 
+const float \& {\bfseries y} () const
+\item 
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a7953060f18bb3baea7b5dd63ccf812d1}\label{classefiilj_1_1_vector2_a7953060f18bb3baea7b5dd63ccf812d1}} 
+void {\bfseries y} (const float \&y)
+\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_a634a059d1c89969df73d0c729a377d88}{operator+}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Adds two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances together, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_abca27e7d4918a4367ef2c9677aa12f86}{operator-\/}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Subtracts a \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} from this, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_a8145e600bd58f8f9a5c1a85a6abe6e89}{operator$\ast$}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances together, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_a0002c0f87d091fbc01399841b038b030}{operator$\ast$}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_a47d864e22fb9b435dbde7c7e148a9e5a}{operator/}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classefiilj_1_1_vector2_a3b59d22616b38ac096933d552fdb3cdd}{operator==}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Tests two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances for equality. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classefiilj_1_1_vector2_a70f32b44babc841e4fd2c1b51c09a2c3}{operator!=}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Tests two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances for inequality. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{classefiilj_1_1_vector2_aa0aae70f2fff862f8492ef654df48a2a}{operator+=}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other)
+\begin{DoxyCompactList}\small\item\em Adds another \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} to this, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{classefiilj_1_1_vector2_a9991b193608a96a554a3cd41a606d2d8}{operator-\/=}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other)
+\begin{DoxyCompactList}\small\item\em Subtracts another \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} from this, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{classefiilj_1_1_vector2_a36003238af9ea0dc2499deb6c6642d02}{operator$\ast$=}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other)
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with another, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{classefiilj_1_1_vector2_ad8bd1f0eebdfb1a5e1c3605301767bf5}{operator$\ast$=}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{classefiilj_1_1_vector2_acd7dc79cfbba2b6e68ec54a84b9ed479}{operator/=}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{classefiilj_1_1_vector2_ac742bbc243a83d0be683ab5f937d6d32}{operator\mbox{[}$\,$\mbox{]}}} (const int \&index)
+\begin{DoxyCompactList}\small\item\em Accesses a value at the specified index in the vector, from top to bottom. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector2_ab60dcbececeb6e443878bba325049caa}{at}} (int y) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the n\+:th vector index, from top to bottom. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector2_adb6288a20419760c726875a8cbdf679b}{dot}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Calculates the dot product between this vector and another. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{classefiilj_1_1_vector2_a45dbaba57ee126f2854de469d09b9cc1}{length}} () const
+\begin{DoxyCompactList}\small\item\em Returns the length of this point from the origin (0, 0). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_aa096574826a5c04b56766f8153fda0dc}{norm}} () const
+\begin{DoxyCompactList}\small\item\em Normalizes the vector, turning it into a unit vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \mbox{\hyperlink{classefiilj_1_1_vector2_a8790870f55e2f2bd9e3b085a5e630b78}{get\+Reflection}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&normal) const
+\begin{DoxyCompactList}\small\item\em Calculates the reflection of a vector against a specified normal. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classefiilj_1_1_vector2_ac8624809f628d198b3eda554899d1d93}{to\+\_\+string}} () const
+\begin{DoxyCompactList}\small\item\em Returns a formatted multi-\/line string representation of the vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static float \mbox{\hyperlink{classefiilj_1_1_vector2_a955dc8336d6e22a577b959e4301ccf44}{dist}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&x, const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the distance between two vectors (points). \end{DoxyCompactList}\item 
+static float \mbox{\hyperlink{classefiilj_1_1_vector2_a6cd6378e6624d36bba053529a1e78366}{dot}} (const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&x, const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the dot product between two vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to represent a 2-\/dimensional point vector. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a680c7008028d268c86d57a2b415a2996}\label{classefiilj_1_1_vector2_a680c7008028d268c86d57a2b415a2996}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!Vector2@{Vector2}}
+\index{Vector2@{Vector2}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{Vector2()}{Vector2()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector2\+::\+Vector2 (\begin{DoxyParamCaption}\item[{float}]{x = {\ttfamily 0},  }\item[{float}]{y = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a new 2D vector with the specified values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Top value\\
+\hline
+{\em y} & Bottom value\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a7854e73ce49bbdd216ab2630a382bde6}\label{classefiilj_1_1_vector2_a7854e73ce49bbdd216ab2630a382bde6}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!Vector2@{Vector2}}
+\index{Vector2@{Vector2}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{Vector2()}{Vector2()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily efiilj\+::\+Vector2\+::\+Vector2 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a copy of the specified \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The vector of which to create a copy\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_ab60dcbececeb6e443878bba325049caa}\label{classefiilj_1_1_vector2_ab60dcbececeb6e443878bba325049caa}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!at@{at}}
+\index{at@{at}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector2\+::at (\begin{DoxyParamCaption}\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the n\+:th vector index, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The vector index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at the specified position in the vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a955dc8336d6e22a577b959e4301ccf44}\label{classefiilj_1_1_vector2_a955dc8336d6e22a577b959e4301ccf44}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!dist@{dist}}
+\index{dist@{dist}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{dist()}{dist()}}
+{\footnotesize\ttfamily static float efiilj\+::\+Vector2\+::dist (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{x,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the distance between two vectors (points). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first point\\
+\hline
+{\em y} & The second point\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The distance between points as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_adb6288a20419760c726875a8cbdf679b}\label{classefiilj_1_1_vector2_adb6288a20419760c726875a8cbdf679b}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!dot@{dot}}
+\index{dot@{dot}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector2\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the dot product between this vector and another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other vector to calculate dot product with\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a6cd6378e6624d36bba053529a1e78366}\label{classefiilj_1_1_vector2_a6cd6378e6624d36bba053529a1e78366}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!dot@{dot}}
+\index{dot@{dot}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static float efiilj\+::\+Vector2\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{x,  }\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the dot product between two vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first vector\\
+\hline
+{\em y} & The second vector\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a8790870f55e2f2bd9e3b085a5e630b78}\label{classefiilj_1_1_vector2_a8790870f55e2f2bd9e3b085a5e630b78}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!getReflection@{getReflection}}
+\index{getReflection@{getReflection}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{getReflection()}{getReflection()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::get\+Reflection (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{normal }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the reflection of a vector against a specified normal. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em normal} & The normal to calculate reflection against\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The resulting reflection vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a45dbaba57ee126f2854de469d09b9cc1}\label{classefiilj_1_1_vector2_a45dbaba57ee126f2854de469d09b9cc1}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!length@{length}}
+\index{length@{length}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{length()}{length()}}
+{\footnotesize\ttfamily float efiilj\+::\+Vector2\+::length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the length of this point from the origin (0, 0). 
+
+\begin{DoxyReturn}{Returns}
+The vector length as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_aa096574826a5c04b56766f8153fda0dc}\label{classefiilj_1_1_vector2_aa096574826a5c04b56766f8153fda0dc}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!norm@{norm}}
+\index{norm@{norm}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{norm()}{norm()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::norm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalizes the vector, turning it into a unit vector. 
+
+\begin{DoxyReturn}{Returns}
+The resulting unit vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a70f32b44babc841e4fd2c1b51c09a2c3}\label{classefiilj_1_1_vector2_a70f32b44babc841e4fd2c1b51c09a2c3}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily bool efiilj\+::\+Vector2\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tests two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances for inequality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if not equal, false otherwise
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a0002c0f87d091fbc01399841b038b030}\label{classefiilj_1_1_vector2_a0002c0f87d091fbc01399841b038b030}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a8145e600bd58f8f9a5c1a85a6abe6e89}\label{classefiilj_1_1_vector2_a8145e600bd58f8f9a5c1a85a6abe6e89}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances together, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_ad8bd1f0eebdfb1a5e1c3605301767bf5}\label{classefiilj_1_1_vector2_ad8bd1f0eebdfb1a5e1c3605301767bf5}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}\& efiilj\+::\+Vector2\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a36003238af9ea0dc2499deb6c6642d02}\label{classefiilj_1_1_vector2_a36003238af9ea0dc2499deb6c6642d02}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}\& efiilj\+::\+Vector2\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with another, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a634a059d1c89969df73d0c729a377d88}\label{classefiilj_1_1_vector2_a634a059d1c89969df73d0c729a377d88}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator+@{operator+}}
+\index{operator+@{operator+}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances together, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_aa0aae70f2fff862f8492ef654df48a2a}\label{classefiilj_1_1_vector2_aa0aae70f2fff862f8492ef654df48a2a}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator+=()}{operator+=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}\& efiilj\+::\+Vector2\+::operator+= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds another \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} to this, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_abca27e7d4918a4367ef2c9677aa12f86}\label{classefiilj_1_1_vector2_abca27e7d4918a4367ef2c9677aa12f86}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::operator-\/ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtracts a \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} from this, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a9991b193608a96a554a3cd41a606d2d8}\label{classefiilj_1_1_vector2_a9991b193608a96a554a3cd41a606d2d8}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator-\/=@{operator-\/=}}
+\index{operator-\/=@{operator-\/=}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator-\/=()}{operator-=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}\& efiilj\+::\+Vector2\+::operator-\/= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtracts another \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} from this, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a47d864e22fb9b435dbde7c7e148a9e5a}\label{classefiilj_1_1_vector2_a47d864e22fb9b435dbde7c7e148a9e5a}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator/@{operator/}}
+\index{operator/@{operator/}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} efiilj\+::\+Vector2\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_acd7dc79cfbba2b6e68ec54a84b9ed479}\label{classefiilj_1_1_vector2_acd7dc79cfbba2b6e68ec54a84b9ed479}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator/=()}{operator/=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}}\& efiilj\+::\+Vector2\+::operator/= (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Divides the individual values of this \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_a3b59d22616b38ac096933d552fdb3cdd}\label{classefiilj_1_1_vector2_a3b59d22616b38ac096933d552fdb3cdd}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator==@{operator==}}
+\index{operator==@{operator==}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool efiilj\+::\+Vector2\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tests two \mbox{\hyperlink{classefiilj_1_1_vector2}{Vector2}} instances for equality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if equal, false otherwise
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_ac742bbc243a83d0be683ab5f937d6d32}\label{classefiilj_1_1_vector2_ac742bbc243a83d0be683ab5f937d6d32}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily float\& efiilj\+::\+Vector2\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{const int \&}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Accesses a value at the specified index in the vector, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at the specified position in the vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{classefiilj_1_1_vector2_ac8624809f628d198b3eda554899d1d93}\label{classefiilj_1_1_vector2_ac8624809f628d198b3eda554899d1d93}} 
+\index{efiilj::Vector2@{efiilj::Vector2}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!efiilj::Vector2@{efiilj::Vector2}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily std\+::string efiilj\+::\+Vector2\+::to\+\_\+string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a formatted multi-\/line string representation of the vector. 
+
+\begin{DoxyReturn}{Returns}
+A formatted multi-\/line string representation of the vector
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/efiilj-\/7-\/local/\+Documents/\+Source/ltu-\/lab-\/s0006e\+\_\+env/projects/\+Vector\+Lib/code/vector2.\+h\end{DoxyCompactItemize}
