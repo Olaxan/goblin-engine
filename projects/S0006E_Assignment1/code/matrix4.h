@@ -8,7 +8,7 @@
 #include "vector4.h"
 #include "matrix3.h"
 
-namespace Assignment
+namespace efiilj
 {
 
 	/// <summary>
@@ -89,8 +89,6 @@ namespace Assignment
 			_arr[2] = c;
 			_arr[3] = d;
 		}
-
-		/* === CONSTRUCTORS === */
 
 		/* === OPERATORS === */
 
@@ -200,8 +198,6 @@ namespace Assignment
 			return mat * (1 / other);
 		}
 
-		/* === OPERATORS === */
-
 		/* === SHORTHAND OPERATORS === */
 
 		/// <summary>
@@ -214,8 +210,6 @@ namespace Assignment
 			other = (*this) * other;
 			return other;
 		}
-
-		/* === SHORTHAND OPERATORS === */
 
 		/* === ACCESSORS === */
 
@@ -293,8 +287,6 @@ namespace Assignment
 			return Vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
 		}
 
-		/* === ACCESSORS === */
-
 		/* === MATRIX FUNCTIONS === */
 
 		/// <summary>
@@ -352,42 +344,10 @@ namespace Assignment
 		}
 
 		/// <summary>
-		/// Returns the inverse of the matrix, or an identity if none exists.
-		/// </summary>
-		/// <returns>The inverse of the current matrix</returns>
-		Matrix4 inverse() const
-		{
-			Matrix4 inv;
-			float det = determinant();
-
-			if (det == 0)
-				return inv;
-
-			for (int y = 0; y < 4; y++)
-			{
-				for (int x = 0; x < 4; x++)
-				{
-					inv(x, y) = minor(x, y).determinant();
-
-					if ((x + (y % 2 == 0)) % 2 == 0)
-						inv(x, y) *= -1;
-				}
-			}
-
-			inv = inv.getTransposed();
-
-			return inv / det;
-		}
-
-		/* === MATRIX FUNCTIONS === */
-
-		/* === FACTORY FUNCTIONS === */
-
-		/// <summary>
 		/// Returns a transposed copy of the matrix (shifted along the diagonal).
 		/// </summary>
 		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix4 getTransposed() const
+		Matrix4 transpose() const
 		{
 			Matrix4 mat;
 
@@ -413,6 +373,36 @@ namespace Assignment
 
 			return mat;
 		}
+
+		/// <summary>
+		/// Returns the inverse of the matrix, or an identity if none exists.
+		/// </summary>
+		/// <returns>The inverse of the current matrix</returns>
+		Matrix4 inverse() const
+		{
+			Matrix4 inv;
+			float det = determinant();
+
+			if (det == 0)
+				return inv;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 4; x++)
+				{
+					inv(x, y) = minor(x, y).determinant();
+
+					if ((x + (y % 2 == 0)) % 2 == 0)
+						inv(x, y) *= -1;
+				}
+			}
+
+			inv = inv.transpose();
+
+			return inv / det;
+		}
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Constructs a translation matrix from the specified 4D-vector.
@@ -515,7 +505,7 @@ namespace Assignment
 			return mat;
 		}
 
-		/* === FACTORY FUNCTIONS === */
+		/* === UTILITIES === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the matrix.

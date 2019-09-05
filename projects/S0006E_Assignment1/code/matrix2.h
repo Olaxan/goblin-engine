@@ -7,7 +7,7 @@
 
 #include "vector2.h"
 
-namespace Assignment
+namespace efiilj
 {
 
 	/// <summary>
@@ -53,8 +53,6 @@ namespace Assignment
 			this->d(d);
 		}
 
-		/* === CONSTRUCTORS === */
-
 		/* === ACCESSORS === */
 
 		const float& a() const { return this->_arr[0].x(); }
@@ -68,8 +66,6 @@ namespace Assignment
 
 		const float& d() const { return this->_arr[1].y(); }
 		void d(const float& d) { this->_arr[1].y(d); }
-		
-		/* === ACCESSORS === */
 
 		/* === OPERATORS === */
 
@@ -148,8 +144,6 @@ namespace Assignment
 			return mat * (1 / other);
 		}
 
-		/* === OPERATORS === */
-
 		/* === SHORTHAND OPERATORS === */
 
 		/// <summary>
@@ -162,8 +156,6 @@ namespace Assignment
 			other = (*this) * other;
 			return other;
 		}
-
-		/* === SHORTHAND OPERATORS === */
 
 		/* === ACCESSORS === */
 
@@ -229,7 +221,7 @@ namespace Assignment
 			return Vector2(at(x, 0), at(x, 1));
 		}
 
-		/* === ACCESSORS === */
+		/* === MATRIX FUNCTIONS === */
 
 		/// <summary>
 		/// Clears the matrix, optionally creating an identity matrix.
@@ -243,8 +235,6 @@ namespace Assignment
 			}
 		}
 
-		/* === MATRIX FUNCTIONS === */
-
 		/// <summary>
 		/// Returns the matrix determinant.
 		/// </summary>
@@ -252,6 +242,15 @@ namespace Assignment
 		float determinant() const
 		{
 			return a() * d() - b() * c();
+		}
+
+		/// <summary>
+		/// Returns a transposed copy of the matrix (shifted along the diagonal).
+		/// </summary>
+		/// <returns>Transposed copy of the current matrix</returns>
+		Matrix2 transpose() const
+		{
+			return Matrix2(this->a(), this->c(), this->b(), this->d());
 		}
 
 		/// <summary>
@@ -268,18 +267,8 @@ namespace Assignment
 			return Matrix2(d(), -b(), -c(), a()) / det;
 		}
 
-		/* === MATRIX FUNCTIONS === */
 
 		/* === FACTORY FUNCTIONS === */
-
-		/// <summary>
-		/// Returns a transposed copy of the matrix (shifted along the diagonal).
-		/// </summary>
-		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix2 getTransposed() const
-		{
-			return Matrix2(this->a(), this->c(), this->b(), this->d());
-		}
 
 		/// <summary>
 		/// Returns a rotation matrix for the specified rotation in 2D-space.
@@ -291,7 +280,7 @@ namespace Assignment
 			return Matrix2(cos(rad), -sin(rad), sin(rad), cos(rad));
 		}
 
-		/* === FACTORY FUNCTIONS === */
+		/* UTILITIES */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the matrix.

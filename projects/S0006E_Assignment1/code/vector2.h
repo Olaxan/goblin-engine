@@ -5,7 +5,7 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace Assignment
+namespace efiilj
 {
 
 	/// <summary>
@@ -40,8 +40,6 @@ namespace Assignment
 			this->y(copy.y());
 		}
 
-		/* === CONSTRUCTORS === */
-
 		/* === ACCESSORS === */
 
 		const float& x() const { return this->_arr[0]; }
@@ -49,8 +47,6 @@ namespace Assignment
 
 		const float& y() const { return _arr[1]; }
 		void y(const float& y) { this->_arr[1] = y; }
-		
-		/* === ACCESSORS === */
 
 		/* === OPERATORS === */
 
@@ -138,8 +134,6 @@ namespace Assignment
 			return x() != other.x() || y() != other.y();
 		}
 
-		/* === OPERATORS === */
-
 		/* === SHORTHAND OPERATORS === */
 
 		/// <summary>
@@ -199,8 +193,6 @@ namespace Assignment
 			return *this;
 		}
 
-		/* === SHORTHAND OPERATORS === */
-
 		/* === ACCESSORS === */
 
 		/// <summary>
@@ -228,8 +220,6 @@ namespace Assignment
 
 			return _arr[y];
 		}
-
-		/* === ACCESSORS === */
 
 		/* === VECTOR FUNCTIONS === */
 
@@ -284,8 +274,6 @@ namespace Assignment
 			return v * (1 / v.length());
 		}
 
-		/* === VECTOR FUNCTIONS === */
-
 		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
@@ -298,7 +286,7 @@ namespace Assignment
 			return (*this) - (normal - (*this)) * normal * 2;
 		}
 
-		/* === FACTORY FUNCTIONS === */
+		/* === UTILITIES === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the vector.

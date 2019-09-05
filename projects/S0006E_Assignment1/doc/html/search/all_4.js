@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['inverse_16',['inverse',['../class_assignment_1_1_matrix2.html#a2ea44390e385b2b048914cc7f37c4926',1,'Assignment::Matrix2::inverse()'],['../class_assignment_1_1_matrix3.html#a398c921e62d8b8fbce852e0bf76506b1',1,'Assignment::Matrix3::inverse()'],['../class_assignment_1_1_matrix4.html#ac82e2df125e35084761dfd45f33f4169',1,'Assignment::Matrix4::inverse()']]]
+  ['inverse_15',['inverse',['../classefiilj_1_1_matrix2.html#a1a4c02acaaa0ce8c0b9befd8db410ed1',1,'efiilj::Matrix2::inverse()'],['../classefiilj_1_1_matrix3.html#a6d6c9e7fdab3b7f2ebc642dfcfb65637',1,'efiilj::Matrix3::inverse()'],['../classefiilj_1_1_matrix4.html#abaa25c015424209e99ebc7c5034cac1b',1,'efiilj::Matrix4::inverse()']]]
 ];

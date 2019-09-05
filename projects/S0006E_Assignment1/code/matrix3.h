@@ -9,7 +9,7 @@
 #include "vector3.h"
 #include "matrix2.h"
 
-namespace Assignment
+namespace efiilj
 {
 
 	/// <summary>
@@ -67,8 +67,6 @@ namespace Assignment
 			_arr[1] = y;
 			_arr[2] = z;
 		}
-
-		/* === CONSTRUCTORS === */
 
 		/* === OPERATORS === */
 
@@ -161,8 +159,6 @@ namespace Assignment
 			return mat * (1 / other);
 		}
 
-		/* === OPERATORS === */
-
 		/* === SHORTHAND OPERATORS === */
 
 		/// <summary>
@@ -175,8 +171,6 @@ namespace Assignment
 			other = (*this) * other;
 			return other;
 		}
-
-		/* === SHORTHAND OPERATORS === */
 
 		/* === ACCESSORS === */
 
@@ -254,8 +248,6 @@ namespace Assignment
 			return Vector3(at(x, 0), at(x, 1), at(x, 2));
 		}
 
-		/* === ACCESS OPERATORS === */
-
 		/* === MATRIX FUNCTIONS === */
 
 		/// <summary>
@@ -312,6 +304,29 @@ namespace Assignment
 		}
 
 		/// <summary>
+		/// Returns a transposed copy of the matrix (shifted along the diagonal).
+		/// </summary>
+		/// <returns>Transposed copy of the current matrix</returns>
+		Matrix3 transpose() const
+		{
+			Matrix3 mat;
+
+			mat(0, 0) = at(0, 0);
+			mat(0, 1) = at(1, 0);
+			mat(0, 2) = at(2, 0);
+
+			mat(1, 0) = at(0, 1);
+			mat(1, 1) = at(1, 1);
+			mat(1, 2) = at(2, 1);
+
+			mat(2, 0) = at(0, 2);
+			mat(2, 1) = at(1, 2);
+			mat(2, 2) = at(2, 2);
+
+			return mat;
+		}
+
+		/// <summary>
 		/// Returns the inverse of the matrix, or an identity if none exists.
 		/// </summary>
 		/// <returns>The inverse of the current matrix</returns>
@@ -331,37 +346,12 @@ namespace Assignment
 					inv(i) *= -1;
 			}
 
-			inv = inv.getTransposed();
+			inv = inv.transpose();
 
 			return inv / det;
 		}
 
-		/* === MATRIX FUNCTIONS === */
-
 		/* === FACTORY FUNCTIONS === */
-
-		/// <summary>
-		/// Returns a transposed copy of the matrix (shifted along the diagonal).
-		/// </summary>
-		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix3 getTransposed() const
-		{
-			Matrix3 mat;
-
-			mat(0, 0) = at(0, 0);
-			mat(0, 1) = at(1, 0);
-			mat(0, 2) = at(2, 0);
-
-			mat(1, 0) = at(0, 1);
-			mat(1, 1) = at(1, 1);
-			mat(1, 2) = at(2, 1);
-
-			mat(2, 0) = at(0, 2);
-			mat(2, 1) = at(1, 2);
-			mat(2, 2) = at(2, 2);
-
-			return mat;
-		}
 
 		/// <summary>
 		/// Constructs a translation matrix from the specified 4D-vector.
@@ -388,7 +378,7 @@ namespace Assignment
 			return Matrix3(mat);
 		}
 
-		/* === FACTORY FUNCTIONS === */
+		/* === UTILITIES === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the matrix.

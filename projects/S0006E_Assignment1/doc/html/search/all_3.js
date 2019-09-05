@@ -1,11 +1,10 @@
 var searchData=
 [
-  ['getreflection_8',['getReflection',['../class_assignment_1_1_vector2.html#a6644e22d0e264645e8cfe2373801d447',1,'Assignment::Vector2::getReflection()'],['../class_assignment_1_1_vector3.html#a2083acfc136402080e937f8f4002fc3a',1,'Assignment::Vector3::getReflection()'],['../class_assignment_1_1_vector4.html#a309b09c63828a526e50df3acbcb4773e',1,'Assignment::Vector4::getReflection()']]],
-  ['getrotationmatrix_9',['getRotationMatrix',['../class_assignment_1_1_matrix2.html#a145299446b363662f6c9a8cc85f47a41',1,'Assignment::Matrix2::getRotationMatrix()'],['../class_assignment_1_1_matrix3.html#a3a11e3d491b8f5417b9f58c3524a5323',1,'Assignment::Matrix3::getRotationMatrix()']]],
-  ['getrotationx_10',['getRotationX',['../class_assignment_1_1_matrix4.html#a414bc4bae64ad15a734dde8b710b6953',1,'Assignment::Matrix4']]],
-  ['getrotationxyz_11',['getRotationXYZ',['../class_assignment_1_1_matrix4.html#a3506a75b283dd72e296deff5b325e2d7',1,'Assignment::Matrix4']]],
-  ['getrotationy_12',['getRotationY',['../class_assignment_1_1_matrix4.html#a58c472cef609aa37605b891508140c93',1,'Assignment::Matrix4']]],
-  ['getrotationz_13',['getRotationZ',['../class_assignment_1_1_matrix4.html#a0eb8adb69abac2543b8d9e2ec84e52ed',1,'Assignment::Matrix4']]],
-  ['gettranslation_14',['getTranslation',['../class_assignment_1_1_matrix3.html#a8a1d00801d9d4a8f6b1e27f6559a469c',1,'Assignment::Matrix3::getTranslation()'],['../class_assignment_1_1_matrix4.html#af9312d26a0245465b91a4453af9262f9',1,'Assignment::Matrix4::getTranslation()']]],
-  ['gettransposed_15',['getTransposed',['../class_assignment_1_1_matrix2.html#a49cf7c7ffbca1a12b88245b420b64ab1',1,'Assignment::Matrix2::getTransposed()'],['../class_assignment_1_1_matrix3.html#a623ba85e535310657b536460bf6477d9',1,'Assignment::Matrix3::getTransposed()'],['../class_assignment_1_1_matrix4.html#a8f50d3ab2f98db7f148cd378c43a601e',1,'Assignment::Matrix4::getTransposed()']]]
+  ['getreflection_8',['getReflection',['../classefiilj_1_1_vector2.html#a8790870f55e2f2bd9e3b085a5e630b78',1,'efiilj::Vector2::getReflection()'],['../classefiilj_1_1_vector3.html#a73c5a4fd2b484d932a2e5af9b6f07db5',1,'efiilj::Vector3::getReflection()'],['../classefiilj_1_1_vector4.html#a8903b1310be51fb0a262b8a6b95a405d',1,'efiilj::Vector4::getReflection()']]],
+  ['getrotationmatrix_9',['getRotationMatrix',['../classefiilj_1_1_matrix2.html#af1647532f9eabc93e803c26897526a7f',1,'efiilj::Matrix2::getRotationMatrix()'],['../classefiilj_1_1_matrix3.html#a88445a82d236b728429dcfdf00ba1587',1,'efiilj::Matrix3::getRotationMatrix()']]],
+  ['getrotationx_10',['getRotationX',['../classefiilj_1_1_matrix4.html#a19d9d6912adb71dd004183743b7169e4',1,'efiilj::Matrix4']]],
+  ['getrotationxyz_11',['getRotationXYZ',['../classefiilj_1_1_matrix4.html#a38d548e99669cfd3de1feaf27bac9fb1',1,'efiilj::Matrix4']]],
+  ['getrotationy_12',['getRotationY',['../classefiilj_1_1_matrix4.html#aefb8e7715d4511c63ab258c5d82d9185',1,'efiilj::Matrix4']]],
+  ['getrotationz_13',['getRotationZ',['../classefiilj_1_1_matrix4.html#a8855dc9ccd2d23c8e780db01a0f66cf3',1,'efiilj::Matrix4']]],
+  ['gettranslation_14',['getTranslation',['../classefiilj_1_1_matrix3.html#accd465a8d735eadc62f93c63e4729c51',1,'efiilj::Matrix3::getTranslation()'],['../classefiilj_1_1_matrix4.html#a36b30778f4497793a5a00b9a842896c7',1,'efiilj::Matrix4::getTranslation()']]]
 ];
