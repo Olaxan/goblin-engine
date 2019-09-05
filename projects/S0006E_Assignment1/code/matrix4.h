@@ -21,6 +21,8 @@ namespace Assignment
 
 	public:
 
+		/* === CONSTRUCTORS === */
+
 		/// <summary>
 		/// Creates a new identity Matrix4.
 		/// </summary>
@@ -87,6 +89,10 @@ namespace Assignment
 			_arr[2] = c;
 			_arr[3] = d;
 		}
+
+		/* === CONSTRUCTORS === */
+
+		/* === OPERATORS === */
 
 		/// <summary>
 		/// Sets the matrix to equal the specified matrix.
@@ -194,6 +200,10 @@ namespace Assignment
 			return mat * (1 / other);
 		}
 
+		/* === OPERATORS === */
+
+		/* === SHORTHAND OPERATORS === */
+
 		/// <summary>
 		/// Multiplies this matrix with a vector and returns the result.
 		/// </summary>
@@ -204,6 +214,10 @@ namespace Assignment
 			other = (*this) * other;
 			return other;
 		}
+
+		/* === SHORTHAND OPERATORS === */
+
+		/* === ACCESSORS === */
 
 		/// <summary>
 		/// Returns the (non-const) value at the n:th position in the matrix, from top-left to bottom-right.
@@ -279,6 +293,10 @@ namespace Assignment
 			return Vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
 		}
 
+		/* === ACCESSORS === */
+
+		/* === MATRIX FUNCTIONS === */
+
 		/// <summary>
 		/// Clears the matrix, optionally creating an identity matrix.
 		/// </summary>
@@ -290,6 +308,80 @@ namespace Assignment
 				(*this)(i) = identity && (i % 5 == 0);
 			}
 		}
+
+		/// <summary>
+		/// Returns the minor matrix of the specified cell, excluding its row and column.
+		/// </summary>
+		/// <param name="x">The x-coordinate of the cell</param>
+		/// <param name="y">The y-coordinate of the cell</param>
+		/// <returns>A 3x3 matrix excluding the specified row and column</returns>
+		Matrix3 minor(int x, int y) const
+		{
+			Matrix3 mat;
+			int j = 0;
+
+			for (int i = 0; i < 16; i++)
+			{
+				if (i % 4 != x && i / 4 != y)
+				{
+					mat(j) = at(i);
+					j++;
+				}
+
+				if (j == 9)
+					break;
+			}
+
+			return mat;
+		}
+
+		/// <summary>
+		/// Returns the matrix determinant.
+		/// </summary>
+		/// <returns>The determinant of the matrix</returns>
+		float determinant() const
+		{
+			Matrix3 a, b, c, d;
+
+			a = minor(0, 0);
+			b = minor(1, 0);
+			c = minor(2, 0);
+			d = minor(3, 0);
+
+			return at(0) * a.determinant() - at(1) * b.determinant() + at(2) * c.determinant() - at(3) * d.determinant();
+		}
+
+		/// <summary>
+		/// Returns the inverse of the matrix, or an identity if none exists.
+		/// </summary>
+		/// <returns>The inverse of the current matrix</returns>
+		Matrix4 inverse() const
+		{
+			Matrix4 inv;
+			float det = determinant();
+
+			if (det == 0)
+				return inv;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 4; x++)
+				{
+					inv(x, y) = minor(x, y).determinant();
+
+					if ((x + (y % 2 == 0)) % 2 == 0)
+						inv(x, y) *= -1;
+				}
+			}
+
+			inv = inv.getTransposed();
+
+			return inv / det;
+		}
+
+		/* === MATRIX FUNCTIONS === */
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a transposed copy of the matrix (shifted along the diagonal).
@@ -423,75 +515,7 @@ namespace Assignment
 			return mat;
 		}
 
-		/// <summary>
-		/// Returns the minor matrix of the specified cell, excluding its row and column.
-		/// </summary>
-		/// <param name="x">The x-coordinate of the cell</param>
-		/// <param name="y">The y-coordinate of the cell</param>
-		/// <returns>A 3x3 matrix excluding the specified row and column</returns>
-		Matrix3 minor(int x, int y) const
-		{
-			Matrix3 mat;
-			int j = 0;
-
-			for (int i = 0; i < 16; i++)
-			{
-				if (i % 4 != x && i / 4 != y)
-				{
-					mat(j) = at(i);
-					j++;
-				}
-
-				if (j == 9)
-					break;
-			}
-
-			return mat;
-		}
-
-		/// <summary>
-		/// Returns the matrix determinant.
-		/// </summary>
-		/// <returns>The determinant of the matrix</returns>
-		float determinant() const
-		{
-			Matrix3 a, b, c, d;
-
-			a = minor(0, 0);
-			b = minor(1, 0);
-			c = minor(2, 0);
-			d = minor(3, 0);
-
-			return at(0) * a.determinant() - at(1) * b.determinant() + at(2) * c.determinant() - at(3) * d.determinant();
-		}
-
-		/// <summary>
-		/// Returns the inverse of the matrix, or an identity if none exists.
-		/// </summary>
-		/// <returns>The inverse of the current matrix</returns>
-		Matrix4 inverse() const
-		{
-			Matrix4 inv;
-			float det = determinant();
-
-			if (det == 0)
-				return inv;
-
-			for (int y = 0; y < 4; y++)
-			{
-				for (int x = 0; x < 4; x++)
-				{
-					inv(x, y) = minor(x, y).determinant();
-
-					if ((x + (y % 2 == 0)) % 2 == 0)
-						inv(x, y) *= -1;
-				}
-			}
-
-			inv = inv.getTransposed();
-
-			return inv / det;
-		}
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the matrix.

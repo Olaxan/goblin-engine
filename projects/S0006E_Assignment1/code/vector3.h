@@ -20,6 +20,8 @@ namespace Assignment
 
 	public:
 
+		/* === CONSTRUCTORS === */
+
 		/// <summary>
 		/// Creates a new 3D vector with the specified values.
 		/// </summary>
@@ -59,7 +61,10 @@ namespace Assignment
 			*this = copy;
 		}
 
+		/* === CONSTRUCTORS === */
+
 		/* === ACCESSORS === */
+
 		const float& x() const { return this->_arr[0]; }
 		void x(const float& x) { this->_arr[0] = x; }
 
@@ -68,7 +73,10 @@ namespace Assignment
 
 		const float& z() const { return _arr[2]; }
 		void z(const float& z) { this->_arr[2] = z; }
+
 		/* === ACCESSORS === */
+
+		/* === OPERATORS === */
 
 		/// <summary>
 		/// Adds two Vector3 instances together, and returns the result.
@@ -139,6 +147,30 @@ namespace Assignment
 		}
 
 		/// <summary>
+		/// Tests two Vector3 instances for equality.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>True if equal, false otherwise</returns>
+		bool operator == (const Vector3& other) const
+		{
+			return x() == other.x() && y() == other.y() && z() == other.z();
+		}
+
+		/// <summary>
+		/// Tests two Vector3 instances for inequality.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>True if not equal, false otherwise</returns>
+		bool operator != (const Vector3& other) const
+		{
+			return x() != other.x() || y() != other.y() || z() != other.z();
+		}
+
+		/* === OPERATORS === */
+
+		/* === SHORTHAND OPERATORS === */
+
+		/// <summary>
 		/// Adds another Vector3 to this, and returns the result as a reference.
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
@@ -193,25 +225,9 @@ namespace Assignment
 			return *this;
 		}
 
-		/// <summary>
-		/// Tests two Vector3 instances for equality.
-		/// </summary>
-		/// <param name="other">The right-hand side of the operation</param>
-		/// <returns>True if equal, false otherwise</returns>
-		bool operator == (const Vector3& other) const
-		{
-			return x() == other.x() && y() == other.y() && z() == other.z();
-		}
+		/* === SHORTHAND OPERATORS === */
 
-		/// <summary>
-		/// Tests two Vector3 instances for inequality.
-		/// </summary>
-		/// <param name="other">The right-hand side of the operation</param>
-		/// <returns>True if not equal, false otherwise</returns>
-		bool operator != (const Vector3& other) const
-		{
-			return x() != other.x() || y() != other.y() || z() != other.z();
-		}
+		/* === ACCESSORS === */
 
 		/// <summary>
 		/// Accesses a value at the specified index in the vector, from top to bottom.
@@ -239,6 +255,10 @@ namespace Assignment
 			return _arr[y];
 		}
 
+		/* === ACCESSORS === */
+
+		/* === VECTOR FUNCTIONS === */
+
 		/// <summary>
 		/// Calculates the distance between two vectors (points).
 		/// </summary>
@@ -262,16 +282,6 @@ namespace Assignment
 		}
 
 		/// <summary>
-		/// Calculates the dot product between this vector and another.
-		/// </summary>
-		/// <param name="other">The other vector to calculate dot product with</param>
-		/// <returns>The dot product as a float</returns>
-		float dot(const Vector3& other) const
-		{
-			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
-		}
-
-		/// <summary>
 		/// Calculates the cross product between two vectors.
 		/// </summary>
 		/// <param name="x">The first vector</param>
@@ -280,6 +290,16 @@ namespace Assignment
 		static Vector3 cross(const Vector3& x, const Vector3& y)
 		{
 			return x.cross(y);
+		}
+
+		/// <summary>
+		/// Calculates the dot product between this vector and another.
+		/// </summary>
+		/// <param name="other">The other vector to calculate dot product with</param>
+		/// <returns>The dot product as a float</returns>
+		float dot(const Vector3& other) const
+		{
+			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
 		}
 
 		/// <summary>
@@ -317,6 +337,10 @@ namespace Assignment
 			return v * (1 / v.length());
 		}
 
+		/* === VECTOR FUNCTIONS === */
+
+		/* === FACTORY FUNCTIONS === */
+
 		/// <summary>
 		/// Calculates the reflection of a vector against a specified normal.
 		/// </summary>
@@ -327,6 +351,8 @@ namespace Assignment
 			Vector3 unit = normal * (1 / normal.length());
 			return (*this) - unit * 2 * dot(unit);
 		}
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the vector.

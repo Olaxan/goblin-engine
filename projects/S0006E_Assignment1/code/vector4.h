@@ -20,6 +20,8 @@ namespace Assignment
 
 	public:
 
+		/* === CONSTRUCTORS === */
+
 		/// <summary>
 		/// Creates a new 4D vector with the specified values.
 		/// </summary>
@@ -74,7 +76,10 @@ namespace Assignment
 			*this = copy;
 		}
 
+		/* === CONSTRUCTORS === */
+
 		/* === ACCESSORS === */
+
 		const float& x() const { return this->_arr[0]; }
 		void x(const float& x) { this->_arr[0] = x; }
 
@@ -86,7 +91,10 @@ namespace Assignment
 
 		const float& w() const { return _arr[3]; }
 		void w(const float& w) { this->_arr[3] = w; }
+		
 		/* === ACCESSORS === */
+
+		/* === OPERATORS === */
 
 		/// <summary>
 		/// Adds two Vector4 instances together, and returns the result.
@@ -157,6 +165,30 @@ namespace Assignment
 		}
 
 		/// <summary>
+		/// Tests two Vector4 instances for equality.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>True if equal, false otherwise</returns>
+		bool operator == (const Vector4& other) const
+		{
+			return x() == other.x() && y() == other.y() && z() == other.z() && w() == other.w();
+		}
+
+		/// <summary>
+		/// Tests two Vector4 instances for inequality.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>True if not equal, false otherwise</returns>
+		bool operator != (const Vector4& other) const
+		{
+			return x() != other.x() || y() != other.y() || z() != other.z() || w() != other.w();
+		}
+
+		/* === OPERATORS === */
+
+		/* === SHORTHAND OPERATORS === */
+
+		/// <summary>
 		/// Adds another Vector4 to this, and returns the result as a reference.
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
@@ -211,25 +243,9 @@ namespace Assignment
 			return *this;
 		}
 
-		/// <summary>
-		/// Tests two Vector4 instances for equality.
-		/// </summary>
-		/// <param name="other">The right-hand side of the operation</param>
-		/// <returns>True if equal, false otherwise</returns>
-		bool operator == (const Vector4& other) const
-		{
-			return x() == other.x() && y() == other.y() && z() == other.z() && w() == other.w();
-		}
+		/* === SHORTHAND OPERATORS === */
 
-		/// <summary>
-		/// Tests two Vector4 instances for inequality.
-		/// </summary>
-		/// <param name="other">The right-hand side of the operation</param>
-		/// <returns>True if not equal, false otherwise</returns>
-		bool operator != (const Vector4& other) const
-		{
-			return x() != other.x() || y() != other.y() || z() != other.z() || w() != other.w();
-		}
+		/* === ACCESSORS === */
 
 		/// <summary>
 		/// Accesses a value at the specified index in the vector, from top to bottom.
@@ -256,6 +272,10 @@ namespace Assignment
 
 			return _arr[y];
 		}
+
+		/* === ACCESSORS === */
+
+		/* === VECTOR FUNCTIONS === */
 
 		/// <summary>
 		/// Calculates the 3D distance between two vectors (points).
@@ -358,6 +378,10 @@ namespace Assignment
 			return v * (1 / v.length());
 		}
 
+		/* === VECTOR FUNCTIONS === */
+
+		/* === FACTORY FUNCTIONS === */
+
 		/// <summary>
 		/// Calculates the reflection of a vector against a specified normal.
 		/// The fourth coordinate (w) is not taken into account.
@@ -369,6 +393,8 @@ namespace Assignment
 			Vector4 unit = normal * (1 / normal.length());
 			return (*this) - unit * 2 * dot(unit);
 		}
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the vector.

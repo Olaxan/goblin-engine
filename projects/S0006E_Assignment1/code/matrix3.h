@@ -22,6 +22,8 @@ namespace Assignment
 
 	public:
 
+		/* === CONSTRUCTORS === */
+
 		/// <summary>
 		/// Creates a new identity Matrix3.
 		/// </summary>
@@ -65,6 +67,10 @@ namespace Assignment
 			_arr[1] = y;
 			_arr[2] = z;
 		}
+
+		/* === CONSTRUCTORS === */
+
+		/* === OPERATORS === */
 
 		/// <summary>
 		/// Sets the matrix to equal the specified matrix.
@@ -155,6 +161,10 @@ namespace Assignment
 			return mat * (1 / other);
 		}
 
+		/* === OPERATORS === */
+
+		/* === SHORTHAND OPERATORS === */
+
 		/// <summary>
 		/// Multiplies this matrix with a vector and returns the result.
 		/// </summary>
@@ -165,6 +175,10 @@ namespace Assignment
 			other = (*this) * other;
 			return other;
 		}
+
+		/* === SHORTHAND OPERATORS === */
+
+		/* === ACCESSORS === */
 
 		/// <summary>
 		/// Returns the (non-const) value at the n:th position in the matrix, from top-left to bottom-right.
@@ -240,6 +254,10 @@ namespace Assignment
 			return Vector3(at(x, 0), at(x, 1), at(x, 2));
 		}
 
+		/* === ACCESS OPERATORS === */
+
+		/* === MATRIX FUNCTIONS === */
+
 		/// <summary>
 		/// Clears the matrix, optionally creating an identity matrix.
 		/// </summary>
@@ -250,54 +268,6 @@ namespace Assignment
 			{
 				(*this)(i) = identity && (i % 4 == 0);
 			}
-		}
-
-		/// <summary>
-		/// Returns a transposed copy of the matrix (shifted along the diagonal).
-		/// </summary>
-		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix3 getTransposed() const
-		{
-			Matrix3 mat;
-
-			mat(0, 0) = at(0, 0);
-			mat(0, 1) = at(1, 0);
-			mat(0, 2) = at(2, 0);
-
-			mat(1, 0) = at(0, 1);
-			mat(1, 1) = at(1, 1);
-			mat(1, 2) = at(2, 1);
-
-			mat(2, 0) = at(0, 2);
-			mat(2, 1) = at(1, 2);
-			mat(2, 2) = at(2, 2);
-
-			return mat;
-		}
-
-		/// <summary>
-		/// Constructs a translation matrix from the specified 4D-vector.
-		/// </summary>
-		/// <param name="v">The vector to use for translation</param>
-		/// <returns>A new translation matrix</returns>
-		static Matrix3 getTranslation(const Vector3& v)
-		{
-			Matrix3 mat = Matrix3();
-			mat(2, 0) = v.x();
-			mat(2, 1) = v.y();
-			mat(2, 2) = v.z();
-			return mat;
-		}
-
-		/// <summary>
-		/// Returns a rotation matrix for the specified rotation in 2D-space.
-		/// </summary>
-		/// <param name="rad">The rotation in radians</param>
-		/// <returns>A rotation matrix for the 2D rotation</returns>
-		static Matrix3 getRotationMatrix(const float& rad)
-		{
-			Matrix2 mat = Matrix2::getRotationMatrix(rad);
-			return Matrix3(mat);
 		}
 
 		/// <summary>
@@ -365,6 +335,60 @@ namespace Assignment
 
 			return inv / det;
 		}
+
+		/* === MATRIX FUNCTIONS === */
+
+		/* === FACTORY FUNCTIONS === */
+
+		/// <summary>
+		/// Returns a transposed copy of the matrix (shifted along the diagonal).
+		/// </summary>
+		/// <returns>Transposed copy of the current matrix</returns>
+		Matrix3 getTransposed() const
+		{
+			Matrix3 mat;
+
+			mat(0, 0) = at(0, 0);
+			mat(0, 1) = at(1, 0);
+			mat(0, 2) = at(2, 0);
+
+			mat(1, 0) = at(0, 1);
+			mat(1, 1) = at(1, 1);
+			mat(1, 2) = at(2, 1);
+
+			mat(2, 0) = at(0, 2);
+			mat(2, 1) = at(1, 2);
+			mat(2, 2) = at(2, 2);
+
+			return mat;
+		}
+
+		/// <summary>
+		/// Constructs a translation matrix from the specified 4D-vector.
+		/// </summary>
+		/// <param name="v">The vector to use for translation</param>
+		/// <returns>A new translation matrix</returns>
+		static Matrix3 getTranslation(const Vector3& v)
+		{
+			Matrix3 mat = Matrix3();
+			mat(2, 0) = v.x();
+			mat(2, 1) = v.y();
+			mat(2, 2) = v.z();
+			return mat;
+		}
+
+		/// <summary>
+		/// Returns a rotation matrix for the specified rotation in 2D-space.
+		/// </summary>
+		/// <param name="rad">The rotation in radians</param>
+		/// <returns>A rotation matrix for the 2D rotation</returns>
+		static Matrix3 getRotationMatrix(const float& rad)
+		{
+			Matrix2 mat = Matrix2::getRotationMatrix(rad);
+			return Matrix3(mat);
+		}
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the matrix.

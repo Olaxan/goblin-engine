@@ -17,6 +17,8 @@ namespace Assignment
 		float _arr[2];
 	public:
 
+		/* === CONSTRUCTORS === */
+
 		/// <summary>
 		/// Creates a new 2D vector with the specified values.
 		/// </summary>
@@ -38,13 +40,19 @@ namespace Assignment
 			this->y(copy.y());
 		}
 
+		/* === CONSTRUCTORS === */
+
 		/* === ACCESSORS === */
+
 		const float& x() const { return this->_arr[0]; }
 		void x(const float& x) { this->_arr[0] = x; }
 
 		const float& y() const { return _arr[1]; }
 		void y(const float& y) { this->_arr[1] = y; }
+		
 		/* === ACCESSORS === */
+
+		/* === OPERATORS === */
 
 		/// <summary>
 		/// Adds two Vector2 instances together, and returns the result.
@@ -111,6 +119,30 @@ namespace Assignment
 		}
 
 		/// <summary>
+		/// Tests two Vector2 instances for equality.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>True if equal, false otherwise</returns>
+		bool operator == (const Vector2& other) const
+		{
+			return x() == other.x() && y() == other.y();
+		}
+
+		/// <summary>
+		/// Tests two Vector2 instances for inequality.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>True if not equal, false otherwise</returns>
+		bool operator != (const Vector2& other) const
+		{
+			return x() != other.x() || y() != other.y();
+		}
+
+		/* === OPERATORS === */
+
+		/* === SHORTHAND OPERATORS === */
+
+		/// <summary>
 		/// Adds another Vector2 to this, and returns the result as a reference.
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
@@ -167,25 +199,9 @@ namespace Assignment
 			return *this;
 		}
 
-		/// <summary>
-		/// Tests two Vector2 instances for equality.
-		/// </summary>
-		/// <param name="other">The right-hand side of the operation</param>
-		/// <returns>True if equal, false otherwise</returns>
-		bool operator == (const Vector2& other) const
-		{
-			return x() == other.x() && y() == other.y();
-		}
+		/* === SHORTHAND OPERATORS === */
 
-		/// <summary>
-		/// Tests two Vector2 instances for inequality.
-		/// </summary>
-		/// <param name="other">The right-hand side of the operation</param>
-		/// <returns>True if not equal, false otherwise</returns>
-		bool operator != (const Vector2& other) const
-		{
-			return x() != other.x() || y() != other.y();
-		}
+		/* === ACCESSORS === */
 
 		/// <summary>
 		/// Accesses a value at the specified index in the vector, from top to bottom.
@@ -212,6 +228,10 @@ namespace Assignment
 
 			return _arr[y];
 		}
+
+		/* === ACCESSORS === */
+
+		/* === VECTOR FUNCTIONS === */
 
 		/// <summary>
 		/// Calculates the distance between two vectors (points).
@@ -264,6 +284,10 @@ namespace Assignment
 			return v * (1 / v.length());
 		}
 
+		/* === VECTOR FUNCTIONS === */
+
+		/* === FACTORY FUNCTIONS === */
+
 		/// <summary>
 		/// Calculates the reflection of a vector against a specified normal.
 		/// </summary>
@@ -273,6 +297,8 @@ namespace Assignment
 		{
 			return (*this) - (normal - (*this)) * normal * 2;
 		}
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the vector.

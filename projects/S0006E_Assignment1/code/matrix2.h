@@ -19,6 +19,8 @@ namespace Assignment
 		Vector2 _arr[2];
 	public:
 
+		/* === CONSTRUCTORS === */
+
 		/// <summary>
 		/// Creates a new identity Matrix2.
 		/// </summary>
@@ -51,7 +53,10 @@ namespace Assignment
 			this->d(d);
 		}
 
+		/* === CONSTRUCTORS === */
+
 		/* === ACCESSORS === */
+
 		const float& a() const { return this->_arr[0].x(); }
 		void a(const float& a) { this->_arr[0].x(a); }
 
@@ -63,7 +68,10 @@ namespace Assignment
 
 		const float& d() const { return this->_arr[1].y(); }
 		void d(const float& d) { this->_arr[1].y(d); }
+		
 		/* === ACCESSORS === */
+
+		/* === OPERATORS === */
 
 		/// <summary>
 		/// Sets the matrix to equal the specified matrix.
@@ -140,6 +148,10 @@ namespace Assignment
 			return mat * (1 / other);
 		}
 
+		/* === OPERATORS === */
+
+		/* === SHORTHAND OPERATORS === */
+
 		/// <summary>
 		/// Multiplies this matrix with a vector and returns the result.
 		/// </summary>
@@ -150,6 +162,10 @@ namespace Assignment
 			other = (*this) * other;
 			return other;
 		}
+
+		/* === SHORTHAND OPERATORS === */
+
+		/* === ACCESSORS === */
 
 		/// <summary>
 		/// Returns the (non-const) value at the n:th position in the matrix, from top-left to bottom-right.
@@ -213,6 +229,8 @@ namespace Assignment
 			return Vector2(at(x, 0), at(x, 1));
 		}
 
+		/* === ACCESSORS === */
+
 		/// <summary>
 		/// Clears the matrix, optionally creating an identity matrix.
 		/// </summary>
@@ -225,24 +243,7 @@ namespace Assignment
 			}
 		}
 
-		/// <summary>
-		/// Returns a transposed copy of the matrix (shifted along the diagonal).
-		/// </summary>
-		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix2 getTransposed() const
-		{
-			return Matrix2(this->a(), this->c(), this->b(), this->d());
-		}
-
-		/// <summary>
-		/// Returns a rotation matrix for the specified rotation in 2D-space.
-		/// </summary>
-		/// <param name="rad">The rotation in radians</param>
-		/// <returns>A rotation matrix for the 2D rotation</returns>
-		static Matrix2 getRotationMatrix(const float& rad)
-		{
-			return Matrix2(cos(rad), -sin(rad), sin(rad), cos(rad));
-		}
+		/* === MATRIX FUNCTIONS === */
 
 		/// <summary>
 		/// Returns the matrix determinant.
@@ -266,6 +267,31 @@ namespace Assignment
 
 			return Matrix2(d(), -b(), -c(), a()) / det;
 		}
+
+		/* === MATRIX FUNCTIONS === */
+
+		/* === FACTORY FUNCTIONS === */
+
+		/// <summary>
+		/// Returns a transposed copy of the matrix (shifted along the diagonal).
+		/// </summary>
+		/// <returns>Transposed copy of the current matrix</returns>
+		Matrix2 getTransposed() const
+		{
+			return Matrix2(this->a(), this->c(), this->b(), this->d());
+		}
+
+		/// <summary>
+		/// Returns a rotation matrix for the specified rotation in 2D-space.
+		/// </summary>
+		/// <param name="rad">The rotation in radians</param>
+		/// <returns>A rotation matrix for the 2D rotation</returns>
+		static Matrix2 getRotationMatrix(const float& rad)
+		{
+			return Matrix2(cos(rad), -sin(rad), sin(rad), cos(rad));
+		}
+
+		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
 		/// Returns a formatted multi-line string representation of the matrix.
