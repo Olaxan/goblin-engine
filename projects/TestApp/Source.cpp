@@ -1,4 +1,4 @@
-#include "..\projects\VectorLib\code\matrix4.h"
+#include "..\VectorLib\code\matrix4.h"
 
 #include <iostream>
 
