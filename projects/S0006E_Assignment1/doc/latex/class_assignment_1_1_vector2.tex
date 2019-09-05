@@ -1,0 +1,490 @@
+\hypertarget{class_assignment_1_1_vector2}{}\doxysection{Assignment\+::Vector2 Class Reference}
+\label{class_assignment_1_1_vector2}\index{Assignment::Vector2@{Assignment::Vector2}}
+
+
+Class to represent a 2-\/dimensional point vector.  
+
+
+
+
+{\ttfamily \#include $<$vector2.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2_a820f8aed4a6bdc50cf1453dff0a4ffde}{Vector2}} (float x=0, float y=0)
+\begin{DoxyCompactList}\small\item\em Creates a new 2D vector with the specified values. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2_a8a18e721eb4706ce3a99f95e417f0e60}{Vector2}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&copy)
+\begin{DoxyCompactList}\small\item\em Constructs a copy of the specified \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a6a777660d61d958c183eb8126184a8fe}\label{class_assignment_1_1_vector2_a6a777660d61d958c183eb8126184a8fe}} 
+const float \& {\bfseries x} () const
+\item 
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a42fcfbcf37001036dcd51d243b6c07b3}\label{class_assignment_1_1_vector2_a42fcfbcf37001036dcd51d243b6c07b3}} 
+void {\bfseries x} (const float \&x)
+\item 
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a46e3f17d73470668f1ff21c32056f30d}\label{class_assignment_1_1_vector2_a46e3f17d73470668f1ff21c32056f30d}} 
+const float \& {\bfseries y} () const
+\item 
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a856480ed02209600b764b89412b55120}\label{class_assignment_1_1_vector2_a856480ed02209600b764b89412b55120}} 
+void {\bfseries y} (const float \&y)
+\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_a983af97c30952657357124b669c385d6}{operator+}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Adds two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances together, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_a66bf3486a0e0ab648ecaac291a1aa712}{operator-\/}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Subtracts a \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} from this, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_aebc6f4e62b23bb6e7787822c1f8c5f12}{operator$\ast$}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances together, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_a3d2e74029f6185e7e3f0b6b5c7d70fda}{operator$\ast$}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_a2862baa92066c6dada3e9a2cf0650635}{operator/}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Divides the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{class_assignment_1_1_vector2_ae6dacb3b35ac30f8599dd242ec9f3e32}{operator+=}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other)
+\begin{DoxyCompactList}\small\item\em Adds another \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} to this, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{class_assignment_1_1_vector2_a73d22c5e3e7a71c9245088e34ed28e8a}{operator-\/=}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other)
+\begin{DoxyCompactList}\small\item\em Subtracts another \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} from this, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{class_assignment_1_1_vector2_a55d3f8d76c524afb190ff5e2c2bdf084}{operator$\ast$=}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other)
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with another, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{class_assignment_1_1_vector2_a668f0d36509c4ba735a6abe648f5190b}{operator$\ast$=}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Multiplies the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \& \mbox{\hyperlink{class_assignment_1_1_vector2_a0eb1b758919f081d0800450ef735357a}{operator/=}} (const float \&other)
+\begin{DoxyCompactList}\small\item\em Divides the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_assignment_1_1_vector2_ae49011dae3cf4b6845d9aea42fbe088c}{operator==}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Tests two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances for equality. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_assignment_1_1_vector2_aa2736f97cdd370848e24fda9417467a2}{operator!=}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Tests two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances for inequality. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{class_assignment_1_1_vector2_a6d6f8867314e6bfb2fd6a51278e7c539}{operator\mbox{[}$\,$\mbox{]}}} (const int \&index)
+\begin{DoxyCompactList}\small\item\em Accesses a value at the specified index in the vector, from top to bottom. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_assignment_1_1_vector2_a9ff933b6d73c76ffdd344792a805f7bd}{at}} (int y) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the n\+:th vector index, from top to bottom. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_assignment_1_1_vector2_ad664713de54b5be494fe5c59970e452e}{dot}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&other) const
+\begin{DoxyCompactList}\small\item\em Calculates the dot product between this vector and another. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_assignment_1_1_vector2_a8301b4b0ac426685ffada047e6ef7894}{length}} () const
+\begin{DoxyCompactList}\small\item\em Returns the length of this point from the origin (0, 0). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_ab6998a7de15d324e8015e96ef44418be}{norm}} () const
+\begin{DoxyCompactList}\small\item\em Normalizes the vector, turning it into a unit vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \mbox{\hyperlink{class_assignment_1_1_vector2_a6644e22d0e264645e8cfe2373801d447}{get\+Reflection}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&normal) const
+\begin{DoxyCompactList}\small\item\em Calculates the reflection of a vector against a specified normal. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{class_assignment_1_1_vector2_a9fbce19e6f798e371245a1e7ccab4d49}{to\+\_\+string}} () const
+\begin{DoxyCompactList}\small\item\em Returns a formatted multi-\/line string representation of the vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static float \mbox{\hyperlink{class_assignment_1_1_vector2_a4942704dfce289da42d0bbc19e6cf129}{dist}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&x, const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the distance between two vectors (points). \end{DoxyCompactList}\item 
+static float \mbox{\hyperlink{class_assignment_1_1_vector2_ac7d133afffb595879044b966ccb9b59d}{dot}} (const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&x, const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&y)
+\begin{DoxyCompactList}\small\item\em Calculates the dot product between two vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to represent a 2-\/dimensional point vector. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a820f8aed4a6bdc50cf1453dff0a4ffde}\label{class_assignment_1_1_vector2_a820f8aed4a6bdc50cf1453dff0a4ffde}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!Vector2@{Vector2}}
+\index{Vector2@{Vector2}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{Vector2()}{Vector2()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Assignment\+::\+Vector2\+::\+Vector2 (\begin{DoxyParamCaption}\item[{float}]{x = {\ttfamily 0},  }\item[{float}]{y = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a new 2D vector with the specified values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Top value\\
+\hline
+{\em y} & Bottom value\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a8a18e721eb4706ce3a99f95e417f0e60}\label{class_assignment_1_1_vector2_a8a18e721eb4706ce3a99f95e417f0e60}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!Vector2@{Vector2}}
+\index{Vector2@{Vector2}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{Vector2()}{Vector2()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Assignment\+::\+Vector2\+::\+Vector2 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a copy of the specified \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The vector of which to create a copy\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a9ff933b6d73c76ffdd344792a805f7bd}\label{class_assignment_1_1_vector2_a9ff933b6d73c76ffdd344792a805f7bd}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!at@{at}}
+\index{at@{at}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}}
+{\footnotesize\ttfamily float Assignment\+::\+Vector2\+::at (\begin{DoxyParamCaption}\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the n\+:th vector index, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The vector index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at the specified position in the vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a4942704dfce289da42d0bbc19e6cf129}\label{class_assignment_1_1_vector2_a4942704dfce289da42d0bbc19e6cf129}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!dist@{dist}}
+\index{dist@{dist}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{dist()}{dist()}}
+{\footnotesize\ttfamily static float Assignment\+::\+Vector2\+::dist (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{x,  }\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the distance between two vectors (points). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first point\\
+\hline
+{\em y} & The second point\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The distance between points as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_ad664713de54b5be494fe5c59970e452e}\label{class_assignment_1_1_vector2_ad664713de54b5be494fe5c59970e452e}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!dot@{dot}}
+\index{dot@{dot}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float Assignment\+::\+Vector2\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the dot product between this vector and another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other vector to calculate dot product with\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_ac7d133afffb595879044b966ccb9b59d}\label{class_assignment_1_1_vector2_ac7d133afffb595879044b966ccb9b59d}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!dot@{dot}}
+\index{dot@{dot}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static float Assignment\+::\+Vector2\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{x,  }\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Calculates the dot product between two vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The first vector\\
+\hline
+{\em y} & The second vector\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The dot product as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a6644e22d0e264645e8cfe2373801d447}\label{class_assignment_1_1_vector2_a6644e22d0e264645e8cfe2373801d447}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!getReflection@{getReflection}}
+\index{getReflection@{getReflection}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{getReflection()}{getReflection()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::get\+Reflection (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{normal }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the reflection of a vector against a specified normal. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em normal} & The normal to calculate reflection against\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The resulting reflection vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a8301b4b0ac426685ffada047e6ef7894}\label{class_assignment_1_1_vector2_a8301b4b0ac426685ffada047e6ef7894}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!length@{length}}
+\index{length@{length}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{length()}{length()}}
+{\footnotesize\ttfamily float Assignment\+::\+Vector2\+::length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the length of this point from the origin (0, 0). 
+
+\begin{DoxyReturn}{Returns}
+The vector length as a float
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_ab6998a7de15d324e8015e96ef44418be}\label{class_assignment_1_1_vector2_ab6998a7de15d324e8015e96ef44418be}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!norm@{norm}}
+\index{norm@{norm}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{norm()}{norm()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::norm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalizes the vector, turning it into a unit vector. 
+
+\begin{DoxyReturn}{Returns}
+The resulting unit vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_aa2736f97cdd370848e24fda9417467a2}\label{class_assignment_1_1_vector2_aa2736f97cdd370848e24fda9417467a2}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily bool Assignment\+::\+Vector2\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tests two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances for inequality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if not equal, false otherwise
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a3d2e74029f6185e7e3f0b6b5c7d70fda}\label{class_assignment_1_1_vector2_a3d2e74029f6185e7e3f0b6b5c7d70fda}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_aebc6f4e62b23bb6e7787822c1f8c5f12}\label{class_assignment_1_1_vector2_aebc6f4e62b23bb6e7787822c1f8c5f12}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances together, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a668f0d36509c4ba735a6abe648f5190b}\label{class_assignment_1_1_vector2_a668f0d36509c4ba735a6abe648f5190b}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}\& Assignment\+::\+Vector2\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a55d3f8d76c524afb190ff5e2c2bdf084}\label{class_assignment_1_1_vector2_a55d3f8d76c524afb190ff5e2c2bdf084}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}\& Assignment\+::\+Vector2\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with another, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a983af97c30952657357124b669c385d6}\label{class_assignment_1_1_vector2_a983af97c30952657357124b669c385d6}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator+@{operator+}}
+\index{operator+@{operator+}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances together, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_ae6dacb3b35ac30f8599dd242ec9f3e32}\label{class_assignment_1_1_vector2_ae6dacb3b35ac30f8599dd242ec9f3e32}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator+=@{operator+=}}
+\index{operator+=@{operator+=}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator+=()}{operator+=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}\& Assignment\+::\+Vector2\+::operator+= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds another \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} to this, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a66bf3486a0e0ab648ecaac291a1aa712}\label{class_assignment_1_1_vector2_a66bf3486a0e0ab648ecaac291a1aa712}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator-\/()}{operator-()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::operator-\/ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtracts a \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} from this, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a73d22c5e3e7a71c9245088e34ed28e8a}\label{class_assignment_1_1_vector2_a73d22c5e3e7a71c9245088e34ed28e8a}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator-\/=@{operator-\/=}}
+\index{operator-\/=@{operator-\/=}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator-\/=()}{operator-=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}\& Assignment\+::\+Vector2\+::operator-\/= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Subtracts another \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} from this, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a2862baa92066c6dada3e9a2cf0650635}\label{class_assignment_1_1_vector2_a2862baa92066c6dada3e9a2cf0650635}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator/@{operator/}}
+\index{operator/@{operator/}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} Assignment\+::\+Vector2\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Divides the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a0eb1b758919f081d0800450ef735357a}\label{class_assignment_1_1_vector2_a0eb1b758919f081d0800450ef735357a}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator/=@{operator/=}}
+\index{operator/=@{operator/=}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator/=()}{operator/=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}}\& Assignment\+::\+Vector2\+::operator/= (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Divides the individual values of this \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} with a scalar, and returns the result as a reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_ae49011dae3cf4b6845d9aea42fbe088c}\label{class_assignment_1_1_vector2_ae49011dae3cf4b6845d9aea42fbe088c}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator==@{operator==}}
+\index{operator==@{operator==}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool Assignment\+::\+Vector2\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tests two \mbox{\hyperlink{class_assignment_1_1_vector2}{Vector2}} instances for equality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if equal, false otherwise
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a6d6f8867314e6bfb2fd6a51278e7c539}\label{class_assignment_1_1_vector2_a6d6f8867314e6bfb2fd6a51278e7c539}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily float\& Assignment\+::\+Vector2\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{const int \&}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Accesses a value at the specified index in the vector, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at the specified position in the vector
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_vector2_a9fbce19e6f798e371245a1e7ccab4d49}\label{class_assignment_1_1_vector2_a9fbce19e6f798e371245a1e7ccab4d49}} 
+\index{Assignment::Vector2@{Assignment::Vector2}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!Assignment::Vector2@{Assignment::Vector2}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily std\+::string Assignment\+::\+Vector2\+::to\+\_\+string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a formatted multi-\/line string representation of the vector. 
+
+\begin{DoxyReturn}{Returns}
+A formatted multi-\/line string representation of the vector
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+code/vector2.\+h\end{DoxyCompactItemize}

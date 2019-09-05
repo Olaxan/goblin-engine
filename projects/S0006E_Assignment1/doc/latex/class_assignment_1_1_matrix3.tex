@@ -1,0 +1,489 @@
+\hypertarget{class_assignment_1_1_matrix3}{}\doxysection{Assignment\+::Matrix3 Class Reference}
+\label{class_assignment_1_1_matrix3}\index{Assignment::Matrix3@{Assignment::Matrix3}}
+
+
+Class to represent a 3-\/dimensional matrix.  
+
+
+
+
+{\ttfamily \#include $<$matrix3.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3_a20ef65b3c756001df70f9fdd997c6977}{Matrix3}} ()
+\begin{DoxyCompactList}\small\item\em Creates a new identity \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3_a3849daaa84598308858d4609259a42ec}{Matrix3}} (const \mbox{\hyperlink{class_assignment_1_1_matrix2}{Matrix2}} \&copy)
+\begin{DoxyCompactList}\small\item\em Inserts the specified \mbox{\hyperlink{class_assignment_1_1_matrix2}{Matrix2}} into the top-\/left corner of an 3x3 identity matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3_af2e112ff5ddd511ab7867a4ac1d96122}{Matrix3}} (const \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \&copy)
+\begin{DoxyCompactList}\small\item\em Constructs a copy of the specified \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3_a0d8dc7e469630faec5b815bdf2634bde}{Matrix3}} (\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} x, \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} y, \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} z)
+\begin{DoxyCompactList}\small\item\em Creates a \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} from the specified row vectors, from top to bottom. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \& \mbox{\hyperlink{class_assignment_1_1_matrix3_a49e941b697a7e433165d2abcf46c6335}{operator=}} (const \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \&other)
+\begin{DoxyCompactList}\small\item\em Sets the matrix to equal the specified matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a1312fb030a8a70f63b2b29a518d64903}{operator$\ast$}} (const \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with another \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_aebebd0090a5b2ab06f13c824e44d19bc}{operator$\ast$}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with a scalar. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a3ef2c74fa2ec0ab8a9e767843523d5f1}{operator$\ast$}} (const \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix multiplication with a \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_ac95fb6bdb4abde07dc79f4ab403f9fc1}{operator/}} (const float \&other) const
+\begin{DoxyCompactList}\small\item\em Performs a matrix division with a scalar. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \& \mbox{\hyperlink{class_assignment_1_1_matrix3_a12b81e13eae5d45ed0818b80e721f6f5}{operator$\ast$=}} (\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \&other) const
+\begin{DoxyCompactList}\small\item\em Multiplies this matrix with a vector and returns the result. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{class_assignment_1_1_matrix3_a81983534b1711108584154b0a88b2051}{operator()}} (int i)
+\begin{DoxyCompactList}\small\item\em Returns the (non-\/const) value at the n\+:th position in the matrix, from top-\/left to bottom-\/right. \end{DoxyCompactList}\item 
+float \& \mbox{\hyperlink{class_assignment_1_1_matrix3_a8f2ff403913041bc4052f7c3724c7c18}{operator()}} (int x, int y)
+\begin{DoxyCompactList}\small\item\em Returns the (non-\/const) value at matrix position x, y. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_assignment_1_1_matrix3_a715bb7352416336952a7c8eaa4ed0717}{at}} (int n) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the n\+:th matrix index, from top-\/left to bottom-\/right. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_assignment_1_1_matrix3_a606abdbb83e1a3f4c9b5c9364e5f9794}{at}} (int x, int y) const
+\begin{DoxyCompactList}\small\item\em Returns the (const) value at the matrix position x, y. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a427dc0c1641722c1eaddc0d21d8d8367}{row}} (int y) const
+\begin{DoxyCompactList}\small\item\em Returns the row at specified y-\/position as a 3D-\/vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_ab719790bd77b02e775766a557acb1c0b}{col}} (int x) const
+\begin{DoxyCompactList}\small\item\em Returns the column at specified x-\/position as a 3D-\/vector. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_assignment_1_1_matrix3_a9b3eecc659f521cac3080247adce36c6}{clear}} (bool identity=true)
+\begin{DoxyCompactList}\small\item\em Clears the matrix, optionally creating an identity matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a623ba85e535310657b536460bf6477d9}{get\+Transposed}} () const
+\begin{DoxyCompactList}\small\item\em Returns a transposed copy of the matrix (shifted along the diagonal). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix2}{Matrix2}} \mbox{\hyperlink{class_assignment_1_1_matrix3_aa3fe2ad644f725548ed1e9a1f679c4e7}{minor}} (int x, int y) const
+\begin{DoxyCompactList}\small\item\em Returns the minor matrix of the specified cell, excluding its row and column. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_assignment_1_1_matrix3_a065ff915483bb617666e856f1d212f28}{determinant}} () const
+\begin{DoxyCompactList}\small\item\em Returns the matrix determinant. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a398c921e62d8b8fbce852e0bf76506b1}{inverse}} () const
+\begin{DoxyCompactList}\small\item\em Returns the inverse of the matrix, or an identity if none exists. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{class_assignment_1_1_matrix3_a00eb423b74a624b343dfee9440530a9b}{to\+\_\+string}} ()
+\begin{DoxyCompactList}\small\item\em Returns a formatted multi-\/line string representation of the matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a8a1d00801d9d4a8f6b1e27f6559a469c}{get\+Translation}} (const \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \&v)
+\begin{DoxyCompactList}\small\item\em Constructs a translation matrix from the specified 4D-\/vector. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \mbox{\hyperlink{class_assignment_1_1_matrix3_a3a11e3d491b8f5417b9f58c3524a5323}{get\+Rotation\+Matrix}} (const float \&rad)
+\begin{DoxyCompactList}\small\item\em Returns a rotation matrix for the specified rotation in 2D-\/space. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a0c519f4478bb9af7cf02b5c2454a45a4}\label{class_assignment_1_1_matrix3_a0c519f4478bb9af7cf02b5c2454a45a4}} 
+friend {\bfseries Vector3}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to represent a 3-\/dimensional matrix. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a20ef65b3c756001df70f9fdd997c6977}\label{class_assignment_1_1_matrix3_a20ef65b3c756001df70f9fdd997c6977}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!Matrix3@{Matrix3}}
+\index{Matrix3@{Matrix3}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{Matrix3()}{Matrix3()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily Assignment\+::\+Matrix3\+::\+Matrix3 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a new identity \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}. 
+
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a3849daaa84598308858d4609259a42ec}\label{class_assignment_1_1_matrix3_a3849daaa84598308858d4609259a42ec}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!Matrix3@{Matrix3}}
+\index{Matrix3@{Matrix3}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{Matrix3()}{Matrix3()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily Assignment\+::\+Matrix3\+::\+Matrix3 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_matrix2}{Matrix2}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Inserts the specified \mbox{\hyperlink{class_assignment_1_1_matrix2}{Matrix2}} into the top-\/left corner of an 3x3 identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The matrix of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_af2e112ff5ddd511ab7867a4ac1d96122}\label{class_assignment_1_1_matrix3_af2e112ff5ddd511ab7867a4ac1d96122}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!Matrix3@{Matrix3}}
+\index{Matrix3@{Matrix3}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{Matrix3()}{Matrix3()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily Assignment\+::\+Matrix3\+::\+Matrix3 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \&}]{copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a copy of the specified \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em copy} & The matrix of which to create a copy\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a0d8dc7e469630faec5b815bdf2634bde}\label{class_assignment_1_1_matrix3_a0d8dc7e469630faec5b815bdf2634bde}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!Matrix3@{Matrix3}}
+\index{Matrix3@{Matrix3}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{Matrix3()}{Matrix3()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily Assignment\+::\+Matrix3\+::\+Matrix3 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}}}]{x,  }\item[{\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}}}]{y,  }\item[{\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}}}]{z }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} from the specified row vectors, from top to bottom. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & First row\\
+\hline
+{\em y} & Second row\\
+\hline
+{\em z} & Third row\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a715bb7352416336952a7c8eaa4ed0717}\label{class_assignment_1_1_matrix3_a715bb7352416336952a7c8eaa4ed0717}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!at@{at}}
+\index{at@{at}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float Assignment\+::\+Matrix3\+::at (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the n\+:th matrix index, from top-\/left to bottom-\/right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The matrix index to access\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix index n
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a606abdbb83e1a3f4c9b5c9364e5f9794}\label{class_assignment_1_1_matrix3_a606abdbb83e1a3f4c9b5c9364e5f9794}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!at@{at}}
+\index{at@{at}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{at()}{at()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float Assignment\+::\+Matrix3\+::at (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (const) value at the matrix position x, y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix x-\/position, column\\
+\hline
+{\em y} & Matrix y-\/poisition, row\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix position x, y
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a9b3eecc659f521cac3080247adce36c6}\label{class_assignment_1_1_matrix3_a9b3eecc659f521cac3080247adce36c6}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!clear@{clear}}
+\index{clear@{clear}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void Assignment\+::\+Matrix3\+::clear (\begin{DoxyParamCaption}\item[{bool}]{identity = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clears the matrix, optionally creating an identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em identity} & Whether to create an empty matrix, or an identity matrix\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_ab719790bd77b02e775766a557acb1c0b}\label{class_assignment_1_1_matrix3_ab719790bd77b02e775766a557acb1c0b}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!col@{col}}
+\index{col@{col}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{col()}{col()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} Assignment\+::\+Matrix3\+::col (\begin{DoxyParamCaption}\item[{int}]{x }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the column at specified x-\/position as a 3D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The column index to return\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The column at the specified x-\/position
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a065ff915483bb617666e856f1d212f28}\label{class_assignment_1_1_matrix3_a065ff915483bb617666e856f1d212f28}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!determinant@{determinant}}
+\index{determinant@{determinant}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{determinant()}{determinant()}}
+{\footnotesize\ttfamily float Assignment\+::\+Matrix3\+::determinant (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the matrix determinant. 
+
+\begin{DoxyReturn}{Returns}
+The determinant of the matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a3a11e3d491b8f5417b9f58c3524a5323}\label{class_assignment_1_1_matrix3_a3a11e3d491b8f5417b9f58c3524a5323}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!getRotationMatrix@{getRotationMatrix}}
+\index{getRotationMatrix@{getRotationMatrix}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{getRotationMatrix()}{getRotationMatrix()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::get\+Rotation\+Matrix (\begin{DoxyParamCaption}\item[{const float \&}]{rad }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a rotation matrix for the specified rotation in 2D-\/space. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rad} & The rotation in radians\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A rotation matrix for the 2D rotation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a8a1d00801d9d4a8f6b1e27f6559a469c}\label{class_assignment_1_1_matrix3_a8a1d00801d9d4a8f6b1e27f6559a469c}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!getTranslation@{getTranslation}}
+\index{getTranslation@{getTranslation}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{getTranslation()}{getTranslation()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::get\+Translation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \&}]{v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Constructs a translation matrix from the specified 4D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & The vector to use for translation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new translation matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a623ba85e535310657b536460bf6477d9}\label{class_assignment_1_1_matrix3_a623ba85e535310657b536460bf6477d9}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!getTransposed@{getTransposed}}
+\index{getTransposed@{getTransposed}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{getTransposed()}{getTransposed()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::get\+Transposed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a transposed copy of the matrix (shifted along the diagonal). 
+
+\begin{DoxyReturn}{Returns}
+Transposed copy of the current matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a398c921e62d8b8fbce852e0bf76506b1}\label{class_assignment_1_1_matrix3_a398c921e62d8b8fbce852e0bf76506b1}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!inverse@{inverse}}
+\index{inverse@{inverse}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{inverse()}{inverse()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::inverse (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the inverse of the matrix, or an identity if none exists. 
+
+\begin{DoxyReturn}{Returns}
+The inverse of the current matrix
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_aa3fe2ad644f725548ed1e9a1f679c4e7}\label{class_assignment_1_1_matrix3_aa3fe2ad644f725548ed1e9a1f679c4e7}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!minor@{minor}}
+\index{minor@{minor}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{minor()}{minor()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix2}{Matrix2}} Assignment\+::\+Matrix3\+::minor (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the minor matrix of the specified cell, excluding its row and column. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The x-\/coordinate of the cell\\
+\hline
+{\em y} & The y-\/coordinate of the cell\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A 2D matrix excluding the specified row and column
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a81983534b1711108584154b0a88b2051}\label{class_assignment_1_1_matrix3_a81983534b1711108584154b0a88b2051}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator()@{operator()}}
+\index{operator()@{operator()}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily float\& Assignment\+::\+Matrix3\+::operator() (\begin{DoxyParamCaption}\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (non-\/const) value at the n\+:th position in the matrix, from top-\/left to bottom-\/right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & The matrix index to query\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix index n
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a8f2ff403913041bc4052f7c3724c7c18}\label{class_assignment_1_1_matrix3_a8f2ff403913041bc4052f7c3724c7c18}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator()@{operator()}}
+\index{operator()@{operator()}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily float\& Assignment\+::\+Matrix3\+::operator() (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the (non-\/const) value at matrix position x, y. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix x-\/position, column\\
+\hline
+{\em y} & Matrix y-\/poisition, row\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value at matrix position x, y
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_aebebd0090a5b2ab06f13c824e44d19bc}\label{class_assignment_1_1_matrix3_aebebd0090a5b2ab06f13c824e44d19bc}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a1312fb030a8a70f63b2b29a518d64903}\label{class_assignment_1_1_matrix3_a1312fb030a8a70f63b2b29a518d64903}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with another \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a3ef2c74fa2ec0ab8a9e767843523d5f1}\label{class_assignment_1_1_matrix3_a3ef2c74fa2ec0ab8a9e767843523d5f1}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} Assignment\+::\+Matrix3\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix multiplication with a \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a12b81e13eae5d45ed0818b80e721f6f5}\label{class_assignment_1_1_matrix3_a12b81e13eae5d45ed0818b80e721f6f5}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator$\ast$=@{operator$\ast$=}}
+\index{operator$\ast$=@{operator$\ast$=}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator$\ast$=()}{operator*=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}}\& Assignment\+::\+Matrix3\+::operator$\ast$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Multiplies this matrix with a vector and returns the result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_ac95fb6bdb4abde07dc79f4ab403f9fc1}\label{class_assignment_1_1_matrix3_ac95fb6bdb4abde07dc79f4ab403f9fc1}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator/@{operator/}}
+\index{operator/@{operator/}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator/()}{operator/()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} Assignment\+::\+Matrix3\+::operator/ (\begin{DoxyParamCaption}\item[{const float \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs a matrix division with a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The right-\/hand side of the operation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} resulting from the operation
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a49e941b697a7e433165d2abcf46c6335}\label{class_assignment_1_1_matrix3_a49e941b697a7e433165d2abcf46c6335}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!operator=@{operator=}}
+\index{operator=@{operator=}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}}\& Assignment\+::\+Matrix3\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_assignment_1_1_matrix3}{Matrix3}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the matrix to equal the specified matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The matrix which values are to be copied\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the current matrix, after modification
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a427dc0c1641722c1eaddc0d21d8d8367}\label{class_assignment_1_1_matrix3_a427dc0c1641722c1eaddc0d21d8d8367}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!row@{row}}
+\index{row@{row}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{row()}{row()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_assignment_1_1_vector3}{Vector3}} Assignment\+::\+Matrix3\+::row (\begin{DoxyParamCaption}\item[{int}]{y }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the row at specified y-\/position as a 3D-\/vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & The row index to return\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The row at the specified y-\/position
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_assignment_1_1_matrix3_a00eb423b74a624b343dfee9440530a9b}\label{class_assignment_1_1_matrix3_a00eb423b74a624b343dfee9440530a9b}} 
+\index{Assignment::Matrix3@{Assignment::Matrix3}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!Assignment::Matrix3@{Assignment::Matrix3}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily std\+::string Assignment\+::\+Matrix3\+::to\+\_\+string (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a formatted multi-\/line string representation of the matrix. 
+
+\begin{DoxyReturn}{Returns}
+A formatted multi-\/line string representation of the matrix
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+code/matrix3.\+h\end{DoxyCompactItemize}

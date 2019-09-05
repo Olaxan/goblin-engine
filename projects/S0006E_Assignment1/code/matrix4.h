@@ -11,18 +11,28 @@
 namespace Assignment
 {
 
-
+	/// <summary>
+	/// Class to represent a 4-dimensional matrix.
+	/// </summary>
 	class Matrix4
 	{
 	private:
 		Vector4 _arr[4];
 
 	public:
+
+		/// <summary>
+		/// Creates a new identity Matrix4.
+		/// </summary>
 		Matrix4()
 		{
 			clear();
 		}
 
+		/// <summary>
+		/// Inserts the specified Matrix2 into the top-left corner of an 4x4 identity matrix.
+		/// </summary>
+		/// <param name="copy">The matrix of which to create a copy</param>
 		Matrix4(const Matrix2& copy)
 		{
 			clear();
@@ -33,6 +43,10 @@ namespace Assignment
 			(*this)(1, 1) = copy.d();
 		}
 
+		/// <summary>
+		/// Inserts the specified Matrix3 into the top-left corner of an 4x4 identity matrix.
+		/// </summary>
+		/// <param name="copy">The matrix of which to create a copy</param>
 		Matrix4(const Matrix3& copy)
 		{
 			clear();
@@ -50,11 +64,22 @@ namespace Assignment
 			(*this)(2, 2) = copy.at(2, 2);
 		}
 
+		/// <summary>
+		/// Constructs a copy of the specified matrix.
+		/// </summary>
+		/// <param name="copy">The matrix of which to create a copy</param>
 		Matrix4(const Matrix4& copy)
 		{
 			*this = copy;
 		}
 
+		/// <summary>
+		/// Creates a Matrix4 from the specified row vectors, from top to bottom.
+		/// </summary>
+		/// <param name="a">First row</param>
+		/// <param name="b">Second row</param>
+		/// <param name="c">Third row</param>
+		/// <param name="d">Fourth row</param>
 		Matrix4(Vector4 a, Vector4 b, Vector4 c, Vector4 d)
 		{
 			_arr[0] = a;
@@ -63,6 +88,41 @@ namespace Assignment
 			_arr[3] = d;
 		}
 
+		/// <summary>
+		/// Sets the matrix to equal the specified matrix.
+		/// </summary>
+		/// <param name="other">The matrix which values are to be copied</param>
+		/// <returns>A reference to the current matrix, after modification</returns>
+		Matrix4& operator = (const Matrix4& other)
+		{
+			(*this)(0, 0) = other.at(0, 0);
+			(*this)(0, 1) = other.at(0, 1);
+			(*this)(0, 2) = other.at(0, 2);
+			(*this)(0, 3) = other.at(0, 3);
+
+			(*this)(1, 0) = other.at(1, 0);
+			(*this)(1, 1) = other.at(1, 1);
+			(*this)(1, 2) = other.at(1, 2);
+			(*this)(1, 3) = other.at(1, 3);
+
+			(*this)(2, 0) = other.at(2, 0);
+			(*this)(2, 1) = other.at(2, 1);
+			(*this)(2, 2) = other.at(2, 2);
+			(*this)(2, 3) = other.at(2, 3);
+
+			(*this)(3, 0) = other.at(3, 0);
+			(*this)(3, 1) = other.at(3, 1);
+			(*this)(3, 2) = other.at(3, 2);
+			(*this)(3, 3) = other.at(3, 3);
+
+			return *this;
+		}
+
+		/// <summary>
+		/// Performs a matrix multiplication with another Matrix4.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>The Matrix4 resulting from the operation</returns>
 		Matrix4 operator * (const Matrix4& other) const
 		{
 			Matrix4 mat;
@@ -90,6 +150,11 @@ namespace Assignment
 			return mat;
 		}
 
+		/// <summary>
+		/// Performs a matrix multiplication with a scalar.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>The Matrix4 resulting from the operation</returns>
 		Matrix4 operator * (const float& other) const
 		{
 			Matrix4 mat = *this;
@@ -102,44 +167,11 @@ namespace Assignment
 			return mat;
 		}
 
-		Matrix4 operator / (const float& other) const
-		{
-			Matrix4 mat = *this;
-
-			return mat * (1 / other);
-		}
-
-		Matrix4& operator = (const Matrix4& other)
-		{
-			(*this)(0, 0) = other.at(0, 0);
-			(*this)(0, 1) = other.at(0, 1);
-			(*this)(0, 2) = other.at(0, 2);
-			(*this)(0, 3) = other.at(0, 3);
-
-			(*this)(1, 0) = other.at(1, 0);
-			(*this)(1, 1) = other.at(1, 1);
-			(*this)(1, 2) = other.at(1, 2);
-			(*this)(1, 3) = other.at(1, 3);
-
-			(*this)(2, 0) = other.at(2, 0);
-			(*this)(2, 1) = other.at(2, 1);
-			(*this)(2, 2) = other.at(2, 2);
-			(*this)(2, 3) = other.at(2, 3);
-
-			(*this)(3, 0) = other.at(3, 0);
-			(*this)(3, 1) = other.at(3, 1);
-			(*this)(3, 2) = other.at(3, 2);
-			(*this)(3, 3) = other.at(3, 3);
-
-			return *this;
-		}
-
-		Vector4& operator *= (Vector4& other) const
-		{
-			other = (*this) * other;
-			return other;
-		}
-
+		/// <summary>
+		/// Performs a matrix multiplication with a Vector4.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>The Vector4 resulting from the operation</returns>
 		Vector4 operator * (const Vector4& other) const
 		{
 			Vector4 vect;
@@ -150,25 +182,55 @@ namespace Assignment
 			return vect;
 		}
 
+		/// <summary>
+		/// Performs a matrix division with a scalar.
+		/// </summary>
+		/// <param name="other">The right-hand side of the operation</param>
+		/// <returns>The Matrix4 resulting from the operation</returns>
+		Matrix4 operator / (const float& other) const
+		{
+			Matrix4 mat = *this;
+
+			return mat * (1 / other);
+		}
+
+		/// <summary>
+		/// Multiplies this matrix with a vector and returns the result.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns>A reference to the Vector4 resulting from the operation</returns>
+		Vector4& operator *= (Vector4& other) const
+		{
+			other = (*this) * other;
+			return other;
+		}
+
+		/// <summary>
+		/// Returns the (non-const) value at the n:th position in the matrix, from top-left to bottom-right.
+		/// </summary>
+		/// <param name="n">The matrix index to query</param>
+		/// <returns>The value at matrix index n</returns>
 		float& operator () (int i)
 		{
 			return _arr[i / 4][i % 4];
 		}
 
+		/// <summary>
+		/// Returns the (non-const) value at matrix position x, y.
+		/// </summary>
+		/// <param name="x">Matrix x-position, column</param>
+		/// <param name="y">Matrix y-poisition, row</param>
+		/// <returns>The value at matrix position x, y</returns>
 		float& operator () (int x, int y)
 		{
 			return _arr[y][x];
 		}
 
-		// ********************************************************************************
 		/// <summary>
-		/// Picks the n:th index of the array, from top-left to bottom-right.
+		/// Returns the (const) value at the n:th matrix index, from top-left to bottom-right.
 		/// </summary>
-		/// <param name="n">The matrix index to read</param>
-		/// <returns></returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
+		/// <param name="n">The matrix index to access</param>
+		/// <returns>The value at matrix index n</returns>
 		float at(int n) const
 		{
 			if (n > 16)
@@ -177,16 +239,12 @@ namespace Assignment
 			return at(n % 4, n / 4);
 		}
 
-		// ********************************************************************************
 		/// <summary>
-		/// Picks the matrix cell at x, y and returns the value.
+		/// Returns the (const) value at the matrix position x, y.
 		/// </summary>
-		/// <param name="x">The x-coordinate of the matrix</param>
-		/// <param name="y">The y-coordinate of the matrix</param>
-		/// <returns></returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
+		/// <param name="x">Matrix x-position, column</param>
+		/// <param name="y">Matrix y-poisition, row</param>
+		/// <returns>The value at matrix position x, y</returns>
 		float at(int x, int y) const
 		{
 			if (x > 4 || y > 4)
@@ -195,15 +253,11 @@ namespace Assignment
 			return _arr[y].at(x);
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns the row at specified y-position as a 4D-vector.
 		/// </summary>
 		/// <param name="y">The row index to return</param>
-		/// <returns></returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
+		/// <returns>The row at the specified y-position</returns>
 		Vector4 row(int y) const
 		{
 			if (y > 4)
@@ -212,15 +266,11 @@ namespace Assignment
 			return Vector4(at(0, y), at(1, y), at(2, y), at(3, y));
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns the column at specified x-position as a 4D-vector.
 		/// </summary>
 		/// <param name="x">The column index to return</param>
-		/// <returns></returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
+		/// <returns>The column at the specified x-position</returns>
 		Vector4 col(int x) const
 		{
 			if (x > 4)
@@ -229,14 +279,10 @@ namespace Assignment
 			return Vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Clears the matrix, optionally creating an identity matrix.
 		/// </summary>
 		/// <param name="identity">Whether to create an empty matrix, or an identity matrix</param>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		void clear(bool identity = true)
 		{
 			for (int i = 0; i < 16; i++)
@@ -245,14 +291,10 @@ namespace Assignment
 			}
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns a transposed copy of the matrix (shifted along the diagonal).
 		/// </summary>
 		/// <returns>Transposed copy of the current matrix</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		Matrix4 getTransposed() const
 		{
 			Matrix4 mat;
@@ -280,15 +322,11 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Constructs a translation matrix from the specified 4D-vector.
 		/// </summary>
 		/// <param name="v">The vector to use for translation</param>
 		/// <returns>A new translation matrix</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		static Matrix4 getTranslation(const Vector4& v)
 		{
 			Matrix4 mat = Matrix4();
@@ -301,15 +339,11 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the x-axis.
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		static Matrix4 getRotationX(const float& rad)
 		{
 			Matrix4 mat;
@@ -322,15 +356,11 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the y-axis.
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		static Matrix4 getRotationY(const float& rad)
 		{
 			Matrix4 mat;
@@ -343,15 +373,11 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the x-axis.
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		static Matrix4 getRotationZ(const float& rad)
 		{
 			Matrix4 mat;
@@ -364,16 +390,12 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the x-axis.
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <param name="axis">The axis for rotation</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		static Matrix4 getRotationXYZ(const float& rad, const Vector3 axis)
 		{
 			Vector3 unit = axis.norm();
@@ -401,16 +423,12 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns the minor matrix of the specified cell, excluding its row and column.
 		/// </summary>
 		/// <param name="x">The x-coordinate of the cell</param>
 		/// <param name="y">The y-coordinate of the cell</param>
 		/// <returns>A 3x3 matrix excluding the specified row and column</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		Matrix3 minor(int x, int y) const
 		{
 			Matrix3 mat;
@@ -431,14 +449,10 @@ namespace Assignment
 			return mat;
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns the matrix determinant.
 		/// </summary>
 		/// <returns>The determinant of the matrix</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		float determinant() const
 		{
 			Matrix3 a, b, c, d;
@@ -451,14 +465,10 @@ namespace Assignment
 			return at(0) * a.determinant() - at(1) * b.determinant() + at(2) * c.determinant() - at(3) * d.determinant();
 		}
 
-		// ********************************************************************************
 		/// <summary>
 		/// Returns the inverse of the matrix, or an identity if none exists.
 		/// </summary>
 		/// <returns>The inverse of the current matrix</returns>
-		/// <created>efiilj-7,2019-09-04</created>
-		/// <changed>efiilj-7,2019-09-04</changed>
-		// ********************************************************************************
 		Matrix4 inverse() const
 		{
 			Matrix4 inv;
@@ -483,6 +493,10 @@ namespace Assignment
 			return inv / det;
 		}
 
+		/// <summary>
+		/// Returns a formatted multi-line string representation of the matrix.
+		/// </summary>
+		/// <returns>A formatted multi-line string representation of the matrix</returns>
 		std::string to_string()
 		{
 			std::stringstream ss;
