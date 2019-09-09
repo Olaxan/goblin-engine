@@ -10,10 +10,12 @@ namespace efiilj
 		vertexCount = 0;
 	}
 
-	MeshResource::MeshResource(float* vertexList, unsigned int* indexList, int count) : MeshResource()
+	MeshResource::MeshResource(float* vertexList, unsigned int* indexList, int vertexCount, int indexCount) : MeshResource()
 	{
-		vertexCount = count;
-		InitVertexBuffer(vertexList, count);
+		this->vertexCount = vertexCount;
+		InitVertexBuffer(vertexList, vertexCount);
+		InitIndexBuffer(indexList, indexCount);
+		InitArrayObject();
 	}
 
 	void MeshResource::InitVertexBuffer(float* vertexList, int count)
@@ -23,7 +25,7 @@ namespace efiilj
 		glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), vertexList, GL_STATIC_DRAW);
 	}
 
-	void MeshResource::InitIndexBuffer(int* indexList, int count)
+	void MeshResource::InitIndexBuffer(unsigned int* indexList, int count)
 	{
 		glGenBuffers(1, &ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -37,6 +39,12 @@ namespace efiilj
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	}
+
+	void MeshResource::Bind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindVertexArray(vao);
 	}
 
 	void MeshResource::Draw(const GLuint shader)

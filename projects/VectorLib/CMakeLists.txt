@@ -9,6 +9,6 @@ FILE(GLOB vectorlib_sources code/*.cc)
 SET(files_vectorlib ${vectorlib_headers} ${vectorlib_sources})
 SOURCE_GROUP("vectorlib" FILES ${files_vectorlib})
 
-ADD_EXECUTABLE(VectorLib ${files_vectorlib})
+ADD_LIBRARY(VectorLib ${files_vectorlib})
 TARGET_LINK_LIBRARIES(VectorLib core render)
 ADD_DEPENDENCIES(VectorLib core render)
