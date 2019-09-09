@@ -3,12 +3,12 @@
 #--------------------------------------------------------------------------
 
 PROJECT(VectorLib)
-FILE(GLOB example_headers code/*.h)
-FILE(GLOB example_sources code/*.cc)
+FILE(GLOB vectorlib_headers code/*.h)
+FILE(GLOB vectorlib_sources code/*.cc)
 
-SET(files_example ${example_headers} ${example_sources})
-SOURCE_GROUP("example" FILES ${files_example})
+SET(files_vectorlib ${vectorlib_headers} ${vectorlib_sources})
+SOURCE_GROUP("vectorlib" FILES ${files_vectorlib})
 
-ADD_EXECUTABLE(VectorLib ${files_example})
+ADD_EXECUTABLE(VectorLib ${files_vectorlib})
 TARGET_LINK_LIBRARIES(VectorLib core render)
 ADD_DEPENDENCIES(VectorLib core render)
