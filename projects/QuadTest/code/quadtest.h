@@ -27,6 +27,7 @@ public:
 	void Run();
 private:
 
+	float time = 0;
 	GLuint program;
 	GLuint vertexShader;
 	GLuint pixelShader;

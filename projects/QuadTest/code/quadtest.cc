@@ -5,6 +5,7 @@
 #include "config.h"
 #include "quadtest.h"
 #include <cstring>
+#include <iostream>
 
 const GLchar* vs =
 "#version 430\n"
@@ -53,21 +54,21 @@ bool
 QuadTest::Open()
 {
 	App::Open();
-	this->window = new Display::Window;
+	this->window = new Display::Window(1000, 1000);
 	window->SetKeyPressFunction([this](int32, int32, int32, int32)
 	{
 		this->window->Close();
 	});
 
-	float buf[] =
+	efiilj::Vertex vertices[4] =
 	{
-		-0.25f,	-0.25f,	-1,			// pos 0
-		0.25f, -0.25f, -1,			// pos 1
-		0.25f,	0.25f,	-1,			// pos 2
-		-0.25f,	0.25f,	-1,			// pos 2
+		efiilj::Vertex(-0.25f, -0.25f, -1, 0, 0, 1, 1),
+		efiilj::Vertex(0.25f, -0.25f, -1, 0, 1, 0, 1),
+		efiilj::Vertex(0.25f, 0.25f, -1, 1, 0, 0, 1),
+		efiilj::Vertex(-0.25f, 0.25f, -1, 1, 1, 1, 1)
 	};
 
-	unsigned int ind[] =
+	unsigned int indices[] =
 	{
 		0, 1, 3,
 		1, 2, 3
@@ -75,9 +76,9 @@ QuadTest::Open()
 
 	if (this->window->Open())
 	{
-		mesh = efiilj::MeshResource(buf, ind, 12, 6);
+		mesh = efiilj::MeshResource(vertices, 4, indices, 6);
 
-		// set clear color to gray
+		// set clear color to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		// setup vertex shader
@@ -140,11 +141,11 @@ QuadTest::Run()
 {
 	while (this->window->IsOpen())
 	{
+		time++;
+
 		glClear(GL_COLOR_BUFFER_BIT);
 		this->window->Update();
 
-		// do stuff
-		//mesh.Bind();
 		mesh.Draw(this->program);
 
 		this->window->SwapBuffers();

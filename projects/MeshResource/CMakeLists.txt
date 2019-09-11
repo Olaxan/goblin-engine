@@ -13,4 +13,4 @@ ADD_LIBRARY(MeshResource STATIC ${files_meshresource})
 TARGET_LINK_LIBRARIES(MeshResource core render VectorLib)
 ADD_DEPENDENCIES(MeshResource core render VectorLib)
 
-target_include_directories(MeshResource INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/code/)
+TARGET_INCLUDE_DIRECTORIES(MeshResource INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/code/)

@@ -18,7 +18,7 @@ class Window
 {
 public:
 	/// constructor
-	Window();
+	Window(int width = 1024, int height = 768);
 	/// destructor
 	~Window();
 
