@@ -23,7 +23,6 @@ namespace efiilj
 		int indexCount;
 
 		void InitVertexBuffer(Vertex* vertexList, int count);
-
 		void InitIndexBuffer(unsigned int* indexList, int count);
 		void InitArrayObject();
 
