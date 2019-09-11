@@ -7,25 +7,25 @@
 #include <cstring>
 #include <iostream>
 
-const GLchar* vs =
-"#version 430\n"
-"layout(location=0) in vec3 pos;\n"
-"layout(location=1) in vec4 color;\n"
-"layout(location=0) out vec4 Color;\n"
-"void main()\n"
-"{\n"
-"	gl_Position = vec4(pos, 1);\n"
-"	Color = color;\n"
-"}\n";
+const GLchar* vs = R"glsl(
+#version 430
+layout(location=0) in vec3 pos;
+layout(location=1) in vec4 color;
+layout(location=0) out vec4 Color;
+void main()
+{
+	gl_Position = vec4(pos, 1);
+	Color = color;
+})glsl";
 
-const GLchar* ps =
-"#version 430\n"
-"layout(location=0) in vec4 color;\n"
-"out vec4 Color;\n"
-"void main()\n"
-"{\n"
-"	Color = color;\n"
-"}\n";
+const GLchar* ps = R"glsl(
+#version 430
+layout(location=0) in vec4 color;
+out vec4 Color;
+void main()
+{
+	Color = color;
+})glsl";
 
 using namespace Display;
 namespace Example

@@ -19,6 +19,7 @@ namespace efiilj
 	private:
 		unsigned int vbo;
 		unsigned int ibo;
+		unsigned int vao;
 		int vertexCount;
 		int indexCount;
 
@@ -27,12 +28,11 @@ namespace efiilj
 		void InitArrayObject();
 
 	public:
-		unsigned int vao;
 
 		MeshResource();
 		MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount);
 
 		void Bind();
-		void Draw(const GLuint shader);
+		void Draw(const unsigned int shader);
 	};
 }

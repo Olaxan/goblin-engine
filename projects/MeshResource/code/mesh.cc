@@ -59,7 +59,7 @@ namespace efiilj
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	}
 
-	void MeshResource::Draw(const GLuint shader)
+	void MeshResource::Draw(const unsigned int shader)
 	{
 		glUseProgram(shader);
 		Bind();
