@@ -9,7 +9,7 @@
 #include "core/app.h"
 #include "render/window.h"
 
-#include "..\..\projects\MeshResource\code\mesh.h"
+#include "mesh.h"
 
 namespace Example
 {

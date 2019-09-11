@@ -9,7 +9,8 @@ FILE(GLOB meshresource_sources code/*.cc)
 SET(files_meshresource ${meshresource_headers} ${meshresource_sources})
 SOURCE_GROUP("meshresource" FILES ${files_meshresource})
 
-ADD_LIBRARY(MeshResource ${files_meshresource})
-TARGET_LINK_LIBRARIES(MeshResource core render)
-ADD_DEPENDENCIES(MeshResource core render)
+ADD_LIBRARY(MeshResource STATIC ${files_meshresource})
+TARGET_LINK_LIBRARIES(MeshResource core render VectorLib)
+ADD_DEPENDENCIES(MeshResource core render VectorLib)
 
+target_include_directories(MeshResource INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/code/)

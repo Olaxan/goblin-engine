@@ -10,5 +10,7 @@ SET(files_example ${example_headers} ${example_sources})
 SOURCE_GROUP("quadtest" FILES ${files_example})
 
 ADD_EXECUTABLE(QuadTest ${files_example})
-TARGET_LINK_LIBRARIES(QuadTest core render)
-ADD_DEPENDENCIES(QuadTest core render)
+TARGET_LINK_LIBRARIES(QuadTest core render MeshResource)
+ADD_DEPENDENCIES(QuadTest core render MeshResource)
+
+

@@ -73,12 +73,12 @@ QuadTest::Open()
 		1, 2, 3
 	};
 
-	mesh = efiilj::MeshResource(buf, ind, 12, 6);
-
 	if (this->window->Open())
 	{
+		mesh = efiilj::MeshResource(buf, ind, 12, 6);
+
 		// set clear color to gray
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		// setup vertex shader
 		this->vertexShader = glCreateShader(GL_VERTEX_SHADER);

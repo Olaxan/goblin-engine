@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include "..\..\projects\VectorLib\code\matrix4.h"
+#include "matrix4.h"
 
 namespace efiilj
 {
@@ -12,6 +12,7 @@ namespace efiilj
 		GLuint vbo;
 		GLuint ibo;
 		int vertexCount;
+		int indexCount;
 
 		void InitVertexBuffer(float* vertexList, int count);
 		void InitIndexBuffer(unsigned int* indexList, int count);

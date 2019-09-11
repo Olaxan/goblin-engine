@@ -8,11 +8,13 @@ namespace efiilj
 		vao = 0;
 		vbo = 0;
 		vertexCount = 0;
+		indexCount = 0;
 	}
 
 	MeshResource::MeshResource(float* vertexList, unsigned int* indexList, int vertexCount, int indexCount) : MeshResource()
 	{
 		this->vertexCount = vertexCount;
+		this->indexCount = indexCount;
 		InitVertexBuffer(vertexList, vertexCount);
 		InitIndexBuffer(indexList, indexCount);
 		InitArrayObject();
@@ -50,7 +52,7 @@ namespace efiilj
 	void MeshResource::Draw(const GLuint shader)
 	{
 		glUseProgram(shader);
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 	}
 }
