@@ -65,7 +65,7 @@ QuadTest::Open()
 		efiilj::Vertex(-0.25f, -0.25f, -1, 0, 0, 1, 1),
 		efiilj::Vertex(0.25f, -0.25f, -1, 0, 1, 0, 1),
 		efiilj::Vertex(0.25f, 0.25f, -1, 1, 0, 0, 1),
-		efiilj::Vertex(-0.25f, 0.25f, -1, 1, 1, 1, 1)
+		efiilj::Vertex(-0.25f, 0.25f, -1, 1, 1, 0.5, 1)
 	};
 
 	unsigned int indices[] =
@@ -147,12 +147,13 @@ QuadTest::Run()
 		this->window->Update();
 
 		float tsin = sinf(float(time) / 30);
+		float tsin2 = sinf(float(time) / 10);
+		float tcos2 = cosf(float(time) / 10);
 
-		auto trans = efiilj::Matrix4::getTranslation(tsin, cosf(tsin / 2) / 5, 0);
+		auto trans = efiilj::Matrix4::getTranslation(tsin, std::abs(tcos2 / 3), 0);
 		auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);
-		auto scale = efiilj::Matrix4::getScale(tsin, tsin, tsin);
+		auto scale = efiilj::Matrix4::getScale(0.75 + tsin2 / 3, 0.75 + tsin2 / 3, 1);
 
-		efiilj::Vertex newVert[4];
 		memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));
 
 		for (int i = 0; i < 4; i++)

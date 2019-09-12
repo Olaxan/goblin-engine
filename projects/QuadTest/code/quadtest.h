@@ -33,6 +33,7 @@ private:
 	GLuint pixelShader;
 	efiilj::MeshResource mesh;
 	efiilj::Vertex* vertices;
+	efiilj::Vertex newVert[4];
 	Display::Window* window;
 };
 } // namespace Example
