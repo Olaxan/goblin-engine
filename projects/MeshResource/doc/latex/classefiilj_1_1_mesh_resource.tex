@@ -1,0 +1,112 @@
+\hypertarget{classefiilj_1_1_mesh_resource}{}\doxysection{efiilj\+::Mesh\+Resource Class Reference}
+\label{classefiilj_1_1_mesh_resource}\index{efiilj::MeshResource@{efiilj::MeshResource}}
+
+
+Class to create a mesh on the G\+PU, as well as to hold buffer handles which enables binding.  
+
+
+
+
+{\ttfamily \#include $<$mesh.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classefiilj_1_1_mesh_resource_ac813704970ca70ea7d5aaddf458aff5f}{Mesh\+Resource}} ()
+\begin{DoxyCompactList}\small\item\em Creates an empty \mbox{\hyperlink{classefiilj_1_1_mesh_resource}{Mesh\+Resource}} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classefiilj_1_1_mesh_resource_ae482ae18bbd48024faa2fa4b37ad3ac7}{Mesh\+Resource}} (\mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} $\ast$vertex\+List, int vertex\+Count, unsigned int $\ast$index\+List, int index\+Count)
+\begin{DoxyCompactList}\small\item\em Creates a new \mbox{\hyperlink{classefiilj_1_1_mesh_resource}{Mesh\+Resource}} instance with the specified vertex and index lists. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classefiilj_1_1_mesh_resource_a927297a52b863cc1ac78b1234ec25080}{Bind}} ()
+\begin{DoxyCompactList}\small\item\em Binds \mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} Array Object and Index Buffer to prepare Open\+GL for drawing this mesh. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classefiilj_1_1_mesh_resource_ae6abb23d584fe718c7b78efd430d1761}{Update\+Vertex\+Buffer}} (\mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} $\ast$vertex\+List)
+\begin{DoxyCompactList}\small\item\em Pushes a new vertex list (of the same size) to the \mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} Buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classefiilj_1_1_mesh_resource_ad06ebe97916a12a6d6d873453cb709d7}{Draw}} (const unsigned int shader)
+\begin{DoxyCompactList}\small\item\em Shortcut for instantly drawing this mesh with the current settings. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to create a mesh on the G\+PU, as well as to hold buffer handles which enables binding. 
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_mesh_resource_ac813704970ca70ea7d5aaddf458aff5f}\label{classefiilj_1_1_mesh_resource_ac813704970ca70ea7d5aaddf458aff5f}} 
+\index{efiilj::MeshResource@{efiilj::MeshResource}!MeshResource@{MeshResource}}
+\index{MeshResource@{MeshResource}!efiilj::MeshResource@{efiilj::MeshResource}}
+\doxysubsubsection{\texorpdfstring{MeshResource()}{MeshResource()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily efiilj\+::\+Mesh\+Resource\+::\+Mesh\+Resource (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Creates an empty \mbox{\hyperlink{classefiilj_1_1_mesh_resource}{Mesh\+Resource}} object. 
+
+\mbox{\Hypertarget{classefiilj_1_1_mesh_resource_ae482ae18bbd48024faa2fa4b37ad3ac7}\label{classefiilj_1_1_mesh_resource_ae482ae18bbd48024faa2fa4b37ad3ac7}} 
+\index{efiilj::MeshResource@{efiilj::MeshResource}!MeshResource@{MeshResource}}
+\index{MeshResource@{MeshResource}!efiilj::MeshResource@{efiilj::MeshResource}}
+\doxysubsubsection{\texorpdfstring{MeshResource()}{MeshResource()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily efiilj\+::\+Mesh\+Resource\+::\+Mesh\+Resource (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} $\ast$}]{vertex\+List,  }\item[{int}]{vertex\+Count,  }\item[{unsigned int $\ast$}]{index\+List,  }\item[{int}]{index\+Count }\end{DoxyParamCaption})}
+
+
+
+Creates a new \mbox{\hyperlink{classefiilj_1_1_mesh_resource}{Mesh\+Resource}} instance with the specified vertex and index lists. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vertex\+List} & List of vertices to buffer\\
+\hline
+{\em vertex\+Count} & Size of the vertex list\\
+\hline
+{\em index\+List} & List of indices to buffer\\
+\hline
+{\em index\+Count} & Size of the index list\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classefiilj_1_1_mesh_resource_a927297a52b863cc1ac78b1234ec25080}\label{classefiilj_1_1_mesh_resource_a927297a52b863cc1ac78b1234ec25080}} 
+\index{efiilj::MeshResource@{efiilj::MeshResource}!Bind@{Bind}}
+\index{Bind@{Bind}!efiilj::MeshResource@{efiilj::MeshResource}}
+\doxysubsubsection{\texorpdfstring{Bind()}{Bind()}}
+{\footnotesize\ttfamily void efiilj\+::\+Mesh\+Resource\+::\+Bind (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Binds \mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} Array Object and Index Buffer to prepare Open\+GL for drawing this mesh. 
+
+\mbox{\Hypertarget{classefiilj_1_1_mesh_resource_ad06ebe97916a12a6d6d873453cb709d7}\label{classefiilj_1_1_mesh_resource_ad06ebe97916a12a6d6d873453cb709d7}} 
+\index{efiilj::MeshResource@{efiilj::MeshResource}!Draw@{Draw}}
+\index{Draw@{Draw}!efiilj::MeshResource@{efiilj::MeshResource}}
+\doxysubsubsection{\texorpdfstring{Draw()}{Draw()}}
+{\footnotesize\ttfamily void efiilj\+::\+Mesh\+Resource\+::\+Draw (\begin{DoxyParamCaption}\item[{const unsigned int}]{shader }\end{DoxyParamCaption})}
+
+
+
+Shortcut for instantly drawing this mesh with the current settings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em shader} & The shader program id to use for drawing\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classefiilj_1_1_mesh_resource_ae6abb23d584fe718c7b78efd430d1761}\label{classefiilj_1_1_mesh_resource_ae6abb23d584fe718c7b78efd430d1761}} 
+\index{efiilj::MeshResource@{efiilj::MeshResource}!UpdateVertexBuffer@{UpdateVertexBuffer}}
+\index{UpdateVertexBuffer@{UpdateVertexBuffer}!efiilj::MeshResource@{efiilj::MeshResource}}
+\doxysubsubsection{\texorpdfstring{UpdateVertexBuffer()}{UpdateVertexBuffer()}}
+{\footnotesize\ttfamily void efiilj\+::\+Mesh\+Resource\+::\+Update\+Vertex\+Buffer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} $\ast$}]{vertex\+List }\end{DoxyParamCaption})}
+
+
+
+Pushes a new vertex list (of the same size) to the \mbox{\hyperlink{structefiilj_1_1_vertex}{Vertex}} Buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vertex\+List} & The updated vertex list\\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+code/mesh.\+h\item 
+code/mesh.\+cc\end{DoxyCompactItemize}

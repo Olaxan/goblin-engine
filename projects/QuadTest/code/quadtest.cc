@@ -150,18 +150,18 @@ QuadTest::Run()
 		float tsin2 = sinf(float(time) / 10);
 		float tcos2 = cosf(float(time) / 10);
 
-		auto trans = efiilj::Matrix4::getTranslation(tsin, std::abs(tcos2 / 3), 0);
-		auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);
-		auto scale = efiilj::Matrix4::getScale(0.75 + tsin2 / 3, 0.75 + tsin2 / 3, 1);
+		auto trans = efiilj::Matrix4::getTranslation(tsin, std::abs(tcos2 / 3), 0);		// Translation matrix
+		auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);						// Rotation matrix
+		auto scale = efiilj::Matrix4::getScale(0.75 + tsin2 / 3, 0.75 + tsin2 / 3, 1);	// Scale matrix
 
-		memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));
+		memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));	// Copy original vertex positions to transformation buffer
 
 		for (int i = 0; i < 4; i++)
 		{
-			newVert[i].xyzw = (trans * rot * scale) * newVert[i].xyzw;
+			newVert[i].xyzw = (trans * rot * scale) * newVert[i].xyzw;	// Apply transformation matrices to transformation buffer vertices
 		}
 
-		mesh.UpdateVertexBuffer(newVert);
+		mesh.UpdateVertexBuffer(newVert);	// Send new vertex data to meshresource
 		mesh.Draw(this->program);
 
 		this->window->SwapBuffers();
