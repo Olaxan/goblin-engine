@@ -8,9 +8,9 @@ namespace efiilj
 {
 	struct Vertex
 	{
-		Vertex(float x, float y, float z, float r, float g, float b, float a) : xyz(x, y, z), rgba(r, g, b, a) { }
+		Vertex(float x = 0, float y = 0, float z = 0, float r = 0, float g = 0, float b = 0, float a = 0) : xyzw(x, y, z, 1), rgba(r, g, b, a) { }
 
-		Vector3 xyz;
+		Vector4 xyzw;
 		Vector4 rgba;
 	};
 
@@ -33,6 +33,7 @@ namespace efiilj
 		MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount);
 
 		void Bind();
+		void UpdateVertexBuffer(Vertex* vertexList);
 		void Draw(const unsigned int shader);
 	};
 }

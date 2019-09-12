@@ -2,7 +2,7 @@
 # QuadTest project
 #--------------------------------------------------------------------------
 
-PROJECT(TriTest)
+PROJECT(QuadTest)
 FILE(GLOB example_headers code/*.h)
 FILE(GLOB example_sources code/*.cc)
 

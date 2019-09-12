@@ -53,6 +53,12 @@ namespace efiilj
 		glBindVertexArray(vao);
 	}
 
+	void MeshResource::UpdateVertexBuffer(Vertex* vertexList)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCount * sizeof(Vertex), vertexList);
+	}
+
 	void MeshResource::Bind()
 	{
 		glBindVertexArray(vao);

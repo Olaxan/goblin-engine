@@ -60,7 +60,7 @@ QuadTest::Open()
 		this->window->Close();
 	});
 
-	efiilj::Vertex vertices[4] =
+	vertices = new efiilj::Vertex[4]
 	{
 		efiilj::Vertex(-0.25f, -0.25f, -1, 0, 0, 1, 1),
 		efiilj::Vertex(0.25f, -0.25f, -1, 0, 1, 0, 1),
@@ -146,6 +146,21 @@ QuadTest::Run()
 		glClear(GL_COLOR_BUFFER_BIT);
 		this->window->Update();
 
+		float tsin = sinf(float(time) / 30);
+
+		auto trans = efiilj::Matrix4::getTranslation(tsin, cosf(tsin / 2) / 5, 0);
+		auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);
+		auto scale = efiilj::Matrix4::getScale(tsin, tsin, tsin);
+
+		efiilj::Vertex newVert[4];
+		memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));
+
+		for (int i = 0; i < 4; i++)
+		{
+			newVert[i].xyzw = (trans * rot * scale) * newVert[i].xyzw;
+		}
+
+		mesh.UpdateVertexBuffer(newVert);
 		mesh.Draw(this->program);
 
 		this->window->SwapBuffers();

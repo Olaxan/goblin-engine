@@ -413,10 +413,39 @@ namespace efiilj
 		{
 			Matrix4 mat = Matrix4();
 
-			mat(2, 0) = v.x();
-			mat(2, 1) = v.y();
-			mat(2, 2) = v.z();
-			mat(2, 3) = v.w();
+			mat(3, 0) = v.x();
+			mat(3, 1) = v.y();
+			mat(3, 2) = v.z();
+			mat(3, 3) = v.w();
+
+			return mat;
+		}
+
+		/// <summary>
+		/// Constructs a translation matrix from the specified 4D-vector.
+		/// </summary>
+		/// <param name="x">Translation in the x axis</param>
+		/// <param name="y">Translation in the x axis</param>
+		/// <param name="z">Translation in the x axis</param>
+		/// <returns>A new translation matrix</returns>
+		static Matrix4 getTranslation(float x, float y, float z)
+		{
+			Matrix4 mat = Matrix4();
+
+			mat(3, 0) = x;
+			mat(3, 1) = y;
+			mat(3, 2) = z;
+
+			return mat;
+		}
+
+		static Matrix4 getScale(float x, float y, float z)
+		{
+			Matrix4 mat = Matrix4();
+
+			mat(0, 0) = x;
+			mat(1, 1) = y;
+			mat(2, 2) = z;
 
 			return mat;
 		}
