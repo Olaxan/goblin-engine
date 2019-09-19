@@ -15,24 +15,26 @@ layout(location = 1) in vec4 normal;
 layout(location = 2) in vec4 color;
 layout(location = 3) in vec2 uv;
 
-layout(location = 0) out vec4 Color;
+layout(location = 0) out vec2 Uv;
 
 void main()
 {
 	gl_Position = pos;
-	Color = color;
+	Uv = uv;
 })glsl";
 
 const GLchar* ps = R"glsl(
 #version 430
 
-layout(location = 0) in vec4 color;
+layout(location = 0) in vec2 uv;
+
+uniform sampler2D u_sampler;
 
 out vec4 Color;
 
 void main()
 {
-	Color = color;
+	Color = texture(u_sampler, uv);
 })glsl";
 
 using namespace Display;
@@ -71,7 +73,7 @@ QuadTest::Open()
 	if (this->window->Open())
 	{
 
-		texture = efiilj::TextureResource("res/textures/test.png");
+		texture = efiilj::TextureResource("C:/Users/efiilj-7-local/Documents/Source/ltu-lab-s0006e_env/bin/res/textures/test.png");
 		mesh = efiilj::MeshResource::Cube(1);
 
 		// set clear color to black
@@ -162,7 +164,11 @@ QuadTest::Run()
 		//}
 
 		//mesh.UpdateVertexBuffer(newVert);	// Send new vertex data to meshresource
-		mesh.Draw(this->program);
+
+		glUseProgram(program);
+		texture.Bind();
+		mesh.Bind();
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
 
 		this->window->SwapBuffers();
 	}

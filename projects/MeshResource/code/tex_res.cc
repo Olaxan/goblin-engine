@@ -2,6 +2,7 @@
 #include "stb_image.h"
 
 #include <GL/glew.h>
+#include <iostream>
 
 namespace efiilj
 {
@@ -13,15 +14,16 @@ namespace efiilj
 		glBindTexture(GL_TEXTURE_2D, tex_id);
 
 		stbi_set_flip_vertically_on_load(true);
-		unsigned char* buffer = stbi_load(path, &width, &height, &bits_per_pixel, 4);
+		unsigned char* buffer = stbi_load(path, &width, &height, &bits_per_pixel, 3);
+
+		std::cout << "Loaded texture " << tex_id << ": " << width << "x" << height << " / " << bits_per_pixel;
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		Unbind();
