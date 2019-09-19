@@ -9,7 +9,8 @@
 #include "core/app.h"
 #include "render/window.h"
 
-#include "mesh.h"
+#include "mesh_res.h"
+#include "tex_res.h"
 
 namespace Example
 {
@@ -32,8 +33,9 @@ private:
 	GLuint vertexShader;
 	GLuint pixelShader;
 	efiilj::MeshResource mesh;
+	efiilj::TextureResource texture;
 	efiilj::Vertex* vertices;
-	efiilj::Vertex newVert[4];
+	efiilj::Vertex newVert[36];
 	Display::Window* window;
 };
 } // namespace Example

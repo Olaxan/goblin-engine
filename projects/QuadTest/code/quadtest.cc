@@ -9,19 +9,27 @@
 
 const GLchar* vs = R"glsl(
 #version 430
-layout(location=0) in vec3 pos;
-layout(location=1) in vec4 color;
-layout(location=0) out vec4 Color;
+
+layout(location = 0) in vec4 pos;
+layout(location = 1) in vec4 normal;
+layout(location = 2) in vec4 color;
+layout(location = 3) in vec2 uv;
+
+layout(location = 0) out vec4 Color;
+
 void main()
 {
-	gl_Position = vec4(pos, 1);
+	gl_Position = pos;
 	Color = color;
 })glsl";
 
 const GLchar* ps = R"glsl(
 #version 430
-layout(location=0) in vec4 color;
+
+layout(location = 0) in vec4 color;
+
 out vec4 Color;
+
 void main()
 {
 	Color = color;
@@ -60,23 +68,11 @@ QuadTest::Open()
 		this->window->Close();
 	});
 
-	vertices = new efiilj::Vertex[4]
-	{
-		efiilj::Vertex(-0.25f, -0.25f, -1, 0, 0, 1, 1),
-		efiilj::Vertex(0.25f, -0.25f, -1, 0, 1, 0, 1),
-		efiilj::Vertex(0.25f, 0.25f, -1, 1, 0, 0, 1),
-		efiilj::Vertex(-0.25f, 0.25f, -1, 1, 1, 0.5, 1)
-	};
-
-	unsigned int indices[] =
-	{
-		0, 1, 3,
-		1, 2, 3
-	};
-
 	if (this->window->Open())
 	{
-		mesh = efiilj::MeshResource(vertices, 4, indices, 6);
+
+		texture = efiilj::TextureResource("res/textures/test.png");
+		mesh = efiilj::MeshResource::Cube(1);
 
 		// set clear color to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -94,7 +90,7 @@ QuadTest::Open()
 		{
 			GLchar* buf = new GLchar[shaderLogSize];
 			glGetShaderInfoLog(this->vertexShader, shaderLogSize, NULL, buf);
-			printf("[SHADER COMPILE ERROR]: %s", buf);
+			printf("[VS SHADER COMPILE ERROR]: %s", buf);
 			delete[] buf;
 		}
 
@@ -111,7 +107,7 @@ QuadTest::Open()
 		{
 			GLchar* buf = new GLchar[shaderLogSize];
 			glGetShaderInfoLog(this->pixelShader, shaderLogSize, NULL, buf);
-			printf("[SHADER COMPILE ERROR]: %s", buf);
+			printf("[FS SHADER COMPILE ERROR]: %s", buf);
 			delete[] buf;
 		}
 
@@ -139,29 +135,33 @@ QuadTest::Open()
 void
 QuadTest::Run()
 {
+
+	std::cout << vs << "\n\n === \n\n" << ps;
+
 	while (this->window->IsOpen())
 	{
+
 		time++;
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		this->window->Update();
 
-		float tsin = sinf(float(time) / 30);
-		float tsin2 = sinf(float(time) / 10);
-		float tcos2 = cosf(float(time) / 10);
+		//float tsin = sinf(float(time) / 30);
+		//float tsin2 = sinf(float(time) / 10);
+		//float tcos2 = cosf(float(time) / 10);
 
-		auto trans = efiilj::Matrix4::getTranslation(tsin, std::abs(tcos2 / 3), 0);		// Translation matrix
-		auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);						// Rotation matrix
-		auto scale = efiilj::Matrix4::getScale(0.75 + tsin2 / 3, 0.75 + tsin2 / 3, 1);	// Scale matrix
+		//auto trans = efiilj::Matrix4::getTranslation(tsin, std::abs(tcos2 / 3), 0);		// Translation matrix
+		//auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);						// Rotation matrix
+		//auto scale = efiilj::Matrix4::getScale(0.75 + tsin2 / 3, 0.75 + tsin2 / 3, 1);	// Scale matrix
 
-		memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));	// Copy original vertex positions to transformation buffer
+		//memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));	// Copy original vertex positions to transformation buffer
 
-		for (int i = 0; i < 4; i++)
-		{
-			newVert[i].xyzw = (trans * rot * scale) * newVert[i].xyzw;	// Apply transformation matrices to transformation buffer vertices
-		}
+		//for (int i = 0; i < 4; i++)
+		//{
+		//	newVert[i].xyzw = (trans * rot * scale) * newVert[i].xyzw;	// Apply transformation matrices to transformation buffer vertices
+		//}
 
-		mesh.UpdateVertexBuffer(newVert);	// Send new vertex data to meshresource
+		//mesh.UpdateVertexBuffer(newVert);	// Send new vertex data to meshresource
 		mesh.Draw(this->program);
 
 		this->window->SwapBuffers();

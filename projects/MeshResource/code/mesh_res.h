@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GL/glew.h>
-
 #include "matrix4.h"
 
 namespace efiilj
@@ -11,10 +9,13 @@ namespace efiilj
 	/// </summary>
 	struct Vertex
 	{
-		Vertex(float x = 0, float y = 0, float z = 0, float r = 0, float g = 0, float b = 0, float a = 0) : xyzw(x, y, z, 1), rgba(r, g, b, a) { }
+		Vertex() : xyzw(0, 0, 0, 0), normal(0, 0, 0, 0), rgba(1, 1, 1, 1), uv(0, 0) { }
+		Vertex(Vector3 xyzw, Vector3 normal, Vector4 rgba, Vector2 uv) : xyzw(xyzw), rgba(rgba), normal(normal), uv(uv) { }
 
 		Vector4 xyzw;
+		Vector4 normal;
 		Vector4 rgba;
+		Vector2 uv;
 	};
 
 	/// <summary>
@@ -78,10 +79,14 @@ namespace efiilj
 		/// <param name="indexCount">Size of the index list</param>
 		MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount);
 
+		static MeshResource Cube(float size, float c = 1);
+
 		/// <summary>
 		/// Binds Vertex Array Object and Index Buffer to prepare OpenGL for drawing this mesh.
 		/// </summary>
 		void Bind();
+
+		void Unbind();
 
 		/// <summary>
 		/// Pushes a new vertex list (of the same size) to the Vertex Buffer.
@@ -94,5 +99,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="shader">The shader program id to use for drawing</param>
 		void Draw(const unsigned int shader);
+
+		~MeshResource();
 	};
 }
