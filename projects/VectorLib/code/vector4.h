@@ -345,6 +345,7 @@ namespace efiilj
 			vect.x(y() * other.z() - z() * other.y());
 			vect.y(z() * other.x() - x() * other.z());
 			vect.z(x() * other.y() - y() * other.x());
+			vect.w(this->x());
 			return vect;
 		}
 

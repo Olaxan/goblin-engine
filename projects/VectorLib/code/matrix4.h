@@ -563,21 +563,17 @@ namespace efiilj
 
 		static Matrix4 getLookat(Vector3 cameraPos, Vector3 cameraTarget, Vector3 upDirection)
 		{
-			Vector4 cameraDirection = (cameraPos - cameraTarget).norm();
 
-			Vector4 cameraRight = Vector4::cross(upDirection, cameraDirection).norm();
-			Vector4 cameraUp = Vector4::cross(cameraDirection, cameraRight);
+			Vector3 cameraDirection = (cameraPos - cameraTarget).norm();
+			Vector3 cameraRight = Vector3::cross(upDirection, cameraDirection).norm();
+			Vector3 cameraUp = Vector3::cross(cameraDirection, cameraRight);
 
-			std::cout << cameraRight.to_string() << "\n" << cameraUp.to_string() << "\n" << cameraDirection.to_string() << "\n";
+			Matrix4 A = Matrix4(Vector4(cameraRight), Vector4(cameraUp), Vector4(cameraDirection), Vector4());
 
-			Matrix4 A = Matrix4(cameraRight, cameraUp, cameraDirection, Vector4());
-			
 			Matrix4 B = Matrix4();
 			B(3, 0) = -cameraPos.x();
 			B(3, 1) = -cameraPos.y();
 			B(3, 2) = -cameraPos.z();
-
-			std::cout << "A: \n\n" << A.to_string() << "\nB: \n\n" << B.to_string();
 
 			return A * B;
 		}

@@ -157,8 +157,8 @@ QuadTest::Run()
 		t_now = std::chrono::high_resolution_clock::now();
 		time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
-		efiilj::Matrix4 model = efiilj::Matrix4::getTranslation(0, 0, 0);
-		efiilj::Matrix4 view = efiilj::Matrix4::getLookat(efiilj::Vector3(sinf(time), 2, cosf(time)), efiilj::Vector3(0, 0, 0), efiilj::Vector3(0, 1, 0));
+		efiilj::Matrix4 model = efiilj::Matrix4::getRotationY(time / 2);
+		efiilj::Matrix4 view = efiilj::Matrix4::getLookat(efiilj::Vector3(2, 2, 2), efiilj::Vector3(0, 0, 0), efiilj::Vector3(0, 1, 0));
 		efiilj::Matrix4 perspective = efiilj::Matrix4::getPerspective(fov, 1, 0.1f, 100.0f);
 
 		efiilj::Matrix4 mvp = (perspective * view * model).transpose();
