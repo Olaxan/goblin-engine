@@ -8,6 +8,8 @@
 #include "vector4.h"
 #include "matrix3.h"
 
+#define PI 3.1415926535
+
 namespace efiilj
 {
 
@@ -26,9 +28,9 @@ namespace efiilj
 		/// <summary>
 		/// Creates a new identity Matrix4.
 		/// </summary>
-		Matrix4()
+		Matrix4(bool identity = true)
 		{
-			clear();
+			clear(identity);
 		}
 
 		/// <summary>
@@ -455,7 +457,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationX(const float& rad)
+		static Matrix4 getRotationX(const float rad)
 		{
 			Matrix4 mat;
 
@@ -472,7 +474,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationY(const float& rad)
+		static Matrix4 getRotationY(const float rad)
 		{
 			Matrix4 mat;
 
@@ -489,7 +491,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationZ(const float& rad)
+		static Matrix4 getRotationZ(const float rad)
 		{
 			Matrix4 mat;
 
@@ -507,7 +509,7 @@ namespace efiilj
 		/// <param name="rad">The rotation in radians</param>
 		/// <param name="axis">The axis for rotation</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationXYZ(const float& rad, const Vector3 axis)
+		static Matrix4 getRotationXYZ(const float rad, const Vector3 axis)
 		{
 			Vector3 unit = axis.norm();
 
@@ -534,6 +536,52 @@ namespace efiilj
 			return mat;
 		}
 
+		static Matrix4 getPerspective(float left, float right, float top, float bottom, float near, float far)
+		{
+
+			Matrix4 mat(false);
+
+			mat(0, 0) = (2 * near) / (right - left);
+			mat(2, 0) = (right + left) / (right - left);
+			mat(1, 1) = (2 * near) / (top - bottom);
+			mat(2, 1) = (top + bottom) / (top - bottom);
+			mat(2, 2) = -((far + near) / (far - near));
+			mat(3, 2) = -((2 * far * near) / (far - near));
+			mat(2, 3) = -1;
+
+			return mat;
+		}
+
+		static Matrix4 getPerspective(float fovY, float aspect, float near, float far)
+		{
+			float tangent = tanf(fovY / 2);
+			float height = near * tangent;
+			float width = height * aspect;
+
+			return getPerspective(-width, width, -height, height, near, far);
+		}
+
+		static Matrix4 getLookat(Vector3 cameraPos, Vector3 cameraTarget, Vector3 upDirection)
+		{
+			Vector4 cameraDirection = (cameraPos - cameraTarget).norm();
+
+			Vector4 cameraRight = Vector4::cross(upDirection, cameraDirection).norm();
+			Vector4 cameraUp = Vector4::cross(cameraDirection, cameraRight);
+
+			std::cout << cameraRight.to_string() << "\n" << cameraUp.to_string() << "\n" << cameraDirection.to_string() << "\n";
+
+			Matrix4 A = Matrix4(cameraRight, cameraUp, cameraDirection, Vector4());
+			
+			Matrix4 B = Matrix4();
+			B(3, 0) = -cameraPos.x();
+			B(3, 1) = -cameraPos.y();
+			B(3, 2) = -cameraPos.z();
+
+			std::cout << "A: \n\n" << A.to_string() << "\nB: \n\n" << B.to_string();
+
+			return A * B;
+		}
+
 		/* === UTILITIES === */
 
 		/// <summary>
@@ -555,3 +603,5 @@ namespace efiilj
 		friend Vector4;
 	};
 }
+
+#undef PI

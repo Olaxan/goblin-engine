@@ -12,6 +12,8 @@
 #include "mesh_res.h"
 #include "tex_res.h"
 
+#include <chrono>
+
 namespace Example
 {
 class QuadTest : public Core::App
@@ -28,7 +30,6 @@ public:
 	void Run();
 private:
 
-	float time = 0;
 	GLuint program;
 	GLuint vertexShader;
 	GLuint pixelShader;
@@ -37,5 +38,7 @@ private:
 	efiilj::Vertex* vertices;
 	efiilj::Vertex newVert[36];
 	Display::Window* window;
+	std::chrono::time_point<std::chrono::steady_clock> t_start, t_now;
+	float time;
 };
 } // namespace Example

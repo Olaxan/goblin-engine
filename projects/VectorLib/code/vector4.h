@@ -52,7 +52,7 @@ namespace efiilj
 			this->x(copy.x());
 			this->y(copy.y());
 			this->z(0);
-			this->w(1);
+			this->w(0);
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace efiilj
 			this->x(copy.x());
 			this->y(copy.y());
 			this->z(copy.z());
-			this->w(1);
+			this->w(0);
 		}
 
 		/// <summary>
@@ -361,11 +361,13 @@ namespace efiilj
 		/// <summary>
 		/// Normalizes the vector, turning it into a unit vector.
 		/// </summary>
-		/// <returns>The resulting unit vector</returns>
+		/// <returns>The resulting unit vector, or returns as-received if the vector length is already zero</returns>
 		Vector4 norm() const
 		{
 			Vector4 v = (*this);
-			return v * (1 / v.length());
+			float len = v.length();
+
+			return len > 0 ? v * (1 / v.length()) : v;
 		}
 
 		/* === FACTORY FUNCTIONS === */

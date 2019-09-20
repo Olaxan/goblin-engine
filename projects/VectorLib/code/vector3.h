@@ -324,7 +324,9 @@ namespace efiilj
 		Vector3 norm() const
 		{
 			Vector3 v = (*this);
-			return v * (1 / v.length());
+			float len = v.length();
+
+			return len > 0 ? v * (1 / v.length()) : v;
 		}
 
 		/* === FACTORY FUNCTIONS === */

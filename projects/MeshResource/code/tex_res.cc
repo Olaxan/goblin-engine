@@ -16,7 +16,7 @@ namespace efiilj
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* buffer = stbi_load(path, &width, &height, &bits_per_pixel, 3);
 
-		std::cout << "Loaded texture " << tex_id << ": " << width << "x" << height << " / " << bits_per_pixel;
+		std::cout << "Loaded texture " << tex_id << ": " << width << "x" << height << " / " << bits_per_pixel << "\n\n";
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

@@ -17,9 +17,12 @@ layout(location = 3) in vec2 uv;
 
 layout(location = 0) out vec2 Uv;
 
+uniform mat4 trans;
+uniform mat4 mvp;
+
 void main()
 {
-	gl_Position = pos;
+	gl_Position = mvp * pos;
 	Uv = uv;
 })glsl";
 
@@ -70,11 +73,17 @@ QuadTest::Open()
 		this->window->Close();
 	});
 
+	t_start = std::chrono::high_resolution_clock::now();
+
 	if (this->window->Open())
 	{
 
-		texture = efiilj::TextureResource("C:/Users/efiilj-7-local/Documents/Source/ltu-lab-s0006e_env/bin/res/textures/test.png");
-		mesh = efiilj::MeshResource::Cube(1);
+		texture = efiilj::TextureResource("C:/Users/efiilj-7-local/Documents/Source/ltu-lab-s0006e_env/bin/res/textures/test2.png");
+		mesh = efiilj::MeshResource::Cube(0.5);
+
+		//enable face culling
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
 
 		// set clear color to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -138,32 +147,27 @@ void
 QuadTest::Run()
 {
 
-	std::cout << vs << "\n\n === \n\n" << ps;
+	std::cout << "Compiled successfully!\n\nVERTEX SHADER:\n" << vs << "\n\nFRAGMENT SHADER:\n" << ps << "\n\n === \n\n";
+
+	float fov = nvgDegToRad(75);
 
 	while (this->window->IsOpen())
 	{
 
-		time++;
+		t_now = std::chrono::high_resolution_clock::now();
+		time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		efiilj::Matrix4 model = efiilj::Matrix4::getTranslation(0, 0, 0);
+		efiilj::Matrix4 view = efiilj::Matrix4::getLookat(efiilj::Vector3(sinf(time), 2, cosf(time)), efiilj::Vector3(0, 0, 0), efiilj::Vector3(0, 1, 0));
+		efiilj::Matrix4 perspective = efiilj::Matrix4::getPerspective(fov, 1, 0.1f, 100.0f);
+
+		efiilj::Matrix4 mvp = (perspective * view * model).transpose();
+
+		GLint uniMVP = glGetUniformLocation(program, "mvp");
+		glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &mvp(0));
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
-
-		//float tsin = sinf(float(time) / 30);
-		//float tsin2 = sinf(float(time) / 10);
-		//float tcos2 = cosf(float(time) / 10);
-
-		//auto trans = efiilj::Matrix4::getTranslation(tsin, std::abs(tcos2 / 3), 0);		// Translation matrix
-		//auto rot = efiilj::Matrix4::getRotationZ(float(time) / 30);						// Rotation matrix
-		//auto scale = efiilj::Matrix4::getScale(0.75 + tsin2 / 3, 0.75 + tsin2 / 3, 1);	// Scale matrix
-
-		//memcpy(newVert, vertices, 4 * sizeof(efiilj::Vertex));	// Copy original vertex positions to transformation buffer
-
-		//for (int i = 0; i < 4; i++)
-		//{
-		//	newVert[i].xyzw = (trans * rot * scale) * newVert[i].xyzw;	// Apply transformation matrices to transformation buffer vertices
-		//}
-
-		//mesh.UpdateVertexBuffer(newVert);	// Send new vertex data to meshresource
 
 		glUseProgram(program);
 		texture.Bind();

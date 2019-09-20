@@ -271,7 +271,9 @@ namespace efiilj
 		Vector2 norm() const
 		{
 			Vector2 v = (*this);
-			return v * (1 / v.length());
+			float len = v.length();
+
+			return len > 0 ? v * (1 / v.length()) : v;
 		}
 
 		/* === FACTORY FUNCTIONS === */
