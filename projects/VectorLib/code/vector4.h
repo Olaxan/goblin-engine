@@ -64,7 +64,7 @@ namespace efiilj
 			this->x(copy.x());
 			this->y(copy.y());
 			this->z(copy.z());
-			this->w(0);
+			this->w(1);
 		}
 
 		/// <summary>
@@ -131,6 +131,7 @@ namespace efiilj
 			vect.x(this->x() * other.x());
 			vect.y(this->y() * other.y());
 			vect.z(this->z() * other.z());
+			vect.w(this->w() * other.w());
 			return vect;
 		}
 
@@ -145,6 +146,7 @@ namespace efiilj
 			vect.x(this->x() * other);
 			vect.y(this->y() * other);
 			vect.z(this->z() * other);
+			vect.w(this->w() * other);
 			return vect;
 		}
 
@@ -345,7 +347,7 @@ namespace efiilj
 			vect.x(y() * other.z() - z() * other.y());
 			vect.y(z() * other.x() - x() * other.z());
 			vect.z(x() * other.y() - y() * other.x());
-			vect.w(this->x());
+			vect.w(0);
 			return vect;
 		}
 

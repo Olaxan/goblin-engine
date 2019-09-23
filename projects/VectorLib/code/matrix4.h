@@ -541,41 +541,40 @@ namespace efiilj
 
 			Matrix4 mat(false);
 
-			mat(0, 0) = (2 * near) / (right - left);
-			mat(2, 0) = (right + left) / (right - left);
-			mat(1, 1) = (2 * near) / (top - bottom);
-			mat(2, 1) = (top + bottom) / (top - bottom);
-			mat(2, 2) = -((far + near) / (far - near));
-			mat(3, 2) = -((2 * far * near) / (far - near));
-			mat(2, 3) = -1;
+			mat(0, 0) = (2.0f * near) / (right - left);
+			mat(2, 0) = -((right + left) / (right - left));
+			mat(1, 1) = (2.0f * near) / (top - bottom);
+			mat(2, 1) = -((top + bottom) / (top - bottom));
+			mat(2, 2) = (far + near) / (far - near);
+			mat(3, 2) = -((2.0f * far * near) / (far - near));
+			mat(2, 3) = 1.0f;
 
 			return mat;
 		}
 
-		static Matrix4 getPerspective(float fovY, float aspect, float near, float far)
+		static Matrix4 getPerspective(float fov, float aspect, float near, float far)
 		{
-			float tangent = tanf(fovY / 2);
-			float height = near * tangent;
-			float width = height * aspect;
+			float top = tanf(fov / 2.0f) * near;
+			float bottom = -top;
+			float right = top * aspect;
+			float left = bottom * aspect;
 
-			return getPerspective(-width, width, -height, height, near, far);
+			return getPerspective(left, right, top, bottom, near, far);
 		}
 
 		static Matrix4 getLookat(Vector3 cameraPos, Vector3 cameraTarget, Vector3 upDirection)
 		{
 
-			Vector3 cameraDirection = (cameraPos - cameraTarget).norm();
+			Vector3 cameraDirection = (cameraTarget - cameraPos).norm();
 			Vector3 cameraRight = Vector3::cross(upDirection, cameraDirection).norm();
 			Vector3 cameraUp = Vector3::cross(cameraDirection, cameraRight);
 
 			Matrix4 A = Matrix4(Vector4(cameraRight), Vector4(cameraUp), Vector4(cameraDirection), Vector4());
+			A(3, 0) = Vector3::dot(cameraRight, cameraPos) * -1;
+			A(3, 1) = Vector3::dot(cameraUp, cameraPos) * -1;
+			A(3, 2) = Vector3::dot(cameraDirection, cameraPos) * -1;
 
-			Matrix4 B = Matrix4();
-			B(3, 0) = -cameraPos.x();
-			B(3, 1) = -cameraPos.y();
-			B(3, 2) = -cameraPos.z();
-
-			return A * B;
+			return A;
 		}
 
 		/* === UTILITIES === */

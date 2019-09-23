@@ -17,7 +17,6 @@ layout(location = 3) in vec2 uv;
 
 layout(location = 0) out vec2 Uv;
 
-uniform mat4 trans;
 uniform mat4 mvp;
 
 void main()
@@ -67,7 +66,7 @@ bool
 QuadTest::Open()
 {
 	App::Open();
-	this->window = new Display::Window(1000, 1000);
+	this->window = new Display::Window(720, 720);
 	window->SetKeyPressFunction([this](int32, int32, int32, int32)
 	{
 		this->window->Close();
@@ -79,7 +78,7 @@ QuadTest::Open()
 	{
 
 		texture = efiilj::TextureResource("C:/Users/efiilj-7-local/Documents/Source/ltu-lab-s0006e_env/bin/res/textures/test2.png");
-		mesh = efiilj::MeshResource::Cube(0.5);
+		mesh = efiilj::MeshResource::Cube(1);
 
 		//enable face culling
 		glEnable(GL_CULL_FACE);
@@ -157,19 +156,23 @@ QuadTest::Run()
 		t_now = std::chrono::high_resolution_clock::now();
 		time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
-		efiilj::Matrix4 model = efiilj::Matrix4::getRotationY(time / 2);
-		efiilj::Matrix4 view = efiilj::Matrix4::getLookat(efiilj::Vector3(2, 2, 2), efiilj::Vector3(0, 0, 0), efiilj::Vector3(0, 1, 0));
-		efiilj::Matrix4 perspective = efiilj::Matrix4::getPerspective(fov, 1, 0.1f, 100.0f);
+		//efiilj::Matrix4 model = efiilj::Matrix4::getTranslation(0.0f, 0.0f, 0.0f);
+		efiilj::Matrix4 view = efiilj::Matrix4::getLookat(efiilj::Vector3(2 * sinf(time), 1, 2 * cosf(time)), efiilj::Vector3(0.0f, 0.0f, 0.0f), efiilj::Vector3(0.0f, 1.0f, 0.0f));
+		efiilj::Matrix4 perspective = efiilj::Matrix4::getPerspective(fov, 1.0f, 0.1f, 100.0f);
 
-		efiilj::Matrix4 mvp = (perspective * view * model).transpose();
+		efiilj::Matrix4 mvp = (perspective * view);
+
+		glUseProgram(program);
 
 		GLint uniMVP = glGetUniformLocation(program, "mvp");
-		glUniformMatrix4fv(uniMVP, 1, GL_FALSE, &mvp(0));
+		glUniformMatrix4fv(uniMVP, 1, GL_TRUE, &mvp(0));
+
+		GLint uniSampler = glGetUniformLocation(program, "u_sampler");
+		glUniform1i(uniSampler, 0);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 
-		glUseProgram(program);
 		texture.Bind();
 		mesh.Bind();
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
