@@ -30,31 +30,31 @@ namespace efiilj
 			// Front = S
 			Vertex(Vector3(-size, -size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 0
 			Vertex(Vector3( size, -size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.5, 0.33)),		// 1
-			Vertex(Vector3( size,  size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.5, 0)),		// 2
-			Vertex(Vector3(-size,  size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.25, 0)),		// 3
+			Vertex(Vector3( size,  size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),		// 2
+			Vertex(Vector3(-size,  size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),		// 3
 
 			// Back = N
-			Vertex(Vector3( size, -size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),	// 4
-			Vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 5
-			Vertex(Vector3(-size,  size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.25, 1)),		// 6
-			Vertex(Vector3( size,  size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.5, 1)),		// 7
+			Vertex(Vector3( size, -size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.75, 0.33)),	// 4
+			Vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(1, 0.33)),		// 5
+			Vertex(Vector3(-size,  size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(1, 0.66)),		// 6
+			Vertex(Vector3( size,  size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.75, 0.66)),		// 7
 
 			// Top
-			Vertex(Vector3(-size, size,  size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(1, 0.33)),		// 8
-			Vertex(Vector3( size, size,  size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.75, 0.33)),	// 9
-			Vertex(Vector3( size, size, -size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.75, 0.66)),	// 10
-			Vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(1, 0.66)),		// 11
+			Vertex(Vector3(-size, size,  size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 8
+			Vertex(Vector3( size, size,  size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),		// 9
+			Vertex(Vector3( size, size, -size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 1)),		// 10
+			Vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 1)),		// 11
 
 			// Bottom
-			Vertex(Vector3( size, -size,  size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.33)),	// 13 = 12
-			Vertex(Vector3(-size, -size,  size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 12 = 13
-			Vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 15 = 14
-			Vertex(Vector3( size, -size, -size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),	// 14 = 15
+			Vertex(Vector3( size, -size,  size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0)),		// 13 = 12
+			Vertex(Vector3(-size, -size,  size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0)),		// 12 = 13
+			Vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.33)),	// 15 = 14
+			Vertex(Vector3( size, -size, -size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 14 = 15
 
 			// Left = W
-			Vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 16
+			Vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0, 0.33)),		// 16
 			Vertex(Vector3(-size, -size,  size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 17
-			Vertex(Vector3(-size,  size,  size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0, 0.33)),		// 18
+			Vertex(Vector3(-size,  size,  size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 18
 			Vertex(Vector3(-size,  size, -size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0, 0.66)),		// 19
 
 			// Right = E
@@ -65,12 +65,12 @@ namespace efiilj
 		};
 
 		unsigned int indices[36] = {
-			3, 1, 0, 1, 3, 2,			// Front
-			7, 5, 4, 5, 7, 6,			// Back
-			11, 9, 8, 9, 11, 10,		// Top
-			15, 13, 12, 13, 15, 14,		// Bottom
-			19, 17, 16, 17, 19, 18,		// Left
-			23, 21, 20, 21, 23, 22		// Right
+			0, 1, 3, 2, 3, 1,			// Front
+			4, 5, 7, 6, 7, 5,			// Back
+			8, 9, 11, 10, 11, 9,		// Top
+			12, 13, 15, 14, 15, 13,		// Bottom
+			16, 17, 19, 18, 19, 17,		// Left
+			20, 21, 23, 22, 23, 21		// Right
 		};
 
 		return MeshResource(vertices, 24, indices, 36);
@@ -129,7 +129,6 @@ namespace efiilj
 
 	void MeshResource::Unbind()
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
@@ -143,6 +142,9 @@ namespace efiilj
 
 	MeshResource::~MeshResource()
 	{
-		//todo
+		Unbind();
+		glDeleteBuffers(1, &vao);
+		glDeleteBuffers(1, &vbo);
+		glDeleteBuffers(1, &ibo);
 	}
 }

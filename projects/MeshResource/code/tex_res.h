@@ -14,5 +14,6 @@ namespace efiilj
 		void Bind(unsigned int slot = 0);
 		void Unbind();
 
+		~TextureResource();
 	};
 }

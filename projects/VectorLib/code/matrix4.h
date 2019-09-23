@@ -545,9 +545,9 @@ namespace efiilj
 			mat(2, 0) = -((right + left) / (right - left));
 			mat(1, 1) = (2.0f * near) / (top - bottom);
 			mat(2, 1) = -((top + bottom) / (top - bottom));
-			mat(2, 2) = (far + near) / (far - near);
-			mat(3, 2) = -((2.0f * far * near) / (far - near));
-			mat(2, 3) = 1.0f;
+			mat(2, 2) = -(far / (far - near));
+			mat(3, 2) = -((far * near) / (far - near));
+			mat(2, 3) = -1.0f;
 
 			return mat;
 		}
@@ -565,7 +565,7 @@ namespace efiilj
 		static Matrix4 getLookat(Vector3 cameraPos, Vector3 cameraTarget, Vector3 upDirection)
 		{
 
-			Vector3 cameraDirection = (cameraTarget - cameraPos).norm();
+			Vector3 cameraDirection = (cameraPos - cameraTarget).norm();
 			Vector3 cameraRight = Vector3::cross(upDirection, cameraDirection).norm();
 			Vector3 cameraUp = Vector3::cross(cameraDirection, cameraRight);
 

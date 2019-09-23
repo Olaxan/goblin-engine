@@ -33,8 +33,6 @@ private:
 	GLuint program;
 	GLuint vertexShader;
 	GLuint pixelShader;
-	efiilj::MeshResource mesh;
-	efiilj::TextureResource texture;
 	efiilj::Vertex* vertices;
 	efiilj::Vertex newVert[36];
 	Display::Window* window;
