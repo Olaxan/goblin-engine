@@ -97,10 +97,6 @@ QuadTest::Run()
 
 		node.Draw();
 
-		/*texture.Bind();
-		mesh.Bind();
-		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, NULL);*/
-
 		this->window->SwapBuffers();
 	}
 }

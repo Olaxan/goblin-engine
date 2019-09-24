@@ -8,9 +8,9 @@ namespace efiilj
 
 	GraphicsNode::GraphicsNode(MeshResource& mesh, TextureResource& texture, ShaderResource& shader)
 	{
-		this->mesh = std::unique_ptr<MeshResource>(&mesh);
-		this->texture = std::unique_ptr<TextureResource>(&texture);
-		this->shader = std::unique_ptr<ShaderResource>(&shader);
+		this->mesh = std::make_unique<MeshResource>(mesh);
+		this->texture = std::make_unique<TextureResource>(texture);
+		this->shader = std::make_unique<ShaderResource>(shader);
 	}
 
 	void GraphicsNode::Bind()

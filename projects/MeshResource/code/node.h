@@ -22,13 +22,13 @@ namespace efiilj
 		GraphicsNode(MeshResource& mesh, TextureResource& texture, ShaderResource& shader);
 
 		const MeshResource& Mesh() const { return *this->mesh; }
-		void Mesh(std::unique_ptr<MeshResource> mesh) { this->mesh = std::move(mesh); }
+		void Mesh(MeshResource& mesh) { this->mesh = std::make_unique<MeshResource>(std::move(mesh)); }
 
 		const TextureResource& Texture() const { return *this->texture; }
-		void Texture(std::unique_ptr<TextureResource> mesh) { this->texture = std::move(texture); }
+		void Texture(TextureResource& texture) { this->texture = std::make_unique<TextureResource>(std::move(texture)); }
 
 		const ShaderResource& Shader() const { return *this->shader; }
-		void Shader(std::unique_ptr<ShaderResource> shader) { this->shader = std::move(shader); }
+		void Shader(ShaderResource& shader) { this->shader = std::make_unique<ShaderResource>(std::move(shader)); }
 
 		void Bind();
 		void Unbind();

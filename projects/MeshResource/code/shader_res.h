@@ -41,5 +41,7 @@ namespace efiilj
 		int FindUniformLocation(const char* name);
 		bool SetUniform1i(const char* name, int val);
 		bool SetUniformMatrix4fv(const char* name, Matrix4& mat);
+
+		~ShaderResource();
 	};
 }

@@ -151,5 +151,10 @@ namespace efiilj
 		glUniformMatrix4fv(uniform, 1, GL_TRUE, &mat(0));
 		return true;
 	}
+
+	ShaderResource::~ShaderResource()
+	{
+		glDeleteProgram(program_id);
+	}
 }
 
