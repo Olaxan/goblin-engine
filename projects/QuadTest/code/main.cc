@@ -8,7 +8,7 @@
 int
 main(int argc, const char** argv)
 {
-	Example::QuadTest app;
+	efiilj::QuadTest app;
 	if (app.Open())
 	{
 		app.Run();

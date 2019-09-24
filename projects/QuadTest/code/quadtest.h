@@ -13,24 +13,22 @@
 
 #include <chrono>
 
-namespace Example
+namespace efiilj
 {
-class QuadTest : public Core::App
-{
-public:
-	/// constructor
-	QuadTest();
-	/// destructor
-	~QuadTest();
+	class QuadTest : public Core::App
+	{
+	private:
 
-	/// open app
-	bool Open();
-	/// run app
-	void Run();
-private:
+		Display::Window* window;
+		std::chrono::time_point<std::chrono::steady_clock> t_start, t_now;
+		float time;
 
-	Display::Window* window;
-	std::chrono::time_point<std::chrono::steady_clock> t_start, t_now;
-	float time;
-};
-} // namespace Example
+	public:
+
+		QuadTest();
+		~QuadTest();
+
+		bool Open();
+		void Run();
+	};
+}
