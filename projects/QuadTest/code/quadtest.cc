@@ -7,37 +7,6 @@
 #include <cstring>
 #include <iostream>
 
-const GLchar* vs = R"glsl(
-#version 430
-
-layout(location = 0) in vec4 pos;
-layout(location = 1) in vec4 normal;
-layout(location = 2) in vec4 color;
-layout(location = 3) in vec2 uv;
-
-layout(location = 0) out vec2 Uv;
-
-uniform mat4 mvp;
-
-void main()
-{
-	gl_Position = mvp * pos;
-	Uv = uv;
-})glsl";
-
-const GLchar* ps = R"glsl(
-#version 430
-
-layout(location = 0) in vec2 uv;
-
-uniform sampler2D u_sampler;
-
-out vec4 Color;
-
-void main()
-{
-	Color = texture(u_sampler, uv);
-})glsl";
 
 using namespace Display;
 namespace Example
@@ -84,53 +53,6 @@ QuadTest::Open()
 		// set clear color to black
 		glClearColor(0.025f, 0.0f, 0.025f, 1.0f);
 
-		// setup vertex shader
-		this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		GLint length = static_cast<GLint>(std::strlen(vs));
-		glShaderSource(this->vertexShader, 1, &vs, &length);
-		glCompileShader(this->vertexShader);
-
-		// get error log
-		GLint shaderLogSize;
-		glGetShaderiv(this->vertexShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-		if (shaderLogSize > 0)
-		{
-			GLchar* buf = new GLchar[shaderLogSize];
-			glGetShaderInfoLog(this->vertexShader, shaderLogSize, NULL, buf);
-			printf("[VS SHADER COMPILE ERROR]: %s", buf);
-			delete[] buf;
-		}
-
-		// setup pixel shader
-		this->pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
-		length = static_cast<GLint>(std::strlen(ps));
-		glShaderSource(this->pixelShader, 1, &ps, &length);
-		glCompileShader(this->pixelShader);
-
-		// get error log
-		shaderLogSize;
-		glGetShaderiv(this->pixelShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-		if (shaderLogSize > 0)
-		{
-			GLchar* buf = new GLchar[shaderLogSize];
-			glGetShaderInfoLog(this->pixelShader, shaderLogSize, NULL, buf);
-			printf("[FS SHADER COMPILE ERROR]: %s", buf);
-			delete[] buf;
-		}
-
-		// create a program object
-		this->program = glCreateProgram();
-		glAttachShader(this->program, this->vertexShader);
-		glAttachShader(this->program, this->pixelShader);
-		glLinkProgram(this->program);
-		glGetProgramiv(this->program, GL_INFO_LOG_LENGTH, &shaderLogSize);
-		if (shaderLogSize > 0)
-		{
-			GLchar* buf = new GLchar[shaderLogSize];
-			glGetProgramInfoLog(this->program, shaderLogSize, NULL, buf);
-			printf("[PROGRAM LINK ERROR]: %s", buf);
-			delete[] buf;
-		}
 		return true;
 	}
 	return false;
@@ -143,12 +65,16 @@ void
 QuadTest::Run()
 {
 
-	std::cout << "Compiled successfully!\n\nVERTEX SHADER:\n" << vs << "\n\nFRAGMENT SHADER:\n" << ps << "\n\n === \n\n";
-
 	float fov = nvgDegToRad(75);
 
+	std::string fs = efiilj::ShaderResource::LoadShader("./res/shaders/vertex.shader");
+	std::string vs = efiilj::ShaderResource::LoadShader("./res/shaders/fragment.shader");
+
+	efiilj::ShaderResource shader = efiilj::ShaderResource(fs.c_str(), vs.c_str());
 	efiilj::TextureResource texture = efiilj::TextureResource("./res/textures/test.png", true);
 	efiilj::MeshResource mesh = efiilj::MeshResource::Cube(1);
+
+	efiilj::GraphicsNode node(mesh, texture, shader);
 
 	while (this->window->IsOpen())
 	{
@@ -162,20 +88,18 @@ QuadTest::Run()
 
 		efiilj::Matrix4 mvp = (perspective * view * model);
 
-		glUseProgram(program);
-
-		GLint uniMVP = glGetUniformLocation(program, "mvp");
-		glUniformMatrix4fv(uniMVP, 1, GL_TRUE, &mvp(0));
-
-		GLint uniSampler = glGetUniformLocation(program, "u_sampler");
-		glUniform1i(uniSampler, 0);
+		shader.Use();
+		shader.SetUniformMatrix4fv("mvp", mvp);
+		shader.SetUniform1i("u_sampler", 0);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 
-		texture.Bind();
+		node.Draw();
+
+		/*texture.Bind();
 		mesh.Bind();
-		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, NULL);*/
 
 		this->window->SwapBuffers();
 	}

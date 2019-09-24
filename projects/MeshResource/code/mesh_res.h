@@ -122,10 +122,9 @@ namespace efiilj
 		void UpdateVertexBuffer(Vertex* vertexList);
 
 		/// <summary>
-		/// Shortcut for instantly drawing this mesh with the current settings.
+		/// Performs a draw call with the correct index specifications.
 		/// </summary>
-		/// <param name="shader">The shader program id to use for drawing</param>
-		void Draw(const unsigned int shader);
+		void DrawElements();
 
 		~MeshResource();
 	};

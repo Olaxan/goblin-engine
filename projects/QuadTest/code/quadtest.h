@@ -9,8 +9,7 @@
 #include "core/app.h"
 #include "render/window.h"
 
-#include "mesh_res.h"
-#include "tex_res.h"
+#include "node.h"
 
 #include <chrono>
 
@@ -30,11 +29,6 @@ public:
 	void Run();
 private:
 
-	GLuint program;
-	GLuint vertexShader;
-	GLuint pixelShader;
-	efiilj::Vertex* vertices;
-	efiilj::Vertex newVert[36];
 	Display::Window* window;
 	std::chrono::time_point<std::chrono::steady_clock> t_start, t_now;
 	float time;

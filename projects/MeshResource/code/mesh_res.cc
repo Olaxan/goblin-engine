@@ -133,10 +133,8 @@ namespace efiilj
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	void MeshResource::Draw(const unsigned int shader)
+	void MeshResource::DrawElements()
 	{
-		glUseProgram(shader);
-		Bind();
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 	}
 
