@@ -147,7 +147,7 @@ QuadTest::Run()
 
 	float fov = nvgDegToRad(90);
 
-	efiilj::TextureResource texture = efiilj::TextureResource("C:/Users/efiilj-7-local/Documents/Source/ltu-lab-s0006e_env/bin/res/textures/test.png");
+	efiilj::TextureResource texture = efiilj::TextureResource("./res/textures/test.png");
 	efiilj::MeshResource mesh = efiilj::MeshResource::Cube(1);
 
 	while (this->window->IsOpen())
