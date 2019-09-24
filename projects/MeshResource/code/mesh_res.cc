@@ -28,40 +28,40 @@ namespace efiilj
 		Vertex vertices[24] = {
 
 			// Front = S
-			Vertex(Vector3(-size, -size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 0
-			Vertex(Vector3( size, -size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.5, 0.33)),		// 1
-			Vertex(Vector3( size,  size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),		// 2
-			Vertex(Vector3(-size,  size, size), Vector3(0, 0, 1), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),		// 3
+			Vertex(Vector3(-size, -size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.25, 0.33)),	// 0
+			Vertex(Vector3( size, -size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.5, 0.33)),		// 1
+			Vertex(Vector3( size,  size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.5, 0.66)),		// 2
+			Vertex(Vector3(-size,  size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.25, 0.66)),	// 3
 
 			// Back = N
-			Vertex(Vector3( size, -size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.75, 0.33)),	// 4
-			Vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(1, 0.33)),		// 5
-			Vertex(Vector3(-size,  size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(1, 0.66)),		// 6
-			Vertex(Vector3( size,  size, -size), Vector3(0, 0, -1), Vector4(1, 1, 1, 1), Vector2(0.75, 0.66)),		// 7
+			Vertex(Vector3( size, -size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(0.75, 0.33)),	// 4
+			Vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(1, 0.33)),		// 5
+			Vertex(Vector3(-size,  size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(1, 0.66)),		// 6
+			Vertex(Vector3( size,  size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(0.75, 0.66)),	// 7
 
 			// Top
-			Vertex(Vector3(-size, size,  size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 8
-			Vertex(Vector3( size, size,  size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),		// 9
-			Vertex(Vector3( size, size, -size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 1)),		// 10
-			Vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 1)),		// 11
+			Vertex(Vector3(-size, size,  size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.25, 0.66)),	// 8
+			Vertex(Vector3( size, size,  size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.5, 0.66)),		// 9
+			Vertex(Vector3( size, size, -size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.5, 1)),		// 10
+			Vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.25, 1)),		// 11
 
 			// Bottom
-			Vertex(Vector3( size, -size,  size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0)),		// 13 = 12
-			Vertex(Vector3(-size, -size,  size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0)),		// 12 = 13
-			Vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.33)),	// 15 = 14
-			Vertex(Vector3( size, -size, -size), Vector3(0, -1, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 14 = 15
+			Vertex(Vector3( size, -size,  size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.25, 0)),		// 12
+			Vertex(Vector3(-size, -size,  size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.5, 0)),		// 13
+			Vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.5, 0.33)),	// 14
+			Vertex(Vector3( size, -size, -size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.25, 0.33)),	// 15
 
 			// Left = W
-			Vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0, 0.33)),		// 16
-			Vertex(Vector3(-size, -size,  size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.33)),	// 17
-			Vertex(Vector3(-size,  size,  size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.25, 0.66)),	// 18
-			Vertex(Vector3(-size,  size, -size), Vector3(-1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0, 0.66)),		// 19
+			Vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0, 0.33)),		// 16
+			Vertex(Vector3(-size, -size,  size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.25, 0.33)),	// 17
+			Vertex(Vector3(-size,  size,  size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.25, 0.66)),	// 18
+			Vertex(Vector3(-size,  size, -size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0, 0.66)),		// 19
 
 			// Right = E
-			Vertex(Vector3(size, -size,  size), Vector3(1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.33)),		// 20
-			Vertex(Vector3(size, -size, -size), Vector3(1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.75, 0.33)),	// 21
-			Vertex(Vector3(size,  size, -size), Vector3(1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.75, 0.66)),	// 22
-			Vertex(Vector3(size,  size,  size), Vector3(1, 0, 0), Vector4(1, 1, 1, 1), Vector2(0.5, 0.66)),		// 23
+			Vertex(Vector3(size, -size,  size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.5, 0.33)),		// 20
+			Vertex(Vector3(size, -size, -size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.75, 0.33)),	// 21
+			Vertex(Vector3(size,  size, -size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.75, 0.66)),	// 22
+			Vertex(Vector3(size,  size,  size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.5, 0.66)),		// 23
 		};
 
 		unsigned int indices[36] = {

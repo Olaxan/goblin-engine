@@ -79,13 +79,40 @@ namespace efiilj
 		/// <param name="indexCount">Size of the index list</param>
 		MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount);
 
+		/// <summary>
+		/// Static method to generate a cube of the specified size.
+		/// </summary>
+		/// <param name="size">The size across the entire cube</param>
+		/// <param name="c">Vertex color</param>
+		/// <returns></returns>
 		static MeshResource Cube(float size, float c = 1);
+
+		/// <summary>
+		/// Gets mesh vertex count
+		/// </summary>
+		/// <returns>The number of vertices in the mesh</returns>
+		int VertexCount()
+		{
+			return vertexCount;
+		}
+
+		/// <summary>
+		/// Gets the mesh index count
+		/// </summary>
+		/// <returns>The number of index in the mesh</returns>
+		int IndexCount()
+		{
+			return indexCount;
+		}
 
 		/// <summary>
 		/// Binds Vertex Array Object and Index Buffer to prepare OpenGL for drawing this mesh.
 		/// </summary>
 		void Bind();
 
+		/// <summary>
+		/// Unbinds the resource from the OpenGL state machine.
+		/// </summary>
 		void Unbind();
 
 		/// <summary>

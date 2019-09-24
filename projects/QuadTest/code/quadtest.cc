@@ -145,9 +145,9 @@ QuadTest::Run()
 
 	std::cout << "Compiled successfully!\n\nVERTEX SHADER:\n" << vs << "\n\nFRAGMENT SHADER:\n" << ps << "\n\n === \n\n";
 
-	float fov = nvgDegToRad(90);
+	float fov = nvgDegToRad(75);
 
-	efiilj::TextureResource texture = efiilj::TextureResource("./res/textures/test.png");
+	efiilj::TextureResource texture = efiilj::TextureResource("./res/textures/test.png", true);
 	efiilj::MeshResource mesh = efiilj::MeshResource::Cube(1);
 
 	while (this->window->IsOpen())
@@ -175,7 +175,7 @@ QuadTest::Run()
 
 		texture.Bind();
 		mesh.Bind();
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, NULL);
 
 		this->window->SwapBuffers();
 	}

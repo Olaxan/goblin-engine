@@ -8,12 +8,12 @@ namespace efiilj
 {
 	TextureResource::TextureResource() : tex_id(0), width(0), height(0), bits_per_pixel(0) { }
 
-	TextureResource::TextureResource(const char* path) : tex_id(0), width(0), height(0), bits_per_pixel(0)
+	TextureResource::TextureResource(const char* path, bool flip) : tex_id(0), width(0), height(0), bits_per_pixel(0)
 	{
 		glGenTextures(1, &tex_id);
 		glBindTexture(GL_TEXTURE_2D, tex_id);
 
-		stbi_set_flip_vertically_on_load(true);
+		stbi_set_flip_vertically_on_load(flip);
 		unsigned char* buffer = stbi_load(path, &width, &height, &bits_per_pixel, 4);
 
 		std::cout << "Loaded texture " << tex_id << ": " << width << "x" << height << " / " << bits_per_pixel << "\n\n";
