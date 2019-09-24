@@ -133,7 +133,6 @@ namespace efiilj
 	bool ShaderResource::SetUniform1i(const char* name, int val)
 	{
 		int uniform = FindUniformLocation(name);
-
 		if (uniform == -1)
 			return false;
 
@@ -141,10 +140,19 @@ namespace efiilj
 		return true;
 	}
 
+	bool ShaderResource::SetUniformVector4fv(const char* name, Vector4& vec)
+	{
+		int uniform = FindUniformLocation(name);
+		if (uniform == -1)
+			return false;
+
+		glUniform4fv(uniform, 1, &vec[0]);
+		return true;
+	}
+
 	bool ShaderResource::SetUniformMatrix4fv(const char* name, Matrix4& mat)
 	{
 		int uniform = FindUniformLocation(name);
-
 		if (uniform == -1)
 			return false;
 

@@ -244,7 +244,7 @@ namespace efiilj
 		float at(int n) const
 		{
 			if (n > 16)
-				throw new std::out_of_range("Matrix index out of range");
+				throw std::out_of_range("Matrix index out of range");
 
 			return at(n % 4, n / 4);
 		}
@@ -258,7 +258,7 @@ namespace efiilj
 		float at(int x, int y) const
 		{
 			if (x > 4 || y > 4)
-				throw new std::out_of_range("Matrix index out of range");
+				throw std::out_of_range("Matrix index out of range");
 
 			return _arr[y].at(x);
 		}
@@ -271,9 +271,22 @@ namespace efiilj
 		Vector4 row(int y) const
 		{
 			if (y > 4)
-				throw new std::out_of_range("Row index out of range");
+				throw std::out_of_range("Row index out of range");
 
-			return Vector4(at(0, y), at(1, y), at(2, y), at(3, y));
+			return _arr[y];
+		}
+
+		/// <summary>
+		/// Sets the row at the specified y-position.
+		/// </summary>
+		/// <param name="y">The row index to change</param>
+		/// <param name="row">The Vector4 to replace the row with</param>
+		void row(int y, Vector4& row)
+		{
+			if (y > 4)
+				throw std::out_of_range("Row index out of range");
+
+			_arr[y] = row;
 		}
 
 		/// <summary>
@@ -284,9 +297,20 @@ namespace efiilj
 		Vector4 col(int x) const
 		{
 			if (x > 4)
-				throw new std::out_of_range("Column index out of range");
+				throw std::out_of_range("Column index out of range");
 
 			return Vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
+		}
+
+		void col(int x, Vector4& col)
+		{
+			if (x > 4)
+				throw std::out_of_range("Row index out of range");
+
+			(*this)(x, 0) = col[0];
+			(*this)(x, 1) = col[1];
+			(*this)(x, 2) = col[2];
+			(*this)(x, 3) = col[3];
 		}
 
 		/* === MATRIX FUNCTIONS === */

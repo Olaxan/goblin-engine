@@ -7,10 +7,10 @@ layout(location = 3) in vec2 uv;
 
 layout(location = 0) out vec2 Uv;
 
-uniform mat4 mvp;
+uniform mat4 u_mvp;
 
 void main()
 {
-	gl_Position = mvp * pos;
+	gl_Position = u_mvp * pos;
 	Uv = uv;
 }

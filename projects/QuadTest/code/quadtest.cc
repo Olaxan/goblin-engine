@@ -25,7 +25,7 @@ namespace efiilj
 	bool QuadTest::Open()
 	{
 		App::Open();
-		this->window = new Display::Window(720, 720);
+		this->window = new Display::Window(1000, 1000);
 		window->SetKeyPressFunction([this](int32, int32, int32, int32)
 		{
 			this->window->Close();
@@ -71,16 +71,12 @@ namespace efiilj
 			Matrix4 model = Matrix4::getScale(1, 1, 1);
 			Matrix4 view = Matrix4::getLookat(Vector3(2 * sinf(time / 2), 1, 2 * cosf(time / 2)), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 			Matrix4 perspective = Matrix4::getPerspective(fov, 1.0f, 0.1f, 100.0f);
-
 			Matrix4 mvp = (perspective * view * model);
-
-			shader.Use();
-			shader.SetUniformMatrix4fv("mvp", mvp);
-			shader.SetUniform1i("u_sampler", 0);
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
+			node.Transform(mvp);
 			node.Draw();
 
 			this->window->SwapBuffers();

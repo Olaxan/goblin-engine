@@ -13,6 +13,11 @@ namespace efiilj
 		this->shader = std::make_unique<ShaderResource>(shader);
 	}
 
+	void GraphicsNode::SetPosition(Vector3& pos, bool relative)
+	{
+		transform(3, 0) = (transform(3, 0) * relative)
+	}
+
 	void GraphicsNode::Bind()
 	{
 		mesh->Bind();
@@ -30,6 +35,7 @@ namespace efiilj
 	void GraphicsNode::Draw()
 	{
 		Bind();
+		shader->SetUniformMatrix4fv("u_mvp", transform);
 		mesh->DrawElements();
 		Unbind();
 	}
