@@ -25,13 +25,15 @@ namespace efiilj
 	bool QuadTest::Open()
 	{
 		App::Open();
-		this->window = new Display::Window(1000, 1000);
-		window->SetKeyPressFunction([this](int32, int32, int32, int32)
-		{
-			this->window->Close();
-		});
 
 		t_start = std::chrono::high_resolution_clock::now();
+
+		this->window = new Display::Window(1000, 1000);
+
+		window->SetMouseMoveFunction([this](float64, float64) 
+		{
+
+		});
 
 		if (this->window->Open())
 		{
@@ -61,6 +63,29 @@ namespace efiilj
 		MeshResource mesh = MeshResource::Cube(1);
 
 		GraphicsNode node(mesh, texture, shader);
+
+		window->SetKeyPressFunction([this, &node](int32 key, int32 scancode, int32 action, int32 mod)
+		{
+			switch (key)
+			{
+			case GLFW_KEY_W:
+				node.SetPosition(Vector3(0, 0, -1), true);
+				break;
+			case GLFW_KEY_S:
+				node.SetPosition(Vector3(0, 0, 1), true);
+				break;
+			case GLFW_KEY_A:
+				node.SetPosition(Vector3(-1, 0, 0), true);
+				break;
+			case GLFW_KEY_D:
+				node.SetPosition(Vector3(1, 0, 0), true);
+				break;
+
+			default:
+				window->Close();
+				break;
+			}
+		});
 
 		while (this->window->IsOpen())
 		{
