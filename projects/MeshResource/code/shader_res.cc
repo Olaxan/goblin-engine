@@ -16,6 +16,8 @@ namespace efiilj
 		program_id = CreateProgram(vertex, fragment);
 	}
 
+	ShaderResource::ShaderResource(std::string vertex, std::string fragment) : ShaderResource(vertex.c_str(), fragment.c_str()) { }
+
 	std::string ShaderResource::LoadShader(const char* filePath)
 	{
 		std::string s;
@@ -29,6 +31,11 @@ namespace efiilj
 		}
 
 		return ss.str();
+	}
+
+	std::string ShaderResource::LoadShader(std::string filePath)
+	{
+		return LoadShader(filePath.c_str());
 	}
 
 	unsigned int ShaderResource::CompileShader(unsigned int type, const char* source)
@@ -66,7 +73,7 @@ namespace efiilj
 		return program;
 	}
 
-	bool ShaderResource::DebugShader(unsigned int id, ShaderDebugType type, unsigned int status, std::ostream& stream, const char* header)
+	bool ShaderResource::DebugShader(unsigned int id, ShaderDebugType type, unsigned int status, std::ostream& stream, const char* header) const
 	{
 		int result = 0;
 		int logSize = 0;
@@ -103,12 +110,12 @@ namespace efiilj
 		return result;
 	}
 
-	void ShaderResource::Use()
+	void ShaderResource::Use() const
 	{
 		glUseProgram(program_id);
 	}
 
-	void ShaderResource::Drop()
+	void ShaderResource::Drop() const
 	{
 		glUseProgram(0);
 	}
@@ -140,23 +147,23 @@ namespace efiilj
 		return true;
 	}
 
-	bool ShaderResource::SetUniformVector4fv(const char* name, Vector4& vec)
+	bool ShaderResource::SetUniformVector4fv(const char* name, const Vector4& vec)
 	{
 		int uniform = FindUniformLocation(name);
 		if (uniform == -1)
 			return false;
 
-		glUniform4fv(uniform, 1, &vec[0]);
+		glUniform4fv(uniform, 1, &vec.at(0));
 		return true;
 	}
 
-	bool ShaderResource::SetUniformMatrix4fv(const char* name, Matrix4& mat)
+	bool ShaderResource::SetUniformMatrix4fv(const char* name, const Matrix4& mat)
 	{
 		int uniform = FindUniformLocation(name);
 		if (uniform == -1)
 			return false;
 
-		glUniformMatrix4fv(uniform, 1, GL_TRUE, &mat(0));
+		glUniformMatrix4fv(uniform, 1, GL_TRUE, &mat.at(0));
 		return true;
 	}
 

@@ -2,22 +2,17 @@
 
 namespace efiilj
 {
-	GraphicsNode::GraphicsNode()
-	{
-	}
+	GraphicsNode::GraphicsNode() { }
 
-	GraphicsNode::GraphicsNode(MeshResource& mesh, TextureResource& texture, ShaderResource& shader)
-	{
-		this->mesh = std::make_shared<MeshResource>(mesh);
-		this->texture = std::make_shared<TextureResource>(texture);
-		this->shader = std::make_shared<ShaderResource>(shader);
-	}
-
-	void GraphicsNode::SetPosition(Vector3& pos, bool relative)
-	{
-		transform(3, 0) = relative ? transform(3, 0) + pos[0] : pos[0];
-		transform(3, 1) = relative ? transform(3, 1) + pos[1] : pos[1];
-		transform(3, 2) = relative ? transform(3, 2) + pos[2] : pos[2];
+	GraphicsNode::GraphicsNode(
+		std::shared_ptr<MeshResource> mesh_ptr,
+		std::shared_ptr<TextureResource> texture_ptr,
+		std::shared_ptr<ShaderResource> shader_ptr,
+		std::shared_ptr<TransformModel> transform_ptr,
+		std::shared_ptr<CameraModel> camera_ptr) 
+		: mesh(mesh_ptr), texture(texture_ptr), shader(shader_ptr), transform(transform_ptr), camera(camera_ptr) 
+	{ 
+		std::cout << mesh->IndexCount() << " / " << transform->Model().to_mem_string();
 	}
 
 	void GraphicsNode::Bind()
@@ -37,7 +32,7 @@ namespace efiilj
 	void GraphicsNode::Draw()
 	{
 		Bind();
-		shader->SetUniformMatrix4fv("u_mvp", transform);
+		shader->SetUniformMatrix4fv("u_mvp", camera->View() * transform->Model());
 		mesh->DrawElements();
 		Unbind();
 	}

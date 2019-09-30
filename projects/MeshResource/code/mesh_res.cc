@@ -7,19 +7,18 @@ namespace efiilj
 
 	MeshResource::MeshResource() : ibo(0), vao(0), vbo(0), indexCount(0), vertexCount(0) { }
 
-	MeshResource::MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount)
+	MeshResource::MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount) : ibo(0), vao(0), vbo(0)
 	{
 		this->vertexCount = vertexCount;
 		this->indexCount = indexCount;
-
-		ibo = 0;
-		vao = 0;
-		vbo = 0;
 
 		InitArrayObject();
 		InitVertexBuffer(vertexList, vertexCount);
 		InitIndexBuffer(indexList, indexCount);
 	}
+
+	MeshResource::MeshResource(MeshResource& copy) 
+		: ibo(copy.ibo), vao(copy.vao), vbo(copy.vbo), indexCount(copy.indexCount), vertexCount(copy.vertexCount) { }
 
 	MeshResource MeshResource::Cube(float size, float c)
 	{
@@ -28,40 +27,40 @@ namespace efiilj
 		Vertex vertices[24] = {
 
 			// Front = S
-			Vertex(Vector3(-size, -size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.25, 0.33)),	// 0
-			Vertex(Vector3( size, -size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.5, 0.33)),		// 1
-			Vertex(Vector3( size,  size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.5, 0.66)),		// 2
-			Vertex(Vector3(-size,  size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.25, 0.66)),	// 3
+			Vertex(Vector3(-size, -size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.25f, 0.33f)),		// 0
+			Vertex(Vector3( size, -size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.5f, 0.33f)),		// 1
+			Vertex(Vector3( size,  size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.5f, 0.66f)),		// 2
+			Vertex(Vector3(-size,  size, size), Vector3(0, 0, 1), Vector4(c, c, c, c), Vector2(0.25f, 0.66f)),		// 3
 
 			// Back = N
-			Vertex(Vector3( size, -size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(0.75, 0.33)),	// 4
-			Vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(1, 0.33)),		// 5
-			Vertex(Vector3(-size,  size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(1, 0.66)),		// 6
-			Vertex(Vector3( size,  size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(0.75, 0.66)),	// 7
+			Vertex(Vector3( size, -size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(0.75, 0.33f)),		// 4
+			Vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(1.0f, 0.33f)),		// 5
+			Vertex(Vector3(-size,  size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(1.0f, 0.66f)),		// 6
+			Vertex(Vector3( size,  size, -size), Vector3(0, 0, -1), Vector4(c, c, c, c), Vector2(0.75, 0.66f)),		// 7
 
 			// Top
-			Vertex(Vector3(-size, size,  size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.25, 0.66)),	// 8
-			Vertex(Vector3( size, size,  size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.5, 0.66)),		// 9
-			Vertex(Vector3( size, size, -size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.5, 1)),		// 10
-			Vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.25, 1)),		// 11
+			Vertex(Vector3(-size, size,  size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.25f, 0.66f)),		// 8
+			Vertex(Vector3( size, size,  size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.5f, 0.66f)),		// 9
+			Vertex(Vector3( size, size, -size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.5f, 1.0f)),		// 10
+			Vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(c, c, c, c), Vector2(0.25f, 1.0f)),		// 11
 
 			// Bottom
-			Vertex(Vector3( size, -size,  size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.25, 0)),		// 12
-			Vertex(Vector3(-size, -size,  size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.5, 0)),		// 13
-			Vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.5, 0.33)),	// 14
-			Vertex(Vector3( size, -size, -size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.25, 0.33)),	// 15
+			Vertex(Vector3( size, -size,  size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.25f, 0.0f)),		// 12
+			Vertex(Vector3(-size, -size,  size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.5f, 0.0f)),		// 13
+			Vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.5f, 0.33f)),		// 14
+			Vertex(Vector3( size, -size, -size), Vector3(0, -1, 0), Vector4(c, c, c, c), Vector2(0.25f, 0.33f)),	// 15
 
 			// Left = W
-			Vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0, 0.33)),		// 16
-			Vertex(Vector3(-size, -size,  size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.25, 0.33)),	// 17
-			Vertex(Vector3(-size,  size,  size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.25, 0.66)),	// 18
-			Vertex(Vector3(-size,  size, -size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0, 0.66)),		// 19
+			Vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.0f, 0.33f)),		// 16
+			Vertex(Vector3(-size, -size,  size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.25f, 0.33f)),	// 17
+			Vertex(Vector3(-size,  size,  size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.25f, 0.66f)),	// 18
+			Vertex(Vector3(-size,  size, -size), Vector3(-1, 0, 0), Vector4(c, c, c, c), Vector2(0.0f, 0.66f)),		// 19
 
 			// Right = E
-			Vertex(Vector3(size, -size,  size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.5, 0.33)),		// 20
-			Vertex(Vector3(size, -size, -size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.75, 0.33)),	// 21
-			Vertex(Vector3(size,  size, -size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.75, 0.66)),	// 22
-			Vertex(Vector3(size,  size,  size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.5, 0.66)),		// 23
+			Vertex(Vector3(size, -size,  size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.5f, 0.33f)),		// 20
+			Vertex(Vector3(size, -size, -size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.75, 0.33f)),		// 21
+			Vertex(Vector3(size,  size, -size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.75, 0.66f)),		// 22
+			Vertex(Vector3(size,  size,  size), Vector3(1, 0, 0), Vector4(c, c, c, c), Vector2(0.5f, 0.66f)),		// 23
 		};
 
 		unsigned int indices[36] = {
@@ -98,7 +97,7 @@ namespace efiilj
 
 	void MeshResource::InitIndexBuffer(unsigned int* indexList, int count)
 	{
-		if (ibo != 0)
+		if (ibo != 0) // Ollad
 			return;
 
 		glGenBuffers(1, &ibo);
@@ -140,6 +139,8 @@ namespace efiilj
 
 	MeshResource::~MeshResource()
 	{
+		std::cout << "Deleting mesh resource " << this << std::endl;
+
 		Unbind();
 		glDeleteBuffers(1, &vao);
 		glDeleteBuffers(1, &vbo);

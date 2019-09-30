@@ -4,11 +4,14 @@
 //------------------------------------------------------------------------------
 #include "config.h"
 #include "quadtest.h"
+#include "camera.h"
+
 #include <cstring>
 #include <iostream>
 
 
 using namespace Display;
+
 namespace efiilj
 {
 
@@ -58,27 +61,34 @@ namespace efiilj
 		std::string fs = ShaderResource::LoadShader("./res/shaders/vertex.shader");
 		std::string vs = ShaderResource::LoadShader("./res/shaders/fragment.shader");
 
-		ShaderResource shader = ShaderResource(fs.c_str(), vs.c_str());
-		TextureResource texture = TextureResource("./res/textures/test.png", true);
-		MeshResource mesh = MeshResource::Cube(1);
+		MeshResource cube = MeshResource::Cube(1);
 
-		GraphicsNode node(mesh, texture, shader);
+		std::shared_ptr<MeshResource> meshPtr = std::make_shared<MeshResource>(cube);
+		std::shared_ptr<TextureResource> texturePtr = std::make_shared<TextureResource>("./res/textures/test.png", true);
+		std::shared_ptr<ShaderResource> shaderPtr = std::make_shared<ShaderResource>(fs, vs);
+		std::shared_ptr<TransformModel> transPtr1 = std::make_shared<TransformModel>(Vector3(0, 0, 0));
+		std::shared_ptr<TransformModel> transPtr2 = std::make_shared<TransformModel>(Vector3(0, 1, 0), Vector3(0, 0.5f, 0));
+		std::shared_ptr<CameraModel> cameraPtr = std::make_shared<CameraModel>(fov, 1.0f, 0.1f, 100.0f,
+			TransformModel(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(1, 1, 1)), Vector3(0, 1, 0));
 
-		window->SetKeyPressFunction([this, &node](int32 key, int32 scancode, int32 action, int32 mod)
+		GraphicsNode node1(meshPtr, texturePtr, shaderPtr, transPtr1, cameraPtr);
+		GraphicsNode node2(meshPtr, texturePtr, shaderPtr, transPtr2, cameraPtr);
+
+		window->SetKeyPressFunction([&](int32 key, int32 scancode, int32 action, int32 mod)
 		{
 			switch (key)
 			{
 			case GLFW_KEY_W:
-				node.SetPosition(Vector3(0, 0, -1), true);
+				transPtr1->Position(Vector3(0, 0, -0.1f), true);
 				break;
 			case GLFW_KEY_S:
-				node.SetPosition(Vector3(0, 0, 1), true);
+				transPtr1->Position(Vector3(0, 0, 0.1f), true);
 				break;
 			case GLFW_KEY_A:
-				node.SetPosition(Vector3(-1, 0, 0), true);
+				transPtr1->Position(Vector3(-0.1f, 0, 0), true);
 				break;
 			case GLFW_KEY_D:
-				node.SetPosition(Vector3(1, 0, 0), true);
+				transPtr1->Position(Vector3(0.1f, 0, 0), true);
 				break;
 
 			default:
@@ -87,22 +97,29 @@ namespace efiilj
 			}
 		});
 
+		window->SetMouseMoveFunction([&](float x, float y)
+		{
+				float xx = x / 1000.0f - 0.5f;
+				float yy = y / 1000.0f - 0.5f;
+
+				cameraPtr->Transform().Rotation(Vector3(-0.5f + yy, xx - 3.1415f / 2, 0));
+
+				std::cout << "\rX: " << xx << ", Y: " << yy;
+		});
+
 		while (this->window->IsOpen())
 		{
 
 			t_now = std::chrono::high_resolution_clock::now();
 			time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
-			Matrix4 model = Matrix4::getScale(1, 1, 1);
-			Matrix4 view = Matrix4::getLookat(Vector3(2 * sinf(time / 2), 1, 2 * cosf(time / 2)), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-			Matrix4 perspective = Matrix4::getPerspective(fov, 1.0f, 0.1f, 100.0f);
-			Matrix4 mvp = (perspective * view * model);
-
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
-			node.Transform(mvp);
-			node.Draw();
+			node1.Draw();
+			node2.Draw();
+
+			//cameraPtr->Transform().Rotation(Vector3(-0.5f, time, 0));
 
 			this->window->SwapBuffers();
 		}

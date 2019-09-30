@@ -59,12 +59,12 @@ namespace efiilj
 		/// Inserts the specified Vector3 into the top of a new Vector4.
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
-		Vector4(const Vector3& copy)
+		Vector4(const Vector3& copy, float w)
 		{
 			this->x(copy.x());
 			this->y(copy.y());
 			this->z(copy.z());
-			this->w(1);
+			this->w(w);
 		}
 
 		/// <summary>
@@ -259,7 +259,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The vector index to access</param>
 		/// <returns>The value at the specified position in the vector</returns>
-		float at(int y) const
+		const float& at(int y) const
 		{
 			if (y > 3)
 				throw new std::out_of_range("Vector index out of range");

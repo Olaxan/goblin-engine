@@ -241,7 +241,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The matrix index to access</param>
 		/// <returns>The value at matrix index n</returns>
-		float at(int n) const
+		const float& at(int n) const
 		{
 			if (n > 16)
 				throw std::out_of_range("Matrix index out of range");
@@ -255,7 +255,7 @@ namespace efiilj
 		/// <param name="x">Matrix x-position, column</param>
 		/// <param name="y">Matrix y-poisition, row</param>
 		/// <returns>The value at matrix position x, y</returns>
-		float at(int x, int y) const
+		const float& at(int x, int y) const
 		{
 			if (x > 4 || y > 4)
 				throw std::out_of_range("Matrix index out of range");
@@ -281,12 +281,13 @@ namespace efiilj
 		/// </summary>
 		/// <param name="y">The row index to change</param>
 		/// <param name="row">The Vector4 to replace the row with</param>
-		void row(int y, Vector4& row)
+		/// <param name="relative">Whether the operation should be added to the existing values, or replace them<param name=""></param>
+		void row(int y, Vector4& row, bool relative = false)
 		{
 			if (y > 4)
 				throw std::out_of_range("Row index out of range");
 
-			_arr[y] = row;
+			_arr[y] = relative ? _arr[y] + row : row ;
 		}
 
 		/// <summary>
@@ -302,15 +303,21 @@ namespace efiilj
 			return Vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
 		}
 
-		void col(int x, Vector4& col)
+		/// <summary>
+		/// Sets the column at the specified y-position.
+		/// </summary>
+		/// <param name="y">The column index to change</param>
+		/// <param name="row">The Vector4 to change the column with</param>
+		/// <param name="relative">Whether the operation should be added to the existing values, or replace them</param>
+		void col(int x, const Vector4& col, bool relative = false)
 		{
 			if (x > 4)
 				throw std::out_of_range("Row index out of range");
 
-			(*this)(x, 0) = col[0];
-			(*this)(x, 1) = col[1];
-			(*this)(x, 2) = col[2];
-			(*this)(x, 3) = col[3];
+			(*this)(x, 0) = relative ? at(x, 0) + col.x() : col.x();
+			(*this)(x, 1) = relative ? at(x, 1) + col.y() : col.y();
+			(*this)(x, 2) = relative ? at(x, 2) + col.z() : col.z();
+			(*this)(x, 3) = relative ? at(x, 3) + col.w() : col.w();
 		}
 
 		/* === MATRIX FUNCTIONS === */
@@ -476,6 +483,11 @@ namespace efiilj
 			return mat;
 		}
 
+		static Matrix4 getScale(const Vector3& xyz)
+		{
+			return getScale(xyz.x(), xyz.y(), xyz.z());
+		}
+
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the x-axis.
 		/// </summary>
@@ -560,6 +572,12 @@ namespace efiilj
 			return mat;
 		}
 
+		static Matrix4 getRotationXYZ(const Vector3& eulers)
+		{
+			// TODO: Optimize
+			return getRotationZ(eulers.z()) * getRotationY(eulers.y()) * getRotationX(eulers.x());
+		}
+
 		static Matrix4 getPerspective(float left, float right, float top, float bottom, float near, float far)
 		{
 
@@ -575,6 +593,8 @@ namespace efiilj
 
 			return mat;
 		}
+		
+		//144540105
 
 		static Matrix4 getPerspective(float fov, float aspect, float near, float far)
 		{
@@ -593,7 +613,7 @@ namespace efiilj
 			Vector3 cameraRight = Vector3::cross(upDirection, cameraDirection).norm();
 			Vector3 cameraUp = Vector3::cross(cameraDirection, cameraRight);
 
-			Matrix4 A = Matrix4(Vector4(cameraRight), Vector4(cameraUp), Vector4(cameraDirection), Vector4());
+			Matrix4 A = Matrix4(Vector4(cameraRight, 1), Vector4(cameraUp, 1), Vector4(cameraDirection, 1), Vector4());
 			A(3, 0) = Vector3::dot(cameraRight, cameraPos) * -1;
 			A(3, 1) = Vector3::dot(cameraUp, cameraPos) * -1;
 			A(3, 2) = Vector3::dot(cameraDirection, cameraPos) * -1;
@@ -607,13 +627,25 @@ namespace efiilj
 		/// Returns a formatted multi-line string representation of the matrix.
 		/// </summary>
 		/// <returns>A formatted multi-line string representation of the matrix</returns>
-		std::string to_string()
+		std::string to_string() const
 		{
 			std::stringstream ss;
 			ss << at(0, 0) << ", " << at(1, 0) << ", " << at(2, 0) << ", " << at(3, 0) << ";\n";
 			ss << at(0, 1) << ", " << at(1, 1) << ", " << at(2, 1) << ", " << at(3, 1) << ";\n";
 			ss << at(0, 2) << ", " << at(1, 2) << ", " << at(2, 2) << ", " << at(3, 2) << ";\n";
 			ss << at(0, 3) << ", " << at(1, 3) << ", " << at(2, 3) << ", " << at(3, 3) << ";\n";
+			return ss.str();
+		}
+
+		std::string to_mem_string() const
+		{
+			std::stringstream ss;
+			for (int i = 0; i < 16; i++)
+			{
+				ss << *(&(*this).at(0) + i) << ", ";
+			}
+
+			ss << std::endl;
 			return ss.str();
 		}
 

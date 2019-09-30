@@ -10,7 +10,7 @@ namespace efiilj
 	struct Vertex
 	{
 		Vertex() : xyzw(0, 0, 0, 0), normal(0, 0, 0, 0), rgba(1, 1, 1, 1), uv(0, 0) { }
-		Vertex(Vector3 xyzw, Vector3 normal, Vector4 rgba, Vector2 uv) : xyzw(xyzw), rgba(rgba), normal(normal), uv(uv) { }
+		Vertex(Vector3 xyzw, Vector3 normal, Vector4 rgba, Vector2 uv) : xyzw(xyzw, 1), normal(normal, 1), rgba(rgba), uv(uv) { }
 
 		Vector4 xyzw;
 		Vector4 normal;
@@ -78,6 +78,9 @@ namespace efiilj
 		/// <param name="indexList">List of indices to buffer</param>
 		/// <param name="indexCount">Size of the index list</param>
 		MeshResource(Vertex* vertexList, int vertexCount, unsigned int* indexList, int indexCount);
+
+		MeshResource(MeshResource& copy);
+		MeshResource(MeshResource&& move);
 
 		/// <summary>
 		/// Static method to generate a cube of the specified size.
