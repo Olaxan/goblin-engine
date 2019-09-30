@@ -80,15 +80,19 @@ namespace efiilj
 			{
 			case GLFW_KEY_W:
 				transPtr1->Position(Vector3(0, 0, -0.1f), true);
+				transPtr2->Position(Vector3(0, 0, -0.1f), true);
 				break;
 			case GLFW_KEY_S:
 				transPtr1->Position(Vector3(0, 0, 0.1f), true);
+				transPtr2->Position(Vector3(0, 0, 0.1f), true);
 				break;
 			case GLFW_KEY_A:
 				transPtr1->Position(Vector3(-0.1f, 0, 0), true);
+				transPtr2->Position(Vector3(-0.1f, 0, 0), true);
 				break;
 			case GLFW_KEY_D:
 				transPtr1->Position(Vector3(0.1f, 0, 0), true);
+				transPtr2->Position(Vector3(0.1f, 0, 0), true);
 				break;
 
 			default:
@@ -102,7 +106,7 @@ namespace efiilj
 				float xx = x / 1000.0f - 0.5f;
 				float yy = y / 1000.0f - 0.5f;
 
-				cameraPtr->Transform().Rotation(Vector3(-0.5f + yy, xx - 3.1415f / 2, 0));
+				cameraPtr->Transform().Rotation(Vector3(-0.5f - yy, xx - 3.1415f / 2, 0));
 
 				std::cout << "\rX: " << xx << ", Y: " << yy;
 		});

@@ -11,9 +11,7 @@ namespace efiilj
 		std::shared_ptr<TransformModel> transform_ptr,
 		std::shared_ptr<CameraModel> camera_ptr) 
 		: mesh(mesh_ptr), texture(texture_ptr), shader(shader_ptr), transform(transform_ptr), camera(camera_ptr) 
-	{ 
-		std::cout << mesh->IndexCount() << " / " << transform->Model().to_mem_string();
-	}
+	{ }
 
 	void GraphicsNode::Bind()
 	{
