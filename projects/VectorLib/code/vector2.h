@@ -245,6 +245,11 @@ namespace efiilj
 			return x.dot(y);
 		}
 
+		static bool is_near(const Vector2& a, const Vector2& b, float treshold = 0.01f)
+		{
+			return dist(a, b) < treshold;
+		}
+
 		/// <summary>
 		/// Calculates the dot product between this vector and another.
 		/// </summary>

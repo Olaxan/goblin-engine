@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <map>
 
 namespace efiilj
 {
@@ -122,8 +123,7 @@ namespace efiilj
 				Vector3 norm = normals[normalIndex - 1];
 				Vector2 uv = uvs[uvIndex - 1];
 
-				vertexList.push_back(Vertex(xyzw, norm, Vector4(1, 1, 1, 1), uv));
-				indexList.push_back(i);
+				packedVertices.push_back(Vertex(xyzw, norm, Vector4(1, 1, 1, 1), uv));
 			}
 		}
 		else
@@ -133,8 +133,42 @@ namespace efiilj
 		}
 		
 		file.close();
+		return FindIndices(packedVertices);
+	}
 
-		return vertexCount() > 0;
+	bool ObjectLoader::FindIndices(std::vector<Vertex>& in_vertices)
+	{
+		int count = in_vertices.size();
+
+		if (count < 3)
+			return false;
+
+		indexList.clear();
+		vertexList.clear();
+
+		Vertex test;
+		std::map<Vertex, unsigned int> vertices;
+		std::map<Vertex, unsigned int>::iterator it;
+
+		for (int i = 0; i < count; i++)
+		{
+			test = in_vertices[i];
+
+			auto it = vertices.find(test);
+			if (it != vertices.end())
+			{
+				indexList.push_back(it->second);
+			}
+			else
+			{
+				vertexList.push_back(test);
+				unsigned int index = (unsigned int)vertexList.size() - 1;
+				indexList.push_back(index);
+				vertices[test] = index;
+			}
+		}
+
+		return indexList.size() > 0;
 	}
 
 	ObjectLoader::ObjectLoader(const char* path)

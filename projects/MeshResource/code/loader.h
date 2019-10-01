@@ -16,6 +16,7 @@ namespace efiilj
 		bool is_valid;
 
 		bool LoadFromFile(const char* path);
+		bool FindIndices(std::vector<Vertex>& in_vertices);
 
 	public:
 

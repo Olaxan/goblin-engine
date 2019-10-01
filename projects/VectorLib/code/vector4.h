@@ -316,6 +316,11 @@ namespace efiilj
 			return x.cross(y);
 		}
 
+		static bool is_near(const Vector4& a, const Vector4& b, float treshold = 0.01f)
+		{
+			return dist(a, b) < treshold;
+		}
+
 		/// <summary>
 		/// Calculates the 3D dot product between this vector and another.
 		/// </summary>
