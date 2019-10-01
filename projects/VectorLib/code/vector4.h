@@ -400,6 +400,18 @@ namespace efiilj
 			return ss.str();
 		}
 
+		std::string to_mem_string() const
+		{
+			std::stringstream ss;
+			for (int i = 0; i < 4; i++)
+			{
+				ss << *(&(*this).at(0) + i) << ", ";
+			}
+
+			ss << std::endl;
+			return ss.str();
+		}
+
 		~Vector4() { }
 	};
 }

@@ -12,7 +12,7 @@ namespace efiilj
 			Matrix4 r = Matrix4::getRotationXYZ(rotation);
 			Matrix4 s = Matrix4::getScale(scale);
 
-			model = s * r * t;
+			model = t * r * s;
 			is_dirty = false;
 		}
 

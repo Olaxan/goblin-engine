@@ -21,7 +21,8 @@ namespace efiilj
 
 		Display::Window* window;
 		std::chrono::time_point<std::chrono::steady_clock> t_start, t_now;
-		float time;
+		float time, mouse_x, mouse_y, mouse_down_x, mouse_down_y;
+		bool is_dragging_mouse;
 
 	public:
 
