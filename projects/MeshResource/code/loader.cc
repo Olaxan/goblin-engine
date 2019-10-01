@@ -70,7 +70,7 @@ namespace efiilj
 						&vertexIndex[2], &uvIndex[2], &normalIndex[2],
 						&vertexIndex[3], &uvIndex[3], &normalIndex[3]);
 
-					if (matches == 9 || matches == 12)
+					if (matches >= 9)
 					{
 						vertexIndices.push_back(vertexIndex[0]);
 						vertexIndices.push_back(vertexIndex[1]);
@@ -83,33 +83,27 @@ namespace efiilj
 						normalIndices.push_back(normalIndex[0]);
 						normalIndices.push_back(normalIndex[1]);
 						normalIndices.push_back(normalIndex[2]);
+
+						if (matches == 12)
+						{
+							vertexIndices.push_back(vertexIndex[2]);
+							vertexIndices.push_back(vertexIndex[3]);
+							vertexIndices.push_back(vertexIndex[0]);
+
+							uvIndices.push_back(uvIndex[3]);
+							uvIndices.push_back(uvIndex[2]);
+							uvIndices.push_back(uvIndex[0]);
+
+							normalIndices.push_back(normalIndex[2]);
+							normalIndices.push_back(normalIndex[3]);
+							normalIndices.push_back(normalIndex[0]);
+						}
 					}
 					else
 					{
 						std::cout << "\nError when loading OBJ file - failed to parse face data (" << cs << ")" << std::endl;
 						return false;
 					}
-
-					if (matches == 12)
-					{
-						std::cout << "Triangulating quadrilateral (" << s << ")\n";
-
-						vertexIndices.push_back(vertexIndex[2]);
-						vertexIndices.push_back(vertexIndex[3]);
-						vertexIndices.push_back(vertexIndex[0]);
-
-						uvIndices.push_back(uvIndex[3]);
-						uvIndices.push_back(uvIndex[2]);
-						uvIndices.push_back(uvIndex[0]);
-
-						normalIndices.push_back(normalIndex[2]);
-						normalIndices.push_back(normalIndex[3]);
-						normalIndices.push_back(normalIndex[0]);
-					}
-				}
-				else
-				{
-					std::cout << "Skipped line " << s << "\n";
 				}
 			}
 
