@@ -7,22 +7,25 @@
 
 namespace efiilj
 {
-	ShaderResource::ShaderResource() : program_id(0)
+	shader_resource::shader_resource() : program_id_(0)
 	{
 	}
 
-	ShaderResource::ShaderResource(const char* vertex, const char* fragment) : program_id(0)
+	shader_resource::shader_resource(const char* vertex, const char* fragment) : program_id_(0)
 	{
-		program_id = CreateProgram(vertex, fragment);
+		program_id_ = create_program(vertex, fragment);
 	}
 
-	ShaderResource::ShaderResource(std::string vertex, std::string fragment) : ShaderResource(vertex.c_str(), fragment.c_str()) { }
+	shader_resource::shader_resource(const std::string& vertex, const std::string& fragment) : shader_resource(
+		vertex.c_str(), fragment.c_str())
+	{
+	}
 
-	std::string ShaderResource::LoadShader(const char* filePath)
+	std::string shader_resource::load_shader(const char* file_path)
 	{
 		std::string s;
 		std::stringstream ss;
-		std::ifstream file(filePath);
+		std::ifstream file(file_path);
 
 		if (file.is_open())
 		{
@@ -33,36 +36,37 @@ namespace efiilj
 		return ss.str();
 	}
 
-	std::string ShaderResource::LoadShader(std::string filePath)
+	std::string shader_resource::load_shader(const std::string& file_path)
 	{
-		return LoadShader(filePath.c_str());
+		return load_shader(file_path.c_str());
 	}
 
-	unsigned int ShaderResource::CompileShader(unsigned int type, const char* source)
+	unsigned int shader_resource::compile_shader(const unsigned int type, const char* source)
 	{
-		unsigned int id = glCreateShader(type);
+		const unsigned int id = glCreateShader(type);
 
-		glShaderSource(id, 1, &source, NULL);
+		glShaderSource(id, 1, &source, nullptr);
 		glCompileShader(id);
-		DebugShader(id, ShaderDebugType::SHADER, GL_COMPILE_STATUS, std::cout, (type == GL_VERTEX_SHADER ? "Vertex compilation failed!" : "Fragment compilation failed!"));
+		debug_shader(id, type_shader, GL_COMPILE_STATUS, std::cout,
+		            (type == GL_VERTEX_SHADER ? "Vertex compilation failed!" : "Fragment compilation failed!"));
 
 		return id;
 	}
 
-	unsigned int ShaderResource::CreateProgram(const char* vertex, const char* fragment)
+	unsigned int shader_resource::create_program(const char* vertex, const char* fragment)
 	{
-		unsigned int program = glCreateProgram();
-		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertex);
-		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragment);
+		const unsigned int program = glCreateProgram();
+		const unsigned int vs = compile_shader(GL_VERTEX_SHADER, vertex);
+		const unsigned int fs = compile_shader(GL_FRAGMENT_SHADER, fragment);
 
 		glAttachShader(program, vs);
 		glAttachShader(program, fs);
 
 		glLinkProgram(program);
-		DebugShader(program, ShaderDebugType::PROGRAM, GL_LINK_STATUS, std::cout, "Program linking failed!");
+		debug_shader(program, type_program, GL_LINK_STATUS, std::cout, "Program linking failed!");
 
 		glValidateProgram(program);
-		DebugShader(program, ShaderDebugType::PROGRAM, GL_VALIDATE_STATUS, std::cout, "Program validation failed!");
+		debug_shader(program, type_program, GL_VALIDATE_STATUS, std::cout, "Program validation failed!");
 
 		glDetachShader(program, vs);
 		glDetachShader(program, fs);
@@ -73,30 +77,31 @@ namespace efiilj
 		return program;
 	}
 
-	bool ShaderResource::DebugShader(unsigned int id, ShaderDebugType type, unsigned int status, std::ostream& stream, const char* header) const
+	bool shader_resource::debug_shader(const unsigned int id, const shader_debug_type type, const unsigned int status, std::ostream& stream,
+	                                 const char* header)
 	{
 		int result = 0;
-		int logSize = 0;
+		int log_size = 0;
 		char* message = "";
 
 		switch (type)
 		{
-		case ShaderResource::SHADER:
+		case type_shader:
 			glGetShaderiv(id, status, &result);
 			if (result == GL_FALSE)
 			{
-				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logSize);
-				message = (char*)_malloca(logSize * sizeof(char));
-				glGetShaderInfoLog(id, logSize, NULL, message);
+				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_size);
+				message = static_cast<char*>(nullptr);
+				glGetShaderInfoLog(id, log_size, nullptr, message);
 			}
 			break;
-		case ShaderResource::PROGRAM:
+		case type_program:
 			glGetProgramiv(id, status, &result);
 			if (result == GL_FALSE)
 			{
-				glGetProgramiv(id, GL_INFO_LOG_LENGTH, &logSize);
-				message = (char*)_malloca(logSize * sizeof(char));
-				glGetProgramInfoLog(id, logSize, NULL, message);
+				glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_size);
+				message = static_cast<char*>(nullptr);
+				glGetProgramInfoLog(id, log_size, nullptr, message);
 			}
 			break;
 		default:
@@ -110,26 +115,26 @@ namespace efiilj
 		return result;
 	}
 
-	void ShaderResource::Use() const
+	void shader_resource::use() const
 	{
-		glUseProgram(program_id);
+		glUseProgram(program_id_);
 	}
 
-	void ShaderResource::Drop() const
+	void shader_resource::drop()
 	{
 		glUseProgram(0);
 	}
 
-	int ShaderResource::FindUniformLocation(const char* name)
+	int shader_resource::find_uniform_location(const char* name)
 	{
 		int uniform;
-		auto it = locations.find(name);
+		const auto it = locations_.find(name);
 
-		if (it == locations.end())
+		if (it == locations_.end())
 		{
-			uniform = glGetUniformLocation(program_id, name);
+			uniform = glGetUniformLocation(program_id_, name);
 			if (uniform != -1)
-				locations[name] = uniform;
+				locations_[name] = uniform;
 		}
 		else
 			uniform = it->second;
@@ -137,9 +142,9 @@ namespace efiilj
 		return uniform;
 	}
 
-	bool ShaderResource::SetUniform1i(const char* name, int val)
+	bool shader_resource::set_uniform1_i(const char* name, const int val)
 	{
-		int uniform = FindUniformLocation(name);
+		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
 			return false;
 
@@ -147,9 +152,9 @@ namespace efiilj
 		return true;
 	}
 
-	bool ShaderResource::SetUniformVector4fv(const char* name, const Vector4& vec)
+	bool shader_resource::set_uniform_vector4_fv(const char* name, const Vector4& vec)
 	{
-		int uniform = FindUniformLocation(name);
+		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
 			return false;
 
@@ -157,9 +162,9 @@ namespace efiilj
 		return true;
 	}
 
-	bool ShaderResource::SetUniformMatrix4fv(const char* name, const Matrix4& mat)
+	bool shader_resource::set_uniform_matrix4_fv(const char* name, const Matrix4& mat)
 	{
-		int uniform = FindUniformLocation(name);
+		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
 			return false;
 
@@ -167,9 +172,8 @@ namespace efiilj
 		return true;
 	}
 
-	ShaderResource::~ShaderResource()
+	shader_resource::~shader_resource()
 	{
-		glDeleteProgram(program_id);
+		glDeleteProgram(program_id_);
 	}
 }
-

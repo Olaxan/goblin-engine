@@ -7,26 +7,26 @@
 
 namespace efiilj
 {
-	class ObjectLoader
+	class object_loader
 	{
 	private:
 
-		std::vector<Vertex> vertexList;
-		std::vector<unsigned int> indexList;
-		bool is_valid;
+		std::vector<vertex> vertex_list_;
+		std::vector<unsigned int> index_list_;
+		bool is_valid_;
 
-		bool LoadFromFile(const char* path);
-		bool FindIndices(std::vector<Vertex>& in_vertices);
+		bool load_from_file(const char* path);
+		bool find_indices(std::vector<vertex>& in_vertices);
 
 	public:
 
-		ObjectLoader(const char* path);
+		explicit object_loader(const char* path);
 
-		bool isValid() { return is_valid; }
+		bool is_valid() const { return is_valid_; }
 
-		int vertexCount() { return vertexList.size(); }
-		int indexCount() { return indexList.size(); }
+		int vertex_count() const { return vertex_list_.size(); }
+		int index_count() const { return index_list_.size(); }
 
-		MeshResource GetResource();
+		mesh_resource get_resource();
 	};
 }

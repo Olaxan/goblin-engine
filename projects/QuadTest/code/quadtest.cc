@@ -16,9 +16,9 @@ using namespace Display;
 namespace efiilj
 {
 
-	QuadTest::QuadTest() : window(0), time(0), mouse_x(0), mouse_y(0), mouse_down_x(0), mouse_down_y(0), is_dragging_mouse(false) { }
+	QuadTest::QuadTest() : window(nullptr), time(0), mouse_x(0), mouse_y(0), mouse_down_x(0), mouse_down_y(0), is_dragging_mouse(false) { }
 
-	QuadTest::~QuadTest() { }
+	QuadTest::~QuadTest() = default;
 
 	bool QuadTest::Open()
 	{
@@ -48,42 +48,42 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		std::string fs = ShaderResource::LoadShader("./res/shaders/vertex.shader");
-		std::string vs = ShaderResource::LoadShader("./res/shaders/fragment.shader");
+		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
+		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
 
-		ObjectLoader foxLoader = ObjectLoader("./res/meshes/fox.obj");
-		ObjectLoader rockLoader = ObjectLoader("./res/meshes/rock.obj");
+		object_loader foxLoader = object_loader("./res/meshes/fox.obj");
+		object_loader rockLoader = object_loader("./res/meshes/rock.obj");
 
-		if (!foxLoader.isValid() || !rockLoader.isValid())
+		if (!foxLoader.is_valid() || !rockLoader.is_valid())
 		{
 			std::cout << "\nFailed to load OBJ file - program will terminate.\n";
 			return;
 		}
 
-		std::cout << "Loaded " << foxLoader.vertexCount() << " vertices, " << foxLoader.indexCount() << " indices\n";
-		std::cout << "Loaded " << rockLoader.vertexCount() << " vertices, " << rockLoader.indexCount() << " indices\n";
+		std::cout << "Loaded " << foxLoader.vertex_count() << " vertices, " << foxLoader.index_count() << " indices\n";
+		std::cout << "Loaded " << rockLoader.vertex_count() << " vertices, " << rockLoader.index_count() << " indices\n";
 
-		MeshResource foxModel = foxLoader.GetResource();
-		MeshResource rockModel = rockLoader.GetResource();
+		mesh_resource foxModel = foxLoader.get_resource();
+		mesh_resource rockModel = rockLoader.get_resource();
 
-		std::shared_ptr<ShaderResource> shaderPtr = std::make_shared<ShaderResource>(fs, vs);
+		std::shared_ptr<shader_resource> shaderPtr = std::make_shared<shader_resource>(fs, vs);
 
-		std::shared_ptr<MeshResource> foxMeshPtr = std::make_shared<MeshResource>(foxModel);
-		std::shared_ptr<MeshResource> rockMeshPtr = std::make_shared<MeshResource>(rockModel);
+		std::shared_ptr<mesh_resource> foxMeshPtr = std::make_shared<mesh_resource>(foxModel);
+		std::shared_ptr<mesh_resource> rockMeshPtr = std::make_shared<mesh_resource>(rockModel);
 
-		std::shared_ptr<TextureResource> foxTexturePtr = std::make_shared<TextureResource>("./res/textures/fox_base.png", true);
-		std::shared_ptr<TextureResource> rockTexturePtr = std::make_shared<TextureResource>("./res/textures/rock_base.png", true);
+		std::shared_ptr<texture_resource> foxTexturePtr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
+		std::shared_ptr<texture_resource> rockTexturePtr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
 
-		std::shared_ptr<TransformModel> foxTransPtr = std::make_shared<TransformModel>(Vector3(0, 1.5f, -1), Vector3(0), Vector3(0.1f, 0.1f, 0.1f));
-		std::shared_ptr<TransformModel> rockTransPtr = std::make_shared<TransformModel>(Vector3(0, 0, -1), Vector3(0), Vector3(0.01f, 0.01f, 0.01f));
+		std::shared_ptr<transform_model> foxTransPtr = std::make_shared<transform_model>(Vector3(0, 0.5f, -1), Vector3(0), Vector3(0.1f, 0.1f, 0.1f));
+		std::shared_ptr<transform_model> rockTransPtr = std::make_shared<transform_model>(Vector3(0, 0, -1), Vector3(1.6), Vector3(0.005f, 0.005f, 0.005f));
 
-		std::shared_ptr<CameraModel> cameraPtr = std::make_shared<CameraModel>(fov, 1.0f, 0.1f, 100.0f,
-			TransformModel(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(1, 1, 1)), Vector3(0, 1, 0));
+		std::shared_ptr<camera_model> cameraPtr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f,
+			transform_model(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(1, 1, 1)), Vector3(0, 1, 0));
 
-		GraphicsNode foxNode(foxMeshPtr, foxTexturePtr, shaderPtr, foxTransPtr, cameraPtr);
-		GraphicsNode rockNode(rockMeshPtr, rockTexturePtr, shaderPtr, rockTransPtr, cameraPtr);
+		graphics_node foxNode(foxMeshPtr, foxTexturePtr, shaderPtr, foxTransPtr, cameraPtr);
+		graphics_node rockNode(rockMeshPtr, rockTexturePtr, shaderPtr, rockTransPtr, cameraPtr);
 
-		window->SetKeyPressFunction([&](int32 key, int32 scancode, int32 action, int32 mod)
+		window->SetKeyPressFunction([&](int key, int scancode, int action, int mod)
 			{
 				if (action == 0)
 					return;
@@ -91,22 +91,22 @@ namespace efiilj
 				switch (key)
 				{
 				case GLFW_KEY_W:
-					foxTransPtr->Position(Vector3(0, 0, -0.05f), true);
+					foxTransPtr->position(Vector3(0, 0, -0.05f), true);
 					break;
 				case GLFW_KEY_S:
-					foxTransPtr->Position(Vector3(0, 0, 0.05f), true);
+					foxTransPtr->position(Vector3(0, 0, 0.05f), true);
 					break;
 				case GLFW_KEY_A:
-					foxTransPtr->Position(Vector3(-0.05f, 0, 0), true);
+					foxTransPtr->position(Vector3(-0.05f, 0, 0), true);
 					break;
 				case GLFW_KEY_D:
-					foxTransPtr->Position(Vector3(0.05f, 0, 0), true);
+					foxTransPtr->position(Vector3(0.05f, 0, 0), true);
 					break;
 				case GLFW_KEY_LEFT_SHIFT:
-					foxTransPtr->Position(Vector3(0, -0.05f, 0), true);
+					foxTransPtr->position(Vector3(0, -0.05f, 0), true);
 					break;
 				case GLFW_KEY_SPACE:
-					foxTransPtr->Position(Vector3(0, 0.05f, 0), true);
+					foxTransPtr->position(Vector3(0, 0.05f, 0), true);
 					break;
 
 				default:
@@ -120,13 +120,13 @@ namespace efiilj
 				mouse_x = x / 1000.0f - 0.5f;
 				mouse_y = y / 1000.0f - 0.5f;
 
-				cameraPtr->Transform().Rotation(Vector3(-0.5f - mouse_y, mouse_x - 3.1415f / 2, 0));
+				cameraPtr->transform().rotation(Vector3(-0.5f - mouse_y, mouse_x - 3.1415f / 2, 0));
 
 				//std::cout << "                             \rX: " << mouse_x << ", Y: " << mouse_y;
 
 				if (is_dragging_mouse)
 				{
-					rockTransPtr->Rotation(Vector3(mouse_y - mouse_down_y, mouse_x - mouse_down_x, 0) * 5, false);
+					rockTransPtr->rotation(Vector3(mouse_y - mouse_down_y, mouse_x - mouse_down_x, 0) * 5, false);
 				}
 			});
 
@@ -153,8 +153,8 @@ namespace efiilj
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
-			foxNode.Draw();
-			rockNode.Draw();
+			foxNode.draw();
+			rockNode.draw();
 
 			//cameraPtr->Transform().Rotation(Vector3(-0.5f, time, 0));
 

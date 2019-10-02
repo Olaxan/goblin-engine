@@ -3,121 +3,123 @@
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include <map>
 
 namespace efiilj
 {
-	bool ObjectLoader::LoadFromFile(const char* path)
+	bool object_loader::load_from_file(const char* path)
 	{
 		std::string s;
 		std::ifstream file(path);
 
-		std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+		std::vector<unsigned int> vertex_indices, uv_indices, normal_indices;
 		std::vector<Vector3> vertices;
 		std::vector<Vector3> normals;
 		std::vector<Vector2> uvs;
 
-		std::vector<Vertex> packedVertices;
+		std::vector<vertex> packed_vertices;
 
 		if (file.is_open())
 		{
 			while (std::getline(file, s))
 			{
-
 				const char* cs = s.c_str();
 
-				if (strnicmp(cs, "vn", 2) == 0)
+				if (_strnicmp(cs, "vn", 2) == 0)
 				{
 					Vector3 norm;
-					if (std::sscanf(&cs[2], "%f %f %f", &norm[0], &norm[1], &norm[2]) == 3)
+					if (sscanf_s(&cs[2], "%f %f %f", &norm[0], &norm[1], &norm[2]) == 3)
 						normals.push_back(norm);
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse normal data (" << cs << ")" << std::endl;
+						std::cout << "\nError when loading OBJ file - failed to parse normal data (" << cs << ")" << std
+							::endl;
 						return false;
 					}
 				}
-				else if (strnicmp(cs, "vt", 2) == 0)
+				else if (_strnicmp(cs, "vt", 2) == 0)
 				{
 					Vector2 uv;
-					if (std::sscanf(&cs[2], "%f %f", &uv[0], &uv[1]) == 2)
+					if (sscanf_s(&cs[2], "%f %f", &uv[0], &uv[1]) == 2)
 						uvs.push_back(uv);
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse uv data (" << cs << ")" << std::endl;
+						std::cout << "\nError when loading OBJ file - failed to parse uv data (" << cs << ")" << std::
+							endl;
 						return false;
 					}
 				}
-				else if (strnicmp(cs, "v", 1) == 0)
+				else if (_strnicmp(cs, "v", 1) == 0)
 				{
 					Vector3 vert;
-					if (sscanf(&cs[1], "%f %f %f", &vert[0], &vert[1], &vert[2]) == 3)
+					if (sscanf_s(&cs[1], "%f %f %f", &vert[0], &vert[1], &vert[2]) == 3)
 						vertices.push_back(vert);
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse vertex data (" << cs << ")" << std::endl;
+						std::cout << "\nError when loading OBJ file - failed to parse vertex data (" << cs << ")" << std
+							::endl;
 						return false;
 					}
 				}
-				else if (strnicmp(cs, "f", 1) == 0)
+				else if (_strnicmp(cs, "f", 1) == 0)
 				{
-					unsigned int vertexIndex[4], uvIndex[4], normalIndex[4];
-					int matches = sscanf(&cs[1], "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", 
-						&vertexIndex[0], &uvIndex[0], &normalIndex[0], 
-						&vertexIndex[1], &uvIndex[1], &normalIndex[1],
-						&vertexIndex[2], &uvIndex[2], &normalIndex[2],
-						&vertexIndex[3], &uvIndex[3], &normalIndex[3]);
+					unsigned int vertex_index[4], uv_index[4], normal_index[4];
+					int matches = sscanf_s(&cs[1], "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
+					                     &vertex_index[0], &uv_index[0], &normal_index[0],
+					                     &vertex_index[1], &uv_index[1], &normal_index[1],
+					                     &vertex_index[2], &uv_index[2], &normal_index[2],
+					                     &vertex_index[3], &uv_index[3], &normal_index[3]);
 
 					if (matches >= 9)
 					{
-						vertexIndices.push_back(vertexIndex[0]);
-						vertexIndices.push_back(vertexIndex[1]);
-						vertexIndices.push_back(vertexIndex[2]);
+						vertex_indices.push_back(vertex_index[0]);
+						vertex_indices.push_back(vertex_index[1]);
+						vertex_indices.push_back(vertex_index[2]);
 
-						uvIndices.push_back(uvIndex[0]);
-						uvIndices.push_back(uvIndex[1]);
-						uvIndices.push_back(uvIndex[2]);
+						uv_indices.push_back(uv_index[0]);
+						uv_indices.push_back(uv_index[1]);
+						uv_indices.push_back(uv_index[2]);
 
-						normalIndices.push_back(normalIndex[0]);
-						normalIndices.push_back(normalIndex[1]);
-						normalIndices.push_back(normalIndex[2]);
+						normal_indices.push_back(normal_index[0]);
+						normal_indices.push_back(normal_index[1]);
+						normal_indices.push_back(normal_index[2]);
 
 						if (matches == 12)
 						{
-							vertexIndices.push_back(vertexIndex[2]);
-							vertexIndices.push_back(vertexIndex[3]);
-							vertexIndices.push_back(vertexIndex[0]);
+							vertex_indices.push_back(vertex_index[2]);
+							vertex_indices.push_back(vertex_index[3]);
+							vertex_indices.push_back(vertex_index[0]);
 
-							uvIndices.push_back(uvIndex[3]);
-							uvIndices.push_back(uvIndex[2]);
-							uvIndices.push_back(uvIndex[0]);
+							uv_indices.push_back(uv_index[3]);
+							uv_indices.push_back(uv_index[2]);
+							uv_indices.push_back(uv_index[0]);
 
-							normalIndices.push_back(normalIndex[2]);
-							normalIndices.push_back(normalIndex[3]);
-							normalIndices.push_back(normalIndex[0]);
+							normal_indices.push_back(normal_index[2]);
+							normal_indices.push_back(normal_index[3]);
+							normal_indices.push_back(normal_index[0]);
 						}
 					}
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse face data (" << cs << ")" << std::endl;
+						std::cout << "\nError when loading OBJ file - failed to parse face data (" << cs << ")" << std::
+							endl;
 						return false;
 					}
 				}
 			}
 
-			for (unsigned int i = 0; i < vertexIndices.size(); i++)
+			for (unsigned int i = 0; i < vertex_indices.size(); i++)
 			{
-				unsigned int vertexIndex = vertexIndices[i];
-				unsigned int uvIndex = uvIndices[i];
-				unsigned int normalIndex = normalIndices[i];
+				unsigned int vertex_index = vertex_indices[i];
+				unsigned int uv_index = uv_indices[i];
+				unsigned int normal_index = normal_indices[i];
 
-				Vector3 xyzw = vertices[vertexIndex - 1];
-				Vector3 norm = normals[normalIndex - 1];
-				Vector2 uv = uvs[uvIndex - 1];
+				Vector3 xyzw = vertices[vertex_index - 1];
+				Vector3 norm = normals[normal_index - 1];
+				Vector2 uv = uvs[uv_index - 1];
 
-				packedVertices.push_back(Vertex(xyzw, norm, Vector4(1, 1, 1, 1), uv));
+				packed_vertices.emplace_back(xyzw, norm, Vector4(1, 1, 1, 1), uv);
 			}
 		}
 		else
@@ -125,54 +127,51 @@ namespace efiilj
 			std::cout << "\nError when loading OBJ file - could not open file (" << path << ")" << std::endl;
 			return false;
 		}
-		
+
 		file.close();
-		return FindIndices(packedVertices);
+		return find_indices(packed_vertices);
 	}
 
-	bool ObjectLoader::FindIndices(std::vector<Vertex>& in_vertices)
+	bool object_loader::find_indices(std::vector<vertex>& in_vertices)
 	{
-		int count = in_vertices.size();
+		const int count = in_vertices.size();
 
 		if (count < 3)
 			return false;
 
-		indexList.clear();
-		vertexList.clear();
+		index_list_.clear();
+		vertex_list_.clear();
 
-		Vertex test;
-		std::map<Vertex, unsigned int> vertices;
-		std::map<Vertex, unsigned int>::iterator it;
+		std::map<vertex, unsigned int> vertices;
 
 		for (int i = 0; i < count; i++)
 		{
-			test = in_vertices[i];
+			vertex test = in_vertices[i];
 
 			auto it = vertices.find(test);
 			if (it != vertices.end())
 			{
-				indexList.push_back(it->second);
+				index_list_.push_back(it->second);
 			}
 			else
 			{
-				vertexList.push_back(test);
-				unsigned int index = (unsigned int)vertexList.size() - 1;
-				indexList.push_back(index);
+				vertex_list_.push_back(test);
+				unsigned int index = static_cast<unsigned int>(vertex_list_.size()) - 1;
+				index_list_.push_back(index);
 				vertices[test] = index;
 			}
 		}
 
-		return indexList.size() > 0;
+		return !index_list_.empty();
 	}
 
-	ObjectLoader::ObjectLoader(const char* path)
+	object_loader::object_loader(const char* path)
 	{
-		is_valid = LoadFromFile(path);
+		is_valid_ = load_from_file(path);
 	}
 
-	MeshResource ObjectLoader::GetResource()
+	mesh_resource object_loader::get_resource()
 	{
-		return MeshResource(vertexList.data(), vertexCount(), indexList.data(), indexCount());
+		return mesh_resource(vertex_list_.data(), vertex_count(), index_list_.data(), index_count());
 	}
 }
-

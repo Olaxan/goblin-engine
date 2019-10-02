@@ -2,20 +2,22 @@
 
 namespace efiilj
 {
-	CameraModel::CameraModel(float fov, float aspect, float near, float far, TransformModel pos, Vector3 up) : transform(pos), up_axis(up)
+	camera_model::
+	camera_model(const float fov, const float aspect, const float near, const float far, const transform_model& pos,
+	             const Vector3& up) : up_axis_(up), transform_(pos)
 	{
-		perspective = Matrix4::getPerspective(fov, aspect, near, far);
+		perspective_ = Matrix4::getPerspective(fov, aspect, near, far);
 	}
 
-	Matrix4 CameraModel::View()
+	Matrix4 camera_model::view() const
 	{
-		Vector3 rot = transform.Rotation();
+		const Vector3 rot = transform_.rotation();
 
-		Vector3 dir(
-			cos(rot.x()) * cos(rot.y()), 
+		const Vector3 dir(
+			cos(rot.x()) * cos(rot.y()),
 			sin(rot.x()),
 			cos(rot.x()) * sin(rot.y()));
 
-		return perspective * Matrix4::getLookat(transform.Position(), transform.Position() + dir, up_axis);
+		return perspective_ * Matrix4::getLookat(transform_.position(), transform_.position() + dir, up_axis_);
 	}
 }

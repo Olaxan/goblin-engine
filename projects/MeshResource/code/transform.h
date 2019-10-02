@@ -4,35 +4,51 @@
 
 namespace efiilj
 {
-	class TransformModel
+	class transform_model
 	{
 	private:
 
-		Vector3 position;
-		Vector3 scale;
-		Vector3 rotation;
+		Vector3 position_;
+		Vector3 scale_;
+		Vector3 rotation_;
 
-		Matrix4 model;
-		bool is_dirty;
+		Matrix4 model_;
+		bool is_dirty_;
 
-		void SetDirty(bool dirty = true) { this->is_dirty = dirty; }
+		void set_dirty(const bool dirty = true) { this->is_dirty_ = dirty; }
 
 	public:
 
-		TransformModel(Vector3 pos = Vector3(0, 0, 0), Vector3 rot = Vector3(0, 0, 0), Vector3 scale = Vector3(1, 1, 1));
+		explicit transform_model(const Vector3& pos = Vector3(0, 0, 0), const Vector3& rot = Vector3(0, 0, 0),
+		                         const Vector3& scale = Vector3(1, 1, 1));
 
-		void Position(const Vector3& xyz, bool relative = false) { relative ? position += xyz : position = xyz; SetDirty(); }
-		const Vector3& Position() const { return this->position; }
+		void position(const Vector3& xyz, const bool relative = false)
+		{
+			relative ? position_ += xyz : position_ = xyz;
+			set_dirty();
+		}
 
-		void Rotation(const Vector3& xyz, bool relative = false) { relative ? rotation+= xyz : rotation = xyz; SetDirty(); }
-		const Vector3& Rotation() const { return this->rotation; }
+		const Vector3& position() const { return this->position_; }
 
-		void Scale(const Vector3& xyz, bool relative = false) { relative ? scale += xyz : scale = xyz; SetDirty(); }
-		const Vector3& Scale() const { return this->scale; }
+		void rotation(const Vector3& xyz, const bool relative = false)
+		{
+			relative ? rotation_ += xyz : rotation_ = xyz;
+			set_dirty();
+		}
 
-		const Matrix4& Model();
+		const Vector3& rotation() const { return this->rotation_; }
 
-		~TransformModel() { }
+		void scale(const Vector3& xyz, const bool relative = false)
+		{
+			relative ? scale_ += xyz : scale_ = xyz;
+			set_dirty();
+		}
 
+		const Vector3& scale() const { return this->scale_; }
+
+		const Matrix4& model();
+
+		~transform_model()
+		= default;
 	};
 }

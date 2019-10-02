@@ -5,26 +5,27 @@
 
 namespace efiilj
 {
-	class CameraModel
+	class camera_model
 	{
 	private:
 
-		Vector3 up_axis;
-		Matrix4 perspective;
-		TransformModel transform;
+		Vector3 up_axis_;
+		Matrix4 perspective_;
+		transform_model transform_;
 
 	public:
 
-		CameraModel(float fov, float aspect, float near, float far, TransformModel pos, Vector3 up);
+		camera_model(float fov, float aspect, float near, float far, const transform_model& pos, const Vector3& up);
 
-		void Transform(const TransformModel& trans) { transform = trans; }
-		TransformModel& Transform() { return this->transform; }
+		void transform(const transform_model& trans) { transform_ = trans; }
+		transform_model& transform() { return this->transform_; }
 
-		void Up(const Vector3& xyz) { up_axis = xyz; }
-		const Vector3& Up() const { return this->up_axis; }
+		void up(const Vector3& xyz) { up_axis_ = xyz; }
+		const Vector3& up() const { return this->up_axis_; }
 
-		Matrix4 View();
+		Matrix4 view() const;
 
-		~CameraModel() { }
+		~camera_model()
+		= default;
 	};
 }

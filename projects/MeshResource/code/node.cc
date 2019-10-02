@@ -1,38 +1,41 @@
 #include "node.h"
+#include <utility>
 
 namespace efiilj
 {
-	GraphicsNode::GraphicsNode() { }
+	graphics_node::graphics_node()
+	= default;
 
-	GraphicsNode::GraphicsNode(
-		std::shared_ptr<MeshResource> mesh_ptr,
-		std::shared_ptr<TextureResource> texture_ptr,
-		std::shared_ptr<ShaderResource> shader_ptr,
-		std::shared_ptr<TransformModel> transform_ptr,
-		std::shared_ptr<CameraModel> camera_ptr) 
-		: mesh(mesh_ptr), texture(texture_ptr), shader(shader_ptr), transform(transform_ptr), camera(camera_ptr) 
-	{ }
-
-	void GraphicsNode::Bind()
+	graphics_node::graphics_node(
+		std::shared_ptr<mesh_resource> mesh_ptr,
+		std::shared_ptr<texture_resource> texture_ptr,
+		std::shared_ptr<shader_resource> shader_ptr,
+		std::shared_ptr<transform_model> transform_ptr,
+		std::shared_ptr<camera_model> camera_ptr)
+		: mesh_(std::move(mesh_ptr)), texture_(std::move(texture_ptr)), shader_(std::move(shader_ptr)), transform_(
+			  std::move(transform_ptr)), camera_(std::move(camera_ptr))
 	{
-		mesh->Bind();
-		texture->Bind();
-		shader->Use();
 	}
 
-	void GraphicsNode::Unbind()
+	void graphics_node::bind() const
 	{
-		mesh->Unbind();
-		texture->Unbind();
-		shader->Drop();
+		mesh_->bind();
+		texture_->bind();
+		shader_->use();
 	}
 
-	void GraphicsNode::Draw()
+	void graphics_node::unbind() const
 	{
-		Bind();
-		shader->SetUniformMatrix4fv("u_mvp", camera->View() * transform->Model());
-		mesh->DrawElements();
-		Unbind();
+		mesh_->unbind();
+		texture_->unbind();
+		shader_->drop();
+	}
+
+	void graphics_node::draw() const
+	{
+		bind();
+		shader_->set_uniform_matrix4_fv("u_mvp", camera_->view() * transform_->model());
+		mesh_->draw_elements();
+		unbind();
 	}
 }
-
