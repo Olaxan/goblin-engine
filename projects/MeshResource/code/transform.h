@@ -8,10 +8,6 @@ namespace efiilj
 	{
 	private:
 
-		Vector3 position_;
-		Vector3 scale_;
-		Vector3 rotation_;
-
 		Matrix4 model_;
 		bool is_dirty_;
 
@@ -22,29 +18,22 @@ namespace efiilj
 		explicit transform_model(const Vector3& pos = Vector3(0, 0, 0), const Vector3& rot = Vector3(0, 0, 0),
 		                         const Vector3& scale = Vector3(1, 1, 1));
 
-		void position(const Vector3& xyz, const bool relative = false)
+		Vector3 position;
+		Vector3 scale;
+		Vector3 rotation;
+
+		Vector3 forward() const
 		{
-			relative ? position_ += xyz : position_ = xyz;
-			set_dirty();
+			return Vector3 (
+				cos(rotation.x()) * cos(rotation.y()),
+				sin(rotation.x()),
+				cos(rotation.x()) * sin(rotation.y()));
 		}
 
-		const Vector3& position() const { return this->position_; }
-
-		void rotation(const Vector3& xyz, const bool relative = false)
+		Vector3 left() const
 		{
-			relative ? rotation_ += xyz : rotation_ = xyz;
-			set_dirty();
+			
 		}
-
-		const Vector3& rotation() const { return this->rotation_; }
-
-		void scale(const Vector3& xyz, const bool relative = false)
-		{
-			relative ? scale_ += xyz : scale_ = xyz;
-			set_dirty();
-		}
-
-		const Vector3& scale() const { return this->scale_; }
 
 		const Matrix4& model();
 

@@ -11,13 +11,6 @@ namespace efiilj
 
 	Matrix4 camera_model::view() const
 	{
-		const Vector3 rot = transform_->rotation();
-
-		const Vector3 dir(
-			cos(rot.x()) * cos(rot.y()),
-			sin(rot.x()),
-			cos(rot.x()) * sin(rot.y()));
-
-		return perspective_ * Matrix4::getLookat(transform_->position(), transform_->position() + dir, up_axis_);
+		return perspective_ * Matrix4::get_lookat(transform_->position, transform_->position + transform_->forward(), up_axis_);
 	}
 }

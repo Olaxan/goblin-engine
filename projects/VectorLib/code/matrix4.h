@@ -442,7 +442,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="v">The vector to use for translation</param>
 		/// <returns>A new translation matrix</returns>
-		static Matrix4 getTranslation(const Vector4& v)
+		static Matrix4 get_translation(const Vector4& v)
 		{
 			Matrix4 mat = Matrix4();
 
@@ -461,7 +461,7 @@ namespace efiilj
 		/// <param name="y">Translation in the x axis</param>
 		/// <param name="z">Translation in the x axis</param>
 		/// <returns>A new translation matrix</returns>
-		static Matrix4 getTranslation(float x, float y, float z)
+		static Matrix4 get_translation(float x, float y, float z)
 		{
 			Matrix4 mat = Matrix4();
 
@@ -472,7 +472,7 @@ namespace efiilj
 			return mat;
 		}
 
-		static Matrix4 getScale(float x, float y, float z)
+		static Matrix4 get_scale(float x, float y, float z)
 		{
 			Matrix4 mat = Matrix4();
 
@@ -483,9 +483,9 @@ namespace efiilj
 			return mat;
 		}
 
-		static Matrix4 getScale(const Vector3& xyz)
+		static Matrix4 get_scale(const Vector3& xyz)
 		{
-			return getScale(xyz.x(), xyz.y(), xyz.z());
+			return get_scale(xyz.x(), xyz.y(), xyz.z());
 		}
 
 		/// <summary>
@@ -493,7 +493,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationX(const float rad)
+		static Matrix4 get_rotation_x(const float rad)
 		{
 			Matrix4 mat;
 
@@ -510,7 +510,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationY(const float rad)
+		static Matrix4 get_rotation_y(const float rad)
 		{
 			Matrix4 mat;
 
@@ -527,7 +527,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationZ(const float rad)
+		static Matrix4 get_rotation_z(const float rad)
 		{
 			Matrix4 mat;
 
@@ -545,15 +545,15 @@ namespace efiilj
 		/// <param name="rad">The rotation in radians</param>
 		/// <param name="axis">The axis for rotation</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 getRotationXYZ(const float rad, const Vector3 axis)
+		static Matrix4 get_rotation_xyz(const float rad, const Vector3 axis)
 		{
-			Vector3 unit = axis.norm();
+			const Vector3 unit = axis.norm();
 
-			float sin = sinf(rad);
-			float cos = cosf(rad);
-			float x = unit.x();
-			float y = unit.y();
-			float z = unit.z();
+			const float sin = sinf(rad);
+			const float cos = cosf(rad);
+			const float x = unit.x();
+			const float y = unit.y();
+			const float z = unit.z();
 
 			Matrix4 mat;
 
@@ -572,13 +572,13 @@ namespace efiilj
 			return mat;
 		}
 
-		static Matrix4 getRotationXYZ(const Vector3& eulers)
+		static Matrix4 get_rotation_xyz(const Vector3& eulers)
 		{
 			// TODO: Optimize
-			return getRotationZ(eulers.z()) * getRotationY(eulers.y()) * getRotationX(eulers.x());
+			return get_rotation_z(eulers.z()) * get_rotation_y(eulers.y()) * get_rotation_x(eulers.x());
 		}
 
-		static Matrix4 getPerspective(float left, float right, float top, float bottom, float near, float far)
+		static Matrix4 get_perspective(const float left, const float right, const float top, const float bottom, const float near, const float far)
 		{
 
 			Matrix4 mat(false);
@@ -598,27 +598,26 @@ namespace efiilj
 
 		static Matrix4 getPerspective(float fov, float aspect, float near, float far)
 		{
-			float top = tanf(fov / 2.0f) * near;
-			float bottom = -top;
-			float right = top * aspect;
-			float left = bottom * aspect;
+			const float top = tanf(fov / 2.0f) * near;
+			const float bottom = -top;
+			const float right = top * aspect;
+			const float left = bottom * aspect;
 
-			return getPerspective(left, right, top, bottom, near, far);
+			return get_perspective(left, right, top, bottom, near, far);
 		}
 
-		static Matrix4 getLookat(Vector3 cameraPos, Vector3 cameraTarget, Vector3 upDirection)
+		static Matrix4 get_lookat(const Vector3& camera_pos, const Vector3& camera_target, const Vector3& up_direction)
 		{
+			const Vector3 camera_direction = (camera_pos - camera_target).norm();
+			const Vector3 camera_right = Vector3::cross(up_direction, camera_direction).norm();
+			const Vector3 camera_up = Vector3::cross(camera_direction, camera_right);
 
-			Vector3 cameraDirection = (cameraPos - cameraTarget).norm();
-			Vector3 cameraRight = Vector3::cross(upDirection, cameraDirection).norm();
-			Vector3 cameraUp = Vector3::cross(cameraDirection, cameraRight);
+			Matrix4 a = Matrix4(Vector4(camera_right, 1), Vector4(camera_up, 1), Vector4(camera_direction, 1), Vector4());
+			a(3, 0) = Vector3::dot(camera_right, camera_pos) * -1;
+			a(3, 1) = Vector3::dot(camera_up, camera_pos) * -1;
+			a(3, 2) = Vector3::dot(camera_direction, camera_pos) * -1;
 
-			Matrix4 A = Matrix4(Vector4(cameraRight, 1), Vector4(cameraUp, 1), Vector4(cameraDirection, 1), Vector4());
-			A(3, 0) = Vector3::dot(cameraRight, cameraPos) * -1;
-			A(3, 1) = Vector3::dot(cameraUp, cameraPos) * -1;
-			A(3, 2) = Vector3::dot(cameraDirection, cameraPos) * -1;
-
-			return A;
+			return a;
 		}
 
 		/* === UTILITIES === */
@@ -649,7 +648,8 @@ namespace efiilj
 			return ss.str();
 		}
 
-		~Matrix4() { }
+		~Matrix4()
+			= default;
 
 		friend Vector4;
 	};

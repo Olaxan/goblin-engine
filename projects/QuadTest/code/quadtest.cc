@@ -92,22 +92,22 @@ namespace efiilj
 				switch (key)
 				{
 				case GLFW_KEY_W:
-					camera_trans_ptr->position(Vector3(0, 0, -0.05f), true);
+					camera_trans_ptr->position += camera_trans_ptr->forward() * 0.5f;
 					break;
 				case GLFW_KEY_S:
-					camera_trans_ptr->position(Vector3(0, 0, 0.05f), true);
-					break;
-				case GLFW_KEY_A:
-					camera_trans_ptr->position(Vector3(-0.05f, 0, 0), true);
+					camera_trans_ptr->position -= camera_trans_ptr->forward() * 0.5f;
 					break;
 				case GLFW_KEY_D:
-					camera_trans_ptr->position(Vector3(0.05f, 0, 0), true);
+					camera_trans_ptr->position += Vector3(0.05f, 0, 0);
+					break;
+				case GLFW_KEY_A:
+					camera_trans_ptr->position -= Vector3(0.05f, 0, 0);
 					break;
 				case GLFW_KEY_LEFT_SHIFT:
-					camera_trans_ptr->position(Vector3(0, -0.05f, 0), true);
+					camera_trans_ptr->position -= Vector3(0, 0.05f, 0);
 					break;
 				case GLFW_KEY_SPACE:
-					camera_trans_ptr->position(Vector3(0, 0.05f, 0), true);
+					camera_trans_ptr->position += Vector3(0, 0.05f, 0);
 					break;
 
 				default:
@@ -122,9 +122,9 @@ namespace efiilj
 				mouse_y_ = y / 1000.0f - 0.5f;
 
 				if (is_dragging_mouse_)
-					rock_trans_ptr->rotation(Vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f, false);
+					rock_trans_ptr->rotation = Vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
 				else
-					camera_trans_ptr->rotation(Vector3(-mouse_y_, mouse_x_, 0));
+					camera_trans_ptr->rotation = Vector3(-mouse_y_, mouse_x_, 0);
 			});
 
 		window_->SetMousePressFunction([&](int button, const int action, int mods) 
