@@ -239,7 +239,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The vector index to access</param>
 		/// <returns>The value at the specified position in the vector</returns>
-		float at(int y) const
+		const float& at(int y) const
 		{
 			if (y > 2)
 				throw new std::out_of_range("Vector index out of range");

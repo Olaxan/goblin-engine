@@ -8,26 +8,26 @@
 //------------------------------------------------------------------------------
 #include "core/app.h"
 #include "render/window.h"
-namespace Example
+namespace example
 {
-class ExampleApp : public Core::App
+class example_app final : public core::app
 {
 public:
 	/// constructor
-	ExampleApp();
+	example_app();
 	/// destructor
-	~ExampleApp();
+	~example_app();
 
 	/// open app
-	bool Open();
+	bool open() override;
 	/// run app
-	void Run();
+	void run() override;
 private:
 
-	GLuint program;
-	GLuint vertexShader;
-	GLuint pixelShader;
-	GLuint triangle;
-	Display::Window* window;
+	unsigned int program_{};
+	unsigned int vertex_shader_{};
+	unsigned int pixel_shader_{};
+	unsigned int triangle_{};
+	Display::Window* window_{};
 };
 } // namespace Example

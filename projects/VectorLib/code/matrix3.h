@@ -200,7 +200,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The matrix index to access</param>
 		/// <returns>The value at matrix index n</returns>
-		float at(int n) const
+		const float& at(int n) const
 		{
 			if (n > 9)
 				throw new std::out_of_range("Matrix index out of range");
@@ -214,7 +214,7 @@ namespace efiilj
 		/// <param name="x">Matrix x-position, column</param>
 		/// <param name="y">Matrix y-poisition, row</param>
 		/// <returns>The value at matrix position x, y</returns>
-		float at(int x, int y) const
+		const float& at(int x, int y) const
 		{
 			if (x > 3 || y > 3)
 				throw new std::out_of_range("Matrix index out of range");

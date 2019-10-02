@@ -5,62 +5,37 @@
 #include "config.h"
 #include "app.h"
 
-namespace Core
+namespace core
 {
 
-//------------------------------------------------------------------------------
-/**
-*/
-App::App() :
-	isOpen(false)
+app::app() :
+	is_open_(false)
 {
 	// empty
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-App::~App()
-{
-	// empty
-}
+app::~app()
+= default;
 
-
-//------------------------------------------------------------------------------
-/**
-*/
-bool
-App::Open()
+bool app::open()
 {
-	assert(!this->isOpen);
-	this->isOpen = true;
+	assert(!this->is_open_);
+	this->is_open_ = true;
 	return true;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-void
-App::Run()
+void app::run()
 {
 	// override in subclass
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-void
-App::Close()
+void app::close()
 {
-	assert(this->isOpen);
-	this->isOpen = false;
+	assert(this->is_open_);
+	this->is_open_ = false;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-void
-App::Exit()
+void app::exit()
 {
 	
 }

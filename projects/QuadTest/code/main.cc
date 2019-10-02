@@ -8,12 +8,12 @@
 int
 main(int argc, const char** argv)
 {
-	efiilj::QuadTest app;
-	if (app.Open())
+	efiilj::quad_test app;
+	if (app.open())
 	{
-		app.Run();
-		app.Close();
+		app.run();
+		app.close();
 	}
-	app.Exit();
+	app.exit();
 	
 }

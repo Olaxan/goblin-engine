@@ -172,6 +172,26 @@ namespace efiilj
 		return true;
 	}
 
+	bool shader_resource::set_uniform_vector3_fv(const char* name, const Vector3& vec)
+	{
+		const int uniform = find_uniform_location(name);
+		if (uniform == -1)
+			return false;
+
+		glUniform3fv(uniform, 1, &vec.at(0));
+		return true;
+	}
+
+	bool shader_resource::set_uniform_matrix3_fv(const char* name, const Matrix3& mat)
+	{
+		const int uniform = find_uniform_location(name);
+		if (uniform == -1)
+			return false;
+
+		glUniformMatrix3fv(uniform, 1, GL_TRUE, &mat.at(0));
+		return true;
+	}
+
 	shader_resource::~shader_resource()
 	{
 		glDeleteProgram(program_id_);

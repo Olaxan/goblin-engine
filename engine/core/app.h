@@ -8,26 +8,26 @@
 */
 //------------------------------------------------------------------------------
 #include <GL/glew.h>
-namespace Core
+namespace core
 {
-	class App
+	class app
 	{
 	public:
 		/// constructor
-		App();
+		app();
 		/// destructor
-		~App();
+		virtual ~app();
 
 		/// open application
-		virtual bool Open();
+		virtual bool open();
 		/// perform per-frame loop
-		virtual void Run();
+		virtual void run();
 		/// stop application
-		virtual void Close();
+		virtual void close();
 		/// kill application
-		virtual void Exit();
+		virtual void exit();
 
 	private:
-		bool isOpen;
+		bool is_open_;
 	};
 }

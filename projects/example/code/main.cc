@@ -8,12 +8,12 @@
 int
 main(int argc, const char** argv)
 {
-	Example::ExampleApp app;
-	if (app.Open())
+	example::example_app app;
+	if (app.open())
 	{
-		app.Run();
-		app.Close();
+		app.run();
+		app.close();
 	}
-	app.Exit();
+	app.exit();
 	
 }

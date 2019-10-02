@@ -7,7 +7,6 @@
 #include "camera.h"
 #include "loader.h"
 
-#include <cstring>
 #include <iostream>
 
 
@@ -16,19 +15,19 @@ using namespace Display;
 namespace efiilj
 {
 
-	QuadTest::QuadTest() : window(nullptr), time(0), mouse_x(0), mouse_y(0), mouse_down_x(0), mouse_down_y(0), is_dragging_mouse(false) { }
+	quad_test::quad_test() : window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false) { }
 
-	QuadTest::~QuadTest() = default;
+	quad_test::~quad_test() = default;
 
-	bool QuadTest::Open()
+	bool quad_test::open()
 	{
-		App::Open();
+		app::open();
 
-		t_start = std::chrono::high_resolution_clock::now();
+		t_start_ = std::chrono::high_resolution_clock::now();
 
-		this->window = new Display::Window(1000, 1000);
+		this->window_ = new Display::Window(1000, 1000);
 
-		if (this->window->Open())
+		if (this->window_->Open())
 		{
 
 			//enable face culling
@@ -43,7 +42,7 @@ namespace efiilj
 		return false;
 	}
 
-	void QuadTest::Run()
+	void quad_test::run()
 	{
 
 		float fov = nvgDegToRad(75);
@@ -51,39 +50,39 @@ namespace efiilj
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
 
-		object_loader foxLoader = object_loader("./res/meshes/fox.obj");
-		object_loader rockLoader = object_loader("./res/meshes/rock.obj");
+		object_loader fox_loader = object_loader("./res/meshes/fox.obj");
+		object_loader rock_loader = object_loader("./res/meshes/rock.obj");
 
-		if (!foxLoader.is_valid() || !rockLoader.is_valid())
+		if (!fox_loader.is_valid() || !rock_loader.is_valid())
 		{
 			std::cout << "\nFailed to load OBJ file - program will terminate.\n";
 			return;
 		}
 
-		std::cout << "Loaded " << foxLoader.vertex_count() << " vertices, " << foxLoader.index_count() << " indices\n";
-		std::cout << "Loaded " << rockLoader.vertex_count() << " vertices, " << rockLoader.index_count() << " indices\n";
+		std::cout << "Loaded " << fox_loader.vertex_count() << " vertices, " << fox_loader.index_count() << " indices\n";
+		std::cout << "Loaded " << rock_loader.vertex_count() << " vertices, " << rock_loader.index_count() << " indices\n";
 
-		mesh_resource foxModel = foxLoader.get_resource();
-		mesh_resource rockModel = rockLoader.get_resource();
+		mesh_resource fox_model = fox_loader.get_resource();
+		mesh_resource rock_model = rock_loader.get_resource();
 
-		std::shared_ptr<shader_resource> shaderPtr = std::make_shared<shader_resource>(fs, vs);
+		auto shader_ptr = std::make_shared<shader_resource>(fs, vs);
 
-		std::shared_ptr<mesh_resource> foxMeshPtr = std::make_shared<mesh_resource>(foxModel);
-		std::shared_ptr<mesh_resource> rockMeshPtr = std::make_shared<mesh_resource>(rockModel);
+		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
+		auto rock_mesh_ptr = std::make_shared<mesh_resource>(rock_model);
 
-		std::shared_ptr<texture_resource> foxTexturePtr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
-		std::shared_ptr<texture_resource> rockTexturePtr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
+		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
+		auto rock_texture_ptr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
 
-		std::shared_ptr<transform_model> foxTransPtr = std::make_shared<transform_model>(Vector3(0, 0.5f, -1), Vector3(0), Vector3(0.1f, 0.1f, 0.1f));
-		std::shared_ptr<transform_model> rockTransPtr = std::make_shared<transform_model>(Vector3(0, 0, -1), Vector3(1.6), Vector3(0.005f, 0.005f, 0.005f));
+		auto fox_trans_ptr = std::make_shared<transform_model>(Vector3(0, 0.5f, -1), Vector3(0), Vector3(0.1f, 0.1f, 0.1f));
+		auto rock_trans_ptr = std::make_shared<transform_model>(Vector3(0, 0, -1), Vector3(1.6), Vector3(0.005f, 0.005f, 0.005f));
 
-		std::shared_ptr<camera_model> cameraPtr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f,
+		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f,
 			transform_model(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(1, 1, 1)), Vector3(0, 1, 0));
 
-		graphics_node foxNode(foxMeshPtr, foxTexturePtr, shaderPtr, foxTransPtr, cameraPtr);
-		graphics_node rockNode(rockMeshPtr, rockTexturePtr, shaderPtr, rockTransPtr, cameraPtr);
+		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
+		graphics_node rock_node(rock_mesh_ptr, rock_texture_ptr, shader_ptr, rock_trans_ptr, camera_ptr);
 
-		window->SetKeyPressFunction([&](int key, int scancode, int action, int mod)
+		window_->SetKeyPressFunction([&](const int key, int, const int action, int)
 			{
 				if (action == 0)
 					return;
@@ -91,74 +90,72 @@ namespace efiilj
 				switch (key)
 				{
 				case GLFW_KEY_W:
-					foxTransPtr->position(Vector3(0, 0, -0.05f), true);
+					fox_trans_ptr->position(Vector3(0, 0, -0.05f), true);
 					break;
 				case GLFW_KEY_S:
-					foxTransPtr->position(Vector3(0, 0, 0.05f), true);
+					fox_trans_ptr->position(Vector3(0, 0, 0.05f), true);
 					break;
 				case GLFW_KEY_A:
-					foxTransPtr->position(Vector3(-0.05f, 0, 0), true);
+					fox_trans_ptr->position(Vector3(-0.05f, 0, 0), true);
 					break;
 				case GLFW_KEY_D:
-					foxTransPtr->position(Vector3(0.05f, 0, 0), true);
+					fox_trans_ptr->position(Vector3(0.05f, 0, 0), true);
 					break;
 				case GLFW_KEY_LEFT_SHIFT:
-					foxTransPtr->position(Vector3(0, -0.05f, 0), true);
+					fox_trans_ptr->position(Vector3(0, -0.05f, 0), true);
 					break;
 				case GLFW_KEY_SPACE:
-					foxTransPtr->position(Vector3(0, 0.05f, 0), true);
+					fox_trans_ptr->position(Vector3(0, 0.05f, 0), true);
 					break;
 
 				default:
-					window->Close();
+					window_->Close();
 					break;
 				}
 			});
 
-		window->SetMouseMoveFunction([&](float x, float y)
+		window_->SetMouseMoveFunction([&](float x, float y)
 			{
-				mouse_x = x / 1000.0f - 0.5f;
-				mouse_y = y / 1000.0f - 0.5f;
+				mouse_x_ = x / 1000.0f - 0.5f;
+				mouse_y_ = y / 1000.0f - 0.5f;
 
-				cameraPtr->transform().rotation(Vector3(-0.5f - mouse_y, mouse_x - 3.1415f / 2, 0));
+				camera_ptr->transform().rotation(Vector3(-0.5f - mouse_y_, mouse_x_ - 3.1415f / 2, 0));
 
-				//std::cout << "                             \rX: " << mouse_x << ", Y: " << mouse_y;
-
-				if (is_dragging_mouse)
+				if (is_dragging_mouse_)
 				{
-					rockTransPtr->rotation(Vector3(mouse_y - mouse_down_y, mouse_x - mouse_down_x, 0) * 5, false);
+					rock_trans_ptr->rotation(Vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 5, false);
 				}
 			});
 
-		window->SetMousePressFunction([&](int button, int action, int mods) 
+		window_->SetMousePressFunction([&](int button, const int action, int mods) 
 			{
 				if (action == 1)
 				{
-					mouse_down_x = mouse_x;
-					mouse_down_y = mouse_y;
-					is_dragging_mouse = true;
+					mouse_down_x_ = mouse_x_;
+					mouse_down_y_ = mouse_y_;
+					is_dragging_mouse_ = true;
 				}
 				else
 				{
-					is_dragging_mouse = false;
+					is_dragging_mouse_ = false;
 				}
 			});
 
-		while (this->window->IsOpen())
+		while (this->window_->IsOpen())
 		{
 
-			t_now = std::chrono::high_resolution_clock::now();
-			time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+			t_now_ = std::chrono::high_resolution_clock::now();
+			time_ = std::chrono::duration_cast<std::chrono::duration<float>>(t_now_ - t_start_).count();
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			this->window->Update();
+			this->window_->Update();
 
-			foxNode.draw();
-			rockNode.draw();
+			fox_node.draw();
+			rock_node.draw();
 
 			//cameraPtr->Transform().Rotation(Vector3(-0.5f, time, 0));
 
-			this->window->SwapBuffers();
+			this->window_->SwapBuffers();
 		}
 	}
 }

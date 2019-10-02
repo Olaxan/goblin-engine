@@ -45,6 +45,8 @@ namespace efiilj
 		bool set_uniform1_i(const char* name, int val);
 		bool set_uniform_vector4_fv(const char* name, const Vector4& vec);
 		bool set_uniform_matrix4_fv(const char* name, const Matrix4& mat);
+		bool set_uniform_vector3_fv(const char* name, const Vector3& vec);
+		bool set_uniform_matrix3_fv(const char* name, const Matrix3& vec);
 
 		~shader_resource();
 	};

@@ -27,134 +27,119 @@ const GLchar* ps =
 "}\n";
 
 using namespace Display;
-namespace Example
+namespace example
 {
+	example_app::example_app()
+		= default;
 
-//------------------------------------------------------------------------------
-/**
-*/
-ExampleApp::ExampleApp()
-{
-	// empty
-}
+	example_app::~example_app()
+		= default;
 
-//------------------------------------------------------------------------------
-/**
-*/
-ExampleApp::~ExampleApp()
-{
-	// empty
-}
 
-//------------------------------------------------------------------------------
-/**
-*/
-bool
-ExampleApp::Open()
-{
-	App::Open();
-	this->window = new Display::Window;
-	window->SetKeyPressFunction([this](int32, int32, int32, int32)
+	bool example_app::open()
 	{
-		this->window->Close();
-	});
-
-	GLfloat buf[] =
-	{
-		-0.5f,	-0.5f,	-1,			// pos 0
-		1,		0,		0,		1,	// color 0
-		0,		0.5f,	-1,			// pos 1
-		0,		1,		0,		1,	// color 0
-		0.5f,	-0.5f,	-1,			// pos 2
-		0,		0,		1,		1	// color 0
-	};
-
-	if (this->window->Open())
-	{
-		// set clear color to gray
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
-		// setup vertex shader
-		this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		GLint length = static_cast<GLint>(std::strlen(vs));
-		glShaderSource(this->vertexShader, 1, &vs, &length);
-		glCompileShader(this->vertexShader);
-
-		// get error log
-		GLint shaderLogSize;
-		glGetShaderiv(this->vertexShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-		if (shaderLogSize > 0)
+		app::open();
+		this->window_ = new Display::Window;
+		window_->SetKeyPressFunction([this](int32, int32, int32, int32)
 		{
-			GLchar* buf = new GLchar[shaderLogSize];
-			glGetShaderInfoLog(this->vertexShader, shaderLogSize, NULL, buf);
-			printf("[SHADER COMPILE ERROR]: %s", buf);
-			delete[] buf;
-		}
+			this->window_->Close();
+		});
 
-		// setup pixel shader
-		this->pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
-		length = static_cast<GLint>(std::strlen(ps));
-		glShaderSource(this->pixelShader, 1, &ps, &length);
-		glCompileShader(this->pixelShader);
-
-		// get error log
-		shaderLogSize;
-		glGetShaderiv(this->pixelShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-		if (shaderLogSize > 0)
+		GLfloat buf[] =
 		{
-			GLchar* buf = new GLchar[shaderLogSize];
-			glGetShaderInfoLog(this->pixelShader, shaderLogSize, NULL, buf);
-			printf("[SHADER COMPILE ERROR]: %s", buf);
-			delete[] buf;
-		}
+			-0.5f,	-0.5f,	-1,			// pos 0
+			1,		0,		0,		1,	// color 0
+			0,		0.5f,	-1,			// pos 1
+			0,		1,		0,		1,	// color 0
+			0.5f,	-0.5f,	-1,			// pos 2
+			0,		0,		1,		1	// color 0
+		};
 
-		// create a program object
-		this->program = glCreateProgram();
-		glAttachShader(this->program, this->vertexShader);
-		glAttachShader(this->program, this->pixelShader);
-		glLinkProgram(this->program);
-		glGetProgramiv(this->program, GL_INFO_LOG_LENGTH, &shaderLogSize);
-		if (shaderLogSize > 0)
+		if (this->window_->Open())
 		{
-			GLchar* buf = new GLchar[shaderLogSize];
-			glGetProgramInfoLog(this->program, shaderLogSize, NULL, buf);
-			printf("[PROGRAM LINK ERROR]: %s", buf);
-			delete[] buf;
-		}
+			// set clear color to gray
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-		// setup vbo
-		glGenBuffers(1, &this->triangle);
-		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(buf), buf, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		return true;
+			// setup vertex shader
+			this->vertex_shader_ = glCreateShader(GL_VERTEX_SHADER);
+			GLint length = static_cast<GLint>(std::strlen(vs));
+			glShaderSource(this->vertex_shader_, 1, &vs, &length);
+			glCompileShader(this->vertex_shader_);
+
+			// get error log
+			GLint shaderLogSize;
+			glGetShaderiv(this->vertex_shader_, GL_INFO_LOG_LENGTH, &shaderLogSize);
+			if (shaderLogSize > 0)
+			{
+				GLchar* buf = new GLchar[shaderLogSize];
+				glGetShaderInfoLog(this->vertex_shader_, shaderLogSize, NULL, buf);
+				printf("[SHADER COMPILE ERROR]: %s", buf);
+				delete[] buf;
+			}
+
+			// setup pixel shader
+			this->pixel_shader_ = glCreateShader(GL_FRAGMENT_SHADER);
+			length = static_cast<GLint>(std::strlen(ps));
+			glShaderSource(this->pixel_shader_, 1, &ps, &length);
+			glCompileShader(this->pixel_shader_);
+
+			// get error log
+			shaderLogSize;
+			glGetShaderiv(this->pixel_shader_, GL_INFO_LOG_LENGTH, &shaderLogSize);
+			if (shaderLogSize > 0)
+			{
+				GLchar* buf = new GLchar[shaderLogSize];
+				glGetShaderInfoLog(this->pixel_shader_, shaderLogSize, NULL, buf);
+				printf("[SHADER COMPILE ERROR]: %s", buf);
+				delete[] buf;
+			}
+
+			// create a program object
+			this->program_ = glCreateProgram();
+			glAttachShader(this->program_, this->vertex_shader_);
+			glAttachShader(this->program_, this->pixel_shader_);
+			glLinkProgram(this->program_);
+			glGetProgramiv(this->program_, GL_INFO_LOG_LENGTH, &shaderLogSize);
+			if (shaderLogSize > 0)
+			{
+				GLchar* buf = new GLchar[shaderLogSize];
+				glGetProgramInfoLog(this->program_, shaderLogSize, NULL, buf);
+				printf("[PROGRAM LINK ERROR]: %s", buf);
+				delete[] buf;
+			}
+
+			// setup vbo
+			glGenBuffers(1, &this->triangle_);
+			glBindBuffer(GL_ARRAY_BUFFER, this->triangle_);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(buf), buf, GL_STATIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			return true;
+		}
+		return false;
 	}
-	return false;
-}
 
-//------------------------------------------------------------------------------
-/**
-*/
-void
-ExampleApp::Run()
-{
-	while (this->window->IsOpen())
+	//------------------------------------------------------------------------------
+	/**
+	*/
+	void
+	example_app::run()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		this->window->Update();
+		while (this->window_->IsOpen())
+		{
+			glClear(GL_COLOR_BUFFER_BIT);
+			this->window_->Update();
 
-		// do stuff
-		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
-		glUseProgram(this->program);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+			// do stuff
+			glBindBuffer(GL_ARRAY_BUFFER, this->triangle_);
+			glUseProgram(this->program_);
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
+			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		this->window->SwapBuffers();
+			this->window_->SwapBuffers();
+		}
 	}
 }
-
-} // namespace Example

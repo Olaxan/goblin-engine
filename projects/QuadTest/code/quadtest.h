@@ -15,21 +15,21 @@
 
 namespace efiilj
 {
-	class QuadTest : public Core::App
+	class quad_test final : public core::app
 	{
-	private:
-
-		Display::Window* window;
-		std::chrono::time_point<std::chrono::steady_clock> t_start, t_now;
-		float time, mouse_x, mouse_y, mouse_down_x, mouse_down_y;
-		bool is_dragging_mouse;
-
 	public:
 
-		QuadTest();
-		~QuadTest();
+		quad_test();
+		~quad_test();
 
-		bool Open();
-		void Run();
+		bool open() override;
+		void run() override;
+
+	private:
+
+		Display::Window* window_;
+		std::chrono::time_point<std::chrono::steady_clock> t_start_, t_now_;
+		float time_, mouse_x_, mouse_y_, mouse_down_x_, mouse_down_y_;
+		bool is_dragging_mouse_;
 	};
 }
