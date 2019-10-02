@@ -19,11 +19,6 @@ namespace efiilj
 		init_index_buffer(index_list, index_count);
 	}
 
-	mesh_resource::mesh_resource(mesh_resource& copy)
-		: vbo_(copy.vbo_), ibo_(copy.ibo_), vao_(copy.vao_), vertex_count_(copy.vertex_count_), index_count_(copy.index_count_)
-	{
-	}
-
 	mesh_resource mesh_resource::cube(float size, const float color)
 	{
 		size /= 2;

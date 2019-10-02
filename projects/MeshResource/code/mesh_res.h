@@ -65,7 +65,11 @@ namespace efiilj
 		/// <param name="index_count">Size of the index list</param>
 		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
 
-		mesh_resource(mesh_resource& copy);
+		mesh_resource(mesh_resource& copy)
+			= default;
+
+		mesh_resource(mesh_resource&& move)
+			= default;
 
 		/// <summary>
 		/// Static method to generate a cube of the specified size.

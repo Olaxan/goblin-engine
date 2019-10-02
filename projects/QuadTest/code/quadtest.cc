@@ -10,8 +10,6 @@
 #include <iostream>
 
 
-using namespace Display;
-
 namespace efiilj
 {
 
@@ -33,6 +31,9 @@ namespace efiilj
 			//enable face culling
 			glEnable(GL_CULL_FACE);
 			glEnable(GL_DEPTH_TEST);
+
+			//lock mouse to window
+			glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 			// set clear color to purple
 			glClearColor(0.025f, 0.0f, 0.025f, 1.0f);
@@ -75,9 +76,10 @@ namespace efiilj
 
 		auto fox_trans_ptr = std::make_shared<transform_model>(Vector3(0, 0.5f, -1), Vector3(0), Vector3(0.1f, 0.1f, 0.1f));
 		auto rock_trans_ptr = std::make_shared<transform_model>(Vector3(0, 0, -1), Vector3(1.6), Vector3(0.005f, 0.005f, 0.005f));
+		auto camera_trans_ptr = std::make_shared<transform_model>(Vector3(0, 2, 2), Vector3(0), Vector3(1, 1, 1));
 
-		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f,
-			transform_model(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(1, 1, 1)), Vector3(0, 1, 0));
+		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, Vector3(0, 1, 0));
+			
 
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
 		graphics_node rock_node(rock_mesh_ptr, rock_texture_ptr, shader_ptr, rock_trans_ptr, camera_ptr);
@@ -90,22 +92,22 @@ namespace efiilj
 				switch (key)
 				{
 				case GLFW_KEY_W:
-					fox_trans_ptr->position(Vector3(0, 0, -0.05f), true);
+					camera_trans_ptr->position(Vector3(0, 0, -0.05f), true);
 					break;
 				case GLFW_KEY_S:
-					fox_trans_ptr->position(Vector3(0, 0, 0.05f), true);
+					camera_trans_ptr->position(Vector3(0, 0, 0.05f), true);
 					break;
 				case GLFW_KEY_A:
-					fox_trans_ptr->position(Vector3(-0.05f, 0, 0), true);
+					camera_trans_ptr->position(Vector3(-0.05f, 0, 0), true);
 					break;
 				case GLFW_KEY_D:
-					fox_trans_ptr->position(Vector3(0.05f, 0, 0), true);
+					camera_trans_ptr->position(Vector3(0.05f, 0, 0), true);
 					break;
 				case GLFW_KEY_LEFT_SHIFT:
-					fox_trans_ptr->position(Vector3(0, -0.05f, 0), true);
+					camera_trans_ptr->position(Vector3(0, -0.05f, 0), true);
 					break;
 				case GLFW_KEY_SPACE:
-					fox_trans_ptr->position(Vector3(0, 0.05f, 0), true);
+					camera_trans_ptr->position(Vector3(0, 0.05f, 0), true);
 					break;
 
 				default:
@@ -114,17 +116,15 @@ namespace efiilj
 				}
 			});
 
-		window_->SetMouseMoveFunction([&](float x, float y)
+		window_->SetMouseMoveFunction([&](const float x, const float y)
 			{
 				mouse_x_ = x / 1000.0f - 0.5f;
 				mouse_y_ = y / 1000.0f - 0.5f;
 
-				camera_ptr->transform().rotation(Vector3(-0.5f - mouse_y_, mouse_x_ - 3.1415f / 2, 0));
-
 				if (is_dragging_mouse_)
-				{
-					rock_trans_ptr->rotation(Vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 5, false);
-				}
+					rock_trans_ptr->rotation(Vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f, false);
+				else
+					camera_trans_ptr->rotation(Vector3(-mouse_y_, mouse_x_, 0));
 			});
 
 		window_->SetMousePressFunction([&](int button, const int action, int mods) 
@@ -140,7 +140,7 @@ namespace efiilj
 					is_dragging_mouse_ = false;
 				}
 			});
-
+		
 		while (this->window_->IsOpen())
 		{
 

@@ -44,6 +44,11 @@ namespace Display
 		/// swap buffers at end of frame
 		void SwapBuffers();
 
+		GLFWwindow* GetWindow() const
+		{
+			return window;
+		}
+
 		/// set key press function callback
 		void SetKeyPressFunction(const std::function<void(int32, int32, int32, int32)>& func);
 		/// set mouse press function callback

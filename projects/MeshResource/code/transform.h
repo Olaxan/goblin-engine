@@ -49,6 +49,6 @@ namespace efiilj
 		const Matrix4& model();
 
 		~transform_model()
-		= default;
+			= default;
 	};
 }
