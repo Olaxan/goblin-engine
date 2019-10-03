@@ -4,6 +4,9 @@
 
 namespace efiilj
 {
+	/**
+	 * \brief A class to represent a point in 3D-space.
+	 */
 	struct transform_model
 	{
 	private:
@@ -17,6 +20,12 @@ namespace efiilj
 
 	public:
 
+		/**
+		 * \brief Creates a new transform instance.
+		 * \param pos Position XYZ coordinates
+		 * \param rot Rotation in Euler angles (pitch, roll, yaw)
+		 * \param scale Scale along XYZ axis
+		 */
 		explicit transform_model(const vector3& pos = vector3(0, 0, 0), const vector3& rot = vector3(0, 0, 0),
 		                         const vector3& scale = vector3(1, 1, 1));
 
@@ -30,40 +39,47 @@ namespace efiilj
 		vector3& rotation() { return rotation_; }
 		void rotation(const vector3& rotation) { rotation_ = rotation; is_changed_ = true; }
 
+		/**
+		 * \brief Retrieves a model matrix for the current transform.
+		 * \return A 4-dimensional matrix which represents the point in 3D-space
+		 */
 		const matrix4& model();
-		
-		vector3 forward() const
-		{
-			return vector3 (
-				cos(rotation_.x()) * cos(rotation_.y()),
-				sin(rotation_.x()),
-				cos(rotation_.x()) * sin(rotation_.y())).norm();
-		}
 
-		vector3 backward() const
-		{
-			return forward() * -1;
-		}
+		/**
+		 * \brief Returns a forward vector relative to the current transform
+		 * \return Unit vector forward relative to transform
+		 */
+		vector3 forward() const;
 
-		vector3 left() const
-		{
-			return vector3::cross(vector3(0, 1, 0), forward()).norm();
-		}
+		/**
+		 * \brief Returns a reverse forward vector relative to the current transform
+		 * \return Unit vector backward relative to transform
+		 */
+		vector3 backward() const;
 
-		vector3 right() const
-		{
-			return left() * -1;
-		}
-		
-		vector3 up() const
-		{
-			return vector3::cross(forward(), left());
-		}
+		/**
+		 * \brief Returns a left pointing vector relative to the current transform
+		 * \return Unit vector left relative to transform
+		 */
+		vector3 left() const;
 
-		vector3 down() const
-		{
-			return up() * -1;
-		}
+		/**
+		 * \brief Returns a right pointing vector relative to the current transform
+		 * \return Unit vector right relative to transform
+		 */
+		vector3 right() const;
+
+		/**
+		 * \brief Returns a upwards vector relative to the current transform
+		 * \return Unit vector up relative to transform
+		 */
+		vector3 up() const;
+
+		/**
+		 * \brief Returns a downward vector relative to the current transform
+		 * \return Unit vector down relative to transform
+		 */
+		vector3 down() const;
 
 		~transform_model()
 			= default;

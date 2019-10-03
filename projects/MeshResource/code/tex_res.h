@@ -2,42 +2,43 @@
 
 namespace efiilj
 {
-	/// <summary>
-	/// Class to create a texture on the GPU, as well as to hold buffer handles which enables binding.
-	/// </summary>
+	/**
+	 * \brief Class to create a texture on the GPU, as well as to hold buffer handles which enables binding.
+	 */
 	class texture_resource
 	{
 	private:
 
-		/// <summary>
-		/// Texture object handle.
-		/// </summary>
+		/**
+		 * \brief Texture object handle
+		 */
 		unsigned int tex_id_;
 
 		int height_, width_, bits_per_pixel_;
+		
 	public:
 
-		/// <summary>
-		/// Creates an empty TextureResource object.
-		/// </summary>
+		/** 
+		 * \brief Creates an empty TextureResource instance.
+		 */ 
 		texture_resource();
 
-		/// <summary>
-		/// Creates a new TextureResource object from the image resource at the specified file path.
-		/// </summary>
-		/// <param name="path">The path to the image resource</param>
-		/// <param name="flip">Whether the texture should be flipped vertically on load, as some formats require</param>
+		/**
+		 * \brief Creates a new TextureResource object from the image resource at the specified file path.
+		 * \param path The path to the image resource
+		 * \param flip Whether the texture should be flipped vertically on load, as required by some formats
+		 */
 		texture_resource(const char* path, bool flip);
 
-		/// <summary>
-		/// Binds the texture to the specified texture slot, to prepare OpenGL for utilizing this texture.
-		/// </summary>
-		/// <param name="slot">The GPU texture slot to use (typically 0 - 8/16)</param>
+		/**
+		 * \brief Binds the texture to the specified texture slot, to prepare OpenGL for utilizing this texture.
+		 * \param slot The GPU texture slot to use (typically 0 - 8/16)
+		 */
 		void bind(unsigned int slot = 0) const;
 
-		/// <summary>
-		/// Unbinds the resource from the OpenGL state machine.
-		/// </summary>
+		/**
+		 * \brief Unbinds all textures from the GPU.
+		 */
 		static void unbind();
 
 		~texture_resource();

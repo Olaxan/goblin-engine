@@ -21,4 +21,37 @@ namespace efiilj
 		
 		return model_;
 	}
+
+	vector3 transform_model::forward() const
+	{
+		return vector3(
+			cos(rotation_.x()) * cos(rotation_.y()),
+			sin(rotation_.x()),
+			cos(rotation_.x()) * sin(rotation_.y())).norm();
+	}
+
+	vector3 transform_model::backward() const
+	{
+		return forward() * -1;
+	}
+
+	vector3 transform_model::left() const
+	{
+		return vector3::cross(vector3(0, 1, 0), forward()).norm();
+	}
+
+	vector3 transform_model::right() const
+	{
+		return left() * -1;
+	}
+
+	vector3 transform_model::up() const
+	{
+		return vector3::cross(forward(), left());
+	}
+
+	vector3 transform_model::down() const
+	{
+		return up() * -1;
+	}
 }

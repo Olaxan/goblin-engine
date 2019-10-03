@@ -7,14 +7,17 @@
 #include "camera.h"
 #include "loader.h"
 #include "light.h"
+#include "node.h"
 
 #include <iostream>
+#include <set>
 
 
 namespace efiilj
 {
 
-	quad_test::quad_test() : window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false) { }
+	quad_test::quad_test()
+	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false) { }
 
 	quad_test::~quad_test() = default;
 
@@ -86,35 +89,17 @@ namespace efiilj
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
 		graphics_node rock_node(rock_mesh_ptr, rock_texture_ptr, shader_ptr, rock_trans_ptr, camera_ptr);
 
+		std::set<int> keys;
+		
 		window_->SetKeyPressFunction([&](const int key, int, const int action, int)
 			{
-				if (action == 0)
-					return;
-
-				switch (key)
+				if (action == 1)
+					keys.emplace(key);
+				else
 				{
-				case GLFW_KEY_W:
-					camera_trans_ptr->position() += camera_trans_ptr->forward() * 0.5f;
-					break;
-				case GLFW_KEY_S:
-					camera_trans_ptr->position() -= camera_trans_ptr->forward() * 0.5f;
-					break;
-				case GLFW_KEY_A:
-					camera_trans_ptr->position() += camera_trans_ptr->left() * 0.5f;
-					break;
-				case GLFW_KEY_D:
-					camera_trans_ptr->position() -= camera_trans_ptr->left() * 0.5f;
-					break;
-				case GLFW_KEY_SPACE:
-					camera_trans_ptr->position() += camera_trans_ptr->up() * 0.5f;
-					break;
-				case GLFW_KEY_LEFT_SHIFT:
-					camera_trans_ptr->position() -= camera_trans_ptr->up() * 0.5f;
-					break;
-
-				default:
-					window_->Close();
-					break;
+					const auto it = keys.find(key);
+					if (it != keys.end())
+						keys.erase(it);
 				}
 			});
 
@@ -136,6 +121,11 @@ namespace efiilj
 					mouse_down_x_ = mouse_x_;
 					mouse_down_y_ = mouse_y_;
 					is_dragging_mouse_ = true;
+
+					if (button == 0)
+						glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+					else
+						glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 				}
 				else
 				{
@@ -151,6 +141,27 @@ namespace efiilj
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window_->Update();
+
+			if (keys.find(GLFW_KEY_W) != keys.end())
+				camera_trans_ptr->position() += camera_trans_ptr->forward() * 0.1f;
+			
+			if (keys.find(GLFW_KEY_S) != keys.end())
+				camera_trans_ptr->position() -= camera_trans_ptr->forward() * 0.1f;
+			
+			if (keys.find(GLFW_KEY_A) != keys.end())
+				camera_trans_ptr->position() += camera_trans_ptr->left() * 0.1f;
+			
+			if (keys.find(GLFW_KEY_D) != keys.end())
+				camera_trans_ptr->position() -= camera_trans_ptr->left() * 0.1f;
+			
+			if (keys.find(GLFW_KEY_SPACE) != keys.end())
+				camera_trans_ptr->position() += camera_trans_ptr->up() * 0.1f;
+			
+			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
+				camera_trans_ptr->position() -= camera_trans_ptr->up() * 0.1f;
+			
+			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
+				window_->Close();
 
 			p_light.position = vector3(sinf(time_), 2.0f, cosf(time_));
 			

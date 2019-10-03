@@ -26,33 +26,40 @@ namespace efiilj
 			{
 				const char* cs = s.c_str();
 
+				// Vertex normals
 				if (_strnicmp(cs, "vn", 2) == 0)
 				{
 					vector3 norm;
+
+					// Get three floats and add to normals vector
 					if (sscanf_s(&cs[2], "%f %f %f", &norm[0], &norm[1], &norm[2]) == 3)
 						normals.push_back(norm);
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse normal data (" << cs << ")" << std
-							::endl;
+						std::cout << "\nError when loading OBJ file - failed to parse normal data (" << cs << ")" << std::endl;
 						return false;
 					}
 				}
+				// Texture coordinates
 				else if (_strnicmp(cs, "vt", 2) == 0)
 				{
 					vector2 uv;
+
+					// Get two values and add to uvs vector
 					if (sscanf_s(&cs[2], "%f %f", &uv[0], &uv[1]) == 2)
 						uvs.push_back(uv);
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse uv data (" << cs << ")" << std::
-							endl;
+						std::cout << "\nError when loading OBJ file - failed to parse uv data (" << cs << ")" << std::endl;
 						return false;
 					}
 				}
+				// Vertices
 				else if (_strnicmp(cs, "v", 1) == 0)
 				{
 					vector3 vert;
+
+					// Get three floats and add to vertices vector
 					if (sscanf_s(&cs[1], "%f %f %f", &vert[0], &vert[1], &vert[2]) == 3)
 						vertices.push_back(vert);
 					else
@@ -62,17 +69,22 @@ namespace efiilj
 						return false;
 					}
 				}
+				// Faces
 				else if (_strnicmp(cs, "f", 1) == 0)
 				{
 					unsigned int vertex_index[4], uv_index[4], normal_index[4];
-					int matches = sscanf_s(&cs[1], "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
+
+					// Get 12 (quad) or 9 (tri) floats and add to index vectors
+					int matches = sscanf_s(&cs[1], "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", 
 					                     &vertex_index[0], &uv_index[0], &normal_index[0],
 					                     &vertex_index[1], &uv_index[1], &normal_index[1],
 					                     &vertex_index[2], &uv_index[2], &normal_index[2],
 					                     &vertex_index[3], &uv_index[3], &normal_index[3]);
 
-					if (matches >= 9)
+					if (matches >= 9) // Face is valid
 					{
+						// Add indices to index arrays (vertex, uv, normals)
+						
 						vertex_indices.push_back(vertex_index[0]);
 						vertex_indices.push_back(vertex_index[1]);
 						vertex_indices.push_back(vertex_index[2]);
@@ -87,6 +99,8 @@ namespace efiilj
 
 						if (matches == 12)
 						{
+							// Face is quad - add another tri
+							
 							vertex_indices.push_back(vertex_index[2]);
 							vertex_indices.push_back(vertex_index[3]);
 							vertex_indices.push_back(vertex_index[0]);
@@ -102,8 +116,7 @@ namespace efiilj
 					}
 					else
 					{
-						std::cout << "\nError when loading OBJ file - failed to parse face data (" << cs << ")" << std::
-							endl;
+						std::cout << "\nError when loading OBJ file - failed to parse face data (" << cs << ")" << std::endl;
 						return false;
 					}
 				}
@@ -111,6 +124,8 @@ namespace efiilj
 
 			for (unsigned int i = 0; i < vertex_indices.size(); i++)
 			{
+				// Convert loose vertices/indices to Vertex objects
+				
 				unsigned int vertex_index = vertex_indices[i];
 				unsigned int uv_index = uv_indices[i];
 				unsigned int normal_index = normal_indices[i];
@@ -129,6 +144,8 @@ namespace efiilj
 		}
 
 		file.close();
+
+		// Optimize vertex buffers and return whether successful
 		return find_indices(packed_vertices);
 	}
 
@@ -142,19 +159,23 @@ namespace efiilj
 		index_list_.clear();
 		vertex_list_.clear();
 
+		// Map holds vertices and their corresponding indices
 		std::map<vertex, unsigned int> vertices;
 
 		for (int i = 0; i < count; i++)
 		{
 			vertex test = in_vertices[i];
 
+			// Try to find vertices identical to this one in map
 			auto it = vertices.find(test);
 			if (it != vertices.end())
 			{
+				// Add vertex index if an identical vertex exists
 				index_list_.push_back(it->second);
 			}
 			else
 			{
+				// Add vertex and index if no similar vertex is found
 				vertex_list_.push_back(test);
 				unsigned int index = static_cast<unsigned int>(vertex_list_.size()) - 1;
 				index_list_.push_back(index);

@@ -4,9 +4,10 @@
 
 namespace efiilj
 {
-	/// <summary>
-	/// Struct to represent a single vertex with position and color.
-	/// </summary>
+	
+	/**
+	 * \brief Struct to represent a single vertex with position and color.
+	 */
 	struct vertex
 	{
 		vertex()
