@@ -15,10 +15,10 @@ namespace efiilj
 	/// <summary>
 	/// Class to represent a 3-dimensional matrix.
 	/// </summary>
-	class Matrix3
+	class matrix3
 	{
 	private:
-		Vector3 _arr[3];
+		vector3 arr_[3];
 
 	public:
 
@@ -27,7 +27,7 @@ namespace efiilj
 		/// <summary>
 		/// Creates a new identity Matrix3.
 		/// </summary>
-		Matrix3()
+		matrix3()
 		{
 			clear();
 		}
@@ -36,7 +36,7 @@ namespace efiilj
 		/// Inserts the specified Matrix2 into the top-left corner of an 3x3 identity matrix.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
-		Matrix3(const Matrix2& copy)
+		matrix3(const matrix2& copy)
 		{
 			clear();
 
@@ -50,7 +50,7 @@ namespace efiilj
 		/// Constructs a copy of the specified Matrix3.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
-		Matrix3(const Matrix3& copy)
+		matrix3(const matrix3& copy)
 		{
 			*this = copy;
 		}
@@ -61,11 +61,11 @@ namespace efiilj
 		/// <param name="x">First row</param>
 		/// <param name="y">Second row</param>
 		/// <param name="z">Third row</param>
-		Matrix3(Vector3 x, Vector3 y, Vector3 z)
+		matrix3(vector3 x, vector3 y, vector3 z)
 		{
-			_arr[0] = x;
-			_arr[1] = y;
-			_arr[2] = z;
+			arr_[0] = x;
+			arr_[1] = y;
+			arr_[2] = z;
 		}
 
 		/* === OPERATORS === */
@@ -75,7 +75,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The matrix which values are to be copied</param>
 		/// <returns>A reference to the current matrix, after modification</returns>
-		Matrix3& operator = (const Matrix3& other)
+		matrix3& operator = (const matrix3& other)
 		{
 			(*this)(0, 0) = other.at(0, 0);
 			(*this)(0, 1) = other.at(0, 1);
@@ -97,21 +97,21 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix3 resulting from the operation</returns>
-		Matrix3 operator * (const Matrix3& other) const
+		matrix3 operator * (const matrix3& other) const
 		{
-			Matrix3 mat;
+			matrix3 mat;
 
-			mat(0, 0) = Vector3::dot(row(0), other.col(0));
-			mat(0, 1) = Vector3::dot(row(1), other.col(0));
-			mat(0, 2) = Vector3::dot(row(2), other.col(0));
+			mat(0, 0) = vector3::dot(row(0), other.col(0));
+			mat(0, 1) = vector3::dot(row(1), other.col(0));
+			mat(0, 2) = vector3::dot(row(2), other.col(0));
 
-			mat(1, 0) = Vector3::dot(row(0), other.col(1));
-			mat(1, 1) = Vector3::dot(row(1), other.col(1));
-			mat(1, 2) = Vector3::dot(row(2), other.col(1));
+			mat(1, 0) = vector3::dot(row(0), other.col(1));
+			mat(1, 1) = vector3::dot(row(1), other.col(1));
+			mat(1, 2) = vector3::dot(row(2), other.col(1));
 
-			mat(2, 0) = Vector3::dot(row(0), other.col(2));
-			mat(2, 1) = Vector3::dot(row(1), other.col(2));
-			mat(2, 2) = Vector3::dot(row(2), other.col(2));
+			mat(2, 0) = vector3::dot(row(0), other.col(2));
+			mat(2, 1) = vector3::dot(row(1), other.col(2));
+			mat(2, 2) = vector3::dot(row(2), other.col(2));
 
 			return mat;
 		}
@@ -121,9 +121,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix3 resulting from the operation</returns>
-		Matrix3 operator * (const float& other) const
+		matrix3 operator * (const float& other) const
 		{
-			Matrix3 mat = *this;
+			matrix3 mat = *this;
 
 			for (int i = 0; i < 9; i++)
 			{
@@ -138,9 +138,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector3 resulting from the operation</returns>
-		Vector3 operator * (const Vector3& other) const
+		vector3 operator * (const vector3& other) const
 		{
-			Vector3 vect;
+			vector3 vect;
 			vect.x(other.dot(row(0)));
 			vect.y(other.dot(row(1)));
 			vect.z(other.dot(row(2)));
@@ -152,9 +152,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix3 resulting from the operation</returns>
-		Matrix3 operator / (const float& other) const
+		matrix3 operator / (const float& other) const
 		{
-			Matrix3 mat = *this;
+			matrix3 mat = *this;
 
 			return mat * (1 / other);
 		}
@@ -166,7 +166,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns>A reference to the Vector3 resulting from the operation</returns>
-		Vector3& operator *= (Vector3& other) const
+		vector3& operator *= (vector3& other) const
 		{
 			other = (*this) * other;
 			return other;
@@ -181,7 +181,7 @@ namespace efiilj
 		/// <returns>The value at matrix index n</returns>
 		float& operator () (int i)
 		{
-			return _arr[i / 3][i % 3];
+			return arr_[i / 3][i % 3];
 		}
 
 		/// <summary>
@@ -192,7 +192,7 @@ namespace efiilj
 		/// <returns>The value at matrix position x, y</returns>
 		float& operator () (int x, int y)
 		{
-			return _arr[y][x];
+			return arr_[y][x];
 		}
 
 		/// <summary>
@@ -219,7 +219,7 @@ namespace efiilj
 			if (x > 3 || y > 3)
 				throw new std::out_of_range("Matrix index out of range");
 
-			return _arr[y].at(x);
+			return arr_[y].at(x);
 		}
 
 		/// <summary>
@@ -227,12 +227,12 @@ namespace efiilj
 		/// </summary>
 		/// <param name="y">The row index to return</param>
 		/// <returns>The row at the specified y-position</returns>
-		Vector3 row(int y) const
+		vector3 row(int y) const
 		{
 			if (y > 3)
 				throw new std::out_of_range("Row index out of range");
 
-			return Vector3(at(0, y), at(1, y), at(2, y));
+			return vector3(at(0, y), at(1, y), at(2, y));
 		}
 
 		/// <summary>
@@ -240,12 +240,12 @@ namespace efiilj
 		/// </summary>
 		/// <param name="x">The column index to return</param>
 		/// <returns>The column at the specified x-position</returns>
-		Vector3 col(int x) const
+		vector3 col(int x) const
 		{
 			if (x > 3)
 				throw new std::out_of_range("Column index out of range");
 
-			return Vector3(at(x, 0), at(x, 1), at(x, 2));
+			return vector3(at(x, 0), at(x, 1), at(x, 2));
 		}
 
 		/* === MATRIX FUNCTIONS === */
@@ -268,9 +268,9 @@ namespace efiilj
 		/// <param name="x">The x-coordinate of the cell</param>
 		/// <param name="y">The y-coordinate of the cell</param>
 		/// <returns>A 2D matrix excluding the specified row and column</returns>
-		Matrix2 minor(int x, int y) const
+		matrix2 minor(int x, int y) const
 		{
-			Matrix2 mat;
+			matrix2 mat;
 			int j = 0;
 
 			for (int i = 0; i < 9; i++)
@@ -294,7 +294,7 @@ namespace efiilj
 		/// <returns>The determinant of the matrix</returns>
 		float determinant() const
 		{
-			Matrix2 a, b, c;
+			matrix2 a, b, c;
 
 			a = minor(0, 0);
 			b = minor(1, 0);
@@ -307,9 +307,9 @@ namespace efiilj
 		/// Returns a transposed copy of the matrix (shifted along the diagonal).
 		/// </summary>
 		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix3 transpose() const
+		matrix3 transpose() const
 		{
-			Matrix3 mat;
+			matrix3 mat;
 
 			mat(0, 0) = at(0, 0);
 			mat(0, 1) = at(1, 0);
@@ -330,9 +330,9 @@ namespace efiilj
 		/// Returns the inverse of the matrix, or an identity if none exists.
 		/// </summary>
 		/// <returns>The inverse of the current matrix</returns>
-		Matrix3 inverse() const
+		matrix3 inverse() const
 		{
-			Matrix3 inv;
+			matrix3 inv;
 			float det = determinant();
 
 			if (det == 0)
@@ -358,9 +358,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="v">The vector to use for translation</param>
 		/// <returns>A new translation matrix</returns>
-		static Matrix3 getTranslation(const Vector3& v)
+		static matrix3 getTranslation(const vector3& v)
 		{
-			Matrix3 mat = Matrix3();
+			matrix3 mat = matrix3();
 			mat(2, 0) = v.x();
 			mat(2, 1) = v.y();
 			mat(2, 2) = v.z();
@@ -372,10 +372,10 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the 2D rotation</returns>
-		static Matrix3 getRotationMatrix(const float& rad)
+		static matrix3 getRotationMatrix(const float& rad)
 		{
-			Matrix2 mat = Matrix2::getRotationMatrix(rad);
-			return Matrix3(mat);
+			matrix2 mat = matrix2::getRotationMatrix(rad);
+			return matrix3(mat);
 		}
 
 		/* === UTILITIES === */
@@ -393,9 +393,9 @@ namespace efiilj
 			return ss.str();
 		}
 
-		~Matrix3() { }
+		~matrix3() { }
 
-		friend Vector3;
+		friend vector3;
 	};
 }
 

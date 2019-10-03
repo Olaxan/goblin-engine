@@ -16,10 +16,10 @@ namespace efiilj
 	/// <summary>
 	/// Class to represent a 4-dimensional matrix.
 	/// </summary>
-	class Matrix4
+	class matrix4
 	{
 	private:
-		Vector4 _arr[4];
+		vector4 arr_[4];
 
 	public:
 
@@ -28,7 +28,7 @@ namespace efiilj
 		/// <summary>
 		/// Creates a new identity Matrix4.
 		/// </summary>
-		Matrix4(bool identity = true)
+		matrix4(bool identity = true)
 		{
 			clear(identity);
 		}
@@ -37,7 +37,7 @@ namespace efiilj
 		/// Inserts the specified Matrix2 into the top-left corner of an 4x4 identity matrix.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
-		Matrix4(const Matrix2& copy)
+		matrix4(const matrix2& copy)
 		{
 			clear();
 
@@ -51,7 +51,7 @@ namespace efiilj
 		/// Inserts the specified Matrix3 into the top-left corner of an 4x4 identity matrix.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
-		Matrix4(const Matrix3& copy)
+		matrix4(const matrix3& copy)
 		{
 			clear();
 
@@ -72,7 +72,7 @@ namespace efiilj
 		/// Constructs a copy of the specified matrix.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
-		Matrix4(const Matrix4& copy)
+		matrix4(const matrix4& copy)
 		{
 			*this = copy;
 		}
@@ -84,12 +84,12 @@ namespace efiilj
 		/// <param name="b">Second row</param>
 		/// <param name="c">Third row</param>
 		/// <param name="d">Fourth row</param>
-		Matrix4(Vector4 a, Vector4 b, Vector4 c, Vector4 d)
+		matrix4(vector4 a, vector4 b, vector4 c, vector4 d)
 		{
-			_arr[0] = a;
-			_arr[1] = b;
-			_arr[2] = c;
-			_arr[3] = d;
+			arr_[0] = a;
+			arr_[1] = b;
+			arr_[2] = c;
+			arr_[3] = d;
 		}
 
 		/* === OPERATORS === */
@@ -99,7 +99,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The matrix which values are to be copied</param>
 		/// <returns>A reference to the current matrix, after modification</returns>
-		Matrix4& operator = (const Matrix4& other)
+		matrix4& operator = (const matrix4& other)
 		{
 			(*this)(0, 0) = other.at(0, 0);
 			(*this)(0, 1) = other.at(0, 1);
@@ -129,29 +129,29 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix4 resulting from the operation</returns>
-		Matrix4 operator * (const Matrix4& other) const
+		matrix4 operator * (const matrix4& other) const
 		{
-			Matrix4 mat;
+			matrix4 mat;
 
-			mat(0, 0) = Vector4::dot4(row(0), other.col(0));
-			mat(0, 1) = Vector4::dot4(row(1), other.col(0));
-			mat(0, 2) = Vector4::dot4(row(2), other.col(0));
-			mat(0, 3) = Vector4::dot4(row(3), other.col(0));
+			mat(0, 0) = vector4::dot4(row(0), other.col(0));
+			mat(0, 1) = vector4::dot4(row(1), other.col(0));
+			mat(0, 2) = vector4::dot4(row(2), other.col(0));
+			mat(0, 3) = vector4::dot4(row(3), other.col(0));
 
-			mat(1, 0) = Vector4::dot4(row(0), other.col(1));
-			mat(1, 1) = Vector4::dot4(row(1), other.col(1));
-			mat(1, 2) = Vector4::dot4(row(2), other.col(1));
-			mat(1, 3) = Vector4::dot4(row(3), other.col(1));
+			mat(1, 0) = vector4::dot4(row(0), other.col(1));
+			mat(1, 1) = vector4::dot4(row(1), other.col(1));
+			mat(1, 2) = vector4::dot4(row(2), other.col(1));
+			mat(1, 3) = vector4::dot4(row(3), other.col(1));
 
-			mat(2, 0) = Vector4::dot4(row(0), other.col(2));
-			mat(2, 1) = Vector4::dot4(row(1), other.col(2));
-			mat(2, 2) = Vector4::dot4(row(2), other.col(2));
-			mat(2, 3) = Vector4::dot4(row(3), other.col(2));
+			mat(2, 0) = vector4::dot4(row(0), other.col(2));
+			mat(2, 1) = vector4::dot4(row(1), other.col(2));
+			mat(2, 2) = vector4::dot4(row(2), other.col(2));
+			mat(2, 3) = vector4::dot4(row(3), other.col(2));
 
-			mat(3, 0) = Vector4::dot4(row(0), other.col(3));
-			mat(3, 1) = Vector4::dot4(row(1), other.col(3));
-			mat(3, 2) = Vector4::dot4(row(2), other.col(3));
-			mat(3, 3) = Vector4::dot4(row(3), other.col(3));
+			mat(3, 0) = vector4::dot4(row(0), other.col(3));
+			mat(3, 1) = vector4::dot4(row(1), other.col(3));
+			mat(3, 2) = vector4::dot4(row(2), other.col(3));
+			mat(3, 3) = vector4::dot4(row(3), other.col(3));
 
 			return mat;
 		}
@@ -161,9 +161,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix4 resulting from the operation</returns>
-		Matrix4 operator * (const float& other) const
+		matrix4 operator * (const float& other) const
 		{
-			Matrix4 mat = *this;
+			matrix4 mat = *this;
 
 			for (int i = 0; i < 16; i++)
 			{
@@ -178,9 +178,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector4 resulting from the operation</returns>
-		Vector4 operator * (const Vector4& other) const
+		vector4 operator * (const vector4& other) const
 		{
-			Vector4 vect;
+			vector4 vect;
 			vect.x(other.dot4(row(0)));
 			vect.y(other.dot4(row(1)));
 			vect.z(other.dot4(row(2)));
@@ -193,9 +193,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix4 resulting from the operation</returns>
-		Matrix4 operator / (const float& other) const
+		matrix4 operator / (const float& other) const
 		{
-			Matrix4 mat = *this;
+			matrix4 mat = *this;
 
 			return mat * (1 / other);
 		}
@@ -207,7 +207,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns>A reference to the Vector4 resulting from the operation</returns>
-		Vector4& operator *= (Vector4& other) const
+		vector4& operator *= (vector4& other) const
 		{
 			other = (*this) * other;
 			return other;
@@ -222,7 +222,7 @@ namespace efiilj
 		/// <returns>The value at matrix index n</returns>
 		float& operator () (int i)
 		{
-			return _arr[i / 4][i % 4];
+			return arr_[i / 4][i % 4];
 		}
 
 		/// <summary>
@@ -233,7 +233,7 @@ namespace efiilj
 		/// <returns>The value at matrix position x, y</returns>
 		float& operator () (int x, int y)
 		{
-			return _arr[y][x];
+			return arr_[y][x];
 		}
 
 		/// <summary>
@@ -260,7 +260,7 @@ namespace efiilj
 			if (x > 4 || y > 4)
 				throw std::out_of_range("Matrix index out of range");
 
-			return _arr[y].at(x);
+			return arr_[y].at(x);
 		}
 
 		/// <summary>
@@ -268,12 +268,12 @@ namespace efiilj
 		/// </summary>
 		/// <param name="y">The row index to return</param>
 		/// <returns>The row at the specified y-position</returns>
-		Vector4 row(int y) const
+		vector4 row(int y) const
 		{
 			if (y > 4)
 				throw std::out_of_range("Row index out of range");
 
-			return _arr[y];
+			return arr_[y];
 		}
 
 		/// <summary>
@@ -282,12 +282,12 @@ namespace efiilj
 		/// <param name="y">The row index to change</param>
 		/// <param name="row">The Vector4 to replace the row with</param>
 		/// <param name="relative">Whether the operation should be added to the existing values, or replace them<param name=""></param>
-		void row(int y, Vector4& row, bool relative = false)
+		void row(int y, vector4& row, bool relative = false)
 		{
 			if (y > 4)
 				throw std::out_of_range("Row index out of range");
 
-			_arr[y] = relative ? _arr[y] + row : row ;
+			arr_[y] = relative ? arr_[y] + row : row ;
 		}
 
 		/// <summary>
@@ -295,12 +295,12 @@ namespace efiilj
 		/// </summary>
 		/// <param name="x">The column index to return</param>
 		/// <returns>The column at the specified x-position</returns>
-		Vector4 col(int x) const
+		vector4 col(int x) const
 		{
 			if (x > 4)
 				throw std::out_of_range("Column index out of range");
 
-			return Vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
+			return vector4(at(x, 0), at(x, 1), at(x, 2), at(x, 3));
 		}
 
 		/// <summary>
@@ -309,7 +309,7 @@ namespace efiilj
 		/// <param name="y">The column index to change</param>
 		/// <param name="row">The Vector4 to change the column with</param>
 		/// <param name="relative">Whether the operation should be added to the existing values, or replace them</param>
-		void col(int x, const Vector4& col, bool relative = false)
+		void col(int x, const vector4& col, bool relative = false)
 		{
 			if (x > 4)
 				throw std::out_of_range("Row index out of range");
@@ -340,9 +340,9 @@ namespace efiilj
 		/// <param name="x">The x-coordinate of the cell</param>
 		/// <param name="y">The y-coordinate of the cell</param>
 		/// <returns>A 3x3 matrix excluding the specified row and column</returns>
-		Matrix3 minor(int x, int y) const
+		matrix3 minor(int x, int y) const
 		{
-			Matrix3 mat;
+			matrix3 mat;
 			int j = 0;
 
 			for (int i = 0; i < 16; i++)
@@ -366,7 +366,7 @@ namespace efiilj
 		/// <returns>The determinant of the matrix</returns>
 		float determinant() const
 		{
-			Matrix3 a, b, c, d;
+			matrix3 a, b, c, d;
 
 			a = minor(0, 0);
 			b = minor(1, 0);
@@ -380,9 +380,9 @@ namespace efiilj
 		/// Returns a transposed copy of the matrix (shifted along the diagonal).
 		/// </summary>
 		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix4 transpose() const
+		matrix4 transpose() const
 		{
-			Matrix4 mat;
+			matrix4 mat;
 
 			mat(0, 0) = at(0, 0);
 			mat(0, 1) = at(1, 0);
@@ -411,9 +411,9 @@ namespace efiilj
 		/// Returns the inverse of the matrix, or an identity if none exists.
 		/// </summary>
 		/// <returns>The inverse of the current matrix</returns>
-		Matrix4 inverse() const
+		matrix4 inverse() const
 		{
-			Matrix4 inv;
+			matrix4 inv;
 			float det = determinant();
 
 			if (det == 0)
@@ -442,9 +442,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="v">The vector to use for translation</param>
 		/// <returns>A new translation matrix</returns>
-		static Matrix4 get_translation(const Vector4& v)
+		static matrix4 get_translation(const vector4& v)
 		{
-			Matrix4 mat = Matrix4();
+			matrix4 mat = matrix4();
 
 			mat(3, 0) = v.x();
 			mat(3, 1) = v.y();
@@ -461,9 +461,9 @@ namespace efiilj
 		/// <param name="y">Translation in the x axis</param>
 		/// <param name="z">Translation in the x axis</param>
 		/// <returns>A new translation matrix</returns>
-		static Matrix4 get_translation(float x, float y, float z)
+		static matrix4 get_translation(float x, float y, float z)
 		{
-			Matrix4 mat = Matrix4();
+			matrix4 mat = matrix4();
 
 			mat(3, 0) = x;
 			mat(3, 1) = y;
@@ -472,9 +472,9 @@ namespace efiilj
 			return mat;
 		}
 
-		static Matrix4 get_scale(float x, float y, float z)
+		static matrix4 get_scale(float x, float y, float z)
 		{
-			Matrix4 mat = Matrix4();
+			matrix4 mat = matrix4();
 
 			mat(0, 0) = x;
 			mat(1, 1) = y;
@@ -483,7 +483,7 @@ namespace efiilj
 			return mat;
 		}
 
-		static Matrix4 get_scale(const Vector3& xyz)
+		static matrix4 get_scale(const vector3& xyz)
 		{
 			return get_scale(xyz.x(), xyz.y(), xyz.z());
 		}
@@ -493,9 +493,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 get_rotation_x(const float rad)
+		static matrix4 get_rotation_x(const float rad)
 		{
-			Matrix4 mat;
+			matrix4 mat;
 
 			mat(1, 1) = cosf(rad);
 			mat(2, 1) = -sinf(rad);
@@ -510,9 +510,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 get_rotation_y(const float rad)
+		static matrix4 get_rotation_y(const float rad)
 		{
-			Matrix4 mat;
+			matrix4 mat;
 
 			mat(0, 0) = cosf(rad);
 			mat(2, 0) = sinf(rad);
@@ -527,9 +527,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 get_rotation_z(const float rad)
+		static matrix4 get_rotation_z(const float rad)
 		{
-			Matrix4 mat;
+			matrix4 mat;
 
 			mat(0, 0) = cosf(rad);
 			mat(1, 0) = -sinf(rad);
@@ -545,9 +545,9 @@ namespace efiilj
 		/// <param name="rad">The rotation in radians</param>
 		/// <param name="axis">The axis for rotation</param>
 		/// <returns>A rotation matrix for the rotation</returns>
-		static Matrix4 get_rotation_xyz(const float rad, const Vector3 axis)
+		static matrix4 get_rotation_xyz(const float rad, const vector3 axis)
 		{
-			const Vector3 unit = axis.norm();
+			const vector3 unit = axis.norm();
 
 			const float sin = sinf(rad);
 			const float cos = cosf(rad);
@@ -555,7 +555,7 @@ namespace efiilj
 			const float y = unit.y();
 			const float z = unit.z();
 
-			Matrix4 mat;
+			matrix4 mat;
 
 			mat(0, 0) = cos + (x * x) * (1 - cos);
 			mat(0, 1) = y * x * (1 - cos) + z * sin;
@@ -572,16 +572,16 @@ namespace efiilj
 			return mat;
 		}
 
-		static Matrix4 get_rotation_xyz(const Vector3& eulers)
+		static matrix4 get_rotation_xyz(const vector3& eulers)
 		{
 			// TODO: Optimize
 			return get_rotation_z(eulers.z()) * get_rotation_y(eulers.y()) * get_rotation_x(eulers.x());
 		}
 
-		static Matrix4 get_perspective(const float left, const float right, const float top, const float bottom, const float near, const float far)
+		static matrix4 get_perspective(const float left, const float right, const float top, const float bottom, const float near, const float far)
 		{
 
-			Matrix4 mat(false);
+			matrix4 mat(false);
 
 			mat(0, 0) = (2.0f * near) / (right - left);
 			mat(2, 0) = -((right + left) / (right - left));
@@ -596,7 +596,7 @@ namespace efiilj
 		
 		//144540105
 
-		static Matrix4 getPerspective(float fov, float aspect, float near, float far)
+		static matrix4 getPerspective(float fov, float aspect, float near, float far)
 		{
 			const float top = tanf(fov / 2.0f) * near;
 			const float bottom = -top;
@@ -606,16 +606,16 @@ namespace efiilj
 			return get_perspective(left, right, top, bottom, near, far);
 		}
 
-		static Matrix4 get_lookat(const Vector3& camera_pos, const Vector3& camera_target, const Vector3& up_direction)
+		static matrix4 get_lookat(const vector3& camera_pos, const vector3& camera_target, const vector3& up_direction)
 		{
-			const Vector3 camera_direction = (camera_pos - camera_target).norm();
-			const Vector3 camera_right = Vector3::cross(up_direction, camera_direction).norm();
-			const Vector3 camera_up = Vector3::cross(camera_direction, camera_right);
+			const vector3 camera_direction = (camera_pos - camera_target).norm();
+			const vector3 camera_right = vector3::cross(up_direction, camera_direction).norm();
+			const vector3 camera_up = vector3::cross(camera_direction, camera_right);
 
-			Matrix4 a = Matrix4(Vector4(camera_right, 1), Vector4(camera_up, 1), Vector4(camera_direction, 1), Vector4());
-			a(3, 0) = Vector3::dot(camera_right, camera_pos) * -1;
-			a(3, 1) = Vector3::dot(camera_up, camera_pos) * -1;
-			a(3, 2) = Vector3::dot(camera_direction, camera_pos) * -1;
+			matrix4 a = matrix4(vector4(camera_right, 1), vector4(camera_up, 1), vector4(camera_direction, 1), vector4());
+			a(3, 0) = vector3::dot(camera_right, camera_pos) * -1;
+			a(3, 1) = vector3::dot(camera_up, camera_pos) * -1;
+			a(3, 2) = vector3::dot(camera_direction, camera_pos) * -1;
 
 			return a;
 		}
@@ -648,10 +648,10 @@ namespace efiilj
 			return ss.str();
 		}
 
-		~Matrix4()
+		~matrix4()
 			= default;
 
-		friend Vector4;
+		friend vector4;
 	};
 }
 

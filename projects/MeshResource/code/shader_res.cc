@@ -7,19 +7,16 @@
 
 namespace efiilj
 {
-	shader_resource::shader_resource() : program_id_(0)
-	{
-	}
+	shader_resource::shader_resource()
+	: program_id_(0) { }
 
 	shader_resource::shader_resource(const char* vertex, const char* fragment) : program_id_(0)
 	{
 		program_id_ = create_program(vertex, fragment);
 	}
 
-	shader_resource::shader_resource(const std::string& vertex, const std::string& fragment) : shader_resource(
-		vertex.c_str(), fragment.c_str())
-	{
-	}
+	shader_resource::shader_resource(const std::string& vertex, const std::string& fragment)
+	: shader_resource(vertex.c_str(), fragment.c_str()) { }
 
 	std::string shader_resource::load_shader(const char* file_path)
 	{
@@ -31,8 +28,10 @@ namespace efiilj
 		{
 			while (std::getline(file, s))
 				ss << s << "\n";
+			
+			file.close();
 		}
-
+		
 		return ss.str();
 	}
 
@@ -91,7 +90,7 @@ namespace efiilj
 			if (result == GL_FALSE)
 			{
 				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(nullptr);
+				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
 				glGetShaderInfoLog(id, log_size, nullptr, message);
 			}
 			break;
@@ -100,7 +99,7 @@ namespace efiilj
 			if (result == GL_FALSE)
 			{
 				glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(nullptr);
+				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
 				glGetProgramInfoLog(id, log_size, nullptr, message);
 			}
 			break;
@@ -138,11 +137,11 @@ namespace efiilj
 		}
 		else
 			uniform = it->second;
-
+		
 		return uniform;
 	}
 
-	bool shader_resource::set_uniform1_i(const char* name, const int val)
+	bool shader_resource::set_uniform(const char* name, const int val)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -152,7 +151,17 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_resource::set_uniform_vector4_fv(const char* name, const Vector4& vec)
+	bool shader_resource::set_uniform(const char* name, const float val)
+	{
+		const int uniform = find_uniform_location(name);
+		if (uniform == -1)
+			return false;
+
+		glUniform1f(uniform, val);
+		return true;
+	}
+
+	bool shader_resource::set_uniform(const char* name, const vector4& vec)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -162,7 +171,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_resource::set_uniform_matrix4_fv(const char* name, const Matrix4& mat)
+	bool shader_resource::set_uniform(const char* name, const matrix4& mat)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -172,7 +181,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_resource::set_uniform_vector3_fv(const char* name, const Vector3& vec)
+	bool shader_resource::set_uniform(const char* name, const vector3& vec)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -182,7 +191,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_resource::set_uniform_matrix3_fv(const char* name, const Matrix3& mat)
+	bool shader_resource::set_uniform(const char* name, const matrix3& mat)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)

@@ -14,9 +14,9 @@ namespace efiilj
 		std::ifstream file(path);
 
 		std::vector<unsigned int> vertex_indices, uv_indices, normal_indices;
-		std::vector<Vector3> vertices;
-		std::vector<Vector3> normals;
-		std::vector<Vector2> uvs;
+		std::vector<vector3> vertices;
+		std::vector<vector3> normals;
+		std::vector<vector2> uvs;
 
 		std::vector<vertex> packed_vertices;
 
@@ -28,7 +28,7 @@ namespace efiilj
 
 				if (_strnicmp(cs, "vn", 2) == 0)
 				{
-					Vector3 norm;
+					vector3 norm;
 					if (sscanf_s(&cs[2], "%f %f %f", &norm[0], &norm[1], &norm[2]) == 3)
 						normals.push_back(norm);
 					else
@@ -40,7 +40,7 @@ namespace efiilj
 				}
 				else if (_strnicmp(cs, "vt", 2) == 0)
 				{
-					Vector2 uv;
+					vector2 uv;
 					if (sscanf_s(&cs[2], "%f %f", &uv[0], &uv[1]) == 2)
 						uvs.push_back(uv);
 					else
@@ -52,7 +52,7 @@ namespace efiilj
 				}
 				else if (_strnicmp(cs, "v", 1) == 0)
 				{
-					Vector3 vert;
+					vector3 vert;
 					if (sscanf_s(&cs[1], "%f %f %f", &vert[0], &vert[1], &vert[2]) == 3)
 						vertices.push_back(vert);
 					else
@@ -115,11 +115,11 @@ namespace efiilj
 				unsigned int uv_index = uv_indices[i];
 				unsigned int normal_index = normal_indices[i];
 
-				Vector3 xyzw = vertices[vertex_index - 1];
-				Vector3 norm = normals[normal_index - 1];
-				Vector2 uv = uvs[uv_index - 1];
+				vector3 xyzw = vertices[vertex_index - 1];
+				vector3 norm = normals[normal_index - 1];
+				vector2 uv = uvs[uv_index - 1];
 
-				packed_vertices.emplace_back(xyzw, norm, Vector4(1, 1, 1, 1), uv);
+				packed_vertices.emplace_back(xyzw, norm, vector4(1, 1, 1, 1), uv);
 			}
 		}
 		else

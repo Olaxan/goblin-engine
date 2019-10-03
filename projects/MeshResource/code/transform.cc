@@ -2,19 +2,19 @@
 
 namespace efiilj
 {
-	transform_model::transform_model(const Vector3& pos, const Vector3& rot, const Vector3& scale)
-	: model_(true), is_dirty_(true), position(pos), scale(scale), rotation(rot) { }
+	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
+	: model_(true), has_changed_(true), position(pos), scale(scale), rotation(rot) { }
 
-	const Matrix4& transform_model::model()
+	const matrix4& transform_model::model()
 	{
-		if (is_dirty_)
+		if (has_changed_)
 		{
-			const Matrix4 t = Matrix4::get_translation(Vector4(position, 1));
-			const Matrix4 r = Matrix4::get_rotation_xyz(rotation);
-			const Matrix4 s = Matrix4::get_scale(scale);
+			const matrix4 t = matrix4::get_translation(vector4(position, 1));
+			const matrix4 r = matrix4::get_rotation_xyz(rotation);
+			const matrix4 s = matrix4::get_scale(scale);
 
 			model_ = t * r * s;
-			is_dirty_ = false;
+			has_changed_ = false;
 		}
 
 		return model_;

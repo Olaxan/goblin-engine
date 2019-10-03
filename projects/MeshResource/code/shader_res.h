@@ -42,11 +42,12 @@ namespace efiilj
 		static void drop();
 
 		int find_uniform_location(const char* name);
-		bool set_uniform1_i(const char* name, int val);
-		bool set_uniform_vector4_fv(const char* name, const Vector4& vec);
-		bool set_uniform_matrix4_fv(const char* name, const Matrix4& mat);
-		bool set_uniform_vector3_fv(const char* name, const Vector3& vec);
-		bool set_uniform_matrix3_fv(const char* name, const Matrix3& vec);
+		bool set_uniform(const char* name, int val);
+		bool set_uniform(const char* name, float val);
+		bool set_uniform(const char* name, const vector4& vec);
+		bool set_uniform(const char* name, const matrix4& mat);
+		bool set_uniform(const char* name, const vector3& vec);
+		bool set_uniform(const char* name, const matrix3& mat);
 
 		~shader_resource();
 	};

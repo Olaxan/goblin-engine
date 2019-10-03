@@ -4,38 +4,36 @@
 
 namespace efiilj
 {
-	class transform_model
+	struct transform_model
 	{
 	private:
 
-		Matrix4 model_;
-		bool is_dirty_;
-
-		void set_dirty(const bool dirty = true) { this->is_dirty_ = dirty; }
+		matrix4 model_;
+		bool has_changed_;
 
 	public:
 
-		explicit transform_model(const Vector3& pos = Vector3(0, 0, 0), const Vector3& rot = Vector3(0, 0, 0),
-		                         const Vector3& scale = Vector3(1, 1, 1));
+		explicit transform_model(const vector3& pos = vector3(0, 0, 0), const vector3& rot = vector3(0, 0, 0),
+		                         const vector3& scale = vector3(1, 1, 1));
 
-		Vector3 position;
-		Vector3 scale;
-		Vector3 rotation;
+		vector3 position;
+		vector3 scale;
+		vector3 rotation;
 
-		Vector3 forward() const
+		vector3 forward() const
 		{
-			return Vector3 (
+			return vector3 (
 				cos(rotation.x()) * cos(rotation.y()),
 				sin(rotation.x()),
 				cos(rotation.x()) * sin(rotation.y()));
 		}
 
-		Vector3 left() const
+		vector3 left() const
 		{
 			
 		}
 
-		const Matrix4& model();
+		const matrix4& model();
 
 		~transform_model()
 			= default;

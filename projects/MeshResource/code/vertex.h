@@ -12,13 +12,13 @@ namespace efiilj
 		vertex()
 		: xyzw(0, 0, 0, 0), normal(0, 0, 0, 0), rgba(1, 1, 1, 1), uv(0, 0) { }
 
-		vertex(const Vector3& xyzw, const Vector3& normal, const Vector4& rgba, const Vector2& uv)
+		vertex(const vector3& xyzw, const vector3& normal, const vector4& rgba, const vector2& uv)
 		: xyzw(xyzw, 1), normal(normal, 1), rgba(rgba), uv(uv) { }
 
-		Vector4 xyzw;
-		Vector4 normal;
-		Vector4 rgba;
-		Vector2 uv;
+		vector4 xyzw;
+		vector4 normal;
+		vector4 rgba;
+		vector2 uv;
 
 		bool operator < (const vertex other) const
 		{
@@ -30,10 +30,10 @@ namespace efiilj
 	{
 		bool operator()(const vertex& lhs, const vertex& rhs) const
 		{
-			return Vector4::is_near(lhs.xyzw, rhs.xyzw)
-				&& Vector4::is_near(lhs.normal, rhs.normal)
-				&& Vector4::is_near(lhs.rgba, rhs.rgba)
-				&& Vector2::is_near(lhs.uv, rhs.uv);
+			return vector4::is_near(lhs.xyzw, rhs.xyzw)
+				&& vector4::is_near(lhs.normal, rhs.normal)
+				&& vector4::is_near(lhs.rgba, rhs.rgba)
+				&& vector2::is_near(lhs.uv, rhs.uv);
 		}
 	};
 }

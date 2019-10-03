@@ -13,10 +13,10 @@ namespace efiilj
 	/// <summary>
 	/// Class to represent a 2-dimensional matrix.
 	/// </summary>
-	class Matrix2
+	class matrix2
 	{
 	private:
-		Vector2 _arr[2];
+		vector2 arr_[2];
 	public:
 
 		/* === CONSTRUCTORS === */
@@ -24,7 +24,7 @@ namespace efiilj
 		/// <summary>
 		/// Creates a new identity Matrix2.
 		/// </summary>
-		Matrix2()
+		matrix2()
 		{
 			clear();
 		}
@@ -33,7 +33,7 @@ namespace efiilj
 		/// Constructs a copy of the specified Matrix2.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
-		Matrix2(const Matrix2& copy)
+		matrix2(const matrix2& copy)
 		{
 			*this = copy;
 		}
@@ -45,7 +45,7 @@ namespace efiilj
 		/// <param name="b">Top right</param>
 		/// <param name="c">Bottom left</param>
 		/// <param name="d">Bottom right</param>
-		Matrix2(float a, float b, float c, float d)
+		matrix2(float a, float b, float c, float d)
 		{
 			this->a(a);
 			this->b(b);
@@ -55,17 +55,17 @@ namespace efiilj
 
 		/* === ACCESSORS === */
 
-		const float& a() const { return this->_arr[0].x(); }
-		void a(const float& a) { this->_arr[0].x(a); }
+		const float& a() const { return this->arr_[0].x(); }
+		void a(const float& a) { this->arr_[0].x(a); }
 
-		const float& b() const { return this->_arr[0].y(); }
-		void b(const float& b) { this->_arr[0].y(b); }
+		const float& b() const { return this->arr_[0].y(); }
+		void b(const float& b) { this->arr_[0].y(b); }
 
-		const float& c() const { return this->_arr[1].x(); }
-		void c(const float& c) { this->_arr[1].x(c); }
+		const float& c() const { return this->arr_[1].x(); }
+		void c(const float& c) { this->arr_[1].x(c); }
 
-		const float& d() const { return this->_arr[1].y(); }
-		void d(const float& d) { this->_arr[1].y(d); }
+		const float& d() const { return this->arr_[1].y(); }
+		void d(const float& d) { this->arr_[1].y(d); }
 
 		/* === OPERATORS === */
 
@@ -74,7 +74,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The matrix which values are to be copied</param>
 		/// <returns>A reference to the current matrix, after modification</returns>
-		Matrix2& operator = (const Matrix2& other)
+		matrix2& operator = (const matrix2& other)
 		{
 			this->a(other.a());
 			this->b(other.b());
@@ -89,15 +89,15 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix2 resulting from the operation</returns>
-		Matrix2 operator * (const Matrix2& other) const
+		matrix2 operator * (const matrix2& other) const
 		{
-			Matrix2 mat;
+			matrix2 mat;
 
-			mat(0, 0) = Vector2::dot(row(0), other.col(0));
-			mat(0, 1) = Vector2::dot(row(1), other.col(0));
+			mat(0, 0) = vector2::dot(row(0), other.col(0));
+			mat(0, 1) = vector2::dot(row(1), other.col(0));
 
-			mat(1, 0) = Vector2::dot(row(0), other.col(1));
-			mat(1, 1) = Vector2::dot(row(1), other.col(1));
+			mat(1, 0) = vector2::dot(row(0), other.col(1));
+			mat(1, 1) = vector2::dot(row(1), other.col(1));
 
 			return mat;
 		}
@@ -107,9 +107,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix2 resulting from the operation</returns>
-		Matrix2 operator * (const float& other) const
+		matrix2 operator * (const float& other) const
 		{
-			Matrix2 mat = *this;
+			matrix2 mat = *this;
 
 			for (int i = 0; i < 4; i++)
 			{
@@ -124,9 +124,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector2 resulting from the operation</returns>
-		Vector2 operator * (const Vector2& other) const
+		vector2 operator * (const vector2& other) const
 		{
-			Vector2 vect;
+			vector2 vect;
 			vect.x(other.dot(row(0)));
 			vect.y(other.dot(row(1)));
 			return vect;
@@ -137,9 +137,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Matrix2 resulting from the operation</returns>
-		Matrix2 operator / (const float& other) const
+		matrix2 operator / (const float& other) const
 		{
-			Matrix2 mat = *this;
+			matrix2 mat = *this;
 
 			return mat * (1 / other);
 		}
@@ -151,7 +151,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns>A reference to the Vector2 resulting from the operation</returns>
-		Vector2& operator *= (Vector2& other) const
+		vector2& operator *= (vector2& other) const
 		{
 			other = (*this) * other;
 			return other;
@@ -166,7 +166,7 @@ namespace efiilj
 		/// <returns>The value at matrix index n</returns>
 		float& operator () (int n)
 		{
-			return _arr[n / 2][n % 2];
+			return arr_[n / 2][n % 2];
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace efiilj
 		/// <returns>The value at matrix position x, y</returns>
 		float& operator () (int x, int y)
 		{
-			return _arr[y][x];
+			return arr_[y][x];
 		}
 
 		/// <summary>
@@ -198,7 +198,7 @@ namespace efiilj
 		/// <returns>The value at matrix position x, y</returns>
 		float at(int x, int y) const
 		{
-			return _arr[y].at(x);
+			return arr_[y].at(x);
 		}
 
 		/// <summary>
@@ -206,9 +206,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="y">The row index to return</param>
 		/// <returns>The row at the specified y-position</returns>
-		Vector2 row(int y) const
+		vector2 row(int y) const
 		{
-			return Vector2(at(0, y), at(1, y));
+			return vector2(at(0, y), at(1, y));
 		}
 
 		/// <summary>
@@ -216,9 +216,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="x">The column index to return</param>
 		/// <returns>The column at the specified x-position</returns>
-		Vector2 col(int x) const
+		vector2 col(int x) const
 		{
-			return Vector2(at(x, 0), at(x, 1));
+			return vector2(at(x, 0), at(x, 1));
 		}
 
 		/* === MATRIX FUNCTIONS === */
@@ -248,23 +248,23 @@ namespace efiilj
 		/// Returns a transposed copy of the matrix (shifted along the diagonal).
 		/// </summary>
 		/// <returns>Transposed copy of the current matrix</returns>
-		Matrix2 transpose() const
+		matrix2 transpose() const
 		{
-			return Matrix2(this->a(), this->c(), this->b(), this->d());
+			return matrix2(this->a(), this->c(), this->b(), this->d());
 		}
 
 		/// <summary>
 		/// Returns the inverse of the matrix, or an identity if none exists.
 		/// </summary>
 		/// <returns>The inverse of the current matrix</returns>
-		Matrix2 inverse() const
+		matrix2 inverse() const
 		{
 			float det = determinant();
 
 			if (det == 0)
-				return Matrix2();
+				return matrix2();
 
-			return Matrix2(d(), -b(), -c(), a()) / det;
+			return matrix2(d(), -b(), -c(), a()) / det;
 		}
 
 
@@ -275,9 +275,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="rad">The rotation in radians</param>
 		/// <returns>A rotation matrix for the 2D rotation</returns>
-		static Matrix2 getRotationMatrix(const float& rad)
+		static matrix2 getRotationMatrix(const float& rad)
 		{
-			return Matrix2(cos(rad), -sin(rad), sin(rad), cos(rad));
+			return matrix2(cos(rad), -sin(rad), sin(rad), cos(rad));
 		}
 
 		/* UTILITIES */
@@ -293,8 +293,8 @@ namespace efiilj
 			return ss.str();
 		}
 
-		~Matrix2() { }
+		~matrix2() { }
 
-		friend Vector2;
+		friend vector2;
 	};
 }

@@ -6,11 +6,11 @@ namespace efiilj
 {
 	struct point_light
 	{
-		point_light(const int color, const float intensity, const transform_model& transform)
-		: color(color), intensity(intensity), transform(transform) { }
+		point_light(const vector3& rgb, const vector3& intensity, const vector3& position)
+		: rgb(rgb), position(position), intensity(intensity) { }
 		
-		int color;
-		float intensity;
-		transform_model transform;
+		vector3 rgb;
+		vector3 position;
+		vector3 intensity;
 	};
 }

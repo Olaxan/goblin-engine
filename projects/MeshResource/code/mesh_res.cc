@@ -26,40 +26,40 @@ namespace efiilj
 		vertex vertices[24] = {
 
 			// Front = S
-			vertex(Vector3(-size, -size, size), Vector3(0, 0, 1), Vector4(color, color, color, color), Vector2(0.25f, 0.33f)),	// 0
-			vertex(Vector3(size, -size, size), Vector3(0, 0, 1), Vector4(color, color, color, color), Vector2(0.5f, 0.33f)),		// 1
-			vertex(Vector3(size, size, size), Vector3(0, 0, 1), Vector4(color, color, color, color), Vector2(0.5f, 0.66f)),		// 2
-			vertex(Vector3(-size, size, size), Vector3(0, 0, 1), Vector4(color, color, color, color), Vector2(0.25f, 0.66f)), // 3
+			vertex(vector3(-size, -size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.25f, 0.33f)),	// 0
+			vertex(vector3(size, -size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.5f, 0.33f)),		// 1
+			vertex(vector3(size, size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.5f, 0.66f)),		// 2
+			vertex(vector3(-size, size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.25f, 0.66f)), // 3
 
 			// Back = N
-			vertex(Vector3(size, -size, -size), Vector3(0, 0, -1), Vector4(color, color, color, color), Vector2(0.75, 0.33f)), // 4
-			vertex(Vector3(-size, -size, -size), Vector3(0, 0, -1), Vector4(color, color, color, color), Vector2(1.0f, 0.33f)), // 5
-			vertex(Vector3(-size, size, -size), Vector3(0, 0, -1), Vector4(color, color, color, color), Vector2(1.0f, 0.66f)), // 6
-			vertex(Vector3(size, size, -size), Vector3(0, 0, -1), Vector4(color, color, color, color), Vector2(0.75, 0.66f)), // 7
+			vertex(vector3(size, -size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(0.75, 0.33f)), // 4
+			vertex(vector3(-size, -size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(1.0f, 0.33f)), // 5
+			vertex(vector3(-size, size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(1.0f, 0.66f)), // 6
+			vertex(vector3(size, size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(0.75, 0.66f)), // 7
 
 			// Top
-			vertex(Vector3(-size, size, size), Vector3(0, 1, 0), Vector4(color, color, color, color), Vector2(0.25f, 0.66f)), // 8
-			vertex(Vector3(size, size, size), Vector3(0, 1, 0), Vector4(color, color, color, color), Vector2(0.5f, 0.66f)), // 9
-			vertex(Vector3(size, size, -size), Vector3(0, 1, 0), Vector4(color, color, color, color), Vector2(0.5f, 1.0f)), // 10
-			vertex(Vector3(-size, size, -size), Vector3(0, 1, 0), Vector4(color, color, color, color), Vector2(0.25f, 1.0f)), // 11
+			vertex(vector3(-size, size, size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.25f, 0.66f)), // 8
+			vertex(vector3(size, size, size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.5f, 0.66f)), // 9
+			vertex(vector3(size, size, -size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.5f, 1.0f)), // 10
+			vertex(vector3(-size, size, -size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.25f, 1.0f)), // 11
 
 			// Bottom
-			vertex(Vector3(size, -size, size), Vector3(0, -1, 0), Vector4(color, color, color, color), Vector2(0.25f, 0.0f)), // 12
-			vertex(Vector3(-size, -size, size), Vector3(0, -1, 0), Vector4(color, color, color, color), Vector2(0.5f, 0.0f)), // 13
-			vertex(Vector3(-size, -size, -size), Vector3(0, -1, 0), Vector4(color, color, color, color), Vector2(0.5f, 0.33f)), // 14
-			vertex(Vector3(size, -size, -size), Vector3(0, -1, 0), Vector4(color, color, color, color), Vector2(0.25f, 0.33f)), // 15
+			vertex(vector3(size, -size, size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.25f, 0.0f)), // 12
+			vertex(vector3(-size, -size, size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.5f, 0.0f)), // 13
+			vertex(vector3(-size, -size, -size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.5f, 0.33f)), // 14
+			vertex(vector3(size, -size, -size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.25f, 0.33f)), // 15
 
 			// Left = W
-			vertex(Vector3(-size, -size, -size), Vector3(-1, 0, 0), Vector4(color, color, color, color), Vector2(0.0f, 0.33f)), // 16
-			vertex(Vector3(-size, -size, size), Vector3(-1, 0, 0), Vector4(color, color, color, color), Vector2(0.25f, 0.33f)), // 17
-			vertex(Vector3(-size, size, size), Vector3(-1, 0, 0), Vector4(color, color, color, color), Vector2(0.25f, 0.66f)), // 18
-			vertex(Vector3(-size, size, -size), Vector3(-1, 0, 0), Vector4(color, color, color, color), Vector2(0.0f, 0.66f)), // 19
+			vertex(vector3(-size, -size, -size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.0f, 0.33f)), // 16
+			vertex(vector3(-size, -size, size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.25f, 0.33f)), // 17
+			vertex(vector3(-size, size, size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.25f, 0.66f)), // 18
+			vertex(vector3(-size, size, -size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.0f, 0.66f)), // 19
 
 			// Right = E
-			vertex(Vector3(size, -size, size), Vector3(1, 0, 0), Vector4(color, color, color, color), Vector2(0.5f, 0.33f)), // 20
-			vertex(Vector3(size, -size, -size), Vector3(1, 0, 0), Vector4(color, color, color, color), Vector2(0.75, 0.33f)), // 21
-			vertex(Vector3(size, size, -size), Vector3(1, 0, 0), Vector4(color, color, color, color), Vector2(0.75, 0.66f)), // 22
-			vertex(Vector3(size, size, size), Vector3(1, 0, 0), Vector4(color, color, color, color), Vector2(0.5f, 0.66f)), // 23
+			vertex(vector3(size, -size, size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.5f, 0.33f)), // 20
+			vertex(vector3(size, -size, -size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.75, 0.33f)), // 21
+			vertex(vector3(size, size, -size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.75, 0.66f)), // 22
+			vertex(vector3(size, size, size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.5f, 0.66f)), // 23
 		};
 
 		unsigned int indices[36] = {
@@ -96,7 +96,7 @@ namespace efiilj
 
 	void mesh_resource::init_index_buffer(unsigned int* index_list, const int count)
 	{
-		if (ibo_ != 0) // Ollad
+		if (ibo_ != 0)
 			return;
 
 		glGenBuffers(1, &ibo_);

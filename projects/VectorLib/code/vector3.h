@@ -13,10 +13,10 @@ namespace efiilj
 	/// <summary>
 	/// Class to represent a 3-dimensional point vector.
 	/// </summary>
-	class Vector3
+	class vector3
 	{
 	private:
-		float _arr[3];
+		float arr_[3];
 
 	public:
 
@@ -28,7 +28,7 @@ namespace efiilj
 		/// <param name="x">Top value</param>
 		/// <param name="y">Middle value</param>
 		/// <param name="z">Bottom value</param>
-		Vector3(float x, float y, float z)
+		vector3(float x, float y, float z)
 		{
 			this->x(x);
 			this->y(y);
@@ -39,13 +39,13 @@ namespace efiilj
 		/// Creates a homogeneous 2D vector with the specified w value.
 		/// </summary>
 		/// <param name="w">The scaling value for the vector, default 1 (for normal cartesian coordinate systems)</param>
-		Vector3(float w = 1) : Vector3(0, 0, w) { }
+		vector3(float w = 1) : vector3(0, 0, w) { }
 
 		/// <summary>
 		/// Inserts the specified Vector2 into the top of a new Vector3.
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
-		Vector3(const Vector2& copy)
+		vector3(const vector2& copy)
 		{
 			this->x(copy.x());
 			this->y(copy.y());
@@ -56,21 +56,21 @@ namespace efiilj
 		/// Constructs a copy of the specified vector.
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
-		Vector3(const Vector3& copy)
+		vector3(const vector3& copy)
 		{
 			*this = copy;
 		}
 
 		/* === ACCESSORS === */
 
-		const float& x() const { return this->_arr[0]; }
-		void x(const float& x) { this->_arr[0] = x; }
+		const float& x() const { return this->arr_[0]; }
+		void x(const float& x) { this->arr_[0] = x; }
 
-		const float& y() const { return _arr[1]; }
-		void y(const float& y) { this->_arr[1] = y; }
+		const float& y() const { return arr_[1]; }
+		void y(const float& y) { this->arr_[1] = y; }
 
-		const float& z() const { return _arr[2]; }
-		void z(const float& z) { this->_arr[2] = z; }
+		const float& z() const { return arr_[2]; }
+		void z(const float& z) { this->arr_[2] = z; }
 
 		/* === OPERATORS === */
 
@@ -79,9 +79,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector3 resulting from the operation</returns>
-		Vector3 operator + (const Vector3& other) const
+		vector3 operator + (const vector3& other) const
 		{
-			Vector3 vect;
+			vector3 vect;
 			vect.x(this->x() + other.x());
 			vect.y(this->y() + other.y());
 			vect.z(this->z() + other.z());
@@ -93,9 +93,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector3 resulting from the operation</returns>
-		Vector3 operator - (const Vector3& other) const
+		vector3 operator - (const vector3& other) const
 		{
-			Vector3 vect;
+			vector3 vect;
 			vect.x(this->x() - other.x());
 			vect.y(this->y() - other.y());
 			vect.z(this->z() - other.z());
@@ -107,9 +107,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector3 resulting from the operation</returns>
-		Vector3 operator * (const Vector3& other) const
+		vector3 operator * (const vector3& other) const
 		{
-			Vector3 vect;
+			vector3 vect;
 			vect.x(this->x() * other.x());
 			vect.y(this->y() * other.y());
 			vect.z(this->z() * other.z());
@@ -121,9 +121,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector3 resulting from the operation</returns>
-		Vector3 operator * (const float& other) const
+		vector3 operator * (const float& other) const
 		{
-			Vector3 vect;
+			vector3 vect;
 			vect.x(this->x() * other);
 			vect.y(this->y() * other);
 			vect.z(this->z() * other);
@@ -135,9 +135,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>The Vector3 resulting from the operation</returns>
-		Vector3 operator / (const float& other) const
+		vector3 operator / (const float& other) const
 		{
-			Vector3 v = *this;
+			vector3 v = *this;
 
 			return v * (1 / other);
 		}
@@ -147,7 +147,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>True if equal, false otherwise</returns>
-		bool operator == (const Vector3& other) const
+		bool operator == (const vector3& other) const
 		{
 			return x() == other.x() && y() == other.y() && z() == other.z();
 		}
@@ -157,7 +157,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>True if not equal, false otherwise</returns>
-		bool operator != (const Vector3& other) const
+		bool operator != (const vector3& other) const
 		{
 			return x() != other.x() || y() != other.y() || z() != other.z();
 		}
@@ -169,7 +169,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>A reference to the Vector3 resulting from the operation</returns>
-		Vector3& operator += (const Vector3& other)
+		vector3& operator += (const vector3& other)
 		{
 			(*this) = (*this) + other;
 			return *this;
@@ -180,7 +180,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>A reference to the Vector3 resulting from the operation</returns>
-		Vector3& operator -= (const Vector3& other)
+		vector3& operator -= (const vector3& other)
 		{
 			(*this) = (*this) - other;
 			return *this;
@@ -191,7 +191,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>A reference to the Vector3 resulting from the operation</returns>
-		Vector3& operator *= (const Vector3& other)
+		vector3& operator *= (const vector3& other)
 		{
 			*this = (*this) * other;
 			return *this;
@@ -202,7 +202,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>A reference to the Vector3 resulting from the operation</returns>
-		Vector3& operator *= (const float& other)
+		vector3& operator *= (const float& other)
 		{
 			*this = (*this) * other;
 			return *this;
@@ -213,7 +213,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The right-hand side of the operation</param>
 		/// <returns>A reference to the Vector3 resulting from the operation</returns>
-		Vector3& operator /= (const float& other)
+		vector3& operator /= (const float& other)
 		{
 			*this = (*this) / other;
 			return *this;
@@ -231,7 +231,7 @@ namespace efiilj
 			if (index > 2)
 				throw new std::out_of_range("Vector index out of range");
 
-			return _arr[index];
+			return arr_[index];
 		}
 
 		/// <summary>
@@ -244,7 +244,7 @@ namespace efiilj
 			if (y > 2)
 				throw new std::out_of_range("Vector index out of range");
 
-			return _arr[y];
+			return arr_[y];
 		}
 
 		/* === VECTOR FUNCTIONS === */
@@ -255,7 +255,7 @@ namespace efiilj
 		/// <param name="x">The first point</param>
 		/// <param name="y">The second point</param>
 		/// <returns>The distance between points as a float</returns>
-		static float dist(const Vector3& x, const Vector3& y)
+		static float dist(const vector3& x, const vector3& y)
 		{
 			return (x - y).length();
 		}
@@ -266,7 +266,7 @@ namespace efiilj
 		/// <param name="x">The first vector</param>
 		/// <param name="y">The second vector</param>
 		/// <returns>The dot product as a float</returns>
-		static float dot(const Vector3& x, const Vector3& y)
+		static float dot(const vector3& x, const vector3& y)
 		{
 			return x.dot(y);
 		}
@@ -277,7 +277,7 @@ namespace efiilj
 		/// <param name="x">The first vector</param>
 		/// <param name="y">The second vector</param>
 		/// <returns>The cross product as a float</returns>
-		static Vector3 cross(const Vector3& x, const Vector3& y)
+		static vector3 cross(const vector3& x, const vector3& y)
 		{
 			return x.cross(y);
 		}
@@ -287,7 +287,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The other vector to calculate dot product with</param>
 		/// <returns>The dot product as a float</returns>
-		float dot(const Vector3& other) const
+		float dot(const vector3& other) const
 		{
 			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
 		}
@@ -297,9 +297,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="other">The other vector to calculate cross product with</param>
 		/// <returns>The cross product as a float</returns>
-		Vector3 cross(const Vector3& other) const
+		vector3 cross(const vector3& other) const
 		{
-			Vector3 vect;
+			vector3 vect;
 
 			vect.x(y() * other.z() - z() * other.y());
 			vect.y(z() * other.x() - x() * other.z());
@@ -321,9 +321,9 @@ namespace efiilj
 		/// Normalizes the vector, turning it into a unit vector.
 		/// </summary>
 		/// <returns>The resulting unit vector</returns>
-		Vector3 norm() const
+		vector3 norm() const
 		{
-			Vector3 v = (*this);
+			vector3 v = (*this);
 			float len = v.length();
 
 			return len > 0 ? v * (1 / v.length()) : v;
@@ -336,9 +336,9 @@ namespace efiilj
 		/// </summary>
 		/// <param name="normal">The normal to calculate reflection against</param>
 		/// <returns>The resulting reflection vector</returns>
-		Vector3 getReflection(const Vector3& normal) const
+		vector3 getReflection(const vector3& normal) const
 		{
-			Vector3 unit = normal * (1 / normal.length());
+			vector3 unit = normal * (1 / normal.length());
 			return (*this) - unit * 2 * dot(unit);
 		}
 
@@ -353,6 +353,6 @@ namespace efiilj
 			return std::to_string(this->x()) + ";\n" + std::to_string(this->y()) + ";\n" + std::to_string(this->z()) + ";\n";
 		}
 
-		~Vector3() { }
+		~vector3() { }
 	};
 }
