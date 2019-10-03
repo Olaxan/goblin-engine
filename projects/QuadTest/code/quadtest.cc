@@ -94,22 +94,22 @@ namespace efiilj
 				switch (key)
 				{
 				case GLFW_KEY_W:
-					camera_trans_ptr->position += camera_trans_ptr->forward() * 0.5f;
+					camera_trans_ptr->position() += camera_trans_ptr->forward() * 0.5f;
 					break;
 				case GLFW_KEY_S:
-					camera_trans_ptr->position -= camera_trans_ptr->forward() * 0.5f;
-					break;
-				case GLFW_KEY_D:
-					camera_trans_ptr->position += vector3(0.05f, 0, 0);
+					camera_trans_ptr->position() -= camera_trans_ptr->forward() * 0.5f;
 					break;
 				case GLFW_KEY_A:
-					camera_trans_ptr->position -= vector3(0.05f, 0, 0);
+					camera_trans_ptr->position() += camera_trans_ptr->left() * 0.5f;
 					break;
-				case GLFW_KEY_LEFT_SHIFT:
-					camera_trans_ptr->position -= vector3(0, 0.05f, 0);
+				case GLFW_KEY_D:
+					camera_trans_ptr->position() -= camera_trans_ptr->left() * 0.5f;
 					break;
 				case GLFW_KEY_SPACE:
-					camera_trans_ptr->position += vector3(0, 0.05f, 0);
+					camera_trans_ptr->position() += camera_trans_ptr->up() * 0.5f;
+					break;
+				case GLFW_KEY_LEFT_SHIFT:
+					camera_trans_ptr->position() -= camera_trans_ptr->up() * 0.5f;
 					break;
 
 				default:
@@ -124,9 +124,9 @@ namespace efiilj
 				mouse_y_ = y / 1000.0f - 0.5f;
 
 				if (is_dragging_mouse_)
-					rock_trans_ptr->rotation = vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
+					rock_trans_ptr->rotation() = vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
 				else
-					camera_trans_ptr->rotation = vector3(-mouse_y_, mouse_x_, 0);
+					camera_trans_ptr->rotation() = vector3(-mouse_y_, mouse_x_, 0);
 			});
 
 		window_->SetMousePressFunction([&](int button, const int action, int mods) 
@@ -155,7 +155,7 @@ namespace efiilj
 			p_light.position = vector3(sinf(time_), 2.0f, cosf(time_));
 			
 			shader_ptr->use();
-			shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
+			shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position());
 			shader_ptr->set_uniform("u_light.color", p_light.rgb);
 			shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
 			shader_ptr->set_uniform("u_light.position", p_light.position);
