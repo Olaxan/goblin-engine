@@ -45,16 +45,16 @@ namespace efiilj
 		void mesh(std::shared_ptr<mesh_resource>& mesh) { this->mesh_ = std::move(mesh); }
 
 		const texture_resource& texture() const { return *this->texture_; }
-		void texture(std::shared_ptr<texture_resource>& texture) const { this->texture = std::move(texture); }
+		void texture(std::shared_ptr<texture_resource>& texture) { this->texture_ = std::move(texture); }
 
 		const shader_resource& shader() const { return *this->shader_; }
-		void shader(std::shared_ptr<shader_resource>& shader) { this->shader = std::move(shader); }
+		void shader(std::shared_ptr<shader_resource>& shader) { this->shader_ = std::move(shader); }
 
 		transform_model& transform() const { return *this->transform_; }
-		void transform(std::shared_ptr<transform_model>& transform) { this->transform = std::move(transform); }
+		void transform(std::shared_ptr<transform_model>& transform) { this->transform_ = std::move(transform); }
 
 		camera_model& camera() const { return *this->camera_; }
-		void camera(std::shared_ptr<camera_model>& camera) { this->camera = std::move(camera); }
+		void camera(std::shared_ptr<camera_model>& camera) { this->camera_ = std::move(camera); }
 
 		/**
 		 * \brief Prepares the node for drawing, binding mesh, texture, and shader resources.

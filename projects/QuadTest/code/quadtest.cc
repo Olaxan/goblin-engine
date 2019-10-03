@@ -17,7 +17,7 @@ namespace efiilj
 {
 
 	quad_test::quad_test()
-	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false) { }
+	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true) { }
 
 	quad_test::~quad_test() = default;
 
@@ -94,7 +94,19 @@ namespace efiilj
 		window_->SetKeyPressFunction([&](const int key, int, const int action, int)
 			{
 				if (action == 1)
+				{
 					keys.emplace(key);
+
+					if (key == GLFW_KEY_TAB)
+					{
+						if (is_mouse_captured_)
+							glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+						else
+							glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+						is_mouse_captured_ = !is_mouse_captured_;
+					}
+				}
 				else
 				{
 					const auto it = keys.find(key);
@@ -110,22 +122,18 @@ namespace efiilj
 
 				if (is_dragging_mouse_)
 					rock_trans_ptr->rotation() = vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
-				else
+
+				if (is_mouse_captured_)
 					camera_trans_ptr->rotation() = vector3(-mouse_y_, mouse_x_, 0);
 			});
 
-		window_->SetMousePressFunction([&](int button, const int action, int mods) 
+		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
 			{
 				if (action == 1)
 				{
 					mouse_down_x_ = mouse_x_;
 					mouse_down_y_ = mouse_y_;
 					is_dragging_mouse_ = true;
-
-					if (button == 0)
-						glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-					else
-						glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 				}
 				else
 				{
