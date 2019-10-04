@@ -11,12 +11,7 @@ namespace efiilj
 	{
 	private:
 
-		vector3 position_;
-		vector3 scale_;
-		vector3 rotation_;
-
 		matrix4 model_;
-		bool is_changed_;
 
 	public:
 
@@ -30,14 +25,9 @@ namespace efiilj
 		                         const vector3& scale = vector3(1, 1, 1));
 
 
-		vector3& position() { return position_; }
-		void position(const vector3& position) { position_ = position; is_changed_ = true; }
-
-		vector3& scale() { return scale_; }
-		void scale(const vector3& scale) { scale_ = scale; is_changed_ = true; }
-
-		vector3& rotation() { return rotation_; }
-		void rotation(const vector3& rotation) { rotation_ = rotation; is_changed_ = true; }
+		vector3 position;
+		vector3 scale;
+		vector3 rotation;
 
 		/**
 		 * \brief Retrieves a model matrix for the current transform.

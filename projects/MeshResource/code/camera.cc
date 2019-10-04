@@ -12,7 +12,7 @@ namespace efiilj
 	matrix4 camera_model::view() const
 	{
 
-		const vector3 camera_pos = transform_->position();
+		const vector3 camera_pos = transform_->position;
 		const vector3 camera_direction = transform_->backward();
 		const vector3 camera_right = transform_->right();
 		const vector3 camera_up = transform_->up();

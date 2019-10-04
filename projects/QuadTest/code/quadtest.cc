@@ -40,7 +40,7 @@ namespace efiilj
 			glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 			// set clear color to purple
-			glClearColor(0.025f, 0.0f, 0.025f, 1.0f);
+			glClearColor(0.01f, 0.0f, 0.01f, 0.5f);
 
 			return true;
 		}
@@ -107,7 +107,7 @@ namespace efiilj
 						is_mouse_captured_ = !is_mouse_captured_;
 					}
 				}
-				else
+				else if (action == 0)
 				{
 					const auto it = keys.find(key);
 					if (it != keys.end())
@@ -120,11 +120,10 @@ namespace efiilj
 				mouse_x_ = x / 1000.0f - 0.5f;
 				mouse_y_ = y / 1000.0f - 0.5f;
 
-				if (is_dragging_mouse_)
-					rock_trans_ptr->rotation() = vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
-
 				if (is_mouse_captured_)
-					camera_trans_ptr->rotation() = vector3(-mouse_y_, mouse_x_, 0);
+					camera_trans_ptr->rotation = vector3(-mouse_y_, mouse_x_, 0);
+				else if (is_dragging_mouse_)
+					fox_trans_ptr->rotation += vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
 			});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
@@ -151,22 +150,22 @@ namespace efiilj
 			this->window_->Update();
 
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				camera_trans_ptr->position() += camera_trans_ptr->forward() * 0.1f;
+				camera_trans_ptr->position+= camera_trans_ptr->forward() * 0.1f;
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				camera_trans_ptr->position() -= camera_trans_ptr->forward() * 0.1f;
+				camera_trans_ptr->position -= camera_trans_ptr->forward() * 0.1f;
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->position() += camera_trans_ptr->left() * 0.1f;
+				camera_trans_ptr->position += camera_trans_ptr->left() * 0.1f;
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->position() -= camera_trans_ptr->left() * 0.1f;
+				camera_trans_ptr->position -= camera_trans_ptr->left() * 0.1f;
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				camera_trans_ptr->position() += camera_trans_ptr->up() * 0.1f;
+				camera_trans_ptr->position += camera_trans_ptr->up() * 0.1f;
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				camera_trans_ptr->position() -= camera_trans_ptr->up() * 0.1f;
+				camera_trans_ptr->position -= camera_trans_ptr->up() * 0.1f;
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
@@ -174,11 +173,11 @@ namespace efiilj
 			p_light.position = vector3(sinf(time_), 2.0f, cosf(time_));
 			
 			shader_ptr->use();
-			shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position());
+			shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
 			shader_ptr->set_uniform("u_light.color", p_light.rgb);
 			shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
 			shader_ptr->set_uniform("u_light.position", p_light.position);
-			shader_ptr->set_uniform("u_ambient_color", vector3(0.1f, 0, 0.1f));
+			shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
 			shader_ptr->set_uniform("u_ambient_strength", 1.0f);
 			shader_ptr->set_uniform("u_specular_strength", 0.5f);
 			shader_ptr->set_uniform("u_shininess", 512);

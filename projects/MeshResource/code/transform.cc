@@ -4,20 +4,16 @@ namespace efiilj
 {
 
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: position_(pos), scale_(scale), rotation_(rot), model_(true), is_changed_(true) { }
+	: position(pos), scale(scale), rotation(rot), model_(true) { }
 	
 	const matrix4& transform_model::model()
 	{
-		if (is_changed_)
-		{
-			//TODO: Optimize transform model function.
-			const matrix4 t = matrix4::get_translation(vector4(position_, 1));
-			const matrix4 r = matrix4::get_rotation_xyz(rotation_);
-			const matrix4 s = matrix4::get_scale(scale_);
+		//TODO: Optimize transform model function.
+		const matrix4 t = matrix4::get_translation(vector4(position, 1));
+		const matrix4 r = matrix4::get_rotation_xyz(rotation);
+		const matrix4 s = matrix4::get_scale(scale);
 
-			model_ = t * r * s;
-			is_changed_ = false;
-		}
+		model_ = t * r * s;
 		
 		return model_;
 	}
@@ -25,9 +21,9 @@ namespace efiilj
 	vector3 transform_model::forward() const
 	{
 		return vector3(
-			cos(rotation_.x()) * cos(rotation_.y()),
-			sin(rotation_.x()),
-			cos(rotation_.x()) * sin(rotation_.y())).norm();
+			cos(rotation.x()) * cos(rotation.y()),
+			sin(rotation.x()),
+			cos(rotation.x()) * sin(rotation.y())).norm();
 	}
 
 	vector3 transform_model::backward() const
