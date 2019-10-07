@@ -39,6 +39,11 @@ namespace Display
 		/// make this window current, meaning all draws will direct to this window context
 		void MakeCurrent();
 
+		void SetCursorMode(const int mode)
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, mode);
+		}
+
 		/// update a tick
 		void Update();
 		/// swap buffers at end of frame

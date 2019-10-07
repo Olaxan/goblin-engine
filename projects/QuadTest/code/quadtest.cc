@@ -52,8 +52,8 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/fox.obj");
-		object_loader rock_loader = object_loader("./res/meshes/rock.obj");
+		object_loader fox_loader = object_loader("./res/meshes/fox.obj2");
+		object_loader rock_loader = object_loader("./res/meshes/rock.obj2");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
@@ -100,9 +100,9 @@ namespace efiilj
 					if (key == GLFW_KEY_TAB)
 					{
 						if (is_mouse_captured_)
-							glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+							window_->SetCursorMode(GLFW_CURSOR_NORMAL);
 						else
-							glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+							window_->SetCursorMode(GLFW_CURSOR_DISABLED);
 
 						is_mouse_captured_ = !is_mouse_captured_;
 					}
@@ -180,7 +180,7 @@ namespace efiilj
 			shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
 			shader_ptr->set_uniform("u_ambient_strength", 1.0f);
 			shader_ptr->set_uniform("u_specular_strength", 0.5f);
-			shader_ptr->set_uniform("u_shininess", 512);
+			shader_ptr->set_uniform("u_shininess", 32);
 			shader_ptr->drop();
 			
 			fox_node.draw();
