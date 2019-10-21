@@ -25,6 +25,7 @@ namespace efiilj
 		void put_pixel(int x, int y);
 
 		void draw_tri(const vertex& v1, const vertex& v2, const vertex& v3) const;
+		void bresenham_line(int x1, int y1, int x2, int y2);
 		
 	public:
 		rasterizer(int height, int width, std::shared_ptr<camera_model> camera, std::shared_ptr<transform_model> model);

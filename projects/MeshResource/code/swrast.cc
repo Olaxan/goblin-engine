@@ -2,6 +2,7 @@
 #include "GL/glew.h"
 
 #include <utility>
+#include <cmath>
 #include <set>
 
 namespace efiilj
@@ -24,14 +25,66 @@ namespace efiilj
 	void rasterizer::put_pixel(int x, int y)
 	{
 		//TODO: Implement
+
+		// run fragment shader
+		// put on frame buffer
 	}
 
 	void rasterizer::draw_tri(const vertex& v1, const vertex& v2, const vertex& v3) const
 	{
 		bind();
 		std::set<vertex> sort = { v1, v2, v3 };
-
 		
+	}
+
+	void rasterizer::bresenham_line(int x1, int y1, int x2, int y2)
+	{
+		int dx = x2 - x1;
+		int dy = y2 - y1;
+
+		const int step_x = (dx < 0) ? -1 : 1;
+		const int step_y = (dy < 0) ? -1 : 1;
+
+		dx *= (2 * step_x);
+		dy *= (2 * step_y);
+
+		if ((0 <= x1) && (x1 < get_width()) && (0 <= y1) && (y1 < get_height()))
+			put_pixel(x1, y1);
+
+		if (dx > dy) 
+		{
+			int fraction = dy - (dx >> 1);
+			
+			while (x1 != x2) 
+			{
+				x1 += step_x;
+				if (fraction >= 0) 
+				{
+					y1 += step_y;
+					fraction -= dx;
+				}
+				fraction += dy;
+				if ((0 <= x1) && (x1 < get_width()) && (0 <= y1) && (y1 < get_height()))
+					put_pixel(x1, y1);
+			}
+		}
+		else
+		{
+			int fraction = dx - (dy >> 1);
+			
+			while (y1 != y2) 
+			{
+				if (fraction >= 0) 
+				{
+						x1 += step_x;
+					fraction -= dy;
+				}
+				y1 += step_y;
+				fraction += dx;
+				if ((0 <= x1) && (x1 < get_width()) && (0 <= y1) && (y1 < get_height()))
+					put_pixel(x1, y1);
+			}
+		}	
 	}
 
 	void rasterizer::set_shader(std::function<void(int)> vertex, std::function<void(int)> fragment)
