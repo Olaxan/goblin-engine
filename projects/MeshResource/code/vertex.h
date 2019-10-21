@@ -21,9 +21,10 @@ namespace efiilj
 		vector4 rgba;
 		vector2 uv;
 
-		bool operator < (const vertex other) const
+		bool operator < (const vertex& other) const
 		{
-			return memcmp(this, &other, sizeof(vertex)) > 0;
+			return (xyzw.y() * xyzw.x() < other.xyzw.y() * other.xyzw.x());
+			/*memcmp(this, &other, sizeof(vertex)) > 0;*/
 		};
 	};
 
