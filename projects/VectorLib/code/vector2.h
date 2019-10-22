@@ -202,8 +202,8 @@ namespace efiilj
 		/// <returns>The value at the specified position in the vector</returns>
 		float& operator [] (const int& index)
 		{
-			if (index > 2)
-				throw new std::out_of_range("Vector index out of range");
+			if (index >= 2)
+				throw std::out_of_range("Vector index out of range");
 
 			return arr_[index];
 		}
@@ -215,8 +215,8 @@ namespace efiilj
 		/// <returns>The value at the specified position in the vector</returns>
 		float at(int y) const
 		{
-			if (y > 1)
-				throw new std::out_of_range("Vector index out of range");
+			if (y >= 2)
+				throw std::out_of_range("Vector index out of range");
 
 			return arr_[y];
 		}

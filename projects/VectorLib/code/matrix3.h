@@ -61,7 +61,7 @@ namespace efiilj
 		/// <param name="x">First row</param>
 		/// <param name="y">Second row</param>
 		/// <param name="z">Third row</param>
-		matrix3(vector3 x, vector3 y, vector3 z)
+		matrix3(const vector3& x, const vector3& y, const vector3& z)
 		{
 			arr_[0] = x;
 			arr_[1] = y;
@@ -154,7 +154,7 @@ namespace efiilj
 		/// <returns>The Matrix3 resulting from the operation</returns>
 		matrix3 operator / (const float& other) const
 		{
-			matrix3 mat = *this;
+			const matrix3 mat = *this;
 
 			return mat * (1 / other);
 		}
@@ -177,9 +177,9 @@ namespace efiilj
 		/// <summary>
 		/// Returns the (non-const) value at the n:th position in the matrix, from top-left to bottom-right.
 		/// </summary>
-		/// <param name="n">The matrix index to query</param>
+		/// <param name="i">The matrix index to query</param>
 		/// <returns>The value at matrix index n</returns>
-		float& operator () (int i)
+		float& operator () (const int i)
 		{
 			return arr_[i / 3][i % 3];
 		}
@@ -188,9 +188,9 @@ namespace efiilj
 		/// Returns the (non-const) value at matrix position x, y.
 		/// </summary>
 		/// <param name="x">Matrix x-position, column</param>
-		/// <param name="y">Matrix y-poisition, row</param>
+		/// <param name="y">Matrix y-position, row</param>
 		/// <returns>The value at matrix position x, y</returns>
-		float& operator () (int x, int y)
+		float& operator () (const int x, const int y)
 		{
 			return arr_[y][x];
 		}
@@ -200,10 +200,10 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The matrix index to access</param>
 		/// <returns>The value at matrix index n</returns>
-		const float& at(int n) const
+		const float& at(const int n) const
 		{
-			if (n > 9)
-				throw new std::out_of_range("Matrix index out of range");
+			if (n >= 9)
+				throw std::out_of_range("Matrix index out of range");
 
 			return at(n % 3, n / 3);
 		}
@@ -214,10 +214,10 @@ namespace efiilj
 		/// <param name="x">Matrix x-position, column</param>
 		/// <param name="y">Matrix y-poisition, row</param>
 		/// <returns>The value at matrix position x, y</returns>
-		const float& at(int x, int y) const
+		const float& at(const int x, const int y) const
 		{
-			if (x > 3 || y > 3)
-				throw new std::out_of_range("Matrix index out of range");
+			if (x >= 3 || y >= 3)
+				throw std::out_of_range("Matrix index out of range");
 
 			return arr_[y].at(x);
 		}
@@ -230,7 +230,7 @@ namespace efiilj
 		vector3 row(int y) const
 		{
 			if (y > 3)
-				throw new std::out_of_range("Row index out of range");
+				throw std::out_of_range("Row index out of range");
 
 			return vector3(at(0, y), at(1, y), at(2, y));
 		}
@@ -243,7 +243,7 @@ namespace efiilj
 		vector3 col(int x) const
 		{
 			if (x > 3)
-				throw new std::out_of_range("Column index out of range");
+				throw std::out_of_range("Column index out of range");
 
 			return vector3(at(x, 0), at(x, 1), at(x, 2));
 		}
