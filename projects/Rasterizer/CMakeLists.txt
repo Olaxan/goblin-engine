@@ -12,3 +12,5 @@ SOURCE_GROUP("rasterizer" FILES ${files_example})
 ADD_LIBRARY(Rasterizer ${files_example})
 TARGET_LINK_LIBRARIES(Rasterizer core render MeshResource VectorLib)
 ADD_DEPENDENCIES(Rasterizer core render MeshResource VectorLib)
+
+TARGET_INCLUDE_DIRECTORIES(Rasterizer INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/code/)

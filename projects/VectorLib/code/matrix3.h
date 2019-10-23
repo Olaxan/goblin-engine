@@ -212,7 +212,7 @@ namespace efiilj
 		/// Returns the (const) value at the matrix position x, y.
 		/// </summary>
 		/// <param name="x">Matrix x-position, column</param>
-		/// <param name="y">Matrix y-poisition, row</param>
+		/// <param name="y">Matrix y-position, row</param>
 		/// <returns>The value at matrix position x, y</returns>
 		const float& at(const int x, const int y) const
 		{

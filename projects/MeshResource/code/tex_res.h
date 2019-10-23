@@ -30,6 +30,10 @@ namespace efiilj
 		 */
 		texture_resource(const char* path, bool flip);
 
+		texture_resource(unsigned width, unsigned height, unsigned* buffer);
+
+		void update(unsigned* buffer) const;
+		
 		/**
 		 * \brief Binds the texture to the specified texture slot, to prepare OpenGL for utilizing this texture.
 		 * \param slot The GPU texture slot to use (typically 0 - 8/16)

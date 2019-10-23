@@ -2,6 +2,7 @@
 
 #include "vertex.h"
 #include "camera.h"
+#include "rnode.h"
 
 #include <vector>
 #include <algorithm>
@@ -22,7 +23,7 @@ namespace efiilj
 		
 		unsigned int c;
 		
-		struct rgba_store
+		struct
 		{
 			unsigned char a;
 			unsigned char b;
@@ -36,37 +37,30 @@ namespace efiilj
 	class rasterizer
 	{
 	private:
-		unsigned int height_, width_;
-		unsigned int* buffer_;
+		unsigned height_, width_, color_;
+		unsigned* buffer_;
 		unsigned short* depth_;
-		std::vector<vertex> vertices_;
-		std::vector<unsigned int> indices_;
-		std::function<void(int)> vertex_shader_, fragment_shader_;
-
+		
+		std::vector<std::shared_ptr<rasterizer_node>> nodes_;
 		std::shared_ptr<camera_model> camera_;
-		std::shared_ptr<transform_model> transform_;
 
 		void put_pixel(int x, int y, unsigned int c) const;
-		void draw_tri(const vertex& v1, const vertex& v2, const vertex& v3) const;
-		void bresenham_line(int x1, int y1, int x2, int y2) const;
-		void bresenham_line(const vertex& v1, const vertex& v2) const;
+		void draw_tri(rasterizer_node& node, unsigned int index) const;
+		void bresenham_line(int x1, int y1, int x2, int y2, unsigned c = 0xFFFFFFFF) const;
 		
 	public:
-		rasterizer(unsigned int height, unsigned int width, 
-			std::shared_ptr<camera_model> camera, std::shared_ptr<transform_model> model);
-		
+		rasterizer(unsigned int height, unsigned int width, std::shared_ptr<camera_model> camera, unsigned int color = 0);
 		~rasterizer();
 
-		void set_shader(std::function<void(int)> vertex, std::function<void(int)> fragment);
-		void set_buffers(std::vector<vertex> vertices, std::vector<unsigned int> indices);
+		void add_node(std::shared_ptr<rasterizer_node> node) { nodes_.emplace_back(std::move(node)); }
 
 		unsigned int get_width() const { return width_; }
 		unsigned int get_height() const { return height_; }
-		matrix4 get_mvp() const { return camera_->view() * transform_->model(); }
-
-		void set_vertex_shader(std::function<void(int)> shader) { vertex_shader_ = std::move(shader); }
-		void set_fragment_shader(std::function<void(int)> shader) { fragment_shader_ = std::move(shader); }
 		
+		unsigned int* get_frame_buffer() const { return buffer_; }
+		unsigned short* get_depth_buffer() const { return depth_; }
+
+		void clear() const;
 		void render();
 	};
 }

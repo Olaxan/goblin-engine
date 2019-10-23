@@ -31,6 +31,33 @@ namespace efiilj
 		unbind();
 	}
 
+	texture_resource::texture_resource(const unsigned width, const unsigned height, unsigned* buffer)
+	: tex_id_(0), height_(height), width_(width), bits_per_pixel_(32)
+	{
+		
+		glGenTextures(1, &tex_id_);
+		glBindTexture(GL_TEXTURE_2D, tex_id_);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_,
+			0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		unbind();
+	}
+
+	void texture_resource::update(unsigned* buffer) const
+	{
+		glBindTexture(GL_TEXTURE_2D, tex_id_);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_, 
+			GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		
+		unbind();
+	}
+
 	void texture_resource::bind(const unsigned int slot) const
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);

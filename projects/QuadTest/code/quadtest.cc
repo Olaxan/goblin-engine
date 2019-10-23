@@ -8,6 +8,8 @@
 #include "loader.h"
 #include "light.h"
 #include "node.h"
+#include "swrast.h"
+#include "bufrend.h"
 
 #include <iostream>
 #include <set>
@@ -27,7 +29,7 @@ namespace efiilj
 
 		t_start_ = std::chrono::high_resolution_clock::now();
 
-		this->window_ = new Display::Window(1000, 1000);
+		this->window_ = new Display::Window(1024, 1024);
 
 		if (this->window_->Open())
 		{
@@ -76,10 +78,11 @@ namespace efiilj
 		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
 		auto rock_texture_ptr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
 
+		//auto fox_trans_ptr = std::make_shared<transform_model>(vector3(0, 0.5f, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(0, 0.5f, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		auto rock_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(1.6), vector3(0.005f, 0.005f, 0.005f));
-		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
 
+		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 
 		auto shader_ptr = std::make_shared<shader_resource>(fs, vs);
@@ -88,6 +91,13 @@ namespace efiilj
 		
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
 		graphics_node rock_node(rock_mesh_ptr, rock_texture_ptr, shader_ptr, rock_trans_ptr, camera_ptr);
+
+		/*TEST OF SOFTWARE RENDERER*/
+		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr);
+		auto node_ptr = std::make_shared<rasterizer_node>(fox_loader.get_vertices(), fox_loader.get_indices(), fox_trans_ptr);
+		rasterizer_ptr->add_node(node_ptr);
+		
+		auto buffer_renderer_ptr = std::make_shared<buffer_renderer>(rasterizer_ptr);
 
 		std::set<int> keys;
 		
@@ -183,8 +193,10 @@ namespace efiilj
 			shader_ptr->set_uniform("u_shininess", 32);
 			shader_ptr->drop();
 			
-			fox_node.draw();
-			rock_node.draw();
+			/*fox_node.draw();
+			rock_node.draw();*/
+
+			buffer_renderer_ptr->draw();
 
 			this->window_->SwapBuffers();
 		}
