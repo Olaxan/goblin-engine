@@ -54,8 +54,8 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/fox.obj2");
-		object_loader rock_loader = object_loader("./res/meshes/rock.obj2");
+		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
+		object_loader rock_loader = object_loader("./res/meshes/rock.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
@@ -79,7 +79,7 @@ namespace efiilj
 		auto rock_texture_ptr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
 
 		//auto fox_trans_ptr = std::make_shared<transform_model>(vector3(0, 0.5f, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(2, 2.5f, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
+		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		auto rock_trans_ptr = std::make_shared<transform_model>(vector3(2, 2, 2), vector3(1.6), vector3(0.005f, 0.005f, 0.005f));
 
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));

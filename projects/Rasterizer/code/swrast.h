@@ -48,6 +48,7 @@ namespace efiilj
 		void put_pixel(int x, int y, unsigned int c);
 		void draw_tri(rasterizer_node& node, unsigned int index);
 		void bresenham_line(int x1, int y1, int x2, int y2, unsigned c = 0xFFFFFFFF);
+		void bresenham_line(float x1, float y1, float x2, float y2, unsigned c = 0xFFFFFFFF);
 		
 	public:
 		rasterizer(unsigned int height, unsigned int width, std::shared_ptr<camera_model> camera, unsigned int color = 0);

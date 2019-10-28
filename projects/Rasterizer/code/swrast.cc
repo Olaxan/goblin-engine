@@ -11,7 +11,6 @@ namespace efiilj
 		std::shared_ptr<camera_model> camera, const unsigned int color)
 		: height_(height), width_(width), color_(color), camera_(std::move(camera))
 	{
-		
 		buffer_ = new unsigned int[width * height];
 		depth_ = new unsigned short[width * height];
 
@@ -33,6 +32,8 @@ namespace efiilj
 	{
 		vec = (camera_->view() * transform.model() * vec);
 		vec /= vec.w();
+		vec.x((vec.x() + 1) * (width_ / 2));
+		vec.y((vec.y() + 1) * (height_ / 2));
 	}
 
 	void rasterizer::put_pixel(const int x, const int y, const unsigned int c)
@@ -54,21 +55,12 @@ namespace efiilj
 		normalize(vm2, node.transform());
 		normalize(vm3, node.transform());
 
-		vm1.x((vm1.x() + 1) * (width_ / 2));
-		vm1.y((vm1.y() + 1) * (height_ / 2));
-		
-		vm2.x((vm2.x() + 1) * (width_ / 2));
-		vm2.y((vm2.y() + 1) * (height_ / 2));
-		
-		vm3.x((vm3.x() + 1) * (width_ / 2));
-		vm3.y((vm3.y() + 1) * (height_ / 2));
-
 		bresenham_line(vm1.x(), vm1.y(), vm2.x(), vm2.y());
 		bresenham_line(vm1.x(), vm1.y(), vm3.x(), vm3.y());
 		bresenham_line(vm2.x(), vm2.y(), vm3.x(), vm3.y());
 	}
 
-	void rasterizer::bresenham_line(int x1, int y1, int x2, int y2, unsigned c)
+	void rasterizer::bresenham_line(int x1, int y1, const int x2, const int y2, const unsigned c)
 	{
 		int dx = x2 - x1;
 		int dy = y2 - y1;
@@ -79,7 +71,7 @@ namespace efiilj
 		dx *= (2 * step_x);
 		dy *= (2 * step_y);
 
-		if (0 <= x1 && x1 < get_width() && 0 <= y1 && y1 < get_height())
+		if (0 <= x1 && x1 < width_ && 0 <= y1 && y1 < height_)
 			put_pixel(x1, y1, c);
 
 		if (dx > dy) 
@@ -95,7 +87,7 @@ namespace efiilj
 					fraction -= dx;
 				}
 				fraction += dy;
-				if (0 <= x1 && x1 < get_width() && 0 <= y1 && y1 < get_height())
+				if (0 <= x1 && x1 < width_ && 0 <= y1 && y1 < height_)
 					put_pixel(x1, y1, c);
 			}
 		}
@@ -112,10 +104,21 @@ namespace efiilj
 				}
 				y1 += step_y;
 				fraction += dx;
-				if (0 <= x1 && x1 < get_width() && 0 <= y1 && y1 < get_height())
+				if (0 <= x1 && x1 < width_ && 0 <= y1 && y1 < height_)
 					put_pixel(x1, y1, c);
 			}
 		}	
+	}
+
+	void rasterizer::bresenham_line(const float x1, const float y1, const float x2, const float y2, const unsigned c)
+	{
+		bresenham_line(
+			static_cast<int>(round(x1)),
+			static_cast<int>(round(y1)),
+			static_cast<int>(round(x2)),
+			static_cast<int>(round(y2)),
+			c
+		);
 	}
 
 	void rasterizer::clear()
