@@ -79,8 +79,8 @@ namespace efiilj
 		auto rock_texture_ptr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
 
 		//auto fox_trans_ptr = std::make_shared<transform_model>(vector3(0, 0.5f, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(0, 0.5f, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		auto rock_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(1.6), vector3(0.005f, 0.005f, 0.005f));
+		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(2, 2.5f, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
+		auto rock_trans_ptr = std::make_shared<transform_model>(vector3(2, 2, 2), vector3(1.6), vector3(0.005f, 0.005f, 0.005f));
 
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
@@ -194,7 +194,7 @@ namespace efiilj
 			shader_ptr->drop();
 			
 			/*fox_node.draw();
-			rock_node.draw();*/
+			rock_node.draw()*/;
 
 			buffer_renderer_ptr->draw();
 

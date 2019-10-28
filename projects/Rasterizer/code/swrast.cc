@@ -29,31 +29,46 @@ namespace efiilj
 		delete[] depth_;
 	}
 
-	void rasterizer::put_pixel(const int x, const int y, const unsigned int c) const
+	void rasterizer::normalize(vector4& vec, transform_model& transform)
+	{
+		vec = (camera_->view() * transform.model() * vec);
+		vec /= vec.w();
+	}
+
+	void rasterizer::put_pixel(const int x, const int y, const unsigned int c)
 	{
 		buffer_[x + width_ * y] = c;
 	}
 
-	void rasterizer::draw_tri(rasterizer_node& node, const unsigned index) const
+	void rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
 	{
-		vertex v1 = node.get_by_index(index);
-		vertex v2 = node.get_by_index(index + 1);
-		vertex v3 = node.get_by_index(index + 2);
+		vertex& v1 = node.get_by_index(index);
+		vertex& v2 = node.get_by_index(index + 1);
+		vertex& v3 = node.get_by_index(index + 2);
 
 		vector4 vm1 = v1.xyzw;
 		vector4 vm2 = v2.xyzw;
 		vector4 vm3 = v3.xyzw;
 
-		vm1 = camera_->view() * node.transform().model() * vm1;
-		vm2 = camera_->view() * node.transform().model() * vm2;
-		vm3 = camera_->view() * node.transform().model() * vm3;
+		normalize(vm1, node.transform());
+		normalize(vm2, node.transform());
+		normalize(vm3, node.transform());
+
+		vm1.x((vm1.x() + 1) * (width_ / 2));
+		vm1.y((vm1.y() + 1) * (height_ / 2));
+		
+		vm2.x((vm2.x() + 1) * (width_ / 2));
+		vm2.y((vm2.y() + 1) * (height_ / 2));
+		
+		vm3.x((vm3.x() + 1) * (width_ / 2));
+		vm3.y((vm3.y() + 1) * (height_ / 2));
 
 		bresenham_line(vm1.x(), vm1.y(), vm2.x(), vm2.y());
 		bresenham_line(vm1.x(), vm1.y(), vm3.x(), vm3.y());
 		bresenham_line(vm2.x(), vm2.y(), vm3.x(), vm3.y());
 	}
 
-	void rasterizer::bresenham_line(int x1, int y1, int x2, int y2, unsigned c) const
+	void rasterizer::bresenham_line(int x1, int y1, int x2, int y2, unsigned c)
 	{
 		int dx = x2 - x1;
 		int dy = y2 - y1;
@@ -103,12 +118,9 @@ namespace efiilj
 		}	
 	}
 
-	void rasterizer::clear() const
+	void rasterizer::clear()
 	{
-		for (int i = 0; i < width_ * height_; i++)
-		{
-			buffer_[i] = color_;
-		}
+		memset(buffer_, 0, width_ * height_ * sizeof(unsigned));
 	}
 
 	void rasterizer::render()
@@ -117,7 +129,7 @@ namespace efiilj
 		
 		for (const auto& node_ptr : nodes_)
 		{
-			for (unsigned int i = 0; i < node_ptr->index_count() / 3; i += 3)
+			for (unsigned int i = 0; i < node_ptr->index_count(); i += 3)
 			{
 				draw_tri(*node_ptr, i);
 			}

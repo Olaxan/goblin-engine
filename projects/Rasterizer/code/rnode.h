@@ -26,7 +26,7 @@ namespace efiilj
 		unsigned int vertex_count() const { return vertices_.size(); }
 		unsigned int index_count() const { return indices_.size(); }
 
-		vertex get_by_index(const unsigned index) { return vertices_[indices_[index]]; }
+		vertex& get_by_index(const unsigned index) { return vertices_[indices_[index]]; }
 
 		transform_model& transform() const { return *this->transform_; }
 		void transform(std::shared_ptr<transform_model>& transform) { this->transform_ = std::move(transform); }

@@ -44,9 +44,10 @@ namespace efiilj
 		std::vector<std::shared_ptr<rasterizer_node>> nodes_;
 		std::shared_ptr<camera_model> camera_;
 
-		void put_pixel(int x, int y, unsigned int c) const;
-		void draw_tri(rasterizer_node& node, unsigned int index) const;
-		void bresenham_line(int x1, int y1, int x2, int y2, unsigned c = 0xFFFFFFFF) const;
+		void normalize(vector4& vec, transform_model& transform);
+		void put_pixel(int x, int y, unsigned int c);
+		void draw_tri(rasterizer_node& node, unsigned int index);
+		void bresenham_line(int x1, int y1, int x2, int y2, unsigned c = 0xFFFFFFFF);
 		
 	public:
 		rasterizer(unsigned int height, unsigned int width, std::shared_ptr<camera_model> camera, unsigned int color = 0);
@@ -60,7 +61,7 @@ namespace efiilj
 		unsigned int* get_frame_buffer() const { return buffer_; }
 		unsigned short* get_depth_buffer() const { return depth_; }
 
-		void clear() const;
+		void clear();
 		void render();
 	};
 }
