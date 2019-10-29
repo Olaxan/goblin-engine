@@ -38,7 +38,8 @@ namespace efiilj
 
 	void rasterizer::put_pixel(const int x, const int y, const unsigned int c)
 	{
-		buffer_[x + width_ * y] = c;
+		if (0 <= x && x < width_ && 0 <= y && y < height_)
+			buffer_[x + width_ * y] = c;
 	}
 
 	void rasterizer::fill_line(const vector2& start, const vector2& end)
@@ -63,17 +64,27 @@ namespace efiilj
 
 		auto cmp = [](const vector4& a, const vector4& b) { return a.y() < b.y(); };
 		auto sorted = std::set<vector4, decltype(cmp)>(cmp) = {vm1, vm2, vm3};
-		
-		auto it_start = sorted.begin();
-		auto it_middle = sorted.begin()++;
-		auto it_end = sorted.end();
+
+		const auto it_start = sorted.begin();
+		const auto it_middle = sorted.begin()++;
+		const auto it_end = sorted.end();
 
 		auto scanline = static_cast<unsigned>(it_start->y());
-		while (true)
+		
+		while (scanline < it_middle->y())
 		{
-			vector2 pt1 = next_point_on_line(*it_start, *it_middle, scanline);
-			vector2 pt2 = next_point_on_line(*it_start, *it_end, scanline);
+			vector2 pt1 = point_on_line(*it_start, *it_middle, scanline);
+			vector2 pt2 = point_on_line(*it_start, *it_end, scanline);
 			fill_line(pt1, pt2);
+			scanline++;
+		}
+
+		while (scanline < it_end->y())
+		{
+			vector2 pt1 = point_on_line(*it_middle, *it_end, scanline);
+			vector2 pt2 = point_on_line(*it_start, *it_end, scanline);
+			fill_line(pt1, pt2);
+			scanline++;
 		}
 		
 		bresenham_line(vm1.x(), vm1.y(), vm2.x(), vm2.y());
@@ -92,10 +103,9 @@ namespace efiilj
 		dx *= (2 * step_x);
 		dy *= (2 * step_y);
 
-		if (0 <= x1 && x1 < width_ && 0 <= y1 && y1 < height_)
-			put_pixel(x1, y1, c);
+		put_pixel(x1, y1, c);
 
-		if (dx > dy) 
+		if (dx > dy)	// X is major axis
 		{
 			int fraction = dy - (dx >> 1);
 			
@@ -108,11 +118,10 @@ namespace efiilj
 					fraction -= dx;
 				}
 				fraction += dy;
-				if (0 <= x1 && x1 < width_ && 0 <= y1 && y1 < height_)
-					put_pixel(x1, y1, c);
+				put_pixel(x1, y1, c);
 			}
 		}
-		else
+		else			// Y is major axis
 		{
 			int fraction = dx - (dy >> 1);
 			
@@ -125,8 +134,7 @@ namespace efiilj
 				}
 				y1 += step_y;
 				fraction += dx;
-				if (0 <= x1 && x1 < width_ && 0 <= y1 && y1 < height_)
-					put_pixel(x1, y1, c);
+				put_pixel(x1, y1, c);
 			}
 		}	
 	}
@@ -142,9 +150,49 @@ namespace efiilj
 		);
 	}
 
-	vector2 rasterizer::next_point_on_line(const vector4& start, const vector4& end, unsigned scanline)
+	vector2 rasterizer::point_on_line(const vector4& start, const vector4& end, unsigned scanline)
 	{
-		//god I wish i existed
+		
+		int x1 = static_cast<int>(start.x());
+		int y1 = static_cast<int>(start.y());
+		const int y2 = static_cast<int>(end.y());
+		const int x2 = static_cast<int>(end.x());
+		
+		int dx = x2 - x1;
+		int dy = y2 - y1;
+
+		const int step_x = (dx < 0) ? -1 : 1;
+		const int step_y = (dy < 0) ? -1 : 1;
+
+		dx *= (2 * step_x);
+		dy *= (2 * step_y);
+
+		if (dx > dy)	// X is major axis
+		{
+			int fraction = dy - (dx >> 1);
+
+			x1 += step_x;
+			if (fraction >= 0)
+			{
+				y1 += step_y;
+				fraction -= dx;
+			}
+			fraction += dy;
+			return vector2(x1, y1);
+		}
+		else			// Y is major axis
+		{
+			int fraction = dx - (dy >> 1);
+
+			if (fraction >= 0)
+			{
+				x1 += step_x;
+				fraction -= dy;
+			}
+			y1 += step_y;
+			fraction += dx;
+			return vector2(x1, y1);
+		}
 	}
 
 	void rasterizer::clear()
