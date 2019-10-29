@@ -24,7 +24,6 @@ namespace efiilj
 		bool operator < (const vertex& other) const
 		{
 			return memcmp(this, &other, sizeof(vertex)) > 0;
-			/*(xyzw.y() * xyzw.x() < other.xyzw.y() * other.xyzw.x());*/
 		};
 	};
 

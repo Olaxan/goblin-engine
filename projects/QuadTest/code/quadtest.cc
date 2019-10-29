@@ -19,7 +19,7 @@ namespace efiilj
 {
 
 	quad_test::quad_test()
-	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true) { }
+	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(true) { }
 
 	quad_test::~quad_test() = default;
 
@@ -55,33 +55,23 @@ namespace efiilj
 		float fov = nvgDegToRad(75);
 
 		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
-		object_loader rock_loader = object_loader("./res/meshes/rock.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
 		
-		if (!fox_loader.is_valid() || !rock_loader.is_valid())
+		if (!fox_loader.is_valid())
 		{
 			std::cout << "\nFailed to load OBJ file - program will terminate.\n";
 			return;
 		}
 
 		std::cout << "Loaded " << fox_loader.vertex_count() << " vertices, " << fox_loader.index_count() << " indices\n";
-		std::cout << "Loaded " << rock_loader.vertex_count() << " vertices, " << rock_loader.index_count() << " indices\n";
 
 		mesh_resource fox_model = fox_loader.get_resource();
-		mesh_resource rock_model = rock_loader.get_resource();
-
 		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
-		auto rock_mesh_ptr = std::make_shared<mesh_resource>(rock_model);
-
 		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
-		auto rock_texture_ptr = std::make_shared<texture_resource>("./res/textures/rock_base.png", true);
-
-		//auto fox_trans_ptr = std::make_shared<transform_model>(vector3(0, 0.5f, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		auto rock_trans_ptr = std::make_shared<transform_model>(vector3(2, 2, 2), vector3(1.6), vector3(0.005f, 0.005f, 0.005f));
-
+		
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 
@@ -90,7 +80,6 @@ namespace efiilj
 		point_light p_light = point_light(vector3(0.5f, 0.5f, 0.5f), vector3(1.0f, 1.0f, 1.0f), vector3(2, 2, 2));
 		
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
-		graphics_node rock_node(rock_mesh_ptr, rock_texture_ptr, shader_ptr, rock_trans_ptr, camera_ptr);
 
 		/*TEST OF SOFTWARE RENDERER*/
 		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr);
@@ -115,6 +104,10 @@ namespace efiilj
 							window_->SetCursorMode(GLFW_CURSOR_DISABLED);
 
 						is_mouse_captured_ = !is_mouse_captured_;
+					}
+					else if (key == GLFW_KEY_LEFT_CONTROL)
+					{
+						is_software_renderer_ = !is_software_renderer_;
 					}
 				}
 				else if (action == 0)
@@ -181,22 +174,27 @@ namespace efiilj
 				window_->Close();
 
 			p_light.position = vector3(sinf(time_), 2.0f, cosf(time_));
-			
-			shader_ptr->use();
-			shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
-			shader_ptr->set_uniform("u_light.color", p_light.rgb);
-			shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
-			shader_ptr->set_uniform("u_light.position", p_light.position);
-			shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
-			shader_ptr->set_uniform("u_ambient_strength", 1.0f);
-			shader_ptr->set_uniform("u_specular_strength", 0.5f);
-			shader_ptr->set_uniform("u_shininess", 32);
-			shader_ptr->drop();
-			
-			/*fox_node.draw();
-			rock_node.draw()*/;
 
-			buffer_renderer_ptr->draw();
+			if (is_software_renderer_)
+			{
+				buffer_renderer_ptr->draw();
+			}
+			else
+			{
+				shader_ptr->use();
+				shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
+				shader_ptr->set_uniform("u_light.color", p_light.rgb);
+				shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
+				shader_ptr->set_uniform("u_light.position", p_light.position);
+				shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
+				shader_ptr->set_uniform("u_ambient_strength", 1.0f);
+				shader_ptr->set_uniform("u_specular_strength", 0.5f);
+				shader_ptr->set_uniform("u_shininess", 32);
+				shader_ptr->drop();
+				
+				fox_node.draw();
+			}
+
 
 			this->window_->SwapBuffers();
 		}

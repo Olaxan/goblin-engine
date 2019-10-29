@@ -41,20 +41,41 @@ namespace efiilj
 		buffer_[x + width_ * y] = c;
 	}
 
+	void rasterizer::fill_line(const vector2& start, const vector2& end)
+	{
+		
+	}
+
+	//146469925
 	void rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
 	{
-		vertex& v1 = node.get_by_index(index);
-		vertex& v2 = node.get_by_index(index + 1);
-		vertex& v3 = node.get_by_index(index + 2);
+		const vertex& v1 = node.get_by_index(index);
+		const vertex& v2 = node.get_by_index(index + 1);
+		const vertex& v3 = node.get_by_index(index + 2);
 
 		vector4 vm1 = v1.xyzw;
 		vector4 vm2 = v2.xyzw;
 		vector4 vm3 = v3.xyzw;
-
+		
 		normalize(vm1, node.transform());
 		normalize(vm2, node.transform());
 		normalize(vm3, node.transform());
 
+		auto cmp = [](const vector4& a, const vector4& b) { return a.y() < b.y(); };
+		auto sorted = std::set<vector4, decltype(cmp)>(cmp) = {vm1, vm2, vm3};
+		
+		auto it_start = sorted.begin();
+		auto it_middle = sorted.begin()++;
+		auto it_end = sorted.end();
+
+		auto scanline = static_cast<unsigned>(it_start->y());
+		while (true)
+		{
+			vector2 pt1 = next_point_on_line(*it_start, *it_middle, scanline);
+			vector2 pt2 = next_point_on_line(*it_start, *it_end, scanline);
+			fill_line(pt1, pt2);
+		}
+		
 		bresenham_line(vm1.x(), vm1.y(), vm2.x(), vm2.y());
 		bresenham_line(vm1.x(), vm1.y(), vm3.x(), vm3.y());
 		bresenham_line(vm2.x(), vm2.y(), vm3.x(), vm3.y());
@@ -119,6 +140,11 @@ namespace efiilj
 			static_cast<int>(round(y2)),
 			c
 		);
+	}
+
+	vector2 rasterizer::next_point_on_line(const vector4& start, const vector4& end, unsigned scanline)
+	{
+		//god I wish i existed
 	}
 
 	void rasterizer::clear()
