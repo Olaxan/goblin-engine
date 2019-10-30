@@ -129,7 +129,7 @@ namespace efiilj
 		}
 	}
 
-	void rasterizer::bresenham_line(const line_data& line, const unsigned c)
+	void rasterizer::bresenham_line(line_data& line, const unsigned c)
 	{
 		int x = line.x1;
 		int y = line.y1;

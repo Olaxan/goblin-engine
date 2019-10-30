@@ -52,7 +52,7 @@ namespace efiilj
 		void draw_tri(rasterizer_node& node, unsigned int index);
 
 		static point_data point_on_line(line_data& line);
-		void bresenham_line(const line_data& line, unsigned c = 0xFFFFFFFF);
+		void bresenham_line(line_data& line, unsigned c = 0xFFFFFFFF);
 		
 	public:
 		rasterizer(unsigned int height, unsigned int width, std::shared_ptr<camera_model> camera, unsigned int color = 0);

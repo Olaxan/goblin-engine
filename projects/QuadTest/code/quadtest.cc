@@ -54,7 +54,7 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
+		object_loader fox_loader = object_loader("./res/meshes/plane.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
