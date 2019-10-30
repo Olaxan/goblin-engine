@@ -3,6 +3,7 @@
 #include "vertex.h"
 #include "camera.h"
 #include "rnode.h"
+#include "line.h"
 
 #include <vector>
 #include <algorithm>
@@ -50,9 +51,8 @@ namespace efiilj
 		void fill_line(const vector2& start, const vector2& end);
 		void draw_tri(rasterizer_node& node, unsigned int index);
 		
-		void bresenham_line(int x1, int y1, int x2, int y2, unsigned c = 0xFFFFFFFF);
-		void bresenham_line(float x1, float y1, float x2, float y2, unsigned c = 0xFFFFFFFF);
-		vector2 next_point_on_line(const vector4& start, const vector4& end, unsigned scanline);
+		vector2 point_on_line(line_data& line);
+		void bresenham_line(const line_data& line, unsigned c = 0xFFFFFFFF);
 		
 	public:
 		rasterizer(unsigned int height, unsigned int width, std::shared_ptr<camera_model> camera, unsigned int color = 0);

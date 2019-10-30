@@ -1,5 +1,6 @@
 #include "swrast.h"
 #include "GL/glew.h"
+#include "line.h"
 
 #include <utility>
 #include <cmath>
@@ -44,7 +45,11 @@ namespace efiilj
 
 	void rasterizer::fill_line(const vector2& start, const vector2& end)
 	{
-		
+		int y = start.y();
+		for (int x = std::min(start.x(), end.x()); x < std::max(start.x(), end.x()); x++)
+		{
+			put_pixel(x, y, 0xFFFFFFFF);
+		}
 	}
 
 	//146469925
@@ -66,133 +71,100 @@ namespace efiilj
 		auto sorted = std::set<vector4, decltype(cmp)>(cmp) = {vm1, vm2, vm3};
 
 		const auto it_start = sorted.begin();
-		const auto it_middle = sorted.begin()++;
-		const auto it_end = sorted.end();
+		const auto it_middle = ++sorted.begin();
+		const auto it_end = --sorted.end();
 
 		auto scanline = static_cast<unsigned>(it_start->y());
-		
-		while (scanline < it_middle->y())
-		{
-			vector2 pt1 = point_on_line(*it_start, *it_middle, scanline);
-			vector2 pt2 = point_on_line(*it_start, *it_end, scanline);
-			fill_line(pt1, pt2);
-			scanline++;
-		}
 
-		while (scanline < it_end->y())
+		line_data l1(*it_start, *it_end);
+		line_data l2(*it_start, *it_middle);
+		line_data l3(*it_middle, *it_end);
+
+		while (scanline < l2.y2)
 		{
-			vector2 pt1 = point_on_line(*it_middle, *it_end, scanline);
-			vector2 pt2 = point_on_line(*it_start, *it_end, scanline);
+			vector2 pt1 = point_on_line(l1);
+			vector2 pt2 = point_on_line(l2);
 			fill_line(pt1, pt2);
 			scanline++;
 		}
 		
-		bresenham_line(vm1.x(), vm1.y(), vm2.x(), vm2.y());
-		bresenham_line(vm1.x(), vm1.y(), vm3.x(), vm3.y());
-		bresenham_line(vm2.x(), vm2.y(), vm3.x(), vm3.y());
+		while (scanline < l3.y2)
+		{
+			vector2 pt1 = point_on_line(l1);
+			vector2 pt2 = point_on_line(l3);
+			fill_line(pt1, pt2);
+			scanline++;
+		}
 	}
 
-	void rasterizer::bresenham_line(int x1, int y1, const int x2, const int y2, const unsigned c)
+	vector2 rasterizer::point_on_line(line_data& line)
 	{
-		int dx = x2 - x1;
-		int dy = y2 - y1;
-
-		const int step_x = (dx < 0) ? -1 : 1;
-		const int step_y = (dy < 0) ? -1 : 1;
-
-		dx *= (2 * step_x);
-		dy *= (2 * step_y);
-
-		put_pixel(x1, y1, c);
-
-		if (dx > dy)	// X is major axis
+		// X is major axis
+		if (line.dx > line.dy)
 		{
-			int fraction = dy - (dx >> 1);
-			
-			while (x1 != x2) 
+			line.x1 += line.step_x;
+			if (line.fraction >= 0)
 			{
-				x1 += step_x;
+				line.y1 += line.step_y;
+				line.fraction -= line.dx;
+			}
+			line.fraction += line.dy;
+			return vector2(line.x1, line.y1);
+		}
+
+		// Y is major axis
+		{
+			if (line.fraction >= 0)
+			{
+				line.x1 += line.step_x;
+				line.fraction -= line.dy;
+			}
+			line.y1 += line.step_y;
+			line.fraction += line.dx;
+			return vector2(line.x1, line.y1);
+		}
+	}
+
+	void rasterizer::bresenham_line(const line_data& line, const unsigned c)
+	{
+		int x = line.x1;
+		int y = line.y1;
+
+		// put initial pixel
+		put_pixel(x, y, c);
+
+		if (line.dx > line.dy) // X is major axis
+		{
+			int fraction = line.dy - (line.dx >> 1);
+			
+			while (x != line.x2) 
+			{
+				x += line.step_x;
 				if (fraction >= 0) 
 				{
-					y1 += step_y;
-					fraction -= dx;
+					y += line.step_y;
+					fraction -= line.dx;
 				}
-				fraction += dy;
-				put_pixel(x1, y1, c);
+				fraction += line.dy;
+				put_pixel(x, y, c);
 			}
 		}
-		else			// Y is major axis
+		else // Y is major axis
 		{
-			int fraction = dx - (dy >> 1);
+			int fraction = line.dx - (line.dy >> 1);
 			
-			while (y1 != y2) 
+			while (y != line.y2) 
 			{
 				if (fraction >= 0) 
 				{
-					x1 += step_x;
-					fraction -= dy;
+					x += line.step_x;
+					fraction -= line.dy;
 				}
-				y1 += step_y;
-				fraction += dx;
-				put_pixel(x1, y1, c);
+				y += line.step_y;
+				fraction += line.dx;
+				put_pixel(x, y, c);
 			}
 		}	
-	}
-
-	void rasterizer::bresenham_line(const float x1, const float y1, const float x2, const float y2, const unsigned c)
-	{
-		bresenham_line(
-			static_cast<int>(round(x1)),
-			static_cast<int>(round(y1)),
-			static_cast<int>(round(x2)),
-			static_cast<int>(round(y2)),
-			c
-		);
-	}
-
-	vector2 rasterizer::point_on_line(const vector4& start, const vector4& end, unsigned scanline)
-	{
-		
-		int x1 = static_cast<int>(start.x());
-		int y1 = static_cast<int>(start.y());
-		const int y2 = static_cast<int>(end.y());
-		const int x2 = static_cast<int>(end.x());
-		
-		int dx = x2 - x1;
-		int dy = y2 - y1;
-
-		const int step_x = (dx < 0) ? -1 : 1;
-		const int step_y = (dy < 0) ? -1 : 1;
-
-		dx *= (2 * step_x);
-		dy *= (2 * step_y);
-
-		if (dx > dy)	// X is major axis
-		{
-			int fraction = dy - (dx >> 1);
-
-			x1 += step_x;
-			if (fraction >= 0)
-			{
-				y1 += step_y;
-				fraction -= dx;
-			}
-			fraction += dy;
-			return vector2(x1, y1);
-		}
-		else			// Y is major axis
-		{
-			int fraction = dx - (dy >> 1);
-
-			if (fraction >= 0)
-			{
-				x1 += step_x;
-				fraction -= dy;
-			}
-			y1 += step_y;
-			fraction += dx;
-			return vector2(x1, y1);
-		}
 	}
 
 	void rasterizer::clear()
