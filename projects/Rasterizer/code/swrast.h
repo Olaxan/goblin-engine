@@ -48,10 +48,10 @@ namespace efiilj
 		void normalize(vector4& vec, transform_model& transform);
 		
 		void put_pixel(int x, int y, unsigned int c);
-		void fill_line(const vector2& start, const vector2& end);
+		void fill_line(const point_data& start, const point_data& end);
 		void draw_tri(rasterizer_node& node, unsigned int index);
-		
-		vector2 point_on_line(line_data& line);
+
+		static point_data point_on_line(line_data& line);
 		void bresenham_line(const line_data& line, unsigned c = 0xFFFFFFFF);
 		
 	public:

@@ -43,13 +43,17 @@ namespace efiilj
 			buffer_[x + width_ * y] = c;
 	}
 
-	void rasterizer::fill_line(const vector2& start, const vector2& end)
-	{
-		int y = start.y();
-		for (int x = std::min(start.x(), end.x()); x < std::max(start.x(), end.x()); x++)
+	void rasterizer::fill_line(const point_data& start, const point_data& end)
+	{	
+		int y = start.y;
+
+		put_pixel(start.x, y, 0xFFFFFFFF);
+		put_pixel(end.x, y, 0xFFFFFFFF);
+
+		/*for (int x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
 		{
 			put_pixel(x, y, 0xFFFFFFFF);
-		}
+		}*/
 	}
 
 	//146469925
@@ -74,30 +78,30 @@ namespace efiilj
 		const auto it_middle = ++sorted.begin();
 		const auto it_end = --sorted.end();
 
-		auto scanline = static_cast<unsigned>(it_start->y());
-
 		line_data l1(*it_start, *it_end);
 		line_data l2(*it_start, *it_middle);
 		line_data l3(*it_middle, *it_end);
 
+		int scanline = l1.y1;
+
 		while (scanline < l2.y2)
 		{
-			vector2 pt1 = point_on_line(l1);
-			vector2 pt2 = point_on_line(l2);
+			point_data pt1 = point_on_line(l1);
+			point_data pt2 = point_on_line(l2);
 			fill_line(pt1, pt2);
 			scanline++;
 		}
 		
 		while (scanline < l3.y2)
 		{
-			vector2 pt1 = point_on_line(l1);
-			vector2 pt2 = point_on_line(l3);
+			point_data pt1 = point_on_line(l1);
+			point_data pt2 = point_on_line(l3);
 			fill_line(pt1, pt2);
 			scanline++;
 		}
 	}
 
-	vector2 rasterizer::point_on_line(line_data& line)
+	point_data rasterizer::point_on_line(line_data& line)
 	{
 		// X is major axis
 		if (line.dx > line.dy)
@@ -109,7 +113,7 @@ namespace efiilj
 				line.fraction -= line.dx;
 			}
 			line.fraction += line.dy;
-			return vector2(line.x1, line.y1);
+			return point_data {line.x1, line.y1 };
 		}
 
 		// Y is major axis
@@ -121,7 +125,7 @@ namespace efiilj
 			}
 			line.y1 += line.step_y;
 			line.fraction += line.dx;
-			return vector2(line.x1, line.y1);
+			return point_data { line.x1, line.y1 };
 		}
 	}
 
