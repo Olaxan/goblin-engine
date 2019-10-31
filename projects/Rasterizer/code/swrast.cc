@@ -52,23 +52,26 @@ namespace efiilj
 	}
 
 	//146469925
-	bool rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
+	void rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
 	{
 		
-		const vertex& v1 = node.get_by_index(index);
-		const vertex& v2 = node.get_by_index(index + 1);
-		const vertex& v3 = node.get_by_index(index + 2);
+		vertex& v1 = node.get_by_index(index);
+		vertex& v2 = node.get_by_index(index + 1);
+		vertex& v3 = node.get_by_index(index + 2);
 
-		vector4 points[] = { v1.xyzw, v2.xyzw, v3.xyzw };
+		const vertex_uniforms vertex_u { camera_->view(), node.transform().model() };
+		
+		const vertex_data vs1 = node.vertex_shader(v1, vertex_u);
+		const vertex_data vs2 = node.vertex_shader(v2, vertex_u);
+		const vertex_data vs3 = node.vertex_shader(v3, vertex_u);
 
-		if (cull_backface(points[0], points[1], points[2]))
-			return false;
+		vector4 points[] = { vs1.fragment, vs2.fragment, vs3.fragment };
 		
 		normalize(points[0], node.transform());
 		normalize(points[1], node.transform());
 		normalize(points[2], node.transform());
 
-		const auto cmp = [&](const vector4& a, const vector4& b) { return a.x() + width_ * a.y() < b.x() + width_ * b.y(); };
+		const auto cmp = [&](const vector4& a, const vector4& b) { return a.x() + static_cast<float>(width_) * a.y() < b.x() + static_cast<float>(width_) * b.y(); };
 		std::sort(points, points + 3, cmp);
 
 		line_data l1(points[0], points[2]);
@@ -94,8 +97,6 @@ namespace efiilj
 				fill_line(pt1, pt2);
 			}
 		}
-
-		return true;
 	}
 
 	point_data rasterizer::point_on_line(line_data& line)
@@ -191,15 +192,11 @@ namespace efiilj
 	{
 		clear();
 
-		int drawn = 0;
-		int culled = 0;
 		for (const auto& node_ptr : nodes_)
 		{
 			for (unsigned int i = 0; i < node_ptr->index_count(); i += 3)
 			{
-				if (draw_tri(*node_ptr, i))
-					drawn++;
-				else culled++;
+				draw_tri(*node_ptr, i);
 			}
 		}
 	}

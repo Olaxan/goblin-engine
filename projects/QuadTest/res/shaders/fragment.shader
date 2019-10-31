@@ -12,7 +12,7 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec4 color;
 layout(location = 3) in vec2 uv;
 
-uniform vec3 u_camera_position;
+uniform vec4 u_camera_position;
 uniform sampler2D u_sampler;
 uniform point_light u_light;
 uniform vec3 u_ambient_color;
@@ -27,7 +27,7 @@ void main()
     vec3 ambient = u_ambient_strength * u_ambient_color;
 	vec3 norm = normalize(normal);
 	vec3 light_dir = normalize(u_light.position - fragment);
-	vec3 view_dir = normalize(u_camera_position - fragment);
+	vec3 view_dir = normalize(u_camera_position.xyz - fragment);
 	vec3 reflect_dir = reflect(-light_dir, norm);
 	
 	float diff = max(dot(norm, light_dir), 0.0);

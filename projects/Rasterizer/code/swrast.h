@@ -25,7 +25,7 @@ namespace efiilj
 		
 		void put_pixel(int x, int y, unsigned int c);
 		void fill_line(const point_data& start, const point_data& end);
-		bool draw_tri(rasterizer_node& node, unsigned int index);
+		void draw_tri(rasterizer_node& node, unsigned int index);
 
 		static point_data point_on_line(line_data& line);
 		bool cull_backface(const vector4& a, const vector4& b, const vector4& c) const;
