@@ -25,9 +25,9 @@ namespace efiilj
 		                         const vector3& scale = vector3(1, 1, 1));
 
 
-		vector3 position;
-		vector3 scale;
-		vector3 rotation;
+		vector4 position;
+		vector4 scale;
+		vector4 rotation;
 
 		/**
 		 * \brief Retrieves a model matrix for the current transform.
@@ -39,37 +39,37 @@ namespace efiilj
 		 * \brief Returns a forward vector relative to the current transform
 		 * \return Unit vector forward relative to transform
 		 */
-		vector3 forward() const;
+		vector4 forward() const;
 
 		/**
 		 * \brief Returns a reverse forward vector relative to the current transform
 		 * \return Unit vector backward relative to transform
 		 */
-		vector3 backward() const;
+		vector4 backward() const;
 
 		/**
 		 * \brief Returns a left pointing vector relative to the current transform
 		 * \return Unit vector left relative to transform
 		 */
-		vector3 left() const;
+		vector4 left() const;
 
 		/**
 		 * \brief Returns a right pointing vector relative to the current transform
 		 * \return Unit vector right relative to transform
 		 */
-		vector3 right() const;
+		vector4 right() const;
 
 		/**
 		 * \brief Returns a upwards vector relative to the current transform
 		 * \return Unit vector up relative to transform
 		 */
-		vector3 up() const;
+		vector4 up() const;
 
 		/**
 		 * \brief Returns a downward vector relative to the current transform
 		 * \return Unit vector down relative to transform
 		 */
-		vector3 down() const;
+		vector4 down() const;
 
 		~transform_model()
 			= default;

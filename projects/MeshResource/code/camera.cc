@@ -12,15 +12,15 @@ namespace efiilj
 	matrix4 camera_model::view() const
 	{
 
-		const vector3 camera_pos = transform_->position;
-		const vector3 camera_direction = transform_->backward();
-		const vector3 camera_right = transform_->right();
-		const vector3 camera_up = transform_->up();
+		const vector4 camera_pos = transform_->position;
+		const vector4 camera_direction = transform_->backward();
+		const vector4 camera_right = transform_->right();
+		const vector4 camera_up = transform_->up();
 
-		matrix4 a = matrix4(vector4(camera_right, 1), vector4(camera_up, 1), vector4(camera_direction, 1), vector4());
-		a(3, 0) = vector3::dot(camera_right, camera_pos) * -1;
-		a(3, 1) = vector3::dot(camera_up, camera_pos) * -1;
-		a(3, 2) = vector3::dot(camera_direction, camera_pos) * -1;
+		matrix4 a = matrix4(camera_right, camera_up, camera_direction, vector4());
+		a(3, 0) = vector4::dot(camera_right, camera_pos) * -1;
+		a(3, 1) = vector4::dot(camera_up, camera_pos) * -1;
+		a(3, 2) = vector4::dot(camera_direction, camera_pos) * -1;
 
 		return perspective_ * a;
 	}

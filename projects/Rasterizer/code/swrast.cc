@@ -1,7 +1,9 @@
 #include "swrast.h"
 #include "GL/glew.h"
 #include "line.h"
+#include "color.h"
 
+#include <algorithm>
 #include <utility>
 #include <cmath>
 
@@ -14,10 +16,7 @@ namespace efiilj
 		buffer_ = new unsigned int[width * height];
 		depth_ = new unsigned short[width * height];
 
-		for (int i = 0; i < width * height; i++)
-		{
-			buffer_[i] = color;
-		}
+		clear();
 	}
 
 	rasterizer::~rasterizer()
@@ -53,7 +52,7 @@ namespace efiilj
 	}
 
 	//146469925
-	void rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
+	bool rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
 	{
 		
 		const vertex& v1 = node.get_by_index(index);
@@ -61,6 +60,9 @@ namespace efiilj
 		const vertex& v3 = node.get_by_index(index + 2);
 
 		vector4 points[] = { v1.xyzw, v2.xyzw, v3.xyzw };
+
+		if (cull_backface(points[0], points[1], points[2]))
+			return false;
 		
 		normalize(points[0], node.transform());
 		normalize(points[1], node.transform());
@@ -92,6 +94,8 @@ namespace efiilj
 				fill_line(pt1, pt2);
 			}
 		}
+
+		return true;
 	}
 
 	point_data rasterizer::point_on_line(line_data& line)
@@ -128,6 +132,16 @@ namespace efiilj
 		}
 
 		return point;
+	}
+
+	bool rasterizer::cull_backface(const vector4& a, const vector4& b, const vector4& c) const
+	{
+		const vector4 u = b - a;
+		const vector4 v = c - a;
+		const vector4 face_normal = vector4::cross(u, v);
+		const vector4 camera_direction = camera_->transform().forward();
+		
+		return vector4::dot(camera_direction, face_normal) > 0;
 	}
 
 	void rasterizer::bresenham_line(line_data& line, const unsigned c)
@@ -170,18 +184,22 @@ namespace efiilj
 
 	void rasterizer::clear()
 	{
-		memset(buffer_, 0, width_ * height_ * sizeof(unsigned));
+		std::fill(buffer_, buffer_ + width_ * height_, color_);
 	}
 
 	void rasterizer::render()
 	{
 		clear();
-		
+
+		int drawn = 0;
+		int culled = 0;
 		for (const auto& node_ptr : nodes_)
 		{
 			for (unsigned int i = 0; i < node_ptr->index_count(); i += 3)
 			{
-				draw_tri(*node_ptr, i);
+				if (draw_tri(*node_ptr, i))
+					drawn++;
+				else culled++;
 			}
 		}
 	}

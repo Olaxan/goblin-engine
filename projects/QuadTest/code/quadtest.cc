@@ -10,6 +10,7 @@
 #include "node.h"
 #include "swrast.h"
 #include "bufrend.h"
+#include "color.h"
 
 #include <iostream>
 #include <set>
@@ -82,7 +83,7 @@ namespace efiilj
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
 
 		/*TEST OF SOFTWARE RENDERER*/
-		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr);
+		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr, color(0, 0, 10));
 		auto node_ptr = std::make_shared<rasterizer_node>(fox_loader.get_vertices(), fox_loader.get_indices(), fox_trans_ptr);
 		rasterizer_ptr->add_node(node_ptr);
 		
@@ -124,9 +125,9 @@ namespace efiilj
 				mouse_y_ = y / 1000.0f - 0.5f;
 
 				if (is_mouse_captured_)
-					camera_trans_ptr->rotation = vector3(-mouse_y_, mouse_x_, 0);
+					camera_trans_ptr->rotation = vector4(-mouse_y_, mouse_x_, 0, 1);
 				else if (is_dragging_mouse_)
-					fox_trans_ptr->rotation += vector3(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0) * 0.5f;
+					fox_trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
 			});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
@@ -185,7 +186,7 @@ namespace efiilj
 				shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
 				shader_ptr->set_uniform("u_light.color", p_light.rgb);
 				shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
-				shader_ptr->set_uniform("u_light.position", p_light.position);
+				shader_ptr->set_uniform("u_light.position", p_light.position); // should not be vec4!
 				shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
 				shader_ptr->set_uniform("u_ambient_strength", 1.0f);
 				shader_ptr->set_uniform("u_specular_strength", 0.5f);

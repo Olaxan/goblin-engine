@@ -14,14 +14,15 @@ namespace efiilj
 	private:
 		std::vector<vertex> vertices_;
 		std::vector<unsigned> indices_;
-		std::function<void(int)> vertex_shader_, fragment_shader_;
+		std::function<void(vertex*)> vertex_shader_;
+		std::function<unsigned(vector2, vector4, unsigned*)> fragment_shader_; //UV, Normal, Texture
 		std::shared_ptr<transform_model> transform_;
 
 	public:
 		rasterizer_node(std::vector<vertex> vertices, std::vector<unsigned> indices, std::shared_ptr<transform_model> transform);
 
-		void set_vertex_shader(std::function<void(int)> shader) { vertex_shader_ = std::move(shader); }
-		void set_fragment_shader(std::function<void(int)> shader) { fragment_shader_ = std::move(shader); }
+		void set_vertex_shader(std::function<void(vertex*)> shader) { vertex_shader_ = std::move(shader); }
+		void set_fragment_shader(std::function<unsigned(vector2, vector4, unsigned*)> shader) { fragment_shader_ = std::move(shader); }
 
 		unsigned int vertex_count() const { return vertices_.size(); }
 		unsigned int index_count() const { return indices_.size(); }

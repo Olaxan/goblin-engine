@@ -10,31 +10,7 @@
 #include <functional>
 
 namespace efiilj
-{
-	union color
-	{
-		color(const unsigned char r, const unsigned char g, const unsigned char b, const unsigned char a = 0xFF)
-			: c(0xFFFFFFFF)
-		{
-			rgba.r = r;
-			rgba.g = g;
-			rgba.b = b;
-			rgba.a = a;
-		}
-		
-		unsigned int c;
-		
-		struct
-		{
-			unsigned char r;
-			unsigned char g;
-			unsigned char b;
-			unsigned char a;
-		} rgba;
-
-		operator unsigned int() const { return c; }
-	};
-	
+{	
 	class rasterizer
 	{
 	private:
@@ -49,9 +25,10 @@ namespace efiilj
 		
 		void put_pixel(int x, int y, unsigned int c);
 		void fill_line(const point_data& start, const point_data& end);
-		void draw_tri(rasterizer_node& node, unsigned int index);
+		bool draw_tri(rasterizer_node& node, unsigned int index);
 
 		static point_data point_on_line(line_data& line);
+		bool cull_backface(const vector4& a, const vector4& b, const vector4& c) const;
 		void bresenham_line(line_data& line, unsigned c = 0xFFFFFFFF);
 		
 	public:

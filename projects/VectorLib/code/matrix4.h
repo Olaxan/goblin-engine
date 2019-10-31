@@ -486,6 +486,11 @@ namespace efiilj
 			return get_scale(xyz.x(), xyz.y(), xyz.z());
 		}
 
+		static matrix4 get_scale(const vector4& xyz)
+		{
+			return get_scale(xyz.x(), xyz.y(), xyz.z());
+		}
+
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the x-axis.
 		/// </summary>
@@ -571,6 +576,12 @@ namespace efiilj
 		}
 
 		static matrix4 get_rotation_xyz(const vector3& eulers)
+		{
+			// TODO: Optimize
+			return get_rotation_z(eulers.z()) * get_rotation_y(eulers.y()) * get_rotation_x(eulers.x());
+		}
+
+		static matrix4 get_rotation_xyz(const vector4& eulers)
 		{
 			// TODO: Optimize
 			return get_rotation_z(eulers.z()) * get_rotation_y(eulers.y()) * get_rotation_x(eulers.x());
