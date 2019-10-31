@@ -4,7 +4,6 @@
 
 #include <utility>
 #include <cmath>
-#include <set>
 
 namespace efiilj
 {
@@ -44,131 +43,133 @@ namespace efiilj
 	}
 
 	void rasterizer::fill_line(const point_data& start, const point_data& end)
-	{	
-		int y = start.y;
+	{
+		const int y = start.y;
 
-		put_pixel(start.x, y, 0xFFFFFFFF);
-		put_pixel(end.x, y, 0xFFFFFFFF);
-
-		/*for (int x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
+		for (int x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
 		{
 			put_pixel(x, y, 0xFFFFFFFF);
-		}*/
+		}
 	}
 
 	//146469925
 	void rasterizer::draw_tri(rasterizer_node& node, const unsigned index)
 	{
+		
 		const vertex& v1 = node.get_by_index(index);
 		const vertex& v2 = node.get_by_index(index + 1);
 		const vertex& v3 = node.get_by_index(index + 2);
 
-		vector4 vm1 = v1.xyzw;
-		vector4 vm2 = v2.xyzw;
-		vector4 vm3 = v3.xyzw;
+		vector4 points[] = { v1.xyzw, v2.xyzw, v3.xyzw };
 		
-		normalize(vm1, node.transform());
-		normalize(vm2, node.transform());
-		normalize(vm3, node.transform());
+		normalize(points[0], node.transform());
+		normalize(points[1], node.transform());
+		normalize(points[2], node.transform());
 
-		auto cmp = [](const vector4& a, const vector4& b) { return a.y() < b.y(); };
-		auto sorted = std::set<vector4, decltype(cmp)>(cmp) = {vm1, vm2, vm3};
+		const auto cmp = [&](const vector4& a, const vector4& b) { return a.x() + width_ * a.y() < b.x() + width_ * b.y(); };
+		std::sort(points, points + 3, cmp);
 
-		const auto it_start = sorted.begin();
-		const auto it_middle = ++sorted.begin();
-		const auto it_end = --sorted.end();
+		line_data l1(points[0], points[2]);
+		line_data l2(points[0], points[1]);
+		line_data l3(points[1], points[2]);
 
-		line_data l1(*it_start, *it_end);
-		line_data l2(*it_start, *it_middle);
-		line_data l3(*it_middle, *it_end);
+		// 0, 0 bottom left
+		// x+ right
+		// y+ up
 
-		int scanline = l1.y1;
-
-		while (scanline < l2.y2)
+		if (l2.dy > 0)
 		{
-			point_data pt1 = point_on_line(l1);
-			point_data pt2 = point_on_line(l2);
-			fill_line(pt1, pt2);
-			scanline++;
+			while (l1.curr_y < l2.y2)
+			{
+				point_data pt1 = point_on_line(l1);
+				point_data pt2 = point_on_line(l2);
+				fill_line(pt1, pt2);
+			}
 		}
-		
-		while (scanline < l3.y2)
+
+		if (l3.dy != 0)
 		{
-			point_data pt1 = point_on_line(l1);
-			point_data pt2 = point_on_line(l3);
-			fill_line(pt1, pt2);
-			scanline++;
+			while (l1.curr_y < l3.y2)
+			{
+				point_data pt1 = point_on_line(l1);
+				point_data pt2 = point_on_line(l3);
+				fill_line(pt1, pt2);
+			}
 		}
 	}
 
 	point_data rasterizer::point_on_line(line_data& line)
 	{
-		// X is major axis
-		if (line.dx > line.dy)
+		point_data point { line.curr_x, line.curr_y };
+		
+		if (line.horizontal)
 		{
-			line.x1 += line.step_x;
-			if (line.fraction >= 0)
+			while (line.curr_x != line.x2)
 			{
-				line.y1 += line.step_y;
-				line.fraction -= line.dx;
+				if (line.fraction >= 0)
+				{
+					line.curr_y += line.step_y;
+					line.fraction -= line.dx;
+					break;
+				}
+				line.curr_x += line.step_x;
+				line.fraction += line.dy;
+				point.x = line.curr_x;
 			}
-			line.fraction += line.dy;
-			return point_data {line.x1, line.y1 };
 		}
-
-		// Y is major axis
+		else
 		{
+			line.curr_y += line.step_y;
+			point.y = line.curr_y;
+			
 			if (line.fraction >= 0)
 			{
-				line.x1 += line.step_x;
+				line.curr_x += line.step_x;
 				line.fraction -= line.dy;
 			}
-			line.y1 += line.step_y;
+			
 			line.fraction += line.dx;
-			return point_data { line.x1, line.y1 };
 		}
+
+		return point;
 	}
 
 	void rasterizer::bresenham_line(line_data& line, const unsigned c)
 	{
-		int x = line.x1;
-		int y = line.y1;
-
+		
 		// put initial pixel
-		put_pixel(x, y, c);
+		put_pixel(line.curr_x, line.curr_y, c);
 
-		if (line.dx > line.dy) // X is major axis
-		{
-			int fraction = line.dy - (line.dx >> 1);
-			
-			while (x != line.x2) 
+		if (line.horizontal)
+		{	
+			while (line.curr_x != line.x2) 
 			{
-				x += line.step_x;
-				if (fraction >= 0) 
+				line.curr_x += line.step_x;
+				if (line.fraction >= 0) 
 				{
-					y += line.step_y;
-					fraction -= line.dx;
+					line.curr_y += line.step_y;
+					line.fraction -= line.dx;
 				}
-				fraction += line.dy;
-				put_pixel(x, y, c);
+				line.fraction += line.dy;
+				put_pixel(line.curr_x, line.curr_y, c);
 			}
 		}
-		else // Y is major axis
-		{
-			int fraction = line.dx - (line.dy >> 1);
-			
-			while (y != line.y2) 
+		else
+		{	
+			while (line.curr_y != line.y2) 
 			{
-				if (fraction >= 0) 
+				if (line.fraction >= 0) 
 				{
-					x += line.step_x;
-					fraction -= line.dy;
+					line.curr_x += line.step_x;
+					line.fraction -= line.dy;
 				}
-				y += line.step_y;
-				fraction += line.dx;
-				put_pixel(x, y, c);
+				line.curr_y += line.step_y;
+				line.fraction += line.dx;
+				put_pixel(line.curr_x, line.curr_y, c);
 			}
-		}	
+		}
+
+		line.reset();
 	}
 
 	void rasterizer::clear()

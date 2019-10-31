@@ -26,10 +26,10 @@ namespace efiilj
 		
 		struct
 		{
-			unsigned char a;
-			unsigned char b;
-			unsigned char g;
 			unsigned char r;
+			unsigned char g;
+			unsigned char b;
+			unsigned char a;
 		} rgba;
 
 		operator unsigned int() const { return c; }
