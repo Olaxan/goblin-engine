@@ -38,7 +38,7 @@ namespace efiilj
 
 	void rasterizer::put_pixel(const int x, const int y, const unsigned int c)
 	{
-		if (0 <= x && x < width_ && 0 <= y && y < height_)
+		if (x > 0 && x < width_ && y > 0 && y < height_)
 			buffer_[x + width_ * y] = c;
 	}
 
@@ -73,11 +73,7 @@ namespace efiilj
 		line_data l2(points[0], points[1]);
 		line_data l3(points[1], points[2]);
 
-		// 0, 0 bottom left
-		// x+ right
-		// y+ up
-
-		if (l2.dy > 0)
+		if (l1.dy > 0 && l2.dy > 0)
 		{
 			while (l1.curr_y < l2.y2)
 			{
@@ -87,7 +83,7 @@ namespace efiilj
 			}
 		}
 
-		if (l3.dy != 0)
+		if (l1.dy > 0 && l3.dy > 0)
 		{
 			while (l1.curr_y < l3.y2)
 			{
@@ -104,7 +100,7 @@ namespace efiilj
 		
 		if (line.horizontal)
 		{
-			while (line.curr_x != line.x2)
+			while (true) //line.curr_x != line.x2
 			{
 				if (line.fraction >= 0)
 				{
