@@ -55,7 +55,7 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
+		object_loader fox_loader = object_loader("./res/meshes/hest_snel.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
@@ -82,12 +82,34 @@ namespace efiilj
 		
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
 
-		/*TEST OF SOFTWARE RENDERER*/
+		/*SOFTWARE RENDERER*/
 		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr, color(0, 0, 10));
 		auto node_ptr = std::make_shared<rasterizer_node>(fox_loader.get_vertices(), fox_loader.get_indices(), fox_trans_ptr);
+		
+		node_ptr->vertex_shader = [](vertex* vert, const vertex_uniforms& uniforms) -> vertex_data
+		{
+			vertex_data data;
+			data.pos = uniforms.camera * uniforms.model * vert->xyzw;
+			data.uv = vert->uv;
+			data.color = vert->rgba;
+			data.normal = uniforms.model.inverse().transpose() * vert->normal;
+			data.fragment = (uniforms.model * data.pos);
+
+			return data;
+		};
+
+		node_ptr->fragment_shader = [](vector2&, vector4&, const texture_data&, const fragment_uniforms&) -> color
+		{
+			return color(255, 255, 255);
+		};
+
+		auto tex_ptr = std::make_shared<texture_data>("./res/textures/fox_base.png");
+		node_ptr->texture(tex_ptr);
+		
 		rasterizer_ptr->add_node(node_ptr);
 		
 		auto buffer_renderer_ptr = std::make_shared<buffer_renderer>(rasterizer_ptr);
+		/*END SOFTWARE RENDERER*/
 
 		std::set<int> keys;
 		

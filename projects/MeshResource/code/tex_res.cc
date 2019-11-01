@@ -28,6 +28,7 @@ namespace efiilj
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
+		stbi_image_free(buffer);
 		unbind();
 	}
 
