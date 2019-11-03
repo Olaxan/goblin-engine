@@ -12,6 +12,3 @@ Put your laboration in the folder titled 'projects'. It must be accompanied with
 The lab environment contains two classes, Window and App. Override the App class for your project to implement your own update loop. The Window class is used to open a window and connect input handlers to it. 
 
 This is done by assigning a lambda function to a callback matching the input you require. It is possible to have more than one window open at a time, although one must select which window to render to using the function called Window::MakeCurrent prior to doing any GL calls.
-  
-# Example
-The example project is simply an example implementation which displays a colored triangle on a grey background.
