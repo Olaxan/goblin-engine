@@ -44,10 +44,10 @@ namespace efiilj
 		void up(const vector3& xyz) { up_axis_ = xyz; }
 
 		/**
-		 * \brief Builds a view/projection matrix with the current values and returns it.
-		 * \return A 4-dimensional matrix for view projection of a vertex in 3D space
+		 * \brief Builds a view/perspective matrix with the current values and returns it.
+		 * \return A 4-dimensional matrix for view/perspective projection of a vertex in 3D space
 		 */
-		matrix4 view() const;
+		matrix4 view_perspective() const;
 
 		~camera_model()
 		= default;

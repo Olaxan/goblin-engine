@@ -65,7 +65,7 @@ namespace efiilj
 		 */
 		void unbind() const;
 		/**
-		 * \brief Performs a draw call. Perspective/view + model matrices are pushed shader uniforms "u_camera" and "u_model" respectively.
+		 * \brief Performs a draw call. View/perspective + model matrices are pushed shader uniforms "u_camera" and "u_model" respectively.
 		 */
 		void draw() const;
 	};

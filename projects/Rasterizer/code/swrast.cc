@@ -40,52 +40,54 @@ namespace efiilj
 			buffer_[x + width_ * y] = c;
 	}
 
-	void rasterizer::fill_line(const point_data& start, const point_data& end, vertex_data* data) const
+	void rasterizer::fill_line(const point_data& start, const point_data& end, const vector4& face_normal, const rasterizer_node& node, vertex_data* data) const
 	{
 		const int y = start.y;
 
+		const fragment_uniforms uniform {};
+
 		for (int x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
 		{
-			//color c = active_node_->fragment_shader();
+			vector3 bc = get_barycentric(static_cast<float>(x), static_cast<float>(y), face_normal, data);
+			vector4 bc_normal = data[0].pos * bc.x() + data[1].pos * bc.y() + data[2].pos * bc.z();
+			const unsigned c = node.fragment_shader(vector2(x, y), bc_normal, node.texture(), uniform);
 			
-			put_pixel(x, y, 0xFFFFFFFF);
+			put_pixel(x, y, c);
 		}
 	}
 
-	void rasterizer::draw_tri(const unsigned index)
+	void rasterizer::draw_tri(rasterizer_node& node, const matrix4& local, const unsigned index)
 	{
 
 		// Get model face vertices
 		vertex* vertices[] = 
 		{
-			active_node_->get_by_index(index),
-			active_node_->get_by_index(index + 1),
-			active_node_->get_by_index(index + 2)
+			node.get_by_index(index),
+			node.get_by_index(index + 1),
+			node.get_by_index(index + 2)
 		};
 
-		const vector4 normal = face_normal(vertices[0]->xyzw, vertices[1]->xyzw, vertices[2]->xyzw);
-		
-		// Exit early if face normal faces away from camera
-		if (cull_backface(normal))
+		const vector4 face_normal = get_face_normal(vertices[0]->xyzw, vertices[1]->xyzw, vertices[2]->xyzw);
+		const vector4 camera_local = local * camera_->transform().position;
+
+		if (cull_backface(vertices[0]->xyzw, face_normal, camera_local))
 			return;
 
-		// Create uniforms struct using camera view and node model transform
-		const vertex_uniforms vertex_u { camera_->view(), active_node_->transform().model() };
+		// Create uniforms struct using camera view/perspective and node model transform
+		const vertex_uniforms vertex_u(camera_->view_perspective(), node.transform().model());
 
 		// Get vertex data from node vertex shader
 		vertex_data data[] = 
 		{
-			active_node_->vertex_shader(vertices[0], vertex_u),
-			active_node_->vertex_shader(vertices[1], vertex_u),
-			active_node_->vertex_shader(vertices[2], vertex_u)
+			node.vertex_shader(vertices[0], vertex_u),
+			node.vertex_shader(vertices[1], vertex_u),
+			node.vertex_shader(vertices[2], vertex_u)
 		};
 
-		// Convert vertex data to screenspace coordinates (?)
+		// Convert vertex data to screen-space coordinates (?)
 		convert_screenspace(data[0]);
 		convert_screenspace(data[1]);
 		convert_screenspace(data[2]);
-
-		std::cout << get_barycentric(data[0].pos, normal, data).to_mem_string() << std::endl;
 
 		// Sort vertex data array based on vertex position
 		const auto cmp = [this](const vertex_data& a, const vertex_data& b) { return a.pos.x() + static_cast<float>(width_) * a.pos.y() < b.pos.x() + static_cast<float>(width_) * b.pos.y(); };
@@ -101,9 +103,9 @@ namespace efiilj
 		{
 			while (l1.curr_y < l2.y2)
 			{
-				point_data pt1 = point_on_line(l1);
-				point_data pt2 = point_on_line(l2);
-				fill_line(pt1, pt2, data);
+				point_data pt1 = get_point_on_line(l1);
+				point_data pt2 = get_point_on_line(l2);
+				fill_line(pt1, pt2, face_normal, node.texture(), data);
 			}
 		}
 
@@ -112,37 +114,59 @@ namespace efiilj
 		{
 			while (l1.curr_y < l3.y2)
 			{
-				point_data pt1 = point_on_line(l1);
-				point_data pt2 = point_on_line(l3);
-				fill_line(pt1, pt2, data);
+				point_data pt1 = get_point_on_line(l1);
+				point_data pt2 = get_point_on_line(l3);
+				fill_line(pt1, pt2, face_normal, node.texture(), data);
 			}
 		}
 	}
 
-	vector4 rasterizer::get_barycentric(const vector4& point, const vector4& face_normal, vertex_data* data)
+	vector3 rasterizer::get_barycentric(const float x, const float y, const vector4& face_normal, vertex_data* data)
 	{
 		const float area = face_normal.length();
 
-		const float first = (data[1].pos.y() - data[2].pos.y())* (point.x() - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (point.y() - data[2].pos.y());
+		const float first = (data[1].pos.y() - data[2].pos.y()) * (x - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (y - data[2].pos.y());
 		const float lower = (data[1].pos.y() - data[2].pos.y()) * (data[0].pos.x() - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (data[0].pos.y() - data[2].pos.y());
 		const float p1 = first / lower;
 
-		const float second = (data[2].pos.y() - data[0].pos.y()) * (point.x() - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (point.y() - data[2].pos.y());
+		const float second = (data[2].pos.y() - data[0].pos.y()) * (x - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (y - data[2].pos.y());
 		const float p2 = second / lower;
 
 		const float p3 = 1 - (p1 + p2);
 
-		return vector4(p1, p2, p3, 1);
+		return vector3(p1, p2, p3);
 	}
 
-	vector4 rasterizer::face_normal(const vector4& a, const vector4& b, const vector4& c)
+	vector3 rasterizer::get_barycentric(const vector4& point, const vector4& face_normal, vertex_data* data)
+	{
+		return get_barycentric(point.x(), point.y(), face_normal, data);
+	}
+
+	vector3 rasterizer::get_barycentric(const point_data& point, const vector4& face_normal, vertex_data* data)
+	{
+		return get_barycentric(static_cast<float>(point.x), static_cast<float>(point.y), face_normal, data);
+	}
+
+	vector4 rasterizer::get_face_normal(const vector4& a, const vector4& b, const vector4& c)
 	{
 		const vector4 u = b - a;
 		const vector4 v = c - a;
 		return vector4::cross(u, v);
 	}
 
-	point_data rasterizer::point_on_line(line_data& line)
+	float rasterizer::get_winding_order(const vector4& a, const vector4& b, const vector4& c)
+	{
+		const matrix2 test (
+			b.x() - a.x(),
+			c.x() - a.x(),
+			b.y() - a.y(),
+			c.y() - a.y()
+		);
+
+		return test.determinant();
+	}
+
+	point_data rasterizer::get_point_on_line(line_data& line)
 	{
 		point_data point { line.curr_x, line.curr_y };
 		
@@ -178,10 +202,11 @@ namespace efiilj
 		return point;
 	}
 
-	bool rasterizer::cull_backface(const vector4& face_normal) const
+	bool rasterizer::cull_backface(const vector4& p0, const vector4& face_normal, const vector4& camera_local) const
 	{
-		const vector4 camera_direction = camera_->transform().forward();
-		return vector4::dot(camera_direction, face_normal) > 0;
+		const vector4 cam_to_tri = p0 - camera_local;
+		
+		return vector4::dot(cam_to_tri, face_normal) >= 0;
 	}
 
 	void rasterizer::bresenham_line(line_data& line, const unsigned c) const
@@ -233,14 +258,12 @@ namespace efiilj
 
 		for (const auto& node_ptr : nodes_)
 		{
-			active_node_ = node_ptr.get();
+			matrix4 local = node_ptr->transform().model_inv();
 			
 			for (unsigned int i = 0; i < node_ptr->index_count(); i += 3)
 			{
-				draw_tri(i);
+				draw_tri(*node_ptr, local, i);
 			}
 		}
-
-		active_node_ = nullptr;
 	}
 }

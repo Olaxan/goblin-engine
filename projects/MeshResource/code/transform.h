@@ -12,6 +12,7 @@ namespace efiilj
 	private:
 
 		matrix4 model_;
+		matrix4 inverse_;
 
 	public:
 
@@ -34,6 +35,8 @@ namespace efiilj
 		 * \return A 4-dimensional matrix which represents the point in 3D-space
 		 */
 		const matrix4& model();
+
+		const matrix4& model_inv();
 
 		/**
 		 * \brief Returns a forward vector relative to the current transform

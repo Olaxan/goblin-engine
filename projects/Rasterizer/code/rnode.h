@@ -12,8 +12,15 @@ namespace efiilj
 {
 	struct vertex_uniforms
 	{
+		vertex_uniforms(const matrix4& camera, const matrix4& model)
+			: camera(camera), model(model)
+		{
+			normal = model.inverse().transpose();
+		}
+		
 		matrix4 camera;
 		matrix4 model;
+		matrix4 normal;
 	};
 
 	struct vertex_data

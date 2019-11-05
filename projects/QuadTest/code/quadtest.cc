@@ -55,7 +55,7 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/hest_snel.obj");
+		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
@@ -92,7 +92,7 @@ namespace efiilj
 			data.pos = uniforms.camera * uniforms.model * vert->xyzw;
 			data.uv = vert->uv;
 			data.color = vert->rgba;
-			data.normal = uniforms.model.inverse().transpose() * vert->normal;
+			data.normal = uniforms.normal * vert->normal;
 			data.fragment = (uniforms.model * data.pos);
 
 			return data;

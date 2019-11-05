@@ -9,9 +9,8 @@ namespace efiilj
 		perspective_ = matrix4::getPerspective(fov, aspect, near, far);
 	}
 
-	matrix4 camera_model::view() const
+	matrix4 camera_model::view_perspective() const
 	{
-
 		const vector4 camera_pos = transform_->position;
 		const vector4 camera_direction = transform_->backward();
 		const vector4 camera_right = transform_->right();

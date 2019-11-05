@@ -34,7 +34,7 @@ namespace efiilj
 	void graphics_node::draw() const
 	{
 		bind();
-		shader_->set_uniform("u_camera", camera_->view());
+		shader_->set_uniform("u_camera", camera_->view_perspective());
 		shader_->set_uniform("u_model", transform_->model());
 		mesh_->draw_elements();
 		unbind();

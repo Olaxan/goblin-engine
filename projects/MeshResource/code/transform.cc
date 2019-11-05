@@ -4,7 +4,7 @@ namespace efiilj
 {
 
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: position(pos, 1), scale(scale, 1), rotation(rot, 1), model_(true) { }
+	: model_(true), position(pos, 1), scale(scale, 1), rotation(rot, 1) { }
 	
 	const matrix4& transform_model::model()
 	{
@@ -16,6 +16,12 @@ namespace efiilj
 		model_ = t * r * s;
 		
 		return model_;
+	}
+
+	const matrix4& transform_model::model_inv()
+	{
+		inverse_ = model_.inverse();
+		return inverse_;
 	}
 
 	vector4 transform_model::forward() const
