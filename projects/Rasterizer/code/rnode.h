@@ -49,7 +49,7 @@ namespace efiilj
 		rasterizer_node(std::vector<vertex> vertices, std::vector<unsigned> indices, std::shared_ptr<transform_model> transform);
 
 		std::function<vertex_data(vertex*, const vertex_uniforms&)> vertex_shader;
-		std::function<unsigned(vector2&, vector4&, const texture_data&, const fragment_uniforms&)> fragment_shader; //UV, Normal, Texture
+		std::function<unsigned(const vertex_data & data, const texture_data&, const fragment_uniforms&)> fragment_shader; //UV, Normal, Color Texture
 
 		unsigned int vertex_count() const { return vertices_.size(); }
 		unsigned int index_count() const { return indices_.size(); }

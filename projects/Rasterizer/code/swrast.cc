@@ -49,8 +49,9 @@ namespace efiilj
 		for (int x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
 		{
 			vector3 bc = get_barycentric(static_cast<float>(x), static_cast<float>(y), face_normal, data);
-			vector4 bc_normal = data[0].pos * bc.x() + data[1].pos * bc.y() + data[2].pos * bc.z();
-			const unsigned c = node.fragment_shader(vector2(x, y), bc_normal, node.texture(), uniform);
+			vertex_data fragment = interpolate_fragment(bc, data);
+			
+			const unsigned c = node.fragment_shader(fragment, node.texture(), uniform);
 			
 			put_pixel(x, y, c);
 		}
@@ -105,7 +106,7 @@ namespace efiilj
 			{
 				point_data pt1 = get_point_on_line(l1);
 				point_data pt2 = get_point_on_line(l2);
-				fill_line(pt1, pt2, face_normal, node.texture(), data);
+				fill_line(pt1, pt2, face_normal, node, data);
 			}
 		}
 
@@ -116,25 +117,27 @@ namespace efiilj
 			{
 				point_data pt1 = get_point_on_line(l1);
 				point_data pt2 = get_point_on_line(l3);
-				fill_line(pt1, pt2, face_normal, node.texture(), data);
+				fill_line(pt1, pt2, face_normal, node, data);
 			}
 		}
 	}
 
 	vector3 rasterizer::get_barycentric(const float x, const float y, const vector4& face_normal, vertex_data* data)
 	{
-		const float area = face_normal.length();
+		const vector2 v0 = vector2(data[1].pos.x(), data[1].pos.y()) - vector2(data[0].pos.x(), data[0].pos.y());
+		const vector2 v1 = vector2(data[2].pos.x(), data[2].pos.y()) - vector2(data[0].pos.x(), data[0].pos.y());
+		const vector2 v2 = vector2(x, y) - vector2(data[0].pos.x(), data[0].pos.y());
+		const float d00 = vector2::dot(v0, v0);
+		const float d01 = vector2::dot(v0, v1);
+		const float d11 = vector2::dot(v1, v1);
+		const float d20 = vector2::dot(v2, v0);
+		const float d21 = vector2::dot(v2, v1);
+		const float denom = d00 * d11 - d01 * d01;
+		const float v = (d11 * d20 - d01 * d21) / denom;
+		const float w = (d00 * d21 - d01 * d20) / denom;
+		const float u = 1.0f - v - w;
 
-		const float first = (data[1].pos.y() - data[2].pos.y()) * (x - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (y - data[2].pos.y());
-		const float lower = (data[1].pos.y() - data[2].pos.y()) * (data[0].pos.x() - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (data[0].pos.y() - data[2].pos.y());
-		const float p1 = first / lower;
-
-		const float second = (data[2].pos.y() - data[0].pos.y()) * (x - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (y - data[2].pos.y());
-		const float p2 = second / lower;
-
-		const float p3 = 1 - (p1 + p2);
-
-		return vector3(p1, p2, p3);
+		return vector3(v, w, y);
 	}
 
 	vector3 rasterizer::get_barycentric(const vector4& point, const vector4& face_normal, vertex_data* data)
@@ -145,6 +148,17 @@ namespace efiilj
 	vector3 rasterizer::get_barycentric(const point_data& point, const vector4& face_normal, vertex_data* data)
 	{
 		return get_barycentric(static_cast<float>(point.x), static_cast<float>(point.y), face_normal, data);
+	}
+
+	vertex_data rasterizer::interpolate_fragment(const vector3& barycentric, vertex_data* data)
+	{
+		const vector4 position = data[0].pos * barycentric.x() + data[1].pos * barycentric.y() + data[2].pos * barycentric.z();
+		const vector4 fragment = data[0].fragment * barycentric.x() + data[1].fragment * barycentric.y() + data[2].fragment * barycentric.z();
+		const vector4 normal = data[0].normal * barycentric.x() + data[1].normal * barycentric.y() + data[2].normal * barycentric.z();
+		const vector4 color = data[0].color * barycentric.x() + data[1].color * barycentric.y() + data[2].color * barycentric.z();
+		const vector2 uv = data[0].uv * barycentric.x() + data[1].uv * barycentric.y();
+
+		return vertex_data { position, fragment, normal, color, uv };
 	}
 
 	vector4 rasterizer::get_face_normal(const vector4& a, const vector4& b, const vector4& c)

@@ -33,6 +33,8 @@ namespace efiilj
 		static vector3 get_barycentric(const vector4& point, const vector4& face_normal, vertex_data* data);
 		static vector3 get_barycentric(const point_data& point, const vector4& face_normal, vertex_data* data);
 
+		static vertex_data interpolate_fragment(const vector3& barycentric, vertex_data* data);
+
 		static vector4 get_face_normal(const vector4& a, const vector4& b, const vector4& c);
 		static point_data get_point_on_line(line_data& line);
 		static float get_winding_order(const vector4& a, const vector4& b, const vector4& c);

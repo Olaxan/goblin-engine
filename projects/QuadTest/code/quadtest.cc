@@ -55,7 +55,7 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
+		object_loader fox_loader = object_loader("./res/meshes/cube.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
@@ -98,9 +98,10 @@ namespace efiilj
 			return data;
 		};
 
-		node_ptr->fragment_shader = [](vector2&, vector4&, const texture_data&, const fragment_uniforms&) -> color
+		node_ptr->fragment_shader = [](const vertex_data& data, const texture_data& texture, const fragment_uniforms& uniforms) -> color
 		{
-			return color(255, 255, 255);
+			const vector4 col = texture.get_pixel(data.uv);
+			return color(col.x(), col.y(), col.z(), col.w());
 		};
 
 		auto tex_ptr = std::make_shared<texture_data>("./res/textures/fox_base.png");
