@@ -16,12 +16,12 @@ namespace efiilj
 		stbi_image_free(texture_);
 	}
 
-	color texture_data::get_pixel(const vector2& uv) const
+	vector4 texture_data::get_pixel(const vector2& uv) const
 	{	
 		const int tex_x = static_cast<int>(static_cast<float>(width_)  * uv.x()) % width_;
 		const int tex_y = static_cast<int>(static_cast<float>(height_)* uv.y()) % height_;
 		const unsigned char* pos = &texture_[(tex_x + width_ * tex_y) * bits_per_pixel_];
 
-		return { pos[0], pos[1], pos[2], static_cast<unsigned char>(bits_per_pixel_ == 4 ? pos[3] : 0xFF)};
+		return {static_cast<float>(pos[0]), static_cast<float>(pos[1]), static_cast<float>(pos[2]), static_cast<float>(bits_per_pixel_ == 4 ? pos[3] : 0xFF) };
 	}
 }

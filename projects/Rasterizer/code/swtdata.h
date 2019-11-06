@@ -27,7 +27,7 @@ namespace efiilj
 		int bits_per_pixel() const { return bits_per_pixel_; }
 		unsigned char* texture() const { return texture_; }
 
-		color get_pixel(const vector2& uv) const;
+		vector4 get_pixel(const vector2& uv) const;
 		
 	};
 }

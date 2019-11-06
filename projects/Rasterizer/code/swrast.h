@@ -33,7 +33,7 @@ namespace efiilj
 		
 		void put_pixel(int x, int y, unsigned c) const;
 		void fill_line(const point_data& start, const point_data& end, const vector4& face_normal, const rasterizer_node& node, vertex_data* data) const;
-		void draw_tri(rasterizer_node& node, const matrix4& local, unsigned index);
+		void draw_tri(rasterizer_node& node, const matrix4& local, unsigned index) const;
 		void bresenham_line(line_data& line, unsigned c = 0xFFFFFFFF) const;
 
 		static vector3 get_barycentric(float x, float y, const vector4& face_normal, vertex_data* data);

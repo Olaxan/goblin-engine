@@ -46,8 +46,6 @@ namespace efiilj
 		const int x1 = std::max(std::min(start.x, end.x), 0);
 		const int x2 = std::min(std::max(start.x, end.x), width_ - 1);
 
-		const fragment_uniforms uniform {};
-
 		if (y < 0 || y > height_)
 			return;
 
@@ -64,7 +62,21 @@ namespace efiilj
 			
 			if (!depth_test(x, y, z))
 				continue;
-			
+
+			fragment_uniforms uniform
+			{
+				fragment.normal,
+				fragment.fragment,
+				camera_->transform().position,
+				vector4(0.5f, 0.5f, 0.5f, 1),
+				vector4(1,1,1,1),
+				vector4(2,2,2,1),
+				vector4(0.025f, 0, 0.025f, 1),
+				1.0f,
+				0.5f,
+				32
+			};
+
 			const unsigned c = node.fragment_shader(fragment, node.texture(), uniform);
 			
 			put_pixel(x, y, c);
@@ -81,10 +93,6 @@ namespace efiilj
 			node.get_by_index(index + 1),
 			node.get_by_index(index + 2)
 		};
-
-		vertices[0]->rgba = vector4(255, 0, 0, 255);
-		vertices[1]->rgba = vector4(0, 255, 0, 255);
-		vertices[2]->rgba = vector4(0, 0, 255, 255);
 
 		const vector4 face_normal = get_face_normal(vertices[0]->xyzw, vertices[1]->xyzw, vertices[2]->xyzw);
 		const vector4 camera_local = local * camera_->transform().position;

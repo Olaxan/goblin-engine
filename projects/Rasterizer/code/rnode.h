@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <functional>
+#include "light.h"
 
 
 namespace efiilj
@@ -34,7 +35,19 @@ namespace efiilj
 
 	struct fragment_uniforms
 	{
+		vector4 normal;
+		vector4 fragment;
 		
+		vector4 camera_position;
+		
+		vector4 light_rgba;
+		vector4 light_intensity;
+		vector4 light_position;
+		
+		vector4 ambient_color;
+		float ambient_strength;
+		float specular_strength;
+		int shininess;
 	};
 	
 	class rasterizer_node

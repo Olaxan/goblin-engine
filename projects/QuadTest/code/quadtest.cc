@@ -83,7 +83,7 @@ namespace efiilj
 		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
 
 		/*SOFTWARE RENDERER*/
-		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr, color(0, 0, 10));
+		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr, color(3, 0, 3, 127));
 		auto node_ptr = std::make_shared<rasterizer_node>(fox_loader.get_vertices(), fox_loader.get_indices(), fox_trans_ptr);
 		
 		node_ptr->vertex_shader = [](vertex* vert, const vertex_uniforms& uniforms) -> vertex_data
@@ -100,8 +100,29 @@ namespace efiilj
 
 		node_ptr->fragment_shader = [](const vertex_data& data, const texture_data& texture, const fragment_uniforms& uniforms) -> color
 		{
-			const color col = texture.get_pixel(data.uv);
-			return col;
+			const vector4 col = texture.get_pixel(data.uv);
+
+			const vector4 ambient = uniforms.ambient_color * uniforms.ambient_strength;
+			const vector4 norm = uniforms.normal.norm();
+			const vector4 light_dir = (uniforms.light_position - uniforms.fragment).norm();
+			const vector4 view_dir = (uniforms.camera_position - uniforms.fragment).norm();
+			const vector4 reflect_dir = (light_dir * -1).getReflection(norm);
+
+			const float diff = std::max(vector4::dot(norm, light_dir), 0.0f);
+			const vector4 diffuse = uniforms.light_rgba * diff;
+
+			const float spec = pow(std::max(vector4::dot(view_dir, reflect_dir), 0.0f), uniforms.shininess);
+			const vector4 specular = uniforms.light_rgba * uniforms.specular_strength * spec;
+
+			const vector4 result = (ambient + diffuse + specular) * col;
+			
+			return
+			{
+				static_cast<unsigned char>(result.x()),
+				static_cast<unsigned char>(result.y()),
+				static_cast<unsigned char>(result.z()),
+				static_cast<unsigned char>(result.w())
+			};
 		};
 
 		auto tex_ptr = std::make_shared<texture_data>("./res/textures/test.png");
