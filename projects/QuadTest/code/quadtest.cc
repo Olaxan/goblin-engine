@@ -100,11 +100,11 @@ namespace efiilj
 
 		node_ptr->fragment_shader = [](const vertex_data& data, const texture_data& texture, const fragment_uniforms& uniforms) -> color
 		{
-			const vector4 col = texture.get_pixel(data.uv);
+			const vector4 col = data.color; //texture.get_pixel(data.uv);
 			return color(col.x(), col.y(), col.z(), col.w());
 		};
 
-		auto tex_ptr = std::make_shared<texture_data>("./res/textures/fox_base.png");
+		auto tex_ptr = std::make_shared<texture_data>("./res/textures/test.png");
 		node_ptr->texture(tex_ptr);
 		
 		rasterizer_ptr->add_node(node_ptr);

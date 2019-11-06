@@ -23,6 +23,7 @@ namespace efiilj
 		
 		void convert_screenspace(vertex_data& vertex) const;
 		bool cull_backface(const vector4& p0, const vector4& face_normal, const vector4& camera_local) const;
+		bool depth_test(unsigned x, unsigned y, unsigned short z) const;
 		
 		void put_pixel(int x, int y, unsigned c) const;
 		void fill_line(const point_data& start, const point_data& end, const vector4& face_normal, const rasterizer_node& node, vertex_data* data) const;

@@ -42,14 +42,23 @@ namespace efiilj
 
 	void rasterizer::fill_line(const point_data& start, const point_data& end, const vector4& face_normal, const rasterizer_node& node, vertex_data* data) const
 	{
-		const int y = start.y;
+		const unsigned y = start.y;
 
 		const fragment_uniforms uniform {};
 
-		for (int x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
+		for (unsigned x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
 		{
 			vector3 bc = get_barycentric(static_cast<float>(x), static_cast<float>(y), face_normal, data);
+
+			if (bc.x() < 0 || bc.y() < 0 || bc.z() < 0)
+				continue;
+			
 			vertex_data fragment = interpolate_fragment(bc, data);
+			
+			const auto z = static_cast<short>(fragment.pos.z());
+			
+			if (!depth_test(x, y, z))
+				continue;
 			
 			const unsigned c = node.fragment_shader(fragment, node.texture(), uniform);
 			
@@ -188,7 +197,7 @@ namespace efiilj
 		
 		if (line.horizontal)
 		{
-			while (true) //line.curr_x != line.x2
+			while (true)
 			{
 				if (line.fraction >= 0)
 				{
@@ -214,7 +223,7 @@ namespace efiilj
 			
 			line.fraction += line.dx;
 		}
-
+		
 		return point;
 	}
 
@@ -223,6 +232,16 @@ namespace efiilj
 		const vector4 cam_to_tri = p0 - camera_local;
 		
 		return vector4::dot(cam_to_tri, face_normal) >= 0;
+	}
+
+	bool rasterizer::depth_test(const unsigned x, const unsigned y, const unsigned short z) const
+	{
+		if (depth_[x + y * width_] < z)
+		{
+			depth_[x + y * width_] = z;
+			return false;
+		}
+		return true;
 	}
 
 	void rasterizer::bresenham_line(line_data& line, const unsigned c) const
@@ -266,6 +285,7 @@ namespace efiilj
 	void rasterizer::clear() const
 	{
 		std::fill(buffer_, buffer_ + width_ * height_, color_);
+		std::fill(depth_, depth_ + width_ * height_, 0);
 	}
 
 	void rasterizer::render()
