@@ -24,7 +24,7 @@ namespace efiilj
 		
 		const int tex_x = static_cast<int>(static_cast<float>(width_)  * uv.x()) % width_;
 		const int tex_y = static_cast<int>(static_cast<float>(height_)* uv.y()) % height_;
-		const unsigned char* pos = &texture_[tex_x + width_ * tex_y];
+		const unsigned char* pos = &texture_[(tex_x + width_ * tex_y) * bits_per_pixel_];
 
 		return vector4(pos[0], pos[1], pos[2], bits_per_pixel_ == 4 ? pos[3] : 255);
 	}

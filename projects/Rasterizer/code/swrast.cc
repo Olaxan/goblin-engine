@@ -68,6 +68,10 @@ namespace efiilj
 			node.get_by_index(index + 2)
 		};
 
+		vertices[0]->rgba = vector4(255, 0, 0, 255);
+		vertices[1]->rgba = vector4(0, 255, 0, 255);
+		vertices[2]->rgba = vector4(0, 0, 255, 255);
+
 		const vector4 face_normal = get_face_normal(vertices[0]->xyzw, vertices[1]->xyzw, vertices[2]->xyzw);
 		const vector4 camera_local = local * camera_->transform().position;
 
@@ -124,20 +128,18 @@ namespace efiilj
 
 	vector3 rasterizer::get_barycentric(const float x, const float y, const vector4& face_normal, vertex_data* data)
 	{
-		const vector2 v0 = vector2(data[1].pos.x(), data[1].pos.y()) - vector2(data[0].pos.x(), data[0].pos.y());
-		const vector2 v1 = vector2(data[2].pos.x(), data[2].pos.y()) - vector2(data[0].pos.x(), data[0].pos.y());
-		const vector2 v2 = vector2(x, y) - vector2(data[0].pos.x(), data[0].pos.y());
-		const float d00 = vector2::dot(v0, v0);
-		const float d01 = vector2::dot(v0, v1);
-		const float d11 = vector2::dot(v1, v1);
-		const float d20 = vector2::dot(v2, v0);
-		const float d21 = vector2::dot(v2, v1);
-		const float denom = d00 * d11 - d01 * d01;
-		const float v = (d11 * d20 - d01 * d21) / denom;
-		const float w = (d00 * d21 - d01 * d20) / denom;
-		const float u = 1.0f - v - w;
+		const float area = face_normal.length();
 
-		return vector3(v, w, y);
+		const float first = (data[1].pos.y() - data[2].pos.y()) * (x - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (y - data[2].pos.y());
+		const float lower = (data[1].pos.y() - data[2].pos.y()) * (data[0].pos.x() - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (data[0].pos.y() - data[2].pos.y());
+		const float p1 = first / lower;
+
+		const float second = (data[2].pos.y() - data[0].pos.y()) * (x - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (y - data[2].pos.y());
+		const float p2 = second / lower;
+
+		const float p3 = 1 - (p1 + p2);
+
+		return vector3(p1, p2, p3);
 	}
 
 	vector3 rasterizer::get_barycentric(const vector4& point, const vector4& face_normal, vertex_data* data)
