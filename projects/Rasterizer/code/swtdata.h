@@ -1,6 +1,7 @@
 #pragma once
 
 #include "matrix4.h"
+#include "color.h"
 
 namespace efiilj
 {
@@ -26,7 +27,7 @@ namespace efiilj
 		int bits_per_pixel() const { return bits_per_pixel_; }
 		unsigned char* texture() const { return texture_; }
 
-		vector4 get_pixel(const vector2& uv) const;
+		color get_pixel(const vector2& uv) const;
 		
 	};
 }

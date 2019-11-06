@@ -14,12 +14,18 @@ namespace efiilj
 	class rasterizer
 	{
 	private:
-		unsigned height_, width_, color_;
+		int height_, width_;
+		unsigned color_;
 		unsigned* buffer_;
 		unsigned short* depth_;
 
 		std::vector<std::shared_ptr<rasterizer_node>> nodes_;
 		std::shared_ptr<camera_model> camera_;
+
+		std::function<bool(const vertex_data& a, const vertex_data& b)> vertex_comparator_ = [this](const vertex_data& a, const vertex_data& b)
+		{
+			return static_cast<int>(a.pos.x()) + width_ * static_cast<int>(a.pos.y()) < static_cast<int>(b.pos.x()) + width_ * static_cast<int>(b.pos.y());
+		};
 		
 		void convert_screenspace(vertex_data& vertex) const;
 		bool cull_backface(const vector4& p0, const vector4& face_normal, const vector4& camera_local) const;
@@ -41,13 +47,13 @@ namespace efiilj
 		static float get_winding_order(const vector4& a, const vector4& b, const vector4& c);
 		
 	public:
-		rasterizer(unsigned height, unsigned width, std::shared_ptr<camera_model> camera, unsigned color = 0);
+		rasterizer(int height, int width, std::shared_ptr<camera_model> camera, unsigned color = 0);
 		~rasterizer();
 
 		void add_node(std::shared_ptr<rasterizer_node> node) { nodes_.emplace_back(std::move(node)); }
 
-		unsigned get_width() const { return width_; }
-		unsigned get_height() const { return height_; }
+		int get_width() const { return width_; }
+		int get_height() const { return height_; }
 		
 		unsigned* get_frame_buffer() const { return buffer_; }
 		unsigned short* get_depth_buffer() const { return depth_; }

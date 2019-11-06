@@ -70,7 +70,7 @@ namespace efiilj
 
 		mesh_resource fox_model = fox_loader.get_resource();
 		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
-		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
+		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/test.png", true);
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
@@ -100,8 +100,8 @@ namespace efiilj
 
 		node_ptr->fragment_shader = [](const vertex_data& data, const texture_data& texture, const fragment_uniforms& uniforms) -> color
 		{
-			const vector4 col = data.color; //texture.get_pixel(data.uv);
-			return color(col.x(), col.y(), col.z(), col.w());
+			const color col = texture.get_pixel(data.uv);
+			return col;
 		};
 
 		auto tex_ptr = std::make_shared<texture_data>("./res/textures/test.png");

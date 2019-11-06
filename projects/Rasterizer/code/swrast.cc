@@ -9,7 +9,7 @@
 
 namespace efiilj
 {
-	rasterizer::rasterizer(const unsigned int height, const unsigned int width,
+	rasterizer::rasterizer(const int height, const int width,
 		std::shared_ptr<camera_model> camera, const unsigned int color)
 		: height_(height), width_(width), color_(color), camera_(std::move(camera))
 	{
@@ -42,11 +42,16 @@ namespace efiilj
 
 	void rasterizer::fill_line(const point_data& start, const point_data& end, const vector4& face_normal, const rasterizer_node& node, vertex_data* data) const
 	{
-		const unsigned y = start.y;
+		const int y = start.y;
+		const int x1 = std::max(std::min(start.x, end.x), 0);
+		const int x2 = std::min(std::max(start.x, end.x), width_ - 1);
 
 		const fragment_uniforms uniform {};
 
-		for (unsigned x = std::min(start.x, end.x); x < std::max(start.x, end.x); x++)
+		if (y < 0 || y > height_)
+			return;
+
+		for (int x = x1; x < x2; x++)
 		{
 			vector3 bc = get_barycentric(static_cast<float>(x), static_cast<float>(y), face_normal, data);
 
@@ -66,7 +71,7 @@ namespace efiilj
 		}
 	}
 
-	void rasterizer::draw_tri(rasterizer_node& node, const matrix4& local, const unsigned index)
+	void rasterizer::draw_tri(rasterizer_node& node, const matrix4& local, const unsigned index) const
 	{
 
 		// Get model face vertices
@@ -104,8 +109,7 @@ namespace efiilj
 		convert_screenspace(data[2]);
 
 		// Sort vertex data array based on vertex position
-		const auto cmp = [this](const vertex_data& a, const vertex_data& b) { return a.pos.x() + static_cast<float>(width_) * a.pos.y() < b.pos.x() + static_cast<float>(width_) * b.pos.y(); };
-		std::sort(data, data + 3, cmp);
+		std::sort(data, data + 3, vertex_comparator_);
 
 		// Create line data based on sorted vertex data
 		line_data l1(data[0].pos, data[2].pos);
@@ -167,7 +171,7 @@ namespace efiilj
 		const vector4 fragment = data[0].fragment * barycentric.x() + data[1].fragment * barycentric.y() + data[2].fragment * barycentric.z();
 		const vector4 normal = data[0].normal * barycentric.x() + data[1].normal * barycentric.y() + data[2].normal * barycentric.z();
 		const vector4 color = data[0].color * barycentric.x() + data[1].color * barycentric.y() + data[2].color * barycentric.z();
-		const vector2 uv = data[0].uv * barycentric.x() + data[1].uv * barycentric.y();
+		const vector2 uv = data[0].uv * barycentric.x() + data[1].uv * barycentric.y() + data[2].uv * barycentric.z();
 
 		return vertex_data { position, fragment, normal, color, uv };
 	}
@@ -236,9 +240,11 @@ namespace efiilj
 
 	bool rasterizer::depth_test(const unsigned x, const unsigned y, const unsigned short z) const
 	{
-		if (depth_[x + y * width_] < z)
+		unsigned short* mem = &depth_[x + y * width_];
+		
+		if (*mem < z)
 		{
-			depth_[x + y * width_] = z;
+			*mem = z;
 			return false;
 		}
 		return true;
