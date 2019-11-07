@@ -15,12 +15,13 @@
 #include <iostream>
 #include <set>
 
+#define flase false
 
 namespace efiilj
 {
 
 	quad_test::quad_test()
-	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(true) { }
+	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
 
 	quad_test::~quad_test() = default;
 
@@ -55,7 +56,7 @@ namespace efiilj
 
 		float fov = nvgDegToRad(75);
 
-		object_loader fox_loader = object_loader("./res/meshes/cube.obj");
+		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 
 		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
 		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
@@ -70,7 +71,7 @@ namespace efiilj
 
 		mesh_resource fox_model = fox_loader.get_resource();
 		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
-		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/test.png", true);
+		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
@@ -125,7 +126,7 @@ namespace efiilj
 			};
 		};
 
-		auto tex_ptr = std::make_shared<texture_data>("./res/textures/test.png");
+		auto tex_ptr = std::make_shared<texture_data>("./res/textures/fox_base.png");
 		node_ptr->texture(tex_ptr);
 		
 		rasterizer_ptr->add_node(node_ptr);
@@ -245,3 +246,5 @@ namespace efiilj
 		}
 	}
 }
+
+#undef flase
