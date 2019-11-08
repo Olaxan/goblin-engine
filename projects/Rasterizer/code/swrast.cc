@@ -9,6 +9,14 @@
 
 namespace efiilj
 {
+	
+	/**
+	 * \brief Creates a new rasterizer instance.
+	 * \param height The height of the rasterizer canvas in pixels
+	 * \param width The width of the rasterizer canvas in pixels
+	 * \param camera A pointer to an active camera instance
+	 * \param color The background color of the canvas
+	 */
 	rasterizer::rasterizer(const int height, const int width,
 		std::shared_ptr<camera_model> camera, const unsigned int color)
 		: height_(height), width_(width), color_(color), camera_(std::move(camera))
