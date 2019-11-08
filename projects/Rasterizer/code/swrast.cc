@@ -14,7 +14,7 @@ namespace efiilj
 		: height_(height), width_(width), color_(color), camera_(std::move(camera))
 	{
 		buffer_ = new unsigned int[width * height];
-		depth_ = new unsigned short[width * height];
+		depth_ = new float[width * height];
 
 		clear();
 	}
@@ -58,9 +58,7 @@ namespace efiilj
 			
 			vertex_data fragment = interpolate_fragment(bc, data);
 			
-			const auto z = static_cast<short>(fragment.pos.z());
-			
-			if (!depth_test(x, y, z))
+			if (!depth_test(x, y, fragment.pos.z()))
 				continue;
 
 			fragment_uniforms uniform
@@ -74,7 +72,7 @@ namespace efiilj
 				vector4(0.025f, 0, 0.025f, 1),
 				1.0f,
 				0.5f,
-				32
+				8
 			};
 
 			const unsigned c = node.fragment_shader(fragment, node.texture(), uniform);
@@ -246,16 +244,16 @@ namespace efiilj
 		return vector4::dot(cam_to_tri, face_normal) >= 0;
 	}
 
-	bool rasterizer::depth_test(const unsigned x, const unsigned y, const unsigned short z) const
+	bool rasterizer::depth_test(const int x, const int y, const float z) const
 	{
-		unsigned short* mem = &depth_[x + y * width_];
+		float* mem = &depth_[x + width_ * y];
 		
-		if (*mem < z)
+		if (z < *mem)
 		{
 			*mem = z;
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	void rasterizer::bresenham_line(line_data& line, const unsigned c) const
@@ -299,7 +297,7 @@ namespace efiilj
 	void rasterizer::clear() const
 	{
 		std::fill(buffer_, buffer_ + width_ * height_, color_);
-		std::fill(depth_, depth_ + width_ * height_, 0);
+		std::fill(depth_, depth_ + width_ * height_, 1);
 	}
 
 	void rasterizer::render()

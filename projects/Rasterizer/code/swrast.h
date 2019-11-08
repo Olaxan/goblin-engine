@@ -17,7 +17,7 @@ namespace efiilj
 		int height_, width_;
 		unsigned color_;
 		unsigned* buffer_;
-		unsigned short* depth_;
+		float* depth_;
 
 		std::vector<std::shared_ptr<rasterizer_node>> nodes_;
 		std::shared_ptr<camera_model> camera_;
@@ -29,7 +29,7 @@ namespace efiilj
 		
 		void convert_screenspace(vertex_data& vertex) const;
 		bool cull_backface(const vector4& p0, const vector4& face_normal, const vector4& camera_local) const;
-		bool depth_test(unsigned x, unsigned y, unsigned short z) const;
+		bool depth_test(int x, int y, float z) const;
 		
 		void put_pixel(int x, int y, unsigned c) const;
 		void fill_line(const point_data& start, const point_data& end, const vector4& face_normal, const rasterizer_node& node, vertex_data* data) const;
@@ -56,7 +56,7 @@ namespace efiilj
 		int get_height() const { return height_; }
 		
 		unsigned* get_frame_buffer() const { return buffer_; }
-		unsigned short* get_depth_buffer() const { return depth_; }
+		float* get_depth_buffer() const { return depth_; }
 
 		void clear() const;
 		void render();
