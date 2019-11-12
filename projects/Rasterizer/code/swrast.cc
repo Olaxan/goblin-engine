@@ -26,13 +26,13 @@ namespace efiilj
 		delete[] depth_;
 	}
 
-
 	void rasterizer::convert_screenspace(vertex_data& vertex) const
 	{
+		vertex.pos /= vertex.pos.w();
+
 		const float x = vertex.pos.x() + 1;
 		const float y = vertex.pos.y() + 1;
 		
-		vertex.pos /= vertex.pos.w();
 		vertex.pos.x(x * x_offset_);
 		vertex.pos.y(y * y_offset_);
 	}
@@ -70,8 +70,8 @@ namespace efiilj
 		// Draw line from left to right
 		// Cut pixels outside screen bounds
 		const int y = start.y;
-		const int x1 = std::max(std::min(start.x, end.x), 0);
-		const int x2 = std::min(std::max(start.x, end.x), width_ - 1);
+		const int x1 = std::max(std::min(start.x, end.x) - 1, 0);
+		const int x2 = std::min(std::max(start.x, end.x) + 1, width_ - 1);
 
 		// Return early if outside the raster
 		if (y < 0 || y > height_)
@@ -224,8 +224,7 @@ namespace efiilj
 		const float lower = (data[1].pos.y() - data[2].pos.y()) * (data[0].pos.x() - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (data[0].pos.y() - data[2].pos.y());
 		const float p1 = first / lower;
 
-		const float second = (data[2].pos.y() - data[0].pos.y()) * (x - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (y - data[2].pos.y()
-		);
+		const float second = (data[2].pos.y() - data[0].pos.y()) * (x - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (y - data[2].pos.y());
 		const float p2 = second / lower;
 
 		const float p3 = 1 - (p1 + p2);
@@ -315,8 +314,8 @@ namespace efiilj
 	// ReSharper disable once CppMemberFunctionMayBeConst
 	void rasterizer::clear()
 	{
-		std::fill(buffer_, buffer_ + static_cast<int8_t>(width_) * static_cast<int8_t>(height_), color_);
-		std::fill(depth_, depth_ + static_cast<int8_t>(width_) * static_cast<int8_t>(height_), 1);
+		std::fill(buffer_, buffer_ + width_ * height_, color_);
+		std::fill(depth_, depth_ + width_ * height_, 1);
 	}
 
 	void rasterizer::render()

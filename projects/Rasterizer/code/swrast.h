@@ -17,7 +17,8 @@ namespace efiilj
 		int height_, width_;
 		unsigned color_;
 		unsigned* buffer_;
-		float* depth_, x_offset_, y_offset_;
+		float* depth_;
+		float x_offset_, y_offset_;
 
 		std::vector<std::shared_ptr<rasterizer_node>> nodes_;
 		std::shared_ptr<camera_model> camera_;
