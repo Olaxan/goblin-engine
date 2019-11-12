@@ -6,6 +6,9 @@
 
 namespace efiilj
 {
+	/**
+	 * \brief Class for drawing a uint buffer directly to the screen using internal shader code.
+	 */
 	class buffer_renderer
 	{
 	private:
@@ -14,6 +17,10 @@ namespace efiilj
 		std::shared_ptr<texture_resource> texture_;
 		unsigned int width_, height_, vao_{};
 
+		/**
+		 * \brief The default vertex shader - creates a quad across the screen.
+		 * Invoke with a draw call for 6 vertices.
+		 */
 		std::string fs_vertex_shader_ = R"glsl(
 		#version 430
 		layout (location = 0) out vec2 uv;
@@ -27,6 +34,9 @@ namespace efiilj
 		    uv = vec2(x, y);
 		})glsl";
 
+		/**
+		 * \brief The default fragment shader - samples the buffer/raster texture for color.
+		 */
 		std::string fs_fragment_shader_ = R"glsl(
 		#version 430
 		layout (location = 0) in vec2 uv;
@@ -41,8 +51,16 @@ namespace efiilj
 		})glsl";
 
 	public:
+		/**
+		 * \brief Creates a new buffer renderer instance.
+		 * \param rasterizer A pointer to the rasterizer containing the buffer to be drawn
+		 */
 		explicit buffer_renderer(std::shared_ptr<rasterizer> rasterizer);
 		
+		/**
+		 * \brief Draw the buffer to the screen.
+		 * Invokes the render() method in the connected rasterizer.
+		 */
 		void draw() const;
 	};
 }
