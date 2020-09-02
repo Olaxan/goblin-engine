@@ -90,7 +90,7 @@ namespace efiilj
 			if (result == GL_FALSE)
 			{
 				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
+				message = static_cast<char*>(alloca(log_size * sizeof(char)));
 				glGetShaderInfoLog(id, log_size, nullptr, message);
 			}
 			break;
@@ -99,7 +99,7 @@ namespace efiilj
 			if (result == GL_FALSE)
 			{
 				glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
+				message = static_cast<char*>(alloca(log_size * sizeof(char)));
 				glGetProgramInfoLog(id, log_size, nullptr, message);
 			}
 			break;

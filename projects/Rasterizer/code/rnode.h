@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <functional>
+#include <memory>
 #include "light.h"
 
 

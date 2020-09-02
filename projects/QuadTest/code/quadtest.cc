@@ -29,8 +29,6 @@ namespace efiilj
 	{
 		app::open();
 
-		t_start_ = std::chrono::high_resolution_clock::now();
-
 		this->window_ = new Display::Window(1024, 1024);
 
 		if (this->window_->Open())
@@ -192,9 +190,6 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 
-			t_now_ = std::chrono::high_resolution_clock::now();
-			time_ = std::chrono::duration_cast<std::chrono::duration<float>>(t_now_ - t_start_).count();
-
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window_->Update();
 
@@ -218,8 +213,6 @@ namespace efiilj
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
-
-			p_light.position = vector3(sinf(time_), 2.0f, cosf(time_));
 
 			if (is_software_renderer_)
 			{

@@ -9,8 +9,6 @@
 #include "core/app.h"
 #include "render/window.h"
 
-#include <chrono>
-
 namespace efiilj
 {
 	class quad_test final : public core::app
@@ -18,7 +16,6 @@ namespace efiilj
 	private:
 
 		Display::Window* window_;
-		std::chrono::time_point<std::chrono::steady_clock> t_start_, t_now_;
 		float time_, mouse_x_, mouse_y_, mouse_down_x_, mouse_down_y_;
 		bool is_dragging_mouse_, is_mouse_captured_, is_software_renderer_;
 		

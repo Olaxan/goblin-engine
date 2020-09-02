@@ -1,6 +1,7 @@
 #pragma once
 
 #include "matrix4.h"
+#include "string.h"
 
 namespace efiilj
 {
