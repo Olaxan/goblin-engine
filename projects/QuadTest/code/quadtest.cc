@@ -52,7 +52,7 @@ namespace efiilj
 	void quad_test::run()
 	{
 
-		float fov = nvgDegToRad(75);
+		float fov = 1.30899694; // 75 degrees
 
 		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 
