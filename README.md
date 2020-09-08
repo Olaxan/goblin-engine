@@ -1,5 +1,6 @@
 # lab-env
 C++11 based application base for developing apps.
+Currently not platform independent.
 
 # Requirements
 1. CMake 3+.
