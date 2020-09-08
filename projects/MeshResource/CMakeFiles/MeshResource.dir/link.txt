@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMeshResource.a CMakeFiles/MeshResource.dir/code/camera.cc.o CMakeFiles/MeshResource.dir/code/gltf_loader.cc.o CMakeFiles/MeshResource.dir/code/loader.cc.o CMakeFiles/MeshResource.dir/code/mesh_res.cc.o CMakeFiles/MeshResource.dir/code/node.cc.o CMakeFiles/MeshResource.dir/code/shader_res.cc.o CMakeFiles/MeshResource.dir/code/tex_res.cc.o CMakeFiles/MeshResource.dir/code/transform.cc.o
-/usr/bin/ranlib libMeshResource.a

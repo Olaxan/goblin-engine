@@ -10,6 +10,7 @@
 #include "node.h"
 #include "swrast.h"
 #include "bufrend.h"
+#include "gltf_loader.h"
 #include "color.h"
 
 #include <iostream>
@@ -53,6 +54,8 @@ namespace efiilj
 	{
 
 		float fov = 1.30899694; // 75 degrees
+		
+		gltf_model_loader gltf_loader("./res/gltf/cube/box.gltf");
 
 		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 

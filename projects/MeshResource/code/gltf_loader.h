@@ -1,4 +1,8 @@
+#pragma once
+
 #include "tiny_gltf.h"
+
+#include <string>
 
 namespace efiilj 
 {
@@ -9,15 +13,19 @@ namespace efiilj
 	public:
 
 		gltf_model_loader();
-		gltf_model_loader(char* path);
+		gltf_model_loader(std::string, bool=false);
 
-		gltf_model_loader(gltf_model_loader& copy)
+		gltf_model_loader(gltf_model_loader&)
 			= default;
 
-		gltf_model_loader(gltf_model_loader&& move)
+		gltf_model_loader(gltf_model_loader&&)
 			= default;
 		
-		int load_from_file(char* path);
+		bool load_from_file(tinygltf::Model&, std::string, bool);
+
+		void build_mesh(tinygltf::Model&, tinygltf::Mesh&);
+		void get_nodes(tinygltf::Model&, tinygltf::Node&);
+		unsigned get_meshes(tinygltf::Model&);
 
 		~gltf_model_loader();
 	};
