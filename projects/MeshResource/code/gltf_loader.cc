@@ -11,8 +11,7 @@
 #endif
 
 #include "tiny_gltf.h"
-#include "mesh_res.h"
-#include "vertex.h"
+#include "node.h"
 
 #include <stdio.h>
 #include <vector>
@@ -63,33 +62,58 @@ namespace efiilj
 	
 	}
 
-	void gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
+	mesh_resource gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
 	{
-		printf("Constructing, %lu buffer views\n", model.bufferViews.size());
+		printf("Constructing mesh %s\n", mesh.name.c_str());
+		
+		mesh_resource m_res = mesh_resource();
 
-		for (int i = 0; i < model.bufferViews.size(); i++)
+		tinygltf::Primitive prim = mesh.primitives[0];
+
+		for (auto &attrib : prim.attributes)
 		{
-			tinygltf::BufferView view = model.bufferViews[i];
-			tinygltf::Buffer& buf = model.buffers[view.buffer];
+			tinygltf::Accessor accessor = model.accessors[attrib.second];
+			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
 
-			std::cout << "buffer.data.size = " << buf.data.size()
-              		<< ", bufferview.byteOffset = " << view.byteOffset
-              		<< std::endl;	
+			int stride = accessor.ByteStride(view);
+			printf("Attribute: %s, accessor %d, stride %d, view %d (%s)\n", 
+					attrib.first.c_str(), attrib.second, stride, accessor.bufferView, view.name.c_str());
 
-			//mesh_resource mesh(); // Get vertex list and index list from GLTF?
-		}	
+			if (attrib.first.compare("POSITION") == 0)
+			{
+				//m_res.buffer(GL_ARRAY_BUFFER);
+			}
+		}
+		
+	//	std::cout << "buffer.data.size = " << buf.data.size()
+      	//	<< ", bufferview.byteOffset = " << view.byteOffset
+      	//	<< std::endl;
+
+	//	m_res.buffer(view.target, view.byteLength, &buf.data.at(0) + view.byteOffset, GL_STATIC_DRAW);
+
+	//	for (int i = 0; i < mesh.primitives.size(); i++)
+	//	{
+	//		tinygltf::Primitive prim = mesh.primitives[i];
+	//		tinygltf::Accessor i_a = model.accessors[prim.indices];
+
+	//		for (auto &attrib : prim.attributes)
+	//		{
+	//		
+	//		}
+	//	}
 	}
 
-	void gltf_model_loader::get_nodes(tinygltf::Model& model, tinygltf::Node& node)
+	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
 	{
 		if (node.mesh >= 0 && node.mesh < model.meshes.size())
 		{
-			build_mesh(model, model.meshes[node.mesh]);				
+			build_mesh(model, model.meshes[node.mesh]);
 		}
+
 		for (size_t i = 0; i < node.children.size(); i++) 
 		{
 			assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
-			get_nodes(model, model.nodes[node.children[i]]);
+			parse_node(model, model.nodes[node.children[i]]);
 		}
 	}
 
@@ -102,7 +126,7 @@ namespace efiilj
 		for (int i = 0; i < scene.nodes.size(); i++)
 		{
 			tinygltf::Node& node = model.nodes[scene.nodes[i]];
-			get_nodes(model, node);
+			parse_node(model, node);
 		}
 
 		return 0;

@@ -55,7 +55,9 @@ namespace efiilj
 
 		float fov = 1.30899694; // 75 degrees
 		
-		gltf_model_loader gltf_loader("./res/gltf/cube/box.gltf");
+		//gltf_model_loader gltf_loader("./res/gltf/cube/box.gltf");
+		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
+
 
 		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 

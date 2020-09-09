@@ -62,7 +62,7 @@ namespace efiilj
 		 * \param index_list List of indices to buffer
 		 * \param index_count Size of the index list
 		 */
-		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
+		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);;
 
 		mesh_resource(mesh_resource& copy)
 			= default;
@@ -105,6 +105,8 @@ namespace efiilj
 		 * \brief Unbinds vertex, index, and array object buffers on GPU
 		 */
 		static void unbind();
+
+		void buffer(unsigned target, size_t size, void* data, unsigned usage);
 
 		/**
 		 * \brief Pushes a new vertex list (of the same size) to the Vertex Buffer.

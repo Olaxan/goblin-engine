@@ -6,6 +6,10 @@ namespace efiilj
 {
 	mesh_resource::mesh_resource() : vbo_(0), ibo_(0), vao_(0), vertex_count_(0), index_count_(0)
 	{
+		init_array_object();
+		glGenBuffers(1, &this->vbo_);
+		glGenBuffers(1, &this->ibo_);
+		unbind();
 	}
 
 	mesh_resource::
@@ -117,6 +121,13 @@ namespace efiilj
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_count_ * sizeof(vertex), vertex_list);
+	}
+
+	void mesh_resource::buffer(unsigned target, size_t size, void* data, unsigned usage)
+	{
+		bind();
+		glBufferData(target, size, data, usage);
+		unbind();	
 	}
 
 	void mesh_resource::bind() const
