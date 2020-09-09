@@ -21,7 +21,10 @@ namespace efiilj
 
 		gltf_model_loader(gltf_model_loader&&)
 			= default;
-		
+	
+		static size_t type_component_count(std::string& type);
+		static size_t component_type_size(int type);
+
 		bool load_from_file(tinygltf::Model&, std::string, bool);
 
 		mesh_resource build_mesh(tinygltf::Model&, tinygltf::Mesh&);

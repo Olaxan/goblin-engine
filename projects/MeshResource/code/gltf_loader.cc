@@ -38,6 +38,48 @@ namespace efiilj
 		}
 	}
 
+	size_t gltf_model_loader::type_component_count(std::string& type)
+	{
+		if (type.compare("SCALAR") == 0)
+			return 1;
+		if (type.compare("VEC2") == 0)
+			return 2;
+		if (type.compare("VEC3") == 0)
+			return 3;
+		if (type.compare("VEC4") == 0)
+			return 4;
+		if (type.compare("MAT2") == 0)
+			return 4;
+		if (type.compare("MAT3") == 0)
+			return 9;
+		if (type.compare("MAT4") == 0)
+			return 16;
+
+		return 0;
+	}
+
+	size_t gltf_model_loader::component_type_size(int type) 
+	{
+		switch (type) 
+		{
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+			case TINYGLTF_COMPONENT_TYPE_BYTE:
+				return sizeof(char);
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+			case TINYGLTF_COMPONENT_TYPE_SHORT:
+				return sizeof(short);
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+			case TINYGLTF_COMPONENT_TYPE_INT:
+				return sizeof(int);
+			case TINYGLTF_COMPONENT_TYPE_FLOAT:
+				return sizeof(float);
+			case TINYGLTF_COMPONENT_TYPE_DOUBLE:
+				return sizeof(double);
+			default:
+				return 0;
+		}
+	}
+
 	bool gltf_model_loader::load_from_file(tinygltf::Model& model, std::string path, bool is_binary)
 	{
 		tinygltf::TinyGLTF loader;
@@ -70,6 +112,16 @@ namespace efiilj
 
 		tinygltf::Primitive prim = mesh.primitives[0];
 
+		size_t bytes = 0;
+		for (auto &attrib : prim.attributes)
+		{
+			tinygltf::Accessor accessor = model.accessors[attrib.second];
+			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
+			bytes += component_type_size(accessor.componentType) * accessor.type * accessor.count;
+		}
+		
+		printf("Buffer size %lu bytes\n", bytes);
+
 		for (auto &attrib : prim.attributes)
 		{
 			tinygltf::Accessor accessor = model.accessors[attrib.second];
@@ -82,25 +134,9 @@ namespace efiilj
 			if (attrib.first.compare("POSITION") == 0)
 			{
 				//m_res.buffer(GL_ARRAY_BUFFER);
+				continue;
 			}
 		}
-		
-	//	std::cout << "buffer.data.size = " << buf.data.size()
-      	//	<< ", bufferview.byteOffset = " << view.byteOffset
-      	//	<< std::endl;
-
-	//	m_res.buffer(view.target, view.byteLength, &buf.data.at(0) + view.byteOffset, GL_STATIC_DRAW);
-
-	//	for (int i = 0; i < mesh.primitives.size(); i++)
-	//	{
-	//		tinygltf::Primitive prim = mesh.primitives[i];
-	//		tinygltf::Accessor i_a = model.accessors[prim.indices];
-
-	//		for (auto &attrib : prim.attributes)
-	//		{
-	//		
-	//		}
-	//	}
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
