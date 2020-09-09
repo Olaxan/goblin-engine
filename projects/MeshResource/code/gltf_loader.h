@@ -28,6 +28,7 @@ namespace efiilj
 		bool load_from_file(tinygltf::Model&, std::string, bool);
 
 		mesh_resource build_mesh(tinygltf::Model&, tinygltf::Mesh&);
+		mesh_resource build_consolidated_mesh(tinygltf::Model&);
 		void parse_node(tinygltf::Model&, tinygltf::Node&);
 		unsigned get_meshes(tinygltf::Model&);
 

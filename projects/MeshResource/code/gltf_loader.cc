@@ -108,34 +108,61 @@ namespace efiilj
 	{
 		printf("Constructing mesh %s\n", mesh.name.c_str());
 		
-		mesh_resource m_res = mesh_resource();
-
 		tinygltf::Primitive prim = mesh.primitives[0];
 
-		size_t bytes = 0;
+		unsigned vbo, vao;
+		glGenBuffers(1, &vbo);
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		glBindBuffer(vbo);
+
+		mesh_resource m_res = mesh_resource(vao, vbo);
+
+		size_t vbo_size = 0;
 		for (auto &attrib : prim.attributes)
 		{
 			tinygltf::Accessor accessor = model.accessors[attrib.second];
 			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
-			bytes += component_type_size(accessor.componentType) * accessor.type * accessor.count;
+			vbo_size += component_type_size(accessor.componentType) * accessor.type * accessor.count;
 		}
 		
-		printf("Buffer size %lu bytes\n", bytes);
-
+		printf("Buffer size %lu bytes\n", vbo_size);
+		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
+		
+		size_t block_offset = 0;
 		for (auto &attrib : prim.attributes)
 		{
 			tinygltf::Accessor accessor = model.accessors[attrib.second];
 			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
-
+			tinygltf::Buffer buf = model.buffers[view.buffer];
+			
+			size_t block_size = component_type_size(accessor.componentType) * accessor.type * accessor.count;
+			size_t offset = view.byteOffset + accessor.byteOffset;
 			int stride = accessor.ByteStride(view);
+
 			printf("Attribute: %s, accessor %d, stride %d, view %d (%s)\n", 
 					attrib.first.c_str(), attrib.second, stride, accessor.bufferView, view.name.c_str());
 
+			glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
+
+			int vaa = -1;
+			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
 			if (attrib.first.compare("POSITION") == 0)
-			{
-				//m_res.buffer(GL_ARRAY_BUFFER);
-				continue;
-			}
+				vaa = 0;
+
+			if (attrib.first.compare("TANGENT") == 0)
+				vaa = 1;
+
+			if (attrib.first.compare("NORMAL") == 0)
+				vaa = 2;
+
+			if (attrib.first.compare("TEXCOORD_0") == 0)
+				vaa = 3;
+
+			glEnableVertexAttribArray(vaa);
+			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, &block_offset);
+
+			block_offset += block_size;
 		}
 	}
 

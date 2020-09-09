@@ -62,7 +62,9 @@ namespace efiilj
 		 * \param index_list List of indices to buffer
 		 * \param index_count Size of the index list
 		 */
-		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);;
+		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
+
+		mesh_resource(unsigned vao, unsigned vbo, unsigned ibo=0);
 
 		mesh_resource(mesh_resource& copy)
 			= default;

@@ -23,6 +23,8 @@ namespace efiilj
 		init_index_buffer(index_list, index_count);
 	}
 
+	mesh_resource::mesh_resource(unsigned vao, unsigned vbo, unsigned ibo) : vao_(vao), vbo_(vbo), ibo_(ibo) {}
+
 	mesh_resource mesh_resource::cube(float size, const float color)
 	{
 		size /= 2;
