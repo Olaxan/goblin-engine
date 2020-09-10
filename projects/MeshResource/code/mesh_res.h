@@ -72,6 +72,10 @@ namespace efiilj
 	//	mesh_resource(mesh_resource&& move)
 	//		= default;
 
+		unsigned vao() const { return this->vao_; }
+		unsigned vbo() const { return this->vbo_; }
+		unsigned ibo() const { return this->ibo_; }
+
 		/**
 		 * \brief Static method to generate a cube of the specified size.
 		 * \param size The size across the entire cube

@@ -61,8 +61,8 @@ namespace efiilj
 
 		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 
-		std::string fs = shader_resource::load_shader("./res/shaders/vertex.shader");
-		std::string vs = shader_resource::load_shader("./res/shaders/fragment.shader");
+		std::string fs = shader_resource::load_shader("./res/shaders/avocado.vertex");
+		std::string vs = shader_resource::load_shader("./res/shaders/avocado.fragment");
 		
 		if (!fox_loader.is_valid())
 		{
@@ -74,7 +74,9 @@ namespace efiilj
 
 		//mesh_resource fox_model = fox_loader.get_resource();
 		mesh_resource fox_model = gltf_loader.get_resource();
-		printf("Loaded %d vertices and %d indices\n", fox_model.vertex_count(), fox_model.index_count());
+		printf("Loaded %d vertices and %d indices - VAO %d, VBO %d, IBO %d\n", 
+					fox_model.vertex_count(), fox_model.index_count(), fox_model.vao(), fox_model.vbo(), fox_model.ibo());
+
 		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
 		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));

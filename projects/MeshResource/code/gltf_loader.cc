@@ -17,6 +17,8 @@
 #include <vector>
 #include <GL/glew.h>
 
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
 namespace efiilj
 {
 	gltf_model_loader::gltf_model_loader()
@@ -110,10 +112,12 @@ namespace efiilj
 		
 		tinygltf::Primitive prim = mesh.primitives[0];
 
+		unsigned err;
 		unsigned vbo, vao, ibo;
 		glGenBuffers(1, &vbo);
 		glGenBuffers(1, &ibo);
 		glGenVertexArrays(1, &vao);
+
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -127,6 +131,7 @@ namespace efiilj
 		
 		printf("Buffer size %lu bytes\n", vbo_size);
 		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
+
 		
 		int vertex_count = -1;
 		size_t block_offset = 0;
@@ -136,14 +141,17 @@ namespace efiilj
 			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
 			tinygltf::Buffer buf = model.buffers[view.buffer];
 			
-			size_t block_size = component_type_size(accessor.componentType) * accessor.type * accessor.count;
+			size_t stride = accessor.ByteStride(view);
+			size_t block_size = stride * accessor.count;
 			size_t offset = view.byteOffset + accessor.byteOffset;
-			int stride = accessor.ByteStride(view);
 
-			printf("Attribute: %s, accessor %d, stride %d, view %d (%s)\n", 
+			printf("Attribute: %s, accessor %d, stride %ld, view %d (%s)\n", 
 					attrib.first.c_str(), attrib.second, stride, accessor.bufferView, view.name.c_str());
 
 			glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
+			
+			err = glGetError();
+			printf("Buffering %ld bytes (offset %ld) to VBO %u in VAO %u... ERR = %d\n", block_size, block_offset, vbo, vao, err);
 
 			int vaa = -1;
 			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
@@ -163,7 +171,11 @@ namespace efiilj
 				vaa = 3;
 
 			glEnableVertexAttribArray(vaa);
-			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, &block_offset);
+			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, BUFFER_OFFSET(block_offset));
+
+			err = glGetError();
+			printf("Setting up VAA %d (size = %d, type = %d, normalized = %d, offset = %ld) ERR = %d\n",
+					vaa, size, accessor.componentType, accessor.normalized, block_offset, err);
 
 			block_offset += block_size;
 		
@@ -179,7 +191,6 @@ namespace efiilj
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
 				&i_buf.data.at(0) + i_offset, GL_STATIC_DRAW);
 		
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
 		return mesh_resource(vao, vbo, ibo, vertex_count, i_accessor.count);
