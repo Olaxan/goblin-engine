@@ -2,6 +2,7 @@
 
 #include "tiny_gltf.h"
 #include "mesh_res.h"
+#include "node.h"
 
 #include <string>
 
@@ -16,6 +17,7 @@ namespace efiilj
 		unsigned get_meshes(tinygltf::Model&);
 		
 		mesh_resource mesh;
+		std::vector<graphics_node> nodes_;
 
 	public:
 		gltf_model_loader();

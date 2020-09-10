@@ -196,8 +196,15 @@ namespace efiilj
 
 		glBindVertexArray(0);
 
-		return mesh_resource(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
+		mesh_resource m_res(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
 
+		// Do textures now!
+		
+		if (prim.material >= 0)
+		{
+			tinygltf::Material mat = model.materials[prim.material];
+			//TODO continue here
+		}
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
