@@ -56,8 +56,8 @@ namespace efiilj
 		float fov = 1.30899694; // 75 degrees
 		
 		//gltf_model_loader gltf_loader("./res/gltf/cube/box.gltf");
-		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
-
+		//gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
+		gltf_model_loader gltf_loader("./res/gltf/Avocado/glTF/Avocado.gltf");
 
 		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
 
@@ -70,9 +70,11 @@ namespace efiilj
 			return;
 		}
 
-		std::cout << "Loaded " << fox_loader.vertex_count() << " vertices, " << fox_loader.index_count() << " indices\n";
+	//	std::cout << "Loaded " << fox_loader.vertex_count() << " vertices, " << fox_loader.index_count() << " indices\n";
 
-		mesh_resource fox_model = fox_loader.get_resource();
+		//mesh_resource fox_model = fox_loader.get_resource();
+		mesh_resource fox_model = gltf_loader.get_resource();
+		printf("Loaded %d vertices and %d indices\n", fox_model.vertex_count(), fox_model.index_count());
 		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
 		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));

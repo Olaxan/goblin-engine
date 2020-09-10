@@ -10,9 +10,14 @@ namespace efiilj
 	class gltf_model_loader
 	{
 	private:
+		mesh_resource build_mesh(tinygltf::Model&, tinygltf::Mesh&);
+		mesh_resource build_consolidated_mesh(tinygltf::Model&);
+		void parse_node(tinygltf::Model&, tinygltf::Node&);
+		unsigned get_meshes(tinygltf::Model&);
+		
+		mesh_resource mesh;
 
 	public:
-
 		gltf_model_loader();
 		gltf_model_loader(std::string, bool=false);
 
@@ -27,11 +32,11 @@ namespace efiilj
 
 		bool load_from_file(tinygltf::Model&, std::string, bool);
 
-		mesh_resource build_mesh(tinygltf::Model&, tinygltf::Mesh&);
-		mesh_resource build_consolidated_mesh(tinygltf::Model&);
-		void parse_node(tinygltf::Model&, tinygltf::Node&);
-		unsigned get_meshes(tinygltf::Model&);
-
+		mesh_resource get_resource()
+		{
+			return mesh;
+		}
+	
 		~gltf_model_loader();
 	};
 }

@@ -110,25 +110,25 @@ namespace efiilj
 		
 		tinygltf::Primitive prim = mesh.primitives[0];
 
-		unsigned vbo, vao;
+		unsigned vbo, vao, ibo;
 		glGenBuffers(1, &vbo);
+		glGenBuffers(1, &ibo);
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
-		glBindBuffer(vbo);
-
-		mesh_resource m_res = mesh_resource(vao, vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 		size_t vbo_size = 0;
 		for (auto &attrib : prim.attributes)
 		{
 			tinygltf::Accessor accessor = model.accessors[attrib.second];
 			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
-			vbo_size += component_type_size(accessor.componentType) * accessor.type * accessor.count;
+			vbo_size += accessor.count * accessor.ByteStride(view); 
 		}
 		
 		printf("Buffer size %lu bytes\n", vbo_size);
 		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
 		
+		int vertex_count = -1;
 		size_t block_offset = 0;
 		for (auto &attrib : prim.attributes)
 		{
@@ -148,7 +148,10 @@ namespace efiilj
 			int vaa = -1;
 			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
 			if (attrib.first.compare("POSITION") == 0)
+			{
 				vaa = 0;
+				vertex_count = accessor.count;
+			}
 
 			if (attrib.first.compare("TANGENT") == 0)
 				vaa = 1;
@@ -163,14 +166,32 @@ namespace efiilj
 			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, &block_offset);
 
 			block_offset += block_size;
+		
 		}
+		
+		// Buffer mesh indices
+		tinygltf::Accessor i_accessor = model.accessors[prim.indices];
+		tinygltf::BufferView i_bufView = model.bufferViews[i_accessor.bufferView];
+		tinygltf::Buffer i_buf = model.buffers[i_bufView.buffer];
+		size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
+				&i_buf.data.at(0) + i_offset, GL_STATIC_DRAW);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
+		return mesh_resource(vao, vbo, ibo, vertex_count, i_accessor.count);
+
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
 	{
 		if (node.mesh >= 0 && node.mesh < model.meshes.size())
 		{
-			build_mesh(model, model.meshes[node.mesh]);
+			mesh_resource res = build_mesh(model, model.meshes[node.mesh]);
+			this->mesh = res;
 		}
 
 		for (size_t i = 0; i < node.children.size(); i++) 
