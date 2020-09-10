@@ -4,7 +4,7 @@
 
 namespace efiilj
 {
-	mesh_resource::mesh_resource() : vbo_(0), ibo_(0), vao_(0), vertex_count_(0), index_count_(0)
+	mesh_resource::mesh_resource() : type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), vertex_count_(0), index_count_(0)
 	{
 		init_array_object();
 		glGenBuffers(1, &this->vbo_);
@@ -13,7 +13,8 @@ namespace efiilj
 	}
 
 	mesh_resource::
-	mesh_resource(vertex* vertex_list, const int vertex_count, unsigned int* index_list, const int index_count) : vbo_(0), ibo_(0), vao_(0)
+	mesh_resource(vertex* vertex_list, const int vertex_count, unsigned int* index_list, const int index_count) 
+	: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0)
 	{
 		this->vertex_count_ = vertex_count;
 		this->index_count_ = index_count;
@@ -23,8 +24,8 @@ namespace efiilj
 		init_index_buffer(index_list, index_count);
 	}
 
-	mesh_resource::mesh_resource(unsigned vao, unsigned vbo, unsigned ibo, int vertex_count, int index_count) 
-		: vao_(vao), vbo_(vbo), ibo_(ibo), vertex_count_(vertex_count), index_count_(index_count)  {}
+	mesh_resource::mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo, int vertex_count, int index_count) 
+		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), vertex_count_(vertex_count), index_count_(index_count)  {}
 
 	mesh_resource mesh_resource::cube(float size, const float color)
 	{
@@ -147,7 +148,7 @@ namespace efiilj
 
 	void mesh_resource::draw_elements() const
 	{
-		glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, index_count_, type_, nullptr);
 	}
 
 	mesh_resource::~mesh_resource()

@@ -28,6 +28,8 @@ namespace efiilj
 		int vertex_count_;
 		int index_count_;
 
+		unsigned type_;
+
 		/**
 		 * \brief Creates and initializes the Vertex Buffer, configures vertex attribute pointers, and enables attribute arrays.
 		 *  Ensure a Vertex Array Object has been configured and bound before running this function.
@@ -64,7 +66,7 @@ namespace efiilj
 		 */
 		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
 
-		mesh_resource(unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
+		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
 
 	//	mesh_resource(mesh_resource& copy)
 	//		= default;

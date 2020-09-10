@@ -131,15 +131,14 @@ namespace efiilj
 		
 		printf("Buffer size %lu bytes\n", vbo_size);
 		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
-
 		
 		int vertex_count = -1;
 		size_t block_offset = 0;
 		for (auto &attrib : prim.attributes)
 		{
 			tinygltf::Accessor accessor = model.accessors[attrib.second];
-			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
-			tinygltf::Buffer buf = model.buffers[view.buffer];
+			tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
+			tinygltf::Buffer& buf = model.buffers[view.buffer];
 			
 			size_t stride = accessor.ByteStride(view);
 			size_t block_size = stride * accessor.count;
@@ -183,17 +182,21 @@ namespace efiilj
 		
 		// Buffer mesh indices
 		tinygltf::Accessor i_accessor = model.accessors[prim.indices];
-		tinygltf::BufferView i_bufView = model.bufferViews[i_accessor.bufferView];
-		tinygltf::Buffer i_buf = model.buffers[i_bufView.buffer];
+		tinygltf::BufferView& i_bufView = model.bufferViews[i_accessor.bufferView];
+		tinygltf::Buffer& i_buf = model.buffers[i_bufView.buffer];
 		size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
-				&i_buf.data.at(0) + i_offset, GL_STATIC_DRAW);
-		
+				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
+
+		err = glGetError();
+		printf("Buffering %ld indices... (%ld bytes, offset %ld) ERR = %d\n", 
+				i_accessor.count, i_accessor.count * i_accessor.ByteStride(i_bufView), i_offset, err);
+
 		glBindVertexArray(0);
 
-		return mesh_resource(vao, vbo, ibo, vertex_count, i_accessor.count);
+		return mesh_resource(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
 
 	}
 
