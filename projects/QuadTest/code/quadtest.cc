@@ -12,6 +12,7 @@
 #include "bufrend.h"
 #include "gltf_loader.h"
 #include "color.h"
+#include "program.h"
 
 #include <iostream>
 #include <set>
@@ -55,90 +56,22 @@ namespace efiilj
 
 		float fov = 1.30899694; // 75 degrees
 		
-		//gltf_model_loader gltf_loader("./res/gltf/cube/box.gltf");
 		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
 		//gltf_model_loader gltf_loader("./res/gltf/Avocado/glTF/Avocado.gltf");
 
-		object_loader fox_loader = object_loader("./res/meshes/cat.obj");
+		object_loader loader = object_loader("./res/meshes/cat.obj");
 
-		std::string fs = shader_resource::load_shader("./res/shaders/avocado.vertex");
-		std::string vs = shader_resource::load_shader("./res/shaders/avocado.fragment");
+		shader_resource fs(GL_VERTEX_SHADER, "./res/shaders/avocado.vertex");
+		shader_resource vs(GL_FRAGMENT_SHADER, "./res/shaders/avocado.fragment");
+		shader_program prog(vs, fs);
 		
-		if (!fox_loader.is_valid())
-		{
-			std::cout << "\nFailed to load OBJ file - program will terminate.\n";
-			return;
-		}
-
-	//	std::cout << "Loaded " << fox_loader.vertex_count() << " vertices, " << fox_loader.index_count() << " indices\n";
-
-		mesh_resource fox_model = fox_loader.get_resource();
-		printf("Loaded %d vertices and %d indices - VAO %d, VBO %d, IBO %d\n", 
-					fox_model.vertex_count(), fox_model.index_count(), fox_model.vao(), fox_model.vbo(), fox_model.ibo());
-
-		auto fox_mesh_ptr = std::make_shared<mesh_resource>(fox_model);
-		auto fox_texture_ptr = std::make_shared<texture_resource>("./res/textures/fox_base.png", true);
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 
 		auto shader_ptr = std::make_shared<shader_resource>(fs, vs);
 
 		point_light p_light = point_light(vector3(0.5f, 0.5f, 0.5f), vector3(1.0f, 1.0f, 1.0f), vector3(2, 2, 2));
-		
-		graphics_node fox_node(fox_mesh_ptr, fox_texture_ptr, shader_ptr, fox_trans_ptr, camera_ptr);
-
-		/*SOFTWARE RENDERER*/
-		auto rasterizer_ptr = std::make_shared<rasterizer>(1024, 1024, camera_ptr, color(3, 0, 3, 127));
-		auto node_ptr = std::make_shared<rasterizer_node>(fox_loader.get_vertices(), fox_loader.get_indices(), fox_trans_ptr);
-		
-		node_ptr->vertex_shader = [](vertex* vert, const vertex_uniforms& uniforms) -> vertex_data
-		{
-			vertex_data data;
-			data.pos = uniforms.camera * uniforms.model * vert->xyzw;
-			data.uv = vert->uv;
-			data.color = vert->rgba;
-			data.normal = uniforms.normal * vert->normal;
-			data.fragment = (uniforms.model * data.pos);
-
-			return data;
-		};
-
-		node_ptr->fragment_shader = [](const vertex_data& data, const texture_data& texture, const fragment_uniforms& uniforms) -> color
-		{
-			const vector4 col = texture.get_pixel(data.uv);
-
-			const vector4 ambient = uniforms.ambient_color * uniforms.ambient_strength;
-			const vector4 norm = uniforms.normal.norm();
-			const vector4 light_dir = (uniforms.light_position - uniforms.fragment).norm();
-			const vector4 view_dir = (uniforms.camera_position - uniforms.fragment).norm();
-			const vector4 reflect_dir = (light_dir * -1).getReflection(norm);
-
-			const float diff = std::max(vector4::dot(norm, light_dir), 0.0f);
-			const vector4 diffuse = uniforms.light_rgba * diff;
-
-			const float spec = pow(std::max(vector4::dot(view_dir, reflect_dir), 0.0f), uniforms.shininess);
-			const vector4 specular = uniforms.light_rgba * uniforms.specular_strength * spec;
-
-			const vector4 result = (ambient + diffuse + specular) * col;
-			
-			return
-			{
-				static_cast<unsigned char>(result.x()),
-				static_cast<unsigned char>(result.y()),
-				static_cast<unsigned char>(result.z()),
-				static_cast<unsigned char>(result.w())
-			};
-		};
-
-		auto tex_ptr = std::make_shared<texture_data>("./res/textures/fox_base.png");
-		node_ptr->texture(tex_ptr);
-		
-		rasterizer_ptr->add_node(node_ptr);
-		
-		auto buffer_renderer_ptr = std::make_shared<buffer_renderer>(rasterizer_ptr);
-		/*END SOFTWARE RENDERER*/
 
 		std::set<int> keys;
 		
@@ -222,26 +155,18 @@ namespace efiilj
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 
-			if (is_software_renderer_)
-			{
-				buffer_renderer_ptr->draw();
-			}
-			else
-			{
-				shader_ptr->use();
-				shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
-				shader_ptr->set_uniform("u_light.color", p_light.rgb);
-				shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
-				shader_ptr->set_uniform("u_light.position", p_light.position); // should not be vec4!
-				shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
-				shader_ptr->set_uniform("u_ambient_strength", 1.0f);
-				shader_ptr->set_uniform("u_specular_strength", 0.5f);
-				shader_ptr->set_uniform("u_shininess", 32);
-				shader_ptr->drop();
-				
-				fox_node.draw();
-				gltf_loader.draw();
-			}
+		//	shader_ptr->use();
+		//	shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
+		//	shader_ptr->set_uniform("u_light.color", p_light.rgb);
+		//	shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
+		//	shader_ptr->set_uniform("u_light.position", p_light.position); // should not be vec4!
+		//	shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
+		//	shader_ptr->set_uniform("u_ambient_strength", 1.0f);
+		//	shader_ptr->set_uniform("u_specular_strength", 0.5f);
+		//	shader_ptr->set_uniform("u_shininess", 32);
+		//	shader_ptr->drop();
+			
+			gltf_loader.draw();
 
 
 			this->window_->SwapBuffers();

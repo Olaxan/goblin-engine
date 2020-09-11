@@ -204,7 +204,8 @@ namespace efiilj
 				vaa = 3;
 
 			glEnableVertexAttribArray(vaa);
-			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, BUFFER_OFFSET(block_offset));
+			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0,
+				       	BUFFER_OFFSET(block_offset));
 
 			err = glGetError();
 			printf("Setting up VAA %d (size = %d, type = %d, normalized = %d, offset = %ld) ERR = %d\n",
