@@ -12,7 +12,7 @@ namespace efiilj
 		/**
 		 * \brief Texture object handle
 		 */
-		unsigned int tex_id_;
+		unsigned tex_id_, format_, type_;
 
 		int height_, width_, bits_per_pixel_;
 		
@@ -30,9 +30,9 @@ namespace efiilj
 		 */
 		texture_resource(const char* path, bool flip);
 
-		texture_resource(unsigned width, unsigned height, unsigned* buffer);
+		texture_resource(unsigned width, unsigned height, void* buffer, unsigned format, unsigned type);
 
-		void update(unsigned* buffer) const;
+		void update(void* buffer) const;
 		
 		/**
 		 * \brief Binds the texture to the specified texture slot, to prepare OpenGL for utilizing this texture.

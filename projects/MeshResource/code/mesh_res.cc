@@ -27,7 +27,7 @@ namespace efiilj
 	mesh_resource::mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo, int vertex_count, int index_count) 
 		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), vertex_count_(vertex_count), index_count_(index_count)  {}
 
-	mesh_resource mesh_resource::cube(float size, const float color)
+	std::shared_ptr<mesh_resource> mesh_resource::cube(float size, const float color)
 	{
 		size /= 2;
 
@@ -79,7 +79,7 @@ namespace efiilj
 			20, 21, 23, 22, 23, 21 // Right
 		};
 
-		return mesh_resource(vertices, 24, indices, 36);
+		return std::make_shared<mesh_resource>(vertices, 24, indices, 36);
 	}
 
 	void mesh_resource::init_vertex_buffer(vertex* vertex_list, const int count)

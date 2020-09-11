@@ -12,7 +12,6 @@ namespace efiilj
 	{
 	private:
 		mesh_resource build_mesh(tinygltf::Model&, tinygltf::Mesh&);
-		mesh_resource build_consolidated_mesh(tinygltf::Model&);
 		void parse_node(tinygltf::Model&, tinygltf::Node&);
 		unsigned get_meshes(tinygltf::Model&);
 		
@@ -21,7 +20,7 @@ namespace efiilj
 
 	public:
 		gltf_model_loader();
-		gltf_model_loader(std::string, bool=false);
+		gltf_model_loader(const std::string& path, bool is_binary=false);
 
 		gltf_model_loader(gltf_model_loader&)
 			= default;
@@ -29,10 +28,14 @@ namespace efiilj
 		gltf_model_loader(gltf_model_loader&&)
 			= default;
 	
-		static size_t type_component_count(std::string& type);
+		static size_t type_component_count(const std::string& type);
 		static size_t component_type_size(int type);
+		static unsigned get_format(int components);
+		static unsigned get_type(int bits);
 
-		bool load_from_file(tinygltf::Model&, std::string, bool);
+		bool load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary);
+
+		void draw() const;
 
 		mesh_resource get_resource()
 		{

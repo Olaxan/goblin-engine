@@ -2,6 +2,8 @@
 
 #include "vertex.h"
 
+#include <memory>
+
 namespace efiilj
 {
 	
@@ -84,7 +86,7 @@ namespace efiilj
 		 * \param color Vertex color
 		 * \returns A new Mesh Resource representing a cube
 		 */
-		static mesh_resource cube(float size, float color = 1);
+		static std::shared_ptr<mesh_resource> cube(float size, float color = 1);
 
 		/**
 		 * \brief Gets mesh vertex count

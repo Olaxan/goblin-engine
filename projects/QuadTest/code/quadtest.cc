@@ -72,8 +72,7 @@ namespace efiilj
 
 	//	std::cout << "Loaded " << fox_loader.vertex_count() << " vertices, " << fox_loader.index_count() << " indices\n";
 
-		//mesh_resource fox_model = fox_loader.get_resource();
-		mesh_resource fox_model = gltf_loader.get_resource();
+		mesh_resource fox_model = fox_loader.get_resource();
 		printf("Loaded %d vertices and %d indices - VAO %d, VBO %d, IBO %d\n", 
 					fox_model.vertex_count(), fox_model.index_count(), fox_model.vao(), fox_model.vbo(), fox_model.ibo());
 
@@ -241,6 +240,7 @@ namespace efiilj
 				shader_ptr->drop();
 				
 				fox_node.draw();
+				gltf_loader.draw();
 			}
 
 

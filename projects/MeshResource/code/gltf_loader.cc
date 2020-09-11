@@ -26,7 +26,7 @@ namespace efiilj
 
 	}
 
-	gltf_model_loader::gltf_model_loader(std::string path, bool is_binary)
+	gltf_model_loader::gltf_model_loader(const std::string& path, bool is_binary)
 	{
 		tinygltf::Model model;
 		if (load_from_file(model, path, is_binary))
@@ -40,7 +40,7 @@ namespace efiilj
 		}
 	}
 
-	size_t gltf_model_loader::type_component_count(std::string& type)
+	size_t gltf_model_loader::type_component_count(const std::string& type)
 	{
 		if (type.compare("SCALAR") == 0)
 			return 1;
@@ -82,7 +82,41 @@ namespace efiilj
 		}
 	}
 
-	bool gltf_model_loader::load_from_file(tinygltf::Model& model, std::string path, bool is_binary)
+	unsigned get_format(int components)
+	{
+		switch (components)
+		{
+			case 1:
+				return GL_RED;
+			case 2:
+				return  GL_RG;
+			case 3:
+				return GL_RGB;
+			case 4:
+				return GL_RGBA;
+			default:
+				printf("Error: Unsupported texture format! (%u components)\n", components);
+				return 0;
+		}
+	}
+	
+	unsigned get_type(int bits)
+	{
+		switch (bits)
+		{
+			case 8:
+				return GL_UNSIGNED_BYTE;
+			case 16:
+				return GL_UNSIGNED_SHORT;
+			case 32:
+				return GL_UNSIGNED_INT;
+			default:
+				printf("Error: Unsupported texture type! (%u bits)\n", bits);
+				return 0;
+		}	
+	}
+
+	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary)
 	{
 		tinygltf::TinyGLTF loader;
 		std::string err;
@@ -196,15 +230,46 @@ namespace efiilj
 
 		glBindVertexArray(0);
 
-		mesh_resource m_res(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
+		auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
 
 		// Do textures now!
 		
+		auto tex_ptr = std::shared_ptr<texture_resource>();
+		auto nrm_ptr = std::shared_ptr<texture_resource>();
+
 		if (prim.material >= 0)
 		{
 			tinygltf::Material mat = model.materials[prim.material];
-			//TODO continue here
+
+			int tex_i = mat.pbrMetallicRoughness.baseColorTexture.index;
+
+			if (tex_i > -1)
+			{
+				tinygltf::Texture tex_base = model.textures[tex_i];
+				tinygltf::Image src = model.images[tex_base.source];
+				
+				unsigned format = get_format(src.component);
+				unsigned type = get_type(src.bits);
+
+				tex_ptr = std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), format, type);
+			}
+
+			int nrm_i = mat.normalTexture.index;
+
+			if (nrm_i > -1)
+			{
+				tinygltf::Texture tex_nrm = model.textures[nrm_i];
+				tinygltf::Image src = model.images[tex_nrm.source];
+
+				unsigned format = get_format(src.component);
+				unsigned type = get_type(src.bits);
+
+				nrm_ptr = std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), format, type);
+			}
 		}
+
+		//graphics_node node = graphics_node(mesh_ptr, tex_ptr, 
+		//return m_res;
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
@@ -235,6 +300,14 @@ namespace efiilj
 		}
 
 		return 0;
+	}
+
+	void gltf_model_loader::draw() const
+	{
+		for (auto& node : nodes_)
+		{
+			node.draw();
+		}
 	}
 
 	gltf_model_loader::~gltf_model_loader()

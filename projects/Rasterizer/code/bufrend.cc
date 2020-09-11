@@ -9,7 +9,8 @@ namespace efiilj
 		: rasterizer_(std::move(rasterizer)), width_(rasterizer_->get_width()), height_(rasterizer_->get_height())
 	{	
 		glGenVertexArrays(1, &vao_);
-		texture_ = std::make_shared<texture_resource>(width_, height_, rasterizer_->get_frame_buffer());
+		texture_ = std::make_shared<texture_resource>(width_, height_, rasterizer_->get_frame_buffer(), GL_RGBA, GL_UNSIGNED_BYTE);
+		int err = glGetError();
 		shader_ = std::make_shared<shader_resource>(fs_vertex_shader_, fs_fragment_shader_);
 
 		std::cout << "Init buffer renderer..." << std::endl;
