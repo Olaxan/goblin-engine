@@ -11,7 +11,7 @@ namespace efiilj
 	class gltf_model_loader
 	{
 	private:
-		mesh_resource build_mesh(tinygltf::Model&, tinygltf::Mesh&);
+		void build_mesh(tinygltf::Model&, tinygltf::Mesh&);
 		void parse_node(tinygltf::Model&, tinygltf::Node&);
 		unsigned get_meshes(tinygltf::Model&);
 		

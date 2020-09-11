@@ -12,6 +12,7 @@
 
 #include "tiny_gltf.h"
 #include "node.h"
+#include "material.h"
 
 #include <stdio.h>
 #include <vector>
@@ -140,7 +141,7 @@ namespace efiilj
 	
 	}
 
-	mesh_resource gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
+	void gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
 	{
 		printf("Constructing mesh %s\n", mesh.name.c_str());
 		
@@ -235,12 +236,12 @@ namespace efiilj
 
 		// Do textures now!
 		
-		auto tex_ptr = std::shared_ptr<texture_resource>();
-		auto nrm_ptr = std::shared_ptr<texture_resource>();
-
 		if (prim.material >= 0)
 		{
+			
+
 			tinygltf::Material mat = model.materials[prim.material];
+			material_base
 
 			int tex_i = mat.pbrMetallicRoughness.baseColorTexture.index;
 
@@ -251,6 +252,7 @@ namespace efiilj
 				
 				unsigned format = get_format(src.component);
 				unsigned type = get_type(src.bits);
+
 
 				tex_ptr = std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), format, type);
 			}
@@ -268,9 +270,6 @@ namespace efiilj
 				nrm_ptr = std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), format, type);
 			}
 		}
-
-		//graphics_node node = graphics_node(mesh_ptr, tex_ptr, 
-		//return m_res;
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
