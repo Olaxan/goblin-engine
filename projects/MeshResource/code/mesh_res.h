@@ -81,14 +81,6 @@ namespace efiilj
 		unsigned ibo() const { return this->ibo_; }
 
 		/**
-		 * \brief Static method to generate a cube of the specified size.
-		 * \param size The size across the entire cube
-		 * \param color Vertex color
-		 * \returns A new Mesh Resource representing a cube
-		 */
-		static std::shared_ptr<mesh_resource> cube(float size, float color = 1);
-
-		/**
 		 * \brief Gets mesh vertex count
 		 * \returns The number of vertices in the mesh
 		 */

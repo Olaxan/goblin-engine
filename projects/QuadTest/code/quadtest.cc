@@ -56,15 +56,15 @@ namespace efiilj
 
 		float fov = 1.30899694; // 75 degrees
 
-		std::string vs_source = shader_resource::load_shader("./res/shaders/avocado.vertex");
-		std::string fs_source = shader_resource::load_shader("./res/shaders/avocado.fragment");
+		std::string vs_source = shader_resource::load_shader("./res/shaders/gltf.vertex");
+		std::string fs_source = shader_resource::load_shader("./res/shaders/gltf.fragment");
 
 		auto vs = shader_resource(GL_VERTEX_SHADER, vs_source);
 		auto fs = shader_resource(GL_FRAGMENT_SHADER, fs_source);
 		auto prog_ptr = std::make_shared<shader_program>(vs, fs);
 
-		auto trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
+		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
+		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 		
 		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr, trans_ptr);
@@ -133,22 +133,22 @@ namespace efiilj
 			this->window_->Update();
 
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				camera_trans_ptr->position+= camera_trans_ptr->forward() * 0.1f;
+				camera_trans_ptr->position+= camera_trans_ptr->forward() * 0.01f;
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->forward() * 0.1f;
+				camera_trans_ptr->position -= camera_trans_ptr->forward() * 0.01f;
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->position += camera_trans_ptr->left() * 0.1f;
+				camera_trans_ptr->position += camera_trans_ptr->left() * 0.01f;
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->left() * 0.1f;
+				camera_trans_ptr->position -= camera_trans_ptr->left() * 0.01f;
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				camera_trans_ptr->position += camera_trans_ptr->up() * 0.1f;
+				camera_trans_ptr->position += camera_trans_ptr->up() * 0.01f;
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->up() * 0.1f;
+				camera_trans_ptr->position -= camera_trans_ptr->up() * 0.01f;
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();

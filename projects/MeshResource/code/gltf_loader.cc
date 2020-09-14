@@ -317,7 +317,7 @@ namespace efiilj
 
 	gltf_model_loader::~gltf_model_loader()
 	{
-		printf("GLTF loader exited");
+		printf("GLTF loader exited\n");
 	}
 }
 

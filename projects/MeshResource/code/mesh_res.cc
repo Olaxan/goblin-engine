@@ -27,61 +27,6 @@ namespace efiilj
 	mesh_resource::mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo, int vertex_count, int index_count) 
 		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), vertex_count_(vertex_count), index_count_(index_count)  {}
 
-	std::shared_ptr<mesh_resource> mesh_resource::cube(float size, const float color)
-	{
-		size /= 2;
-
-		vertex vertices[24] = {
-
-			// Front = S
-			vertex(vector3(-size, -size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.25f, 0.33f)),	// 0
-			vertex(vector3(size, -size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.5f, 0.33f)),		// 1
-			vertex(vector3(size, size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.5f, 0.66f)),		// 2
-			vertex(vector3(-size, size, size), vector3(0, 0, 1), vector4(color, color, color, color), vector2(0.25f, 0.66f)), // 3
-
-			// Back = N
-			vertex(vector3(size, -size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(0.75, 0.33f)), // 4
-			vertex(vector3(-size, -size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(1.0f, 0.33f)), // 5
-			vertex(vector3(-size, size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(1.0f, 0.66f)), // 6
-			vertex(vector3(size, size, -size), vector3(0, 0, -1), vector4(color, color, color, color), vector2(0.75, 0.66f)), // 7
-
-			// Top
-			vertex(vector3(-size, size, size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.25f, 0.66f)), // 8
-			vertex(vector3(size, size, size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.5f, 0.66f)), // 9
-			vertex(vector3(size, size, -size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.5f, 1.0f)), // 10
-			vertex(vector3(-size, size, -size), vector3(0, 1, 0), vector4(color, color, color, color), vector2(0.25f, 1.0f)), // 11
-
-			// Bottom
-			vertex(vector3(size, -size, size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.25f, 0.0f)), // 12
-			vertex(vector3(-size, -size, size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.5f, 0.0f)), // 13
-			vertex(vector3(-size, -size, -size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.5f, 0.33f)), // 14
-			vertex(vector3(size, -size, -size), vector3(0, -1, 0), vector4(color, color, color, color), vector2(0.25f, 0.33f)), // 15
-
-			// Left = W
-			vertex(vector3(-size, -size, -size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.0f, 0.33f)), // 16
-			vertex(vector3(-size, -size, size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.25f, 0.33f)), // 17
-			vertex(vector3(-size, size, size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.25f, 0.66f)), // 18
-			vertex(vector3(-size, size, -size), vector3(-1, 0, 0), vector4(color, color, color, color), vector2(0.0f, 0.66f)), // 19
-
-			// Right = E
-			vertex(vector3(size, -size, size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.5f, 0.33f)), // 20
-			vertex(vector3(size, -size, -size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.75, 0.33f)), // 21
-			vertex(vector3(size, size, -size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.75, 0.66f)), // 22
-			vertex(vector3(size, size, size), vector3(1, 0, 0), vector4(color, color, color, color), vector2(0.5f, 0.66f)), // 23
-		};
-
-		unsigned int indices[36] = {
-			0, 1, 3, 2, 3, 1, // Front
-			4, 5, 7, 6, 7, 5, // Back
-			8, 9, 11, 10, 11, 9, // Top
-			12, 13, 15, 14, 15, 13, // Bottom
-			16, 17, 19, 18, 19, 17, // Left
-			20, 21, 23, 22, 23, 21 // Right
-		};
-
-		return std::make_shared<mesh_resource>(vertices, 24, indices, 36);
-	}
-
 	void mesh_resource::init_vertex_buffer(vertex* vertex_list, const int count)
 	{
 		if (vbo_ != 0)
@@ -154,8 +99,8 @@ namespace efiilj
 		std::cout << "Deleting mesh resource " << this << std::endl;
 
 		unbind();
-		//glDeleteBuffers(1, &vao_);
-		//glDeleteBuffers(1, &vbo_);
-		//glDeleteBuffers(1, &ibo_);
+		glDeleteBuffers(1, &vao_);
+		glDeleteBuffers(1, &vbo_);
+		glDeleteBuffers(1, &ibo_);
 	}
 }

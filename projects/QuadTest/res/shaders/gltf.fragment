@@ -24,7 +24,7 @@ out vec4 Color;
 
 void main()
 {
-    vec3 ambient = u_ambient_strength * u_ambient_color;
+    	vec3 ambient = u_ambient_strength * u_ambient_color;
 	vec3 norm = normalize(normal);
 	vec3 light_dir = normalize(u_light.position - fragment);
 	vec3 view_dir = normalize(u_camera_position.xyz - fragment);
