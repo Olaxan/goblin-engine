@@ -19,7 +19,6 @@ namespace efiilj
 		std::shared_ptr<mesh_resource> mesh_;
 		std::shared_ptr<material_base> material_;
 		std::shared_ptr<transform_model> transform_;
-		std::shared_ptr<camera_model> camera_;
 
 	public:
 
@@ -34,8 +33,7 @@ namespace efiilj
 		graphics_node(
 			std::shared_ptr<mesh_resource> mesh_ptr,
 			std::shared_ptr<material_base> material_ptr,
-			std::shared_ptr<transform_model> transform_ptr,
-			std::shared_ptr<camera_model> camera_ptr);
+			std::shared_ptr<transform_model> transform_ptr);
 
 		const mesh_resource& mesh() const { return *this->mesh_; }
 		void mesh(std::shared_ptr<mesh_resource>& mesh) { this->mesh_ = std::move(mesh); }
@@ -45,10 +43,7 @@ namespace efiilj
 
 		transform_model& transform() const { return *this->transform_; }
 		void transform(std::shared_ptr<transform_model>& transform) { this->transform_ = std::move(transform); }
-
-		camera_model& camera() const { return *this->camera_; }
-		void camera(std::shared_ptr<camera_model>& camera) { this->camera_ = std::move(camera); }
-
+		
 		/**
 		 * \brief Prepares the node for drawing, binding mesh, texture, and shader resources.
 		 */
@@ -60,6 +55,6 @@ namespace efiilj
 		/**
 		 * \brief Performs a draw call. View/perspective + model matrices are pushed shader uniforms "u_camera" and "u_model" respectively.
 		 */
-		void draw() const;
+		void draw(std::shared_ptr<camera_model> camera) const;
 	};
 }

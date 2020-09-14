@@ -1,6 +1,8 @@
 #pragma once
 
 #include "shader_res.h"
+#include "camera.h"
+#include "matrix4.h"
 
 #include <unordered_map>
 
@@ -32,11 +34,11 @@ namespace efiilj
 		 * \brief Sets the shader resources as active on the GPU.
 		 */
 
-		void use() const;
+		void use();
 		/**
 		 * \brief Disables all shaders on the GPU.
 		 */
-		static void drop();
+		void drop() const;
 
 		/**
 		 * \brief Finds a uniform location within the shader program and returns it. Cached for speed.

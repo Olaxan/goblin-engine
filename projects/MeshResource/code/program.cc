@@ -7,20 +7,24 @@ namespace efiilj
 	shader_program::shader_program(shader_resource vs, shader_resource fs)
 		: vs_(vs), fs_(fs), program_id_(0) 
 	{
-		create_program(); 
+		if (create_program())
+			printf("Created shader program %d\n", program_id_);
+		else
+			printf("Error: Failed to create program!\n");
 	}
 
 	bool shader_program::create_program()
 	{
 		program_id_ = glCreateProgram();
 
+		int err;
 		if (vs_.attach(program_id_) && fs_.attach(program_id_))
 		{
 			glLinkProgram(program_id_);
 			if (!shader_resource::debug_shader(program_id_, shader_resource::type_program, 
 					GL_LINK_STATUS, std::cout, "Program linking failed!"))
 				return false;
-
+			
 			glValidateProgram(program_id_);
 			if (!shader_resource::debug_shader(program_id_, shader_resource::type_program, 
 					GL_VALIDATE_STATUS, std::cout, "Program validation failed!"))
@@ -30,12 +34,22 @@ namespace efiilj
 			vs_.free();
 
 			fs_.detach(program_id_);
-			vs_.free();
+			fs_.free();
 
 			return true;
 		}
 
 		return false;
+	}
+
+	void shader_program::use()
+	{
+		glUseProgram(program_id_);
+	}
+
+	void shader_program::drop() const
+	{
+		glUseProgram(0);
 	}
 
 	int shader_program::find_uniform_location(const char* name)

@@ -137,13 +137,11 @@ namespace efiilj
 	void mesh_resource::bind() const
 	{
 		glBindVertexArray(vao_);
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
 	}
 
 	void mesh_resource::unbind()
 	{
 		glBindVertexArray(0);
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	void mesh_resource::draw_elements() const

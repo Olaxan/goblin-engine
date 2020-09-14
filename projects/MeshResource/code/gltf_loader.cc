@@ -29,13 +29,14 @@ namespace efiilj
 
 	}
 
-	gltf_model_loader::gltf_model_loader(const std::string& path, std::shared_ptr<shader_program> shader)
-		: shader_(std::move(shader))
+	gltf_model_loader::gltf_model_loader(const std::string& path, std::shared_ptr<shader_program> shader, std::shared_ptr<transform_model> transform)
+		: shader_(std::move(shader)), transform_(std::move(transform))
 	{
 		tinygltf::Model model;
 		if (load_from_file(model, path))
 		{
 			printf("GLTF file successfully loaded\n");
+			get_materials(model);
 			get_meshes(model);
 		}
 		else
@@ -228,14 +229,14 @@ namespace efiilj
 
 		// Do textures now!
 		
-		if (prim.material >= 0)
-		{
-			
-			tinygltf::Material mat = model.materials[prim.material];
-			gltf_pbr_base m_pbr_mat(shader_);
-
-			
+		if (prim.material >= 0 && prim.material < materials_.size())
+		{	
+			auto mat_ptr = materials_[prim.material]; // copy?
+			graphics_node node = graphics_node(mesh_ptr, mat_ptr, transform_);
+			nodes_.push_back(node);
 		}
+		else
+			printf("Error: No material assigned to mesh!\n");
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
@@ -243,7 +244,6 @@ namespace efiilj
 		if (node.mesh >= 0 && node.mesh < model.meshes.size())
 		{
 			build_mesh(model, model.meshes[node.mesh]);
-			//this->mesh = res;
 		}
 
 		for (size_t i = 0; i < node.children.size(); i++) 
@@ -253,7 +253,7 @@ namespace efiilj
 		}
 	}
 
-	void gltf_model_loader::link_texture(tinygltf::Model& model, gltf_pbr_base& mat, int index, const std::string& type)
+	void gltf_model_loader::link_texture(tinygltf::Model& model, std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type)
 	{
 		if (index > -1)
 		{
@@ -263,7 +263,7 @@ namespace efiilj
 			unsigned tex_format = get_format(src.component);
 			unsigned tex_type = get_type(src.bits);
 
-			mat.add_texture(type, std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), tex_format, tex_type));
+			mat->add_texture(type, std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), tex_format, tex_type));
 		}
 
 	}
@@ -288,26 +288,30 @@ namespace efiilj
 		for (int i = 0; i < model.materials.size(); i++)
 		{
 			tinygltf::Material mat = model.materials[i];
-			gltf_pbr_base pbr_mat(shader_);
+			auto pbr_mat = std::make_shared<gltf_pbr_base>(shader_);
 
 			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");
 			link_texture(model, pbr_mat, mat.normalTexture.index, "NORMAL");
 			link_texture(model, pbr_mat, mat.occlusionTexture.index, "OCCLUSION");
 			link_texture(model, pbr_mat, mat.emissiveTexture.index, "EMISSIVE");
 
-			pbr_mat.emissiveFactor = mat.emissiveFactor;
-			pbr_mat.baseColorFactor = mat.pbrMetallicRoughness.baseColorFactor;
-			pbr_mat.metallicFactor = mat.pbrMetallicRoughness.metallicFactor;
-			pbr_mat.roughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
-			pbr_mat.doubleSided = mat.doubleSided;
-		}	
+			pbr_mat->emissiveFactor = mat.emissiveFactor;
+			pbr_mat->baseColorFactor = mat.pbrMetallicRoughness.baseColorFactor;
+			pbr_mat->metallicFactor = mat.pbrMetallicRoughness.metallicFactor;
+			pbr_mat->roughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
+			pbr_mat->doubleSided = mat.doubleSided;
+
+			materials_.push_back(std::move(pbr_mat));
+		}
+
+		return 0;
 	}
 
-	void gltf_model_loader::draw() const
+	void gltf_model_loader::draw(std::shared_ptr<camera_model> camera) const
 	{
 		for (auto& node : nodes_)
 		{
-			node.draw();
+			node.draw(camera);
 		}
 	}
 

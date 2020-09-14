@@ -11,7 +11,7 @@ namespace efiilj
 {
 	class material_base
 	{
-	private:
+	protected:
 		std::unordered_map<std::string, std::shared_ptr<texture_resource>> textures_;
 		std::shared_ptr<shader_program> program_;
 
@@ -26,7 +26,7 @@ namespace efiilj
 			textures_[type] = std::move(texture);
 		}
 
-		const shader_program& program() const { return *this->program_; }
+		shader_program& program() const { return *this->program_; }
 		void program(std::shared_ptr<shader_program>& program) { this->program_ = std::move(program); }
 
 		virtual void apply() = 0;
