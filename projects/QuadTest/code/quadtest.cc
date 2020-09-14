@@ -56,20 +56,22 @@ namespace efiilj
 
 		float fov = 1.30899694; // 75 degrees
 		
-		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
 		//gltf_model_loader gltf_loader("./res/gltf/Avocado/glTF/Avocado.gltf");
 
 		object_loader loader = object_loader("./res/meshes/cat.obj");
 
-		shader_resource fs(GL_VERTEX_SHADER, "./res/shaders/avocado.vertex");
-		shader_resource vs(GL_FRAGMENT_SHADER, "./res/shaders/avocado.fragment");
-		shader_program prog(vs, fs);
-		
+		std::string vs_source = shader_resource::load_shader("./res/shaders/avocado.vertex");
+		std::string fs_source = shader_resource::load_shader("./res/shaders/avocado.fragment");
+
+		auto vs = shader_resource(GL_VERTEX_SHADER, vs_source);
+		auto fs = shader_resource(GL_FRAGMENT_SHADER, fs_source);
+		auto prog_ptr = std::make_shared<shader_program>(vs, fs);
+	
+		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr);
+
 		auto fox_trans_ptr = std::make_shared<transform_model>(vector3(4, 2, 2), vector3(0), vector3(0.1f, 0.1f, 0.1f));
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 2, 2), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
-
-		auto shader_ptr = std::make_shared<shader_resource>(fs, vs);
 
 		point_light p_light = point_light(vector3(0.5f, 0.5f, 0.5f), vector3(1.0f, 1.0f, 1.0f), vector3(2, 2, 2));
 

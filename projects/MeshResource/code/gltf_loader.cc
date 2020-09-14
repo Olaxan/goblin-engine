@@ -15,8 +15,10 @@
 #include "material.h"
 
 #include <stdio.h>
-#include <vector>
+#include <string.h>
 #include <GL/glew.h>
+
+#include <vector>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -27,10 +29,11 @@ namespace efiilj
 
 	}
 
-	gltf_model_loader::gltf_model_loader(const std::string& path, bool is_binary)
+	gltf_model_loader::gltf_model_loader(const std::string& path, std::shared_ptr<shader_program> shader)
+		: shader_(std::move(shader))
 	{
 		tinygltf::Model model;
-		if (load_from_file(model, path, is_binary))
+		if (load_from_file(model, path))
 		{
 			printf("GLTF file successfully loaded\n");
 			get_meshes(model);
@@ -83,7 +86,7 @@ namespace efiilj
 		}
 	}
 
-	unsigned get_format(int components)
+	unsigned gltf_model_loader::get_format(int components)
 	{
 		switch (components)
 		{
@@ -101,7 +104,7 @@ namespace efiilj
 		}
 	}
 	
-	unsigned get_type(int bits)
+	unsigned gltf_model_loader::get_type(int bits)
 	{
 		switch (bits)
 		{
@@ -117,17 +120,21 @@ namespace efiilj
 		}	
 	}
 
-	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary)
+	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path)
 	{
 		tinygltf::TinyGLTF loader;
 		std::string err;
 		std::string warn;
+
+		const char* ext = strrchr(path.c_str(), '.');
+		bool is_binary = (strncmp(ext + 1, "glb", 3) == 0);
+
 		bool ret;
 		
 		if (is_binary)
-			ret = loader.LoadBinaryFromFile(&model, &err, &warn, path);
+			ret = loader.LoadBinaryFromFile(&model, &err, &warn, path); // for binary glTF(.glb)
 		else
-			ret = loader.LoadASCIIFromFile(&model, &err, &warn, path); // for binary glTF(.glb)
+			ret = loader.LoadASCIIFromFile(&model, &err, &warn, path); 
 
 		if (!warn.empty()) {
 			printf("Warn: %s\n", warn.c_str());
@@ -164,7 +171,6 @@ namespace efiilj
 			vbo_size += accessor.count * accessor.ByteStride(view); 
 		}
 		
-		printf("Buffer size %lu bytes\n", vbo_size);
 		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
 		
 		int vertex_count = -1;
@@ -179,14 +185,8 @@ namespace efiilj
 			size_t block_size = stride * accessor.count;
 			size_t offset = view.byteOffset + accessor.byteOffset;
 
-			printf("Attribute: %s, accessor %d, stride %ld, view %d (%s)\n", 
-					attrib.first.c_str(), attrib.second, stride, accessor.bufferView, view.name.c_str());
-
 			glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
 			
-			err = glGetError();
-			printf("Buffering %ld bytes (offset %ld) to VBO %u in VAO %u... ERR = %d\n", block_size, block_offset, vbo, vao, err);
-
 			int vaa = -1;
 			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
 			if (attrib.first.compare("POSITION") == 0)
@@ -208,10 +208,6 @@ namespace efiilj
 			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0,
 				       	BUFFER_OFFSET(block_offset));
 
-			err = glGetError();
-			printf("Setting up VAA %d (size = %d, type = %d, normalized = %d, offset = %ld) ERR = %d\n",
-					vaa, size, accessor.componentType, accessor.normalized, block_offset, err);
-
 			block_offset += block_size;
 		
 		}
@@ -226,10 +222,6 @@ namespace efiilj
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
 				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
 
-		err = glGetError();
-		printf("Buffering %ld indices... (%ld bytes, offset %ld) ERR = %d\n", 
-				i_accessor.count, i_accessor.count * i_accessor.ByteStride(i_bufView), i_offset, err);
-
 		glBindVertexArray(0);
 
 		auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
@@ -239,36 +231,10 @@ namespace efiilj
 		if (prim.material >= 0)
 		{
 			
-
 			tinygltf::Material mat = model.materials[prim.material];
-			material_base
+			gltf_pbr_base m_pbr_mat(shader_);
 
-			int tex_i = mat.pbrMetallicRoughness.baseColorTexture.index;
-
-			if (tex_i > -1)
-			{
-				tinygltf::Texture tex_base = model.textures[tex_i];
-				tinygltf::Image src = model.images[tex_base.source];
-				
-				unsigned format = get_format(src.component);
-				unsigned type = get_type(src.bits);
-
-
-				tex_ptr = std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), format, type);
-			}
-
-			int nrm_i = mat.normalTexture.index;
-
-			if (nrm_i > -1)
-			{
-				tinygltf::Texture tex_nrm = model.textures[nrm_i];
-				tinygltf::Image src = model.images[tex_nrm.source];
-
-				unsigned format = get_format(src.component);
-				unsigned type = get_type(src.bits);
-
-				nrm_ptr = std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), format, type);
-			}
+			
 		}
 	}
 
@@ -276,8 +242,8 @@ namespace efiilj
 	{
 		if (node.mesh >= 0 && node.mesh < model.meshes.size())
 		{
-			mesh_resource res = build_mesh(model, model.meshes[node.mesh]);
-			this->mesh = res;
+			build_mesh(model, model.meshes[node.mesh]);
+			//this->mesh = res;
 		}
 
 		for (size_t i = 0; i < node.children.size(); i++) 
@@ -285,6 +251,21 @@ namespace efiilj
 			assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
 			parse_node(model, model.nodes[node.children[i]]);
 		}
+	}
+
+	void gltf_model_loader::link_texture(tinygltf::Model& model, gltf_pbr_base& mat, int index, const std::string& type)
+	{
+		if (index > -1)
+		{
+			tinygltf::Texture tex_base = model.textures[index];
+			tinygltf::Image src = model.images[tex_base.source];
+			
+			unsigned tex_format = get_format(src.component);
+			unsigned tex_type = get_type(src.bits);
+
+			mat.add_texture(type, std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), tex_format, tex_type));
+		}
+
 	}
 
 	unsigned gltf_model_loader::get_meshes(tinygltf::Model& model)
@@ -300,6 +281,26 @@ namespace efiilj
 		}
 
 		return 0;
+	}
+
+	unsigned gltf_model_loader::get_materials(tinygltf::Model& model)
+	{
+		for (int i = 0; i < model.materials.size(); i++)
+		{
+			tinygltf::Material mat = model.materials[i];
+			gltf_pbr_base pbr_mat(shader_);
+
+			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");
+			link_texture(model, pbr_mat, mat.normalTexture.index, "NORMAL");
+			link_texture(model, pbr_mat, mat.occlusionTexture.index, "OCCLUSION");
+			link_texture(model, pbr_mat, mat.emissiveTexture.index, "EMISSIVE");
+
+			pbr_mat.emissiveFactor = mat.emissiveFactor;
+			pbr_mat.baseColorFactor = mat.pbrMetallicRoughness.baseColorFactor;
+			pbr_mat.metallicFactor = mat.pbrMetallicRoughness.metallicFactor;
+			pbr_mat.roughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
+			pbr_mat.doubleSided = mat.doubleSided;
+		}	
 	}
 
 	void gltf_model_loader::draw() const

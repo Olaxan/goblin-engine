@@ -1,9 +1,8 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
 #include "matrix4.h"
+
+#include <string>
 
 namespace efiilj
 {
@@ -16,7 +15,7 @@ namespace efiilj
 	private:	
 
 		unsigned shader_id_;
-		int shader_state_;	
+		int shader_state_;
 
 	public:
 
@@ -36,21 +35,21 @@ namespace efiilj
 		 * \param vertex Vertex shader source code as null-terminated char array
 		 * \param fragment Fragment shader source code as null-terminated char array
 		 */
-		shader_resource(unsigned type, const char* path);
+		shader_resource(unsigned type, const char* source);
 		
 		/**
 		 * \brief Creates a shader program from the specified source code.
 		 * \param vertex Vertex shader source code as std::string
 		 * \param fragment Fragment shader source code as std::string
 		 */
-		shader_resource(unsigned type, const std::string& path);
+		shader_resource(unsigned type, const std::string& source);
 
 		shader_resource(shader_resource& copy)
 			= default;
 
 		shader_resource(shader_resource&& move)
-			= default;
-
+			= default;	
+		
 		/**
 		 * \brief Loads shader source code from the specified file.
 		 * \param file_path Path to the source file

@@ -8,17 +8,16 @@
 namespace efiilj
 {
 	shader_resource::shader_resource()
-	: shader_id_(0), shader_state_(GL_FALSE) { }
+		: shader_id_(0), shader_state_(GL_FALSE) { }
 
-	shader_resource::shader_resource(unsigned type, const char* path) 
+	shader_resource::shader_resource(unsigned type, const char* source) 
 		: shader_id_(0), shader_state_(GL_FALSE)
 	{
-		std::string source = load_shader(path);
-		shader_state_ = compile_shader(type, source.c_str());
+		shader_state_ = compile_shader(type, source);
 	}
 
-	shader_resource::shader_resource(unsigned type, const std::string& path)
-	: shader_resource(type, path.c_str()) { }
+	shader_resource::shader_resource(unsigned type, const std::string& source)
+		: shader_resource(type, source.c_str()) { }
 
 	std::string shader_resource::load_shader(const char* file_path)
 	{

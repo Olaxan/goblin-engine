@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swrast.h"
-#include "shader_res.h"
+#include "program.h"
 #include "tex_res.h"
 
 namespace efiilj
@@ -13,7 +13,7 @@ namespace efiilj
 	{
 	private:
 		std::shared_ptr<rasterizer> rasterizer_;
-		std::shared_ptr<shader_resource> shader_;
+		std::shared_ptr<shader_program> shader_;
 		std::shared_ptr<texture_resource> texture_;
 		unsigned int width_, height_, vao_{};
 
@@ -21,7 +21,7 @@ namespace efiilj
 		 * \brief The default vertex shader - creates a quad across the screen.
 		 * Invoke with a draw call for 6 vertices.
 		 */
-		std::string fs_vertex_shader_ = R"glsl(
+		std::string vertex_shader_ = R"glsl(
 		#version 430
 		layout (location = 0) out vec2 uv;
 		
@@ -37,7 +37,7 @@ namespace efiilj
 		/**
 		 * \brief The default fragment shader - samples the buffer/raster texture for color.
 		 */
-		std::string fs_fragment_shader_ = R"glsl(
+		std::string fragment_shader_ = R"glsl(
 		#version 430
 		layout (location = 0) in vec2 uv;
 

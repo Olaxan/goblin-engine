@@ -5,9 +5,9 @@
 namespace efiilj
 {
 	shader_program::shader_program(shader_resource vs, shader_resource fs)
-		: program_id_(0) 
+		: vs_(vs), fs_(fs), program_id_(0) 
 	{
-		create_program();       
+		create_program(); 
 	}
 
 	bool shader_program::create_program()

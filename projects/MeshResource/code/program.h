@@ -1,6 +1,8 @@
 #pragma once
 
-#include "shader_res.h""
+#include "shader_res.h"
+
+#include <unordered_map>
 
 namespace efiilj
 {
@@ -29,6 +31,7 @@ namespace efiilj
 		/**
 		 * \brief Sets the shader resources as active on the GPU.
 		 */
+
 		void use() const;
 		/**
 		 * \brief Disables all shaders on the GPU.

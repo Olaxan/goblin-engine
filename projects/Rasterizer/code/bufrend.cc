@@ -11,7 +11,9 @@ namespace efiilj
 		glGenVertexArrays(1, &vao_);
 		texture_ = std::make_shared<texture_resource>(width_, height_, rasterizer_->get_frame_buffer(), GL_RGBA, GL_UNSIGNED_BYTE);
 		int err = glGetError();
-		shader_ = std::make_shared<shader_resource>(fs_vertex_shader_, fs_fragment_shader_);
+		shader_resource vs(GL_VERTEX_SHADER, vertex_shader_);
+		shader_resource fs(GL_FRAGMENT_SHADER, fragment_shader_);
+		shader_ = std::make_shared<shader_program>(vs, fs);
 
 		std::cout << "Init buffer renderer..." << std::endl;
 	}

@@ -4,6 +4,7 @@
 #include "program.h"
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 namespace efiilj 
@@ -11,16 +12,18 @@ namespace efiilj
 	class material_base
 	{
 	private:
-		std::vector<std::shared_ptr<texture_resource>> textures_;
+		std::unordered_map<std::string, std::shared_ptr<texture_resource>> textures_;
 		std::shared_ptr<shader_program> program_;
 
-	public: 
-		material_base(std::shared_ptr<shader_program> program);
-		material_base(std::shared_ptr<shader_program> program, std::vector<std::shared_ptr<texture_resource>> textures);
+	public:
 
-		void add_texture(std::shared_ptr<texture_resource> texture)
+		bool doubleSided;
+
+		material_base(std::shared_ptr<shader_program> program);
+
+		void add_texture(std::string type, std::shared_ptr<texture_resource> texture)
 		{
-			textures_.push_back(std::move(texture));
+			textures_[type] = std::move(texture);
 		}
 
 		const shader_program& program() const { return *this->program_; }
@@ -29,10 +32,16 @@ namespace efiilj
 		virtual void apply() = 0;
 	};
 
-	class material_blinnphong : material_base
+	class gltf_pbr_base : public material_base
 	{
 	public:
-		material_blinnphong(std::shared_ptr<shader_program> program);
-		material_blinnphong(std::shared_ptr<shader_program> program, std::vector<std::shared_ptr<texture_resource>> textures);
+		gltf_pbr_base(std::shared_ptr<shader_program> program);
+
+		std::vector<double> emissiveFactor;
+		std::vector<double> baseColorFactor;
+		double metallicFactor;
+		double roughnessFactor;
+		
+		void apply();
 	};
 }
