@@ -152,8 +152,9 @@ namespace efiilj
 	void gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
 	{
 		printf("Constructing mesh %s\n", mesh.name.c_str());
-		
-		tinygltf::Primitive prim = mesh.primitives[0];
+
+		//TODO: Loop through primitives, not just first one.
+		tinygltf::Primitive prim = mesh.primitives[0]; 
 
 		unsigned err;
 		unsigned vbo, vao, ibo;
@@ -164,6 +165,8 @@ namespace efiilj
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+		// Calculate size of required VBO (to fit all attributes)
+		
 		size_t vbo_size = 0;
 		for (auto &attrib : prim.attributes)
 		{
@@ -171,9 +174,9 @@ namespace efiilj
 			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
 			vbo_size += accessor.count * accessor.ByteStride(view); 
 		}
-		
+
 		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
-		
+	
 		int vertex_count = -1;
 		size_t block_offset = 0;
 		for (auto &attrib : prim.attributes)
@@ -194,15 +197,15 @@ namespace efiilj
 			{
 				vaa = 0;
 				vertex_count = accessor.count;
-			}
-
-			if (attrib.first.compare("TANGENT") == 0)
-				vaa = 1;
+			}	
 
 			if (attrib.first.compare("NORMAL") == 0)
-				vaa = 2;
+				vaa = 1;
 
 			if (attrib.first.compare("TEXCOORD_0") == 0)
+				vaa = 2;
+
+			if (attrib.first.compare("TANGENT") == 0)
 				vaa = 3;
 
 			glEnableVertexAttribArray(vaa);
@@ -212,7 +215,7 @@ namespace efiilj
 			block_offset += block_size;
 		
 		}
-		
+
 		// Buffer mesh indices
 		tinygltf::Accessor i_accessor = model.accessors[prim.indices];
 		tinygltf::BufferView& i_bufView = model.bufferViews[i_accessor.bufferView];
@@ -239,17 +242,11 @@ namespace efiilj
 			printf("Error: No material assigned to mesh!\n");
 	}
 
-	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
+	void gltf_model_loader::calculate_bitangents(tinygltf::Model& model, size_t offset, size_t count)
 	{
-		if (node.mesh >= 0 && node.mesh < model.meshes.size())
+		for (int i = 0; i < count; i++)
 		{
-			build_mesh(model, model.meshes[node.mesh]);
-		}
-
-		for (size_t i = 0; i < node.children.size(); i++) 
-		{
-			assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
-			parse_node(model, model.nodes[node.children[i]]);
+		
 		}
 	}
 
@@ -266,6 +263,20 @@ namespace efiilj
 			mat->add_texture(type, std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), tex_format, tex_type));
 		}
 
+	}
+
+	void gltf_model_loader::parse_node(tinygltf::Model& model, tinygltf::Node& node)
+	{
+		if (node.mesh >= 0 && node.mesh < model.meshes.size())
+		{
+			build_mesh(model, model.meshes[node.mesh]);
+		}
+
+		for (size_t i = 0; i < node.children.size(); i++) 
+		{
+			assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
+			parse_node(model, model.nodes[node.children[i]]);
+		}
 	}
 
 	unsigned gltf_model_loader::get_meshes(tinygltf::Model& model)
@@ -305,14 +316,6 @@ namespace efiilj
 		}
 
 		return 0;
-	}
-
-	void gltf_model_loader::draw(std::shared_ptr<camera_model> camera) const
-	{
-		for (auto& node : nodes_)
-		{
-			node.draw(camera);
-		}
 	}
 
 	gltf_model_loader::~gltf_model_loader()

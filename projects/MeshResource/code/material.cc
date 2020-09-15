@@ -16,13 +16,13 @@ namespace efiilj
 		if (program_ != nullptr)
 		{
 			// TEMP
-			program_->set_uniform("u_light.color", vector3(0.5f, 0.5f, 0.5f));
+			program_->set_uniform("u_light.color", vector3(1.0f, 1.0f, 1.0f));
 			program_->set_uniform("u_light.intensity", vector3(1.0f, 1.0f, 1.0f));
 			program_->set_uniform("u_light.position", vector3(2, 2, 2));
 			program_->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
 			program_->set_uniform("u_ambient_strength", 1.0f);
-			program_->set_uniform("u_specular_strength", 0.5f);
-			program_->set_uniform("u_shininess", 32);
+			program_->set_uniform("u_specular_strength", 1.0f);
+			program_->set_uniform("u_shininess", 128);
 
 			program_->use();
 

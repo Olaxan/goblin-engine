@@ -23,7 +23,7 @@ namespace efiilj
 {
 
 	quad_test::quad_test()
-	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
+	: window_(nullptr), frame_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
 
 	quad_test::~quad_test() = default;
 
@@ -63,7 +63,7 @@ namespace efiilj
 		auto fs = shader_resource(GL_FRAGMENT_SHADER, fs_source);
 		auto prog_ptr = std::make_shared<shader_program>(vs, fs);
 
-		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.1f, 0.1f, 0.1f));
+		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.5f, 0.5f, 0.5f));
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 		
@@ -164,10 +164,14 @@ namespace efiilj
 		//	shader_ptr->set_uniform("u_shininess", 32);
 		//	shader_ptr->drop();
 			
-			gltf_loader.draw(camera_ptr);
-
+			for (auto& node : gltf_loader.get_nodes())
+			{
+				node.draw(camera_ptr, frame_);
+			}
 
 			this->window_->SwapBuffers();
+
+			frame_++;
 		}
 	}
 }

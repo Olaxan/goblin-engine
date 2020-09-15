@@ -55,6 +55,6 @@ namespace efiilj
 		/**
 		 * \brief Performs a draw call. View/perspective + model matrices are pushed shader uniforms "u_camera" and "u_model" respectively.
 		 */
-		void draw(std::shared_ptr<camera_model> camera) const;
+		void draw(std::shared_ptr<camera_model> camera, float time) const;
 	};
 }

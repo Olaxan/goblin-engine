@@ -16,8 +16,9 @@ namespace efiilj
 	{
 	private:
 		void build_mesh(tinygltf::Model&, tinygltf::Mesh&);
-		void parse_node(tinygltf::Model&, tinygltf::Node&);
+		void calculate_bitangents(tinygltf::Model&, size_t offset, size_t count);
 		void link_texture(tinygltf::Model&, std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type);
+		void parse_node(tinygltf::Model&, tinygltf::Node&);
 		unsigned get_meshes(tinygltf::Model&);
 		unsigned get_materials(tinygltf::Model& model);
 		
@@ -42,8 +43,10 @@ namespace efiilj
 		static unsigned get_type(int bits);
 
 		bool load_from_file(tinygltf::Model& model, const std::string& path);
-
-		void draw(std::shared_ptr<camera_model> camera) const;
+		const std::vector<graphics_node>& get_nodes() const 
+		{
+			return nodes_;
+		}
 	
 		~gltf_model_loader();
 	};
