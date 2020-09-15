@@ -605,7 +605,7 @@ namespace efiilj
 		
 		//144540105
 
-		static matrix4 getPerspective(const float fov, const float aspect, const float near, const float far)
+		static matrix4 get_perspective(const float fov, const float aspect, const float near, const float far)
 		{
 			const float top = tanf(fov / 2.0f) * near;
 			const float bottom = -top;
