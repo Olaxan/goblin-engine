@@ -32,6 +32,19 @@ namespace efiilj
 				it->second->bind(1);
 				program_->set_uniform("tex_normal", 1);
 			}
+
+			it = textures_.find("ROUGHNESS");
+			if (it != textures_.end())
+			{
+				it->second->bind(2);
+				program_->set_uniform("tex_roughness", 2);
+			}
+
+			it = textures_.find("OCCLUSION");
+			{
+				it->second->bind(3);
+				program_->set_uniform("tex_ambient", 3);
+			}
 		}	
 	}
 }	
