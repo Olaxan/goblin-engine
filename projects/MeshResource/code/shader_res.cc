@@ -71,8 +71,8 @@ namespace efiilj
 		glDeleteShader(shader_id_);
 	}
 
-	bool shader_resource::debug_shader(const unsigned int id, const shader_debug_type type, const unsigned int status, std::ostream& stream,
-	                                 const char* header)
+	bool shader_resource::debug_shader(const unsigned int id, 
+			const shader_debug_type type, const unsigned int status, std::ostream& stream, const char* header)
 	{
 		int result = 0;
 		int log_size = 0;

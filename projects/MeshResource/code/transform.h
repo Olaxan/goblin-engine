@@ -22,8 +22,10 @@ namespace efiilj
 		 * \param rot Rotation in Euler angles (pitch, roll, yaw)
 		 * \param scale Scale along XYZ axis
 		 */
-		explicit transform_model(const vector3& pos = vector3(0, 0, 0), const vector3& rot = vector3(0, 0, 0),
-		                         const vector3& scale = vector3(1, 1, 1));
+		explicit transform_model(
+				const vector3& pos = vector3(0, 0, 0), 
+				const vector3& rot = vector3(0, 0, 0),
+			       	const vector3& scale = vector3(1, 1, 1));
 
 
 		vector4 position;

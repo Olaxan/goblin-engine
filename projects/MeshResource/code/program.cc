@@ -52,14 +52,14 @@ namespace efiilj
 		glUseProgram(0);
 	}
 
-	int shader_program::find_uniform_location(const char* name)
+	int shader_program::find_uniform_location(const char* name, bool is_block)
 	{
 		int uniform;
 		const auto it = locations_.find(name);
 
 		if (it == locations_.end())
 		{
-			uniform = glGetUniformLocation(program_id_, name);
+			uniform = is_block ? glGetUniformBlockIndex(program_id_, name) : glGetUniformLocation(program_id_, name);
 			if (uniform != -1)
 				locations_[name] = uniform;
 		}
@@ -67,6 +67,16 @@ namespace efiilj
 			uniform = it->second;
 		
 		return uniform;
+	}
+
+	bool shader_program::bind_block(const char* name, const int index)
+	{
+		const int uniform = find_uniform_location(name, true);
+		if (uniform == -1)
+			return false;
+
+		glUniformBlockBinding(program_id_, uniform, index);
+		return true;
 	}
 
 	bool shader_program::set_uniform(const char* name, const int val)

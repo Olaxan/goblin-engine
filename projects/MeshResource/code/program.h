@@ -45,7 +45,9 @@ namespace efiilj
 		 * \param name The name of the uniform
 		 * \return The uniform location, or -1 if not found
 		 */
-		int find_uniform_location(const char* name);
+		int find_uniform_location(const char* name, bool is_block=false);
+
+		bool bind_block(const char* name, int index);
 		
 		/**
 		 * \brief Sets an integer uniform on the shader program

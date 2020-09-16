@@ -16,6 +16,7 @@ namespace efiilj
 
 		vector3 up_axis_;
 		matrix4 perspective_;
+		matrix4 view_;
 		std::shared_ptr<transform_model> transform_;
 
 	public:
@@ -42,14 +43,20 @@ namespace efiilj
 
 		const vector3& up() const { return this->up_axis_; }
 		void up(const vector3& xyz) { up_axis_ = xyz; }
+		
+		/**
+		 * \brief Returns the perspective matrix for the camera.
+		 * \return A 4D matrix for perspective calculations.
+		 */
+		const matrix4& get_perspective() const { return perspective_; }
 
 		/**
-		 * \brief Builds a view/perspective matrix with the current values and returns it.
-		 * \return A 4-dimensional matrix for view/perspective projection of a vertex in 3D space
+		 * \brief Builds a view matrix with the current values and returns it.
+		 * \return A 4-dimensional matrix for view projection of a vertex in 3D space
 		 */
-		matrix4 view_perspective() const;
+		const matrix4& get_view();
 
 		~camera_model()
-		= default;
+			= default;
 	};
 }

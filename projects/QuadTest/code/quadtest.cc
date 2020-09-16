@@ -70,6 +70,17 @@ namespace efiilj
 		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr, trans_ptr);
 
 		point_light p_light = point_light(vector3(0.5f, 0.5f, 0.5f), vector3(1.0f, 1.0f, 1.0f), vector3(2, 2, 2));
+	
+		prog_ptr->bind_block("Matrices", 0);
+
+		unsigned ubo_matrices;
+		glGenBuffers(1, &ubo_matrices);
+		glBindBuffer(GL_UNIFORM_BUFFER, ubo_matrices);
+		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(matrix4), NULL, GL_STATIC_DRAW);
+
+		glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo_matrices, 0, 2 * sizeof(matrix4));
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(matrix4), &camera_ptr->get_perspective());
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		std::set<int> keys;
 		
@@ -107,7 +118,7 @@ namespace efiilj
 				mouse_y_ = y / 1000.0f - 0.5f;
 
 				if (is_mouse_captured_)
-					camera_trans_ptr->rotation = vector4(-mouse_y_, mouse_x_, 0, 1);
+					camera_trans_ptr->rotation = vector4(-mouse_y_, 0, mouse_x_, 1);
 				else if (is_dragging_mouse_)
 					trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
 			});
@@ -125,7 +136,7 @@ namespace efiilj
 					is_dragging_mouse_ = false;
 				}
 			});
-		
+	
 		while (this->window_->IsOpen())
 		{
 
@@ -153,20 +164,24 @@ namespace efiilj
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 
-		//	shader_ptr->use();
-		//	shader_ptr->set_uniform("u_camera_position", camera_trans_ptr->position);
-		//	shader_ptr->set_uniform("u_light.color", p_light.rgb);
-		//	shader_ptr->set_uniform("u_light.intensity", p_light.intensity);
-		//	shader_ptr->set_uniform("u_light.position", p_light.position); // should not be vec4!
-		//	shader_ptr->set_uniform("u_ambient_color", vector3(0.025f, 0, 0.025f));
-		//	shader_ptr->set_uniform("u_ambient_strength", 1.0f);
-		//	shader_ptr->set_uniform("u_specular_strength", 0.5f);
-		//	shader_ptr->set_uniform("u_shininess", 32);
-		//	shader_ptr->drop();
-			
+			glBindBuffer(GL_UNIFORM_BUFFER, ubo_matrices);
+			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(matrix4), sizeof(matrix4), &camera_ptr->get_view());
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+			p_light.position = vector3(sinf(frame_ / 120.0f) * 50.0f, 50.0f, cosf(frame_ / 120.0f) * 50.0f); 
+	
+			prog_ptr->use();	
+			prog_ptr->set_uniform("camera_position", camera_trans_ptr->position);	
+			prog_ptr->set_uniform("light.color", p_light.rgb);
+			prog_ptr->set_uniform("light.intensity", p_light.intensity);
+			prog_ptr->set_uniform("light.position", p_light.position);
+			prog_ptr->set_uniform("ambient_color", vector3(0.025f, 0, 0.025f));
+			prog_ptr->set_uniform("ambient_strength", 1.0f);
+			prog_ptr->set_uniform("specular_strength", 1.0f);
+
 			for (auto& node : gltf_loader.get_nodes())
 			{
-				node.draw(camera_ptr, frame_);
+				node.draw();
 			}
 
 			this->window_->SwapBuffers();

@@ -24,12 +24,10 @@ namespace efiilj
 		material_->apply();
 	}
 
-	void graphics_node::draw(std::shared_ptr<camera_model> camera, float frame) const
+	void graphics_node::draw() const
 	{
 		bind();
-		material_->program().set_uniform("u_light.position", vector3(sinf(frame / 120.0f) * 50.0f, 50.0f, cosf(frame / 120.0f) * 50.0f)); 
-		material_->program().set_uniform("u_camera", camera->view_perspective());
-		material_->program().set_uniform("u_model", transform_->model());
+		material_->program().set_uniform("model", transform_->model());
 		mesh_->draw_elements();
 		unbind();
 	}

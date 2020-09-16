@@ -27,9 +27,9 @@ namespace efiilj
 	vector4 transform_model::forward() const
 	{
 		return vector4(
-			cos(rotation.x()) * cos(rotation.y()),
+			cos(rotation.x()) * cos(rotation.z()),
 			sin(rotation.x()),
-			cos(rotation.x()) * sin(rotation.y()), 1).norm();
+			cos(rotation.x()) * sin(rotation.z()), 1).norm();
 	}
 
 	vector4 transform_model::backward() const

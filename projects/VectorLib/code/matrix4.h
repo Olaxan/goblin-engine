@@ -48,6 +48,33 @@ namespace efiilj
 		}
 
 		/// <summary>
+		/// Creates a Matrix4 from the specified row vectors, from top to bottom.
+		/// </summary>
+		/// <param name="a">First row</param>
+		/// <param name="b">Second row</param>
+		/// <param name="c">Third row</param>
+		/// <param name="d">Fourth row</param>
+		matrix4(const vector4& a, const vector4& b, const vector4& c, const vector4& d, bool column=false)
+		{
+			clear(false);
+
+			if (column)
+			{
+				col(0, a);
+				col(1, b);
+				col(2, c);
+				col(3, d);
+			}
+			else
+			{
+				arr_[0] = a;
+				arr_[1] = b;
+				arr_[2] = c;
+				arr_[3] = d;
+			}
+		}
+
+		/// <summary>
 		/// Inserts the specified Matrix3 into the top-left corner of an 4x4 identity matrix.
 		/// </summary>
 		/// <param name="copy">The matrix of which to create a copy</param>
@@ -75,22 +102,7 @@ namespace efiilj
 		matrix4(const matrix4& copy)
 		{
 			*this = copy;
-		}
-
-		/// <summary>
-		/// Creates a Matrix4 from the specified row vectors, from top to bottom.
-		/// </summary>
-		/// <param name="a">First row</param>
-		/// <param name="b">Second row</param>
-		/// <param name="c">Third row</param>
-		/// <param name="d">Fourth row</param>
-		matrix4(const vector4& a, const vector4& b, const vector4& c, const vector4& d)
-		{
-			arr_[0] = a;
-			arr_[1] = b;
-			arr_[2] = c;
-			arr_[3] = d;
-		}
+		}	
 
 		/* === OPERATORS === */
 
@@ -282,12 +294,12 @@ namespace efiilj
 		/// <param name="y">The row index to change</param>
 		/// <param name="row">The Vector4 to replace the row with</param>
 		/// <param name="relative">Whether the operation should be added to the existing values, or replace them<param name=""></param>
-		void row(const int y, vector4& row, const bool relative = false)
+		void row(const int y, const vector4& row)
 		{
 			if (y >= 4)
 				throw std::out_of_range("Row index out of range");
 
-			arr_[y] = relative ? arr_[y] + row : row ;
+			arr_[y] = row;
 		}
 
 		/// <summary>
@@ -309,15 +321,15 @@ namespace efiilj
 		/// <param name="x">The column index to change</param>
 		/// <param name="col">The Vector4 to change the column with</param>
 		/// <param name="relative">Whether the operation should be added to the existing values, or replace them</param>
-		void col(const int x, const vector4& col, const bool relative = false)
+		void col(const int x, const vector4& col)
 		{
 			if (x > 4)
 				throw std::out_of_range("Row index out of range");
 
-			(*this)(x, 0) = relative ? at(x, 0) + col.x() : col.x();
-			(*this)(x, 1) = relative ? at(x, 1) + col.y() : col.y();
-			(*this)(x, 2) = relative ? at(x, 2) + col.z() : col.z();
-			(*this)(x, 3) = relative ? at(x, 3) + col.w() : col.w();
+			(*this)(x, 0) = col.x();
+			(*this)(x, 1) = col.y();
+			(*this)(x, 2) = col.z();
+			(*this)(x, 3) = col.w();
 		}
 
 		/* === MATRIX FUNCTIONS === */
@@ -443,11 +455,7 @@ namespace efiilj
 		static matrix4 get_translation(const vector4& v)
 		{
 			matrix4 mat = matrix4();
-
-			mat(3, 0) = v.x();
-			mat(3, 1) = v.y();
-			mat(3, 2) = v.z();
-			mat(3, 3) = v.w();
+			mat.row(3, v);
 
 			return mat;
 		}
@@ -462,11 +470,8 @@ namespace efiilj
 		static matrix4 get_translation(const float x, const float y, const float z)
 		{
 			matrix4 mat = matrix4();
-
-			mat(3, 0) = x;
-			mat(3, 1) = y;
-			mat(3, 2) = z;
-
+			mat.row(3, vector4(x, y, z, 1));
+			
 			return mat;
 		}
 
@@ -561,15 +566,15 @@ namespace efiilj
 			matrix4 mat;
 
 			mat(0, 0) = cos + (x * x) * (1 - cos);
-			mat(0, 1) = y * x * (1 - cos) + z * sin;
-			mat(0, 2) = z * x * (1 - cos) - y * sin;
+			mat(1, 0) = y * x * (1 - cos) + z * sin;
+			mat(2, 0) = z * x * (1 - cos) - y * sin;
 
-			mat(1, 0) = x * y * (1 - cos) - z * sin;
+			mat(0, 1) = x * y * (1 - cos) - z * sin;
 			mat(1, 1) = cos + y * y * (1 - cos);
-			mat(1, 2) = z * y * (1 - cos) + x * sin;
+			mat(2, 1) = z * y * (1 - cos) + x * sin;
 
-			mat(2, 0) = x * z * (1 - cos) + y * sin;
-			mat(2, 1) = y * z * (1 - cos) - x * sin;
+			mat(0, 2) = x * z * (1 - cos) + y * sin;
+			mat(1, 2) = y * z * (1 - cos) - x * sin;
 			mat(2, 2) = cos + z * z * (1 - cos);
 
 			return mat;
@@ -593,12 +598,12 @@ namespace efiilj
 			matrix4 mat(false);
 
 			mat(0, 0) = (2.0f * near) / (right - left);
-			mat(2, 0) = -((right + left) / (right - left));
+			mat(0, 2) = -((right + left) / (right - left));
 			mat(1, 1) = (2.0f * near) / (top - bottom);
-			mat(2, 1) = -((top + bottom) / (top - bottom));
+			mat(1, 2) = -((top + bottom) / (top - bottom));
 			mat(2, 2) = -(far / (far - near));
-			mat(3, 2) = -((far * near) / (far - near));
-			mat(2, 3) = -1.0f;
+			mat(2, 3) = -((far * near) / (far - near));
+			mat(3, 2) = -1.0f;
 
 			return mat;
 		}
@@ -621,10 +626,10 @@ namespace efiilj
 			const vector3 camera_right = vector3::cross(up_direction, camera_direction).norm();
 			const vector3 camera_up = vector3::cross(camera_direction, camera_right);
 
-			matrix4 a = matrix4(vector4(camera_right, 1), vector4(camera_up, 1), vector4(camera_direction, 1), vector4());
-			a(3, 0) = vector3::dot(camera_right, camera_pos) * -1;
-			a(3, 1) = vector3::dot(camera_up, camera_pos) * -1;
-			a(3, 2) = vector3::dot(camera_direction, camera_pos) * -1;
+			matrix4 a = matrix4(vector4(camera_right, 1), vector4(camera_up, 1), vector4(camera_direction, 1), vector4(), true);
+			a(12) = vector3::dot(camera_right, camera_pos) * -1;
+			a(13) = vector3::dot(camera_up, camera_pos) * -1;
+			a(14) = vector3::dot(camera_direction, camera_pos) * -1;
 
 			return a;
 		}

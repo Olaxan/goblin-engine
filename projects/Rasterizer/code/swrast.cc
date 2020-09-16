@@ -133,7 +133,8 @@ namespace efiilj
 			return;
 
 		// Create uniforms struct using camera view/perspective and node model transform
-		const vertex_uniforms vertex_u(camera_->view_perspective(), node.transform().model());
+		// TODO: Send perspective as well, this broke when updating other code.
+		const vertex_uniforms vertex_u(camera_->get_view(), node.transform().model());
 
 		// Get vertex data from node vertex shader
 		vertex_data data[] =

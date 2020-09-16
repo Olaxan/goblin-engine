@@ -12,18 +12,23 @@ out VS_OUT
 	mat3 TBN;
 } vs_out;
 
-uniform mat4 u_camera;
-uniform mat4 u_model;
+layout (std140) uniform Matrices
+{
+	mat4 projection;
+	mat4 view;
+};
+
+uniform mat4 model;
 
 void main()
 {
-	gl_Position = u_camera * u_model * vec4(pos, 1);
+	gl_Position = projection * view * model * vec4(pos, 1.0);
 
-	vec3 T = normalize(vec3(u_model * tangent));
-	vec3 N = normalize(vec3(u_model * vec4(normal, 0.0)));
+	vec3 T = normalize(vec3(model * tangent));
+	vec3 N = normalize(vec3(model * vec4(normal, 0.0)));
 	vec3 B = cross(N, T) * tangent.z;
 
-	vs_out.Fragment = (u_model * vec4(pos, 1)).xyz;
+	vs_out.Fragment = (model * vec4(pos, 1)).xyz;
 	vs_out.Uv = uv;
 	vs_out.TBN = mat3(T, B, N);
 }
