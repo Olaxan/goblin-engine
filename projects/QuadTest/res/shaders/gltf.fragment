@@ -18,8 +18,7 @@ uniform vec4 camera_position;
 
 uniform sampler2D tex_base;
 uniform sampler2D tex_normal;
-uniform sampler2D tex_roughness;
-uniform sampler2D tex_ambient;
+uniform sampler2D tex_orm;
 
 uniform point_light light;
 uniform vec3 ambient_color;
@@ -44,11 +43,11 @@ void main()
 	float diff = max(dot(normal, light_dir), 0.0);
 	vec3 diffuse = diff * light.color;
 
-	float specular_power = max(1.0, 2 / pow(texture(tex_roughness, fs_in.Uv).g, 4.0) - 2);	
+	float specular_power = max(1.0, 2 / pow(texture(tex_orm, fs_in.Uv).g, 4.0) - 2);	
 	float spec = pow(max(dot(normal, halfway_dir), 0.0), specular_power);
 	vec3 specular = specular_strength * spec * light.color;
 	
 	vec3 result = (ambient + diffuse + specular);
 	
-	Color = vec4(result, 1.0) * texture(tex_base, fs_in.Uv) * texture(tex_ambient, fs_in.Uv).r;
+	Color = vec4(result, 1.0) * texture(tex_base, fs_in.Uv) * texture(tex_orm, fs_in.Uv).r;
 }

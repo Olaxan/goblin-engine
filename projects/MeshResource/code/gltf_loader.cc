@@ -302,9 +302,8 @@ namespace efiilj
 			auto pbr_mat = std::make_shared<gltf_pbr_base>(shader_);
 
 			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");
-			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.metallicRoughnessTexture.index, "ROUGHNESS");
+			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.metallicRoughnessTexture.index, "METAL_ROUGHNESS");
 			link_texture(model, pbr_mat, mat.normalTexture.index, "NORMAL");
-			link_texture(model, pbr_mat, mat.occlusionTexture.index, "OCCLUSION");
 			link_texture(model, pbr_mat, mat.emissiveTexture.index, "EMISSIVE");
 
 			pbr_mat->emissiveFactor = mat.emissiveFactor;
