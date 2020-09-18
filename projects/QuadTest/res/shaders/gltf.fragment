@@ -24,7 +24,6 @@ uniform point_light light;
 uniform vec3 ambient_color;
 uniform float ambient_strength;
 uniform float specular_strength;
-uniform int shininess;
 
 out vec4 Color;
 
