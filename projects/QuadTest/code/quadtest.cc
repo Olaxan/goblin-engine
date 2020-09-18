@@ -63,11 +63,12 @@ namespace efiilj
 		auto fs = shader_resource(GL_FRAGMENT_SHADER, fs_source);
 		auto prog_ptr = std::make_shared<shader_program>(vs, fs);
 
-		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.5f, 0.5f, 0.5f));
+		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.005f, 0.005f, 0.005f));
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 		
-		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr, trans_ptr);
+		gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", prog_ptr, trans_ptr);
+		//gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr, trans_ptr);
 
 		point_light p_light = point_light(vector3(0.5f, 0.5f, 0.5f), vector3(1.0f, 1.0f, 1.0f), vector3(2, 2, 2));
 	
@@ -102,6 +103,10 @@ namespace efiilj
 					else if (key == GLFW_KEY_LEFT_CONTROL)
 					{
 						is_software_renderer_ = !is_software_renderer_;
+					}
+					else if (key == GLFW_KEY_R)
+					{
+						prog_ptr->reload();
 					}
 				}
 				else if (action == 0)

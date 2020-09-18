@@ -154,92 +154,96 @@ namespace efiilj
 		printf("Constructing mesh %s\n", mesh.name.c_str());
 
 		//TODO: Loop through primitives, not just first one.
-		tinygltf::Primitive prim = mesh.primitives[0]; 
 
-		unsigned err;
-		unsigned vbo, vao, ibo;
-		glGenBuffers(1, &vbo);
-		glGenBuffers(1, &ibo);
-		glGenVertexArrays(1, &vao);
-
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		// Calculate size of required VBO (to fit all attributes)
-		
-		size_t vbo_size = 0;
-		for (auto &attrib : prim.attributes)
+		for (auto& prim : mesh.primitives)
 		{
-			tinygltf::Accessor accessor = model.accessors[attrib.second];
-			tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
-			vbo_size += accessor.count * accessor.ByteStride(view); 
-		}
+			//tinygltf::Primitive prim = mesh.primitives[0]; 
 
-		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
-	
-		int vertex_count = -1;
-		size_t block_offset = 0;
-		for (auto &attrib : prim.attributes)
-		{
-			tinygltf::Accessor accessor = model.accessors[attrib.second];
-			tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
-			tinygltf::Buffer& buf = model.buffers[view.buffer];
-			
-			size_t stride = accessor.ByteStride(view);
-			size_t block_size = stride * accessor.count;
-			size_t offset = view.byteOffset + accessor.byteOffset;
+			unsigned err;
+			unsigned vbo, vao, ibo;
+			glGenBuffers(1, &vbo);
+			glGenBuffers(1, &ibo);
+			glGenVertexArrays(1, &vao);
 
-			glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
+			glBindVertexArray(vao);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+			// Calculate size of required VBO (to fit all attributes)
 			
-			int vaa = -1;
-			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
-			if (attrib.first.compare("POSITION") == 0)
+			size_t vbo_size = 0;
+			for (auto &attrib : prim.attributes)
 			{
-				vaa = 0;
-				vertex_count = accessor.count;
-			}	
+				tinygltf::Accessor accessor = model.accessors[attrib.second];
+				tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
+				vbo_size += accessor.count * accessor.ByteStride(view); 
+			}
 
-			if (attrib.first.compare("NORMAL") == 0)
-				vaa = 1;
+			glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
+		
+			int vertex_count = -1;
+			size_t block_offset = 0;
+			for (auto &attrib : prim.attributes)
+			{
+				tinygltf::Accessor accessor = model.accessors[attrib.second];
+				tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
+				tinygltf::Buffer& buf = model.buffers[view.buffer];
+				
+				size_t stride = accessor.ByteStride(view);
+				size_t block_size = stride * accessor.count;
+				size_t offset = view.byteOffset + accessor.byteOffset;
 
-			if (attrib.first.compare("TEXCOORD_0") == 0)
-				vaa = 2;
+				glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
+				
+				int vaa = -1;
+				int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
+				if (attrib.first.compare("POSITION") == 0)
+				{
+					vaa = 0;
+					vertex_count = accessor.count;
+				}	
 
-			if (attrib.first.compare("TANGENT") == 0)
-				vaa = 3;
+				if (attrib.first.compare("NORMAL") == 0)
+					vaa = 1;
 
-			glEnableVertexAttribArray(vaa);
-			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0,
-				       	BUFFER_OFFSET(block_offset));
+				if (attrib.first.compare("TEXCOORD_0") == 0)
+					vaa = 2;
 
-			block_offset += block_size;
+				if (attrib.first.compare("TANGENT") == 0)
+					vaa = 3;
+
+				glEnableVertexAttribArray(vaa);
+				glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, (void*)block_offset);
+
+				block_offset += block_size;
+			
+			}
+
+			// Buffer mesh indices
+			tinygltf::Accessor i_accessor = model.accessors[prim.indices];
+			tinygltf::BufferView& i_bufView = model.bufferViews[i_accessor.bufferView];
+			tinygltf::Buffer& i_buf = model.buffers[i_bufView.buffer];
+			size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
+					&i_buf.data.at(i_offset), GL_STATIC_DRAW);
+
+			glBindVertexArray(0);
+
+			auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
+
+			// Do textures now!
+			
+			if (prim.material >= 0 && prim.material < materials_.size())
+			{	
+				auto mat_ptr = materials_[prim.material];
+				graphics_node node = graphics_node(mesh_ptr, mat_ptr, transform_);
+				nodes_.push_back(node);
+			}
+			else
+				printf("Error: No material assigned to mesh!\n");
 		
 		}
-
-		// Buffer mesh indices
-		tinygltf::Accessor i_accessor = model.accessors[prim.indices];
-		tinygltf::BufferView& i_bufView = model.bufferViews[i_accessor.bufferView];
-		tinygltf::Buffer& i_buf = model.buffers[i_bufView.buffer];
-		size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
-				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
-
-		glBindVertexArray(0);
-
-		auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
-
-		// Do textures now!
-		
-		if (prim.material >= 0 && prim.material < materials_.size())
-		{	
-			auto mat_ptr = materials_[prim.material]; // copy?
-			graphics_node node = graphics_node(mesh_ptr, mat_ptr, transform_);
-			nodes_.push_back(node);
-		}
-		else
-			printf("Error: No material assigned to mesh!\n");
 	}
 
 	void gltf_model_loader::calculate_bitangents(tinygltf::Model& model, size_t offset, size_t count)

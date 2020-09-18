@@ -42,6 +42,11 @@ namespace efiilj
 		return false;
 	}
 
+	bool shader_program::reload()
+	{
+		
+	}
+
 	void shader_program::use()
 	{
 		glUseProgram(program_id_);

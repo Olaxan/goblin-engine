@@ -30,6 +30,8 @@ namespace efiilj
 		 */
 		bool create_program();
 
+		bool reload();
+
 		/**
 		 * \brief Sets the shader resources as active on the GPU.
 		 */
