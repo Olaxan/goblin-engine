@@ -38,11 +38,11 @@ namespace efiilj
 		camera_model(camera_model&& move)
 			= default;
 
-		const transform_model& transform() const { return *this->transform_; }
-		void transform(std::shared_ptr<transform_model>& trans) { transform_ = std::move(trans); }
+		std::shared_ptr<transform_model> get_transform() const { return transform_; }
+		void set_transform(std::shared_ptr<transform_model>& trans) { transform_ = std::move(trans); }
 
-		const vector3& up() const { return this->up_axis_; }
-		void up(const vector3& xyz) { up_axis_ = xyz; }
+		const vector3& get_up() const { return this->up_axis_; }
+		void set_up(const vector3& xyz) { up_axis_ = xyz; }
 		
 		/**
 		 * \brief Returns the perspective matrix for the camera.
