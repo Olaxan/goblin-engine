@@ -234,11 +234,11 @@ namespace efiilj
 
 			// Do textures now!
 			
-			if (prim.material >= 0 && prim.material < materials_.size())
+			if (prim.material > -1 && prim.material < materials_.size())
 			{	
 				auto mat_ptr = materials_[prim.material];
-				graphics_node node = graphics_node(mesh_ptr, mat_ptr, transform_);
-				nodes_.push_back(node);
+				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, transform_);
+				nodes_.push_back(node_ptr);
 			}
 			else
 				printf("Error: No material assigned to mesh!\n");

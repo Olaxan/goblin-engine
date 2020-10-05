@@ -2,8 +2,10 @@
 
 #include "program.h"
 #include "camera.h"
+#include "node.h"
 
 #include <vector>
+#include <chrono>
 
 namespace efiilj
 {
@@ -21,16 +23,22 @@ namespace efiilj
 	class deferred_renderer
 	{
 	private:
-		int width, height;
+
+		typedef std::chrono::duration<float> duration;
+		typedef std::chrono::high_resolution_clock frame_timer; 
+		typedef std::chrono::time_point<frame_timer> frame_timer_point;
+
 		unsigned gbo, rbo, ubo, pos, norm, cspec, active_camera;
 		unsigned attachments[3];
 
+		frame_timer_point last_frame;
 		renderer_settings settings_;
 
 		std::shared_ptr<shader_program> geometry_;
 		std::shared_ptr<shader_program> lighting_;
 
-		std::vector<std::shared_ptr<camera_model>> cameras_;
+		std::vector<std::shared_ptr<graphics_node>> nodes_;
+		std::vector<std::shared_ptr<camera_model>> cameras_;	
 
 		void gen_buffer(unsigned* handle, unsigned type);
 		void setup_ubo();
@@ -39,7 +47,9 @@ namespace efiilj
 		deferred_renderer(renderer_settings& settings, std::shared_ptr<shader_program> geometry, std::shared_ptr<shader_program> lighting);
 		~deferred_renderer() = default;
 
-		void render() const;
+		void add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes);
+
+		void render();
 		void reload_shaders();
 
 		bool set_camera(unsigned active);

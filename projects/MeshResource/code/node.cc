@@ -15,13 +15,14 @@ namespace efiilj
 	void graphics_node::bind() const
 	{
 		mesh_->bind();
-		material_->apply();
+
+		if (material_ != nullptr)
+			material_->apply();
 	}
 
 	void graphics_node::unbind() const
 	{
 		mesh_->unbind();
-		material_->apply();
 	}
 
 	void graphics_node::draw() const

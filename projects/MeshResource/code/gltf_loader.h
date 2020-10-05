@@ -22,7 +22,7 @@ namespace efiilj
 		unsigned get_meshes(tinygltf::Model&);
 		unsigned get_materials(tinygltf::Model& model);
 		
-		std::vector<graphics_node> nodes_;
+		std::vector<std::shared_ptr<graphics_node>> nodes_;
 		std::vector<std::shared_ptr<gltf_pbr_base>> materials_;
 		std::shared_ptr<shader_program> shader_;
 		std::shared_ptr<transform_model> transform_;
@@ -43,7 +43,7 @@ namespace efiilj
 		static unsigned get_type(int bits);
 
 		bool load_from_file(tinygltf::Model& model, const std::string& path);
-		const std::vector<graphics_node>& get_nodes() const 
+		const std::vector<std::shared_ptr<graphics_node>>& get_nodes() const 
 		{
 			return nodes_;
 		}
