@@ -18,22 +18,20 @@ layout (std140) uniform Matrices
 	mat4 view;
 };
 
-uniform float time;
-uniform float deltatime;
+uniform float dt;
 uniform mat4 model;
 
 void main()
 {
-	vec4 mod_pos = model * vec4(pos, 1.0);
-	//mod_pos.z = mod_pos.z - (1 + 2 * sin(time + mod_pos.x)) * 1;
-	//mod_pos.y = mod_pos.y - (1 + 2 * cos(time + mod_pos.x)) * 0.2;
-	gl_Position = projection * view * mod_pos;
+	vec4 world_pos = model * vec4(pos, 1.0);
 
 	vec3 T = normalize(vec3(model * tangent));
 	vec3 N = normalize(vec3(model * vec4(normal, 0.0)));
 	vec3 B = cross(N, T) * tangent.w;
 
-	vs_out.Fragment = mod_pos.xyz;
+	vs_out.Fragment = world_pos.xyz;
 	vs_out.Uv = uv;
 	vs_out.TBN = mat3(T, B, N);
+
+	gl_Position = projection * view * world_pos;
 }

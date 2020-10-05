@@ -58,12 +58,12 @@ namespace efiilj
 
 		 
 
-		auto g_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/def_geometry.vertex");
-		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/def_geometry.fragment");
+		auto g_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/dvs_geometry.glsl");
+		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
 
-		auto l_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/def_lighting.vertex");
-		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/def_lighting.fragment");
+		auto l_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/dvs_lighting.glsl");
+		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_lighting.glsl");
 		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
 		
 		renderer_settings set;
@@ -73,7 +73,7 @@ namespace efiilj
 		auto camera_trans_ptr = camera_ptr->get_transform();
 		
 		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.5f, 0.5f, 0.5f));
-		gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", nullptr, trans_ptr);
+		gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", g_prog_ptr, trans_ptr);
 
 		renderer.add_nodes(gltf_loader.get_nodes());
 

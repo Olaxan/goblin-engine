@@ -15,6 +15,9 @@ namespace efiilj
 		shader_resource fs_;
 
 		unsigned program_id_;
+		bool program_state_;
+
+		static unsigned active_program_;
 
 		std::unordered_map<std::string, int> locations_;
 

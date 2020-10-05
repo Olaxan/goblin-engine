@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <chrono>
+#include <string>
 
 namespace efiilj
 {
@@ -13,6 +14,10 @@ namespace efiilj
 	{
 		unsigned width = 1024;
 		unsigned height = 1024;
+
+		// Uniform names
+		std::string uniform_camera = "cam_pos";
+		std::string uniform_dt_seconds = "dt";
 
 		// Default camera
 		float fov = 1.30899694f;
@@ -28,10 +33,10 @@ namespace efiilj
 		typedef std::chrono::high_resolution_clock frame_timer; 
 		typedef std::chrono::time_point<frame_timer> frame_timer_point;
 
-		unsigned gbo, rbo, ubo, pos, norm, cspec, active_camera;
-		unsigned attachments[3];
+		unsigned gbo_, rbo_, ubo_, pos_, norm_, cspec_, active_camera_;
+		unsigned attachments_[3];
 
-		frame_timer_point last_frame;
+		frame_timer_point last_frame_;
 		renderer_settings settings_;
 
 		std::shared_ptr<shader_program> geometry_;
@@ -53,6 +58,6 @@ namespace efiilj
 		void reload_shaders();
 
 		bool set_camera(unsigned active);
-		std::shared_ptr<camera_model> get_active_camera() { return cameras_[active_camera]; }
+		std::shared_ptr<camera_model> get_active_camera() { return cameras_[active_camera_]; }
 	};
 }

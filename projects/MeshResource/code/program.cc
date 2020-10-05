@@ -4,8 +4,10 @@
 
 namespace efiilj
 {
+	unsigned shader_program::active_program_ = 0;
+
 	shader_program::shader_program(shader_resource vs, shader_resource fs)
-		: vs_(vs), fs_(fs), program_id_(0) 
+		: vs_(vs), fs_(fs), program_id_(0), program_state_(false)
 	{
 		if (create_program())
 			printf("Created shader program %d\n", program_id_);
@@ -16,6 +18,7 @@ namespace efiilj
 	bool shader_program::create_program()
 	{
 		program_id_ = glCreateProgram();
+		program_state_ = false;
 
 		int err;
 		if (vs_.attach(program_id_) && fs_.attach(program_id_))
@@ -36,6 +39,8 @@ namespace efiilj
 			fs_.detach(program_id_);
 			fs_.free();
 
+			program_state_ = true;
+
 			return true;
 		}
 
@@ -52,12 +57,26 @@ namespace efiilj
 
 	void shader_program::use()
 	{
-		glUseProgram(program_id_);
+		if (active_program_ == program_id_)
+			return;
+
+		if (program_state_)
+		{
+			glUseProgram(program_id_);
+			active_program_ = program_id_;
+		}
+		else 
+		{
+			glUseProgram(0);
+			active_program_ = 0;
+			fprintf(stderr, "WARNING: Program %u is not compiled!\n", program_id_);
+		}
 	}
 
 	void shader_program::drop() const
 	{
 		glUseProgram(0);
+		active_program_ = 0;
 	}
 
 	int shader_program::find_uniform_location(const char* name, bool is_block)
