@@ -44,7 +44,10 @@ namespace efiilj
 
 	bool shader_program::reload()
 	{
-		
+		glDeleteProgram(program_id_);
+		vs_.recompile_shader();
+		fs_.recompile_shader();
+		create_program();	
 	}
 
 	void shader_program::use()

@@ -18,7 +18,7 @@ namespace efiilj
 	private:
 
 		Display::Window* window_;
-		float frame_, mouse_x_, mouse_y_, mouse_down_x_, mouse_down_y_;
+		float time_, mouse_x_, mouse_y_, mouse_down_x_, mouse_down_y_;
 		bool is_dragging_mouse_, is_mouse_captured_, is_software_renderer_;
 		
 	public:

@@ -13,7 +13,10 @@ namespace efiilj
 	private:	
 
 		unsigned shader_id_;
+		unsigned type_;
 		int shader_state_;
+		
+		const char* path_;
 
 	public:
 
@@ -33,14 +36,14 @@ namespace efiilj
 		 * \param vertex Vertex shader source code as null-terminated char array
 		 * \param fragment Fragment shader source code as null-terminated char array
 		 */
-		shader_resource(unsigned type, const char* source);
+		shader_resource(unsigned type, const char* path);
 		
 		/**
 		 * \brief Creates a shader program from the specified source code.
 		 * \param vertex Vertex shader source code as std::string
 		 * \param fragment Fragment shader source code as std::string
 		 */
-		shader_resource(unsigned type, const std::string& source);
+		shader_resource(unsigned type, const std::string& path);
 
 		shader_resource(shader_resource& copy)
 			= default;
@@ -69,6 +72,8 @@ namespace efiilj
 		 * \return A handle for the compiled shader on the GPU
 		 */
 		int compile_shader(unsigned int type, const char* source);
+
+		int recompile_shader();
 
 		bool attach(unsigned program); 
 		void detach(unsigned program);

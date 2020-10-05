@@ -8,16 +8,18 @@
 namespace efiilj
 {
 	shader_resource::shader_resource()
-		: shader_id_(0), shader_state_(GL_FALSE) { }
+		: shader_id_(0), type_(0), shader_state_(GL_FALSE) { }
 
-	shader_resource::shader_resource(unsigned type, const char* source) 
-		: shader_id_(0), shader_state_(GL_FALSE)
+	shader_resource::shader_resource(unsigned type, const char* path) 
+		: shader_id_(0), type_(type), shader_state_(GL_FALSE)
 	{
-		shader_state_ = compile_shader(type, source);
+		path_ = path;
+		std::string source = load_shader(path);
+		shader_state_ = compile_shader(type, source.c_str());
 	}
 
-	shader_resource::shader_resource(unsigned type, const std::string& source)
-		: shader_resource(type, source.c_str()) { }
+	shader_resource::shader_resource(unsigned type, const std::string& path)
+		: shader_resource(type, path.c_str()) { }
 
 	std::string shader_resource::load_shader(const char* file_path)
 	{
@@ -53,6 +55,15 @@ namespace efiilj
 		            (type == GL_VERTEX_SHADER ? "Vertex compilation failed!" : "Fragment compilation failed!"));
 
 		return result;
+	}
+
+	int shader_resource::recompile_shader()
+	{
+		if (path_ != nullptr && shader_state_ != 0)
+		{
+			std::string source = load_shader(path_);
+			shader_state_ = compile_shader(type_, source.c_str());
+		}	
 	}
 
 	bool shader_resource::attach(unsigned program)

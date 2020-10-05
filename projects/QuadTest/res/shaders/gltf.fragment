@@ -48,5 +48,5 @@ void main()
 	
 	vec3 result = (ambient + diffuse + specular);
 	
-	Color = vec4(result, 1.0) * texture(tex_base, fs_in.Uv) * texture(tex_orm, fs_in.Uv).r;
+	Color = vec4(result, 1.0) * texture(tex_base, fs_in.Uv) * max(1.0, texture(tex_orm, fs_in.Uv).r);
 }

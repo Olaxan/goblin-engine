@@ -14,6 +14,7 @@
 #include "color.h"
 #include "program.h"
 
+#include <chrono>
 #include <iostream>
 #include <set>
 
@@ -23,7 +24,7 @@ namespace efiilj
 {
 
 	quad_test::quad_test()
-	: window_(nullptr), frame_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
+	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
 
 	quad_test::~quad_test() = default;
 
@@ -54,21 +55,22 @@ namespace efiilj
 	void quad_test::run()
 	{
 
+		typedef std::chrono::duration<float> duration;
+		typedef std::chrono::high_resolution_clock frame_timer; 
+		typedef std::chrono::time_point<frame_timer> frame_timer_point; 
+
 		float fov = 1.30899694; // 75 degrees
 
-		std::string vs_source = shader_resource::load_shader("./res/shaders/gltf.vertex");
-		std::string fs_source = shader_resource::load_shader("./res/shaders/gltf.fragment");
-
-		auto vs = shader_resource(GL_VERTEX_SHADER, vs_source);
-		auto fs = shader_resource(GL_FRAGMENT_SHADER, fs_source);
+		auto vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/gltf.vertex");
+		auto fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/gltf.fragment");
 		auto prog_ptr = std::make_shared<shader_program>(vs, fs);
 
-		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.005f, 0.005f, 0.005f));
+		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.5f, 0.5f, 0.5f));
 		auto camera_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(1, 1, 1));
 		auto camera_ptr = std::make_shared<camera_model>(fov, 1.0f, 0.1f, 100.0f, camera_trans_ptr, vector3(0, 1, 0));
 		
-		gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", prog_ptr, trans_ptr);
-		//gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr, trans_ptr);
+		//gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", prog_ptr, trans_ptr);
+		gltf_model_loader gltf_loader("./res/gltf/FlightHelmet/glTF/FlightHelmet.gltf", prog_ptr, trans_ptr);
 
 		point_light p_light = point_light(vector3(0.5f, 0.5f, 0.5f), vector3(1.0f, 1.0f, 1.0f), vector3(2, 2, 2));
 	
@@ -77,7 +79,7 @@ namespace efiilj
 		unsigned ubo_matrices;
 		glGenBuffers(1, &ubo_matrices);
 		glBindBuffer(GL_UNIFORM_BUFFER, ubo_matrices);
-		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(matrix4), NULL, GL_STATIC_DRAW);
+		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(matrix4), NULL, GL_DYNAMIC_DRAW);
 
 		glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo_matrices, 0, 2 * sizeof(matrix4));
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(matrix4), &camera_ptr->get_perspective());
@@ -141,9 +143,20 @@ namespace efiilj
 					is_dragging_mouse_ = false;
 				}
 			});
-	
+
+		frame_timer_point begin_frame;
+		duration dt;
+
+		begin_frame = frame_timer::now();
+
 		while (this->window_->IsOpen())
 		{
+			dt = frame_timer::now() - begin_frame;
+			time_ += dt.count();
+			begin_frame = frame_timer::now();
+
+			// Add something to wrap time around to avoid imprecision.
+			// Not a priority.
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window_->Update();
@@ -173,7 +186,7 @@ namespace efiilj
 			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(matrix4), sizeof(matrix4), &camera_ptr->get_view());
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-			p_light.position = vector3(sinf(frame_ / 120.0f) * 50.0f, 50.0f, cosf(frame_ / 120.0f) * 50.0f); 
+			p_light.position = vector3(sinf(time_ / 120.0f) * 50.0f, 50.0f, cosf(time_ / 120.0f) * 50.0f); 
 	
 			prog_ptr->use();	
 			prog_ptr->set_uniform("camera_position", camera_trans_ptr->position);	
@@ -184,14 +197,16 @@ namespace efiilj
 			prog_ptr->set_uniform("ambient_strength", 1.0f);
 			prog_ptr->set_uniform("specular_strength", 1.0f);
 
+			prog_ptr->set_uniform("time", time_);
+			prog_ptr->set_uniform("deltatime", dt.count());
+
 			for (auto& node : gltf_loader.get_nodes())
 			{
 				node.draw();
 			}
 
 			this->window_->SwapBuffers();
-
-			frame_++;
+			
 		}
 	}
 }
