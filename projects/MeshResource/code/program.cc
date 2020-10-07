@@ -55,21 +55,22 @@ namespace efiilj
 		create_program();	
 	}
 
-	void shader_program::use()
+	bool shader_program::use()
 	{
 		if (active_program_ == program_id_)
-			return;
+			return true;
 
 		if (program_state_)
 		{
 			glUseProgram(program_id_);
 			active_program_ = program_id_;
+			return true;
 		}
 		else 
 		{
 			glUseProgram(0);
 			active_program_ = 0;
-			fprintf(stderr, "WARNING: Program %u is not compiled!\n", program_id_);
+			return false;
 		}
 	}
 
@@ -79,14 +80,14 @@ namespace efiilj
 		active_program_ = 0;
 	}
 
-	int shader_program::find_uniform_location(const char* name, bool is_block)
+	int shader_program::find_uniform_location(std::string name, bool is_block)
 	{
 		int uniform;
 		const auto it = locations_.find(name);
 
 		if (it == locations_.end())
 		{
-			uniform = is_block ? glGetUniformBlockIndex(program_id_, name) : glGetUniformLocation(program_id_, name);
+			uniform = is_block ? glGetUniformBlockIndex(program_id_, name.c_str()) : glGetUniformLocation(program_id_, name.c_str());
 			if (uniform != -1)
 				locations_[name] = uniform;
 		}
@@ -96,7 +97,7 @@ namespace efiilj
 		return uniform;
 	}
 
-	bool shader_program::bind_block(const char* name, const int index)
+	bool shader_program::bind_block(std::string name, const int index)
 	{
 		const int uniform = find_uniform_location(name, true);
 		if (uniform == -1)
@@ -106,7 +107,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_program::set_uniform(const char* name, const int val)
+	bool shader_program::set_uniform(std::string name, const int val)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -116,7 +117,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_program::set_uniform(const char* name, const float val)
+	bool shader_program::set_uniform(std::string name, const float val)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -126,7 +127,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_program::set_uniform(const char* name, const vector4& vec)
+	bool shader_program::set_uniform(std::string name, const vector4& vec)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -136,7 +137,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_program::set_uniform(const char* name, const matrix4& mat)
+	bool shader_program::set_uniform(std::string name, const matrix4& mat)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -146,7 +147,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_program::set_uniform(const char* name, const vector3& vec)
+	bool shader_program::set_uniform(std::string name, const vector3& vec)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)
@@ -156,7 +157,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool shader_program::set_uniform(const char* name, const matrix3& mat)
+	bool shader_program::set_uniform(std::string name, const matrix3& mat)
 	{
 		const int uniform = find_uniform_location(name);
 		if (uniform == -1)

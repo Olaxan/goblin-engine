@@ -5,6 +5,7 @@
 #include "matrix4.h"
 
 #include <unordered_map>
+#include <string>
 
 namespace efiilj
 {
@@ -39,7 +40,7 @@ namespace efiilj
 		 * \brief Sets the shader resources as active on the GPU.
 		 */
 
-		void use();
+		bool use();
 		/**
 		 * \brief Disables all shaders on the GPU.
 		 */
@@ -50,9 +51,9 @@ namespace efiilj
 		 * \param name The name of the uniform
 		 * \return The uniform location, or -1 if not found
 		 */
-		int find_uniform_location(const char* name, bool is_block=false);
+		int find_uniform_location(std::string name, bool is_block=false);
 
-		bool bind_block(const char* name, int index);
+		bool bind_block(std::string name, int index);
 		
 		/**
 		 * \brief Sets an integer uniform on the shader program
@@ -60,7 +61,7 @@ namespace efiilj
 		 * \param val The integer value which should be set
 		 * \return True if successful; false otherwise
 		 */
-		bool set_uniform(const char* name, int val);
+		bool set_uniform(std::string name, int val);
 		
 		/**
 		 * \brief Sets a float uniform on the shader program
@@ -68,7 +69,7 @@ namespace efiilj
 		 * \param val The float value which should be set
 		 * \return True if successful; false otherwise
 		 */
-		bool set_uniform(const char* name, float val);
+		bool set_uniform(std::string name, float val);
 		
 		/**
 		 * \brief Sets a vector4 (vec4) uniform on the shader program
@@ -76,7 +77,7 @@ namespace efiilj
 		 * \param vec The vector4 which should be set
 		 * \return True if successful; false otherwise
 		 */
-		bool set_uniform(const char* name, const vector4& vec);
+		bool set_uniform(std::string name, const vector4& vec);
 		
 		/**
 		 * \brief Sets a matrix4 (mat4) uniform on the shader program
@@ -84,7 +85,7 @@ namespace efiilj
 		 * \param mat The matrix4 value which should be set
 		 * \return True if successful; false otherwise
 		 */
-		bool set_uniform(const char* name, const matrix4& mat);
+		bool set_uniform(std::string name, const matrix4& mat);
 		
 		/**
 		 * \brief Sets an vector3 (vec3) uniform on the shader program
@@ -92,7 +93,7 @@ namespace efiilj
 		 * \param vec The vector3 value which should be set
 		 * \return True if successful; false otherwise
 		 */
-		bool set_uniform(const char* name, const vector3& vec);
+		bool set_uniform(std::string name, const vector3& vec);
 		
 		/**
 		 * \brief Sets an matrix3 (mat3) uniform on the shader program
@@ -100,6 +101,6 @@ namespace efiilj
 		 * \param mat The matrix3 value which should be set
 		 * \return True if successful; false otherwise
 		 */
-		bool set_uniform(const char* name, const matrix3& mat);
+		bool set_uniform(std::string name, const matrix3& mat);
 	};
 }

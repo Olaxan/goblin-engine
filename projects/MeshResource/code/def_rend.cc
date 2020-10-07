@@ -9,26 +9,27 @@ namespace efiilj
 {
 	deferred_renderer::deferred_renderer
 		(
-			renderer_settings& settings,	
+			std::shared_ptr<camera_manager> camera_manager,	
 			std::shared_ptr<shader_program> geometry_, 
-			std::shared_ptr<shader_program> lighting
-		)
-		: gbo_(0), rbo_(0), ubo_(0), pos_(0), norm_(0), cspec_(0), active_camera_(0), 
-		settings_(settings), geometry_(std::move(geometry_)), lighting_(std::move(lighting))
+			std::shared_ptr<shader_program> lighting,
+			renderer_settings& settings
+		) : 
+			gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0),   
+			camera_mgr_(std::move(camera_manager)),
+			geometry_(std::move(geometry_)), 
+			lighting_(std::move(lighting)),
+			settings_(settings) 
 	{
 		// Setup gbuffer
 		glGenFramebuffers(1, &gbo_);
 		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
 
-		gen_buffer(&pos_, GL_FLOAT);
-		gen_buffer(&norm_, GL_FLOAT);
-		gen_buffer(&cspec_, GL_UNSIGNED_BYTE);
+		gen_buffer(GL_FLOAT);		// Pos
+		gen_buffer(GL_FLOAT);		// Normal
+		gen_buffer(GL_UNSIGNED_BYTE);	// Albedo
+		gen_buffer(GL_UNSIGNED_BYTE);	// ORM
 
-		attachments_[0] = GL_COLOR_ATTACHMENT0;
-		attachments_[1] = GL_COLOR_ATTACHMENT1;
-		attachments_[2] = GL_COLOR_ATTACHMENT3;
-
-		glDrawBuffers(3, attachments_);
+		attach_buffers();
 
 		// Setup render buffer + depth
 		glGenRenderbuffers(1, &rbo_);
@@ -41,42 +42,63 @@ namespace efiilj
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		setup_camera();
-		setup_ubo();
+		setup_quad();
+
+		//geometry_->bind_block("Matrices", 0); DON'T FORGET
 
 		last_frame_ = frame_timer::now(); 
 	}
 
-	void deferred_renderer::gen_buffer(unsigned* handle, unsigned type)
+	void deferred_renderer::gen_buffer(unsigned type)
 	{
+		unsigned index = buffers_.size();
+		
+		buffers_.push_back(0);
+
+		unsigned* handle = &buffers_[index];
+
 		glGenTextures(1, handle);
 		glBindTexture(GL_TEXTURE_2D, *handle);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, settings_.width, settings_.height, 0, GL_RGBA, type, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *handle, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, *handle, 0);
 	}
 
-	void deferred_renderer::setup_camera()
+	void deferred_renderer::attach_buffers()
 	{
-		float aspect = float(settings_.width) / float(settings_.height);
-		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(1, 1, 1));
-		auto default_cam = std::make_shared<camera_model>(settings_.fov, aspect, settings_.near, settings_.far, trans_ptr, vector3(0, 1, 0));
-		cameras_.push_back(default_cam);
-	}
+		std::vector<unsigned> attach;
 
-	void deferred_renderer::setup_ubo()
-	{
-		geometry_->bind_block("Matrices", 0);
+		for (size_t i = 0; i < buffers_.size(); i++)
+		{
+			attach.push_back(GL_COLOR_ATTACHMENT0 + i);
+		}
 
-		glGenBuffers(1, &ubo_);
-		glBindBuffer(GL_UNIFORM_BUFFER, ubo_);
-		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(matrix4), nullptr, GL_DYNAMIC_DRAW);
-
-		glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo_, 0, 2 * sizeof(matrix4));
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(matrix4), &cameras_[0]->get_perspective());
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glDrawBuffers(attach.size(), attach.data());
 	}	
+
+	void deferred_renderer::setup_quad()
+	{
+		// https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+
+		float quad[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        	};	
+
+		glGenVertexArrays(1, &quad_vao_);
+		glGenBuffers(1, &quad_vbo_);
+		glBindVertexArray(quad_vao_);
+		glBindBuffer(GL_ARRAY_BUFFER, quad_vbo_);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quad), &quad, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
 
 	void deferred_renderer::add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
 	{
@@ -87,24 +109,63 @@ namespace efiilj
 	void deferred_renderer::render() 
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
-		glClearColor(0.0, 0.0, 0.0, 1.0);
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		geometry_->use();
-
-		glBindBuffer(GL_UNIFORM_BUFFER, ubo_);
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(matrix4), sizeof(matrix4), &cameras_[active_camera_]->get_view());
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		duration dt = frame_timer::now() - last_frame_;
-		last_frame_ = frame_timer::now();
-
-		geometry_->set_uniform(settings_.uniform_camera.c_str(), cameras_[active_camera_]->get_transform()->position);
-		geometry_->set_uniform(settings_.uniform_dt_seconds.c_str(), dt.count());
-
-		for (auto& node : nodes_)
+		if (geometry_->use())
 		{
-			node->draw();
+			// Geometry pass	
+			
+			duration dt = frame_timer::now() - last_frame_;
+			last_frame_ = frame_timer::now();	
+			lighting_->set_uniform(settings_.u_dt_seconds, dt.count());
+			
+			for (auto& node : nodes_)
+			{
+				node->draw();
+			}
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		if (lighting_->use())
+		{
+			// Lighting pass
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			// Bind buffer textures
+			for (size_t i = 0; i < buffers_.size(); i++)
+			{
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, buffers_[i]);
+				glUniform1i(i, i);
+			}
+
+			// Set lighting uniforms (move to UBO)
+			lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_camera()->get_transform()->position); // nasty
+			lighting_->set_uniform("light.color", settings_.sun.color);
+			lighting_->set_uniform("light.intensity", settings_.sun.intensity);
+			lighting_->set_uniform("light.position", settings_.sun.position);
+			lighting_->set_uniform("ambient_color", settings_.ambient_color);
+			lighting_->set_uniform("ambient_strength", settings_.ambient_strength);
+			lighting_->set_uniform("specular_strength", settings_.specular_strength);
+
+			// Draw screenspace quad
+			glBindVertexArray(quad_vao_);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glBindVertexArray(0);
+			
+			// Copy depth data
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbo_);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glBlitFramebuffer
+			(
+				0, 0, settings_.width, settings_.height, 
+				0, 0, settings_.width, settings_.height, 
+				GL_DEPTH_BUFFER_BIT, GL_NEAREST
+			);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 	}
 	
@@ -113,20 +174,4 @@ namespace efiilj
 		geometry_->reload();
 		lighting_->reload();
 	}
-
-	bool deferred_renderer::set_camera(unsigned active)
-	{
-		if (active < cameras_.size())
-		{
-			active_camera_ = active;
-
-			glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo_, 0, 2 * sizeof(matrix4));
-			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(matrix4), &cameras_[active_camera_]->get_perspective());
-			glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-			return true;
-		}
-
-		return false;
-	}	
 }

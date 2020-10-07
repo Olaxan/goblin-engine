@@ -3,8 +3,8 @@
 // (C) 2015-2018 Individual contributors, see AUTHORS file
 //------------------------------------------------------------------------------
 #include "config.h"
+
 #include "quadtest.h"
-#include "camera.h"
 #include "loader.h"
 #include "light.h"
 #include "node.h"
@@ -14,12 +14,16 @@
 #include "color.h"
 #include "program.h"
 #include "def_rend.h"
+#include "cam_mgr.h"
 
 #include <chrono>
 #include <iostream>
 #include <set>
 
 #define flase false
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1200
+#define CAMERA_SPEED 0.5f
 
 namespace efiilj
 {
@@ -33,7 +37,7 @@ namespace efiilj
 	{
 		app::open();
 
-		this->window_ = new Display::Window(1024, 1024);
+		this->window_ = new Display::Window(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		if (this->window_->Open())
 		{
@@ -45,8 +49,8 @@ namespace efiilj
 			//lock mouse to window
 			glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-			// set clear color to purple
-			glClearColor(0.01f, 0.0f, 0.01f, 0.5f);
+			// set clear color
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 			return true;
 		}
@@ -56,8 +60,6 @@ namespace efiilj
 	void quad_test::run()
 	{
 
-		 
-
 		auto g_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/dvs_geometry.glsl");
 		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -66,13 +68,16 @@ namespace efiilj
 		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_lighting.glsl");
 		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
 		
-		renderer_settings set;
-		deferred_renderer renderer(set, g_prog_ptr, l_prog_ptr);
-
-		auto camera_ptr = renderer.get_active_camera();
-		auto camera_trans_ptr = camera_ptr->get_transform();
+		auto cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
 		
-		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.5f, 0.5f, 0.5f));
+		renderer_settings set;
+
+		set.width = WINDOW_WIDTH;
+		set.height = WINDOW_HEIGHT;
+
+		deferred_renderer renderer(cam_mgr_ptr, g_prog_ptr, l_prog_ptr, set);
+		
+		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
 		gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", g_prog_ptr, trans_ptr);
 
 		renderer.add_nodes(gltf_loader.get_nodes());
@@ -115,11 +120,6 @@ namespace efiilj
 		{
 			mouse_x_ = x / 1000.0f - 0.5f;
 			mouse_y_ = y / 1000.0f - 0.5f;
-
-			if (is_mouse_captured_)
-				camera_trans_ptr->rotation = vector4(-mouse_y_, 0, mouse_x_, 1);
-			else if (is_dragging_mouse_)
-				trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
 		});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
@@ -138,39 +138,37 @@ namespace efiilj
 
 		while (this->window_->IsOpen())
 		{
+			auto camera_ptr = cam_mgr_ptr->get_active_camera();
+			auto camera_trans_ptr = camera_ptr->get_transform();
+
+			if (is_mouse_captured_)
+				camera_trans_ptr->rotation = vector4(-mouse_y_, 0, mouse_x_, 1);
+			else if (is_dragging_mouse_)
+				trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window_->Update();
-
+	
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				camera_trans_ptr->position+= camera_trans_ptr->forward() * 0.01f;
+				camera_trans_ptr->position+= camera_trans_ptr->forward() * CAMERA_SPEED;
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->forward() * 0.01f;
+				camera_trans_ptr->position -= camera_trans_ptr->forward() * CAMERA_SPEED;
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->position += camera_trans_ptr->left() * 0.01f;
+				camera_trans_ptr->position += camera_trans_ptr->left() * CAMERA_SPEED;
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->left() * 0.01f;
+				camera_trans_ptr->position -= camera_trans_ptr->left() * CAMERA_SPEED;
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				camera_trans_ptr->position += camera_trans_ptr->up() * 0.01f;
+				camera_trans_ptr->position += camera_trans_ptr->up() * CAMERA_SPEED;
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->up() * 0.01f;
+				camera_trans_ptr->position -= camera_trans_ptr->up() * CAMERA_SPEED;
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
-	
-			//prog_ptr->set_uniform("light.color", p_light.rgb);
-			//prog_ptr->set_uniform("light.intensity", p_light.intensity);
-			//prog_ptr->set_uniform("light.position", p_light.position);
-			//prog_ptr->set_uniform("ambient_color", vector3(0.025f, 0, 0.025f));
-			//prog_ptr->set_uniform("ambient_strength", 1.0f);
-			//prog_ptr->set_uniform("specular_strength", 1.0f);
-
-			
 
 			renderer.render();	
 

@@ -9,8 +9,6 @@
 #include "core/app.h"
 #include "render/window.h"
 
-#include <chrono>
-
 namespace efiilj
 {
 	class quad_test final : public core::app
