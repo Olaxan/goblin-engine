@@ -31,6 +31,13 @@ namespace efiilj
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
+	void camera_manager::update_camera()
+	{	
+		glBindBuffer(GL_UNIFORM_BUFFER, ubo_);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(matrix4), sizeof(matrix4), &cameras_[active_camera_]->get_view());
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
 	bool camera_manager::set_camera(unsigned active)
 	{
 		if (active < cameras_.size())

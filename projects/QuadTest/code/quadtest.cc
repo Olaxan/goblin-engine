@@ -14,6 +14,7 @@
 #include "color.h"
 #include "program.h"
 #include "def_rend.h"
+#include "fwd_rend.h"
 #include "cam_mgr.h"
 
 #include <chrono>
@@ -67,7 +68,11 @@ namespace efiilj
 		auto l_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/dvs_lighting.glsl");
 		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_lighting.glsl");
 		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
-		
+
+		auto h_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/vs_gltf.glsl");
+		auto h_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/fs_gltf.glsl");
+		auto h_prog_ptr = std::make_shared<shader_program>(h_vs, h_fs);
+
 		auto cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		renderer_settings set;
@@ -75,12 +80,17 @@ namespace efiilj
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
 
-		deferred_renderer renderer(cam_mgr_ptr, g_prog_ptr, l_prog_ptr, set);
+		deferred_renderer def_renderer(cam_mgr_ptr, set, g_prog_ptr, l_prog_ptr);
+		forward_renderer fwd_renderer(cam_mgr_ptr, set);
 		
-		auto trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
-		gltf_model_loader gltf_loader("./res/gltf/Sponza/Sponza.gltf", g_prog_ptr, trans_ptr);
+		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
+		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
+		
+		gltf_model_loader gltf_sponza("./res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
+		gltf_model_loader gltf_helmet("./res/gltf/FlightHelmet/FlightHelmet.gltf", h_prog_ptr, helmet_trans_ptr);
 
-		renderer.add_nodes(gltf_loader.get_nodes());
+		def_renderer.add_nodes(gltf_sponza.get_nodes());
+		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
 		std::set<int> keys;
 		
@@ -105,7 +115,8 @@ namespace efiilj
 				}
 				else if (key == GLFW_KEY_R)
 				{
-					renderer.reload_shaders();
+					def_renderer.reload_shaders();
+					fwd_renderer.reload_shaders();
 				}
 			}
 			else if (action == 0)
@@ -144,7 +155,7 @@ namespace efiilj
 			if (is_mouse_captured_)
 				camera_trans_ptr->rotation = vector4(-mouse_y_, 0, mouse_x_, 1);
 			else if (is_dragging_mouse_)
-				trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
+				helmet_trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window_->Update();
@@ -169,8 +180,11 @@ namespace efiilj
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
+			
+			cam_mgr_ptr->update_camera();
 
-			renderer.render();	
+			def_renderer.render();
+			fwd_renderer.render();
 
 			this->window_->SwapBuffers();
 			

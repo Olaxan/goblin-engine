@@ -25,6 +25,9 @@ namespace efiilj
 		~camera_manager() = default;
 
 		bool set_camera(unsigned active);
+
+		void update_camera();
+
 		std::shared_ptr<camera_model> get_default_camera() { return cameras_[0]; }
 		std::shared_ptr<camera_model> get_active_camera() { return cameras_[active_camera_]; }
 	};
