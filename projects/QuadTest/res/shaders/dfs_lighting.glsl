@@ -15,6 +15,7 @@ layout (location = 0) uniform sampler2D g_position;
 layout (location = 1) uniform sampler2D g_normal;
 layout (location = 2) uniform sampler2D g_albedo;
 layout (location = 3) uniform sampler2D g_orm;
+layout (location = 4) uniform sampler2D g_depth;
 
 uniform vec4 cam_pos;
 
@@ -44,4 +45,5 @@ void main()
 	vec3 result = (ambient + diffuse + specular);
 	
 	Color = vec4(result * texture(g_albedo, Uv).rgb, 1.0); // * texture(g_orm, Uv).r;
+	gl_FragDepth = texelFetch(g_depth, ivec2(gl_FragCoord.xy), 0).r;
 }

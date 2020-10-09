@@ -33,9 +33,13 @@ namespace efiilj
 		glGenTextures(1, &rbo_);
 		glBindTexture(GL_TEXTURE_2D, rbo_);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, settings_.width, settings_.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo_, 0);
 
 		attach_buffers();
+
+		buffers_.push_back(rbo_);
 
 		// Check if framebuffer is ready
 		assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
@@ -118,61 +122,63 @@ namespace efiilj
 	
 		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
 
-		if (geometry_->use())
+		if (!geometry_->use())
+			return;
+
+		// Geometry pass	
+		
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glDisable(GL_BLEND);
+		
+		duration dt = frame_timer::now() - last_frame_;
+		last_frame_ = frame_timer::now();	
+		lighting_->set_uniform(settings_.u_dt_seconds, dt.count());
+
+		for (auto& node : nodes_)
 		{
-			// Geometry pass	
-			
-			glEnable(GL_DEPTH_TEST);
-			glDepthMask(GL_TRUE);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glDisable(GL_BLEND);
-			
-			duration dt = frame_timer::now() - last_frame_;
-			last_frame_ = frame_timer::now();	
-			lighting_->set_uniform(settings_.u_dt_seconds, dt.count());
-	
-			for (auto& node : nodes_)
-			{
-				node->draw();
-			}
-
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-			if (lighting_->use())
-			{
-				// Lighting pass
-
-				glDepthMask(GL_TRUE);
-				glEnable(GL_BLEND);
-				glBlendEquation(GL_FUNC_ADD);
-				glBlendFunc(GL_ONE, GL_ONE);
-
-				// Bind buffer textures
-				for (size_t i = 0; i < buffers_.size(); i++)
-				{
-					glActiveTexture(GL_TEXTURE0 + i);
-					glBindTexture(GL_TEXTURE_2D, buffers_[i]);
-					glUniform1i(i, i);
-				}
-
-				// Set lighting uniforms (move to UBO)
-				lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_camera()->get_transform()->position); // nasty
-				lighting_->set_uniform("light.color", settings_.sun.color);
-				lighting_->set_uniform("light.intensity", settings_.sun.intensity);
-				lighting_->set_uniform("light.position", settings_.sun.position);
-				lighting_->set_uniform("ambient_color", settings_.ambient_color);
-				lighting_->set_uniform("ambient_strength", settings_.ambient_strength);
-				lighting_->set_uniform("specular_strength", settings_.specular_strength);
-
-				// Draw screenspace quad
-				glBindVertexArray(quad_vao_);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-				glBindVertexArray(0);
-				
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			}
+			node->draw();
 		}
-	}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		if (!lighting_->use())
+			return;
+
+		// Lighting pass
+
+		glDepthMask(GL_TRUE);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		// Bind buffer textures
+		for (size_t i = 0; i < buffers_.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, buffers_[i]);
+			glUniform1i(i, i);
+		}
+
+		// Set lighting uniforms (move to UBO)
+		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_camera()->get_transform()->position); // nasty
+		lighting_->set_uniform("light.color", settings_.sun.color);
+		lighting_->set_uniform("light.intensity", settings_.sun.intensity);
+		lighting_->set_uniform("light.position", settings_.sun.position);
+		lighting_->set_uniform("ambient_color", settings_.ambient_color);
+		lighting_->set_uniform("ambient_strength", settings_.ambient_strength);
+		lighting_->set_uniform("specular_strength", settings_.specular_strength);
+
+		// Draw screenspace quad
+		glBindVertexArray(quad_vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
+
+		glDisable(GL_BLEND);
+}
 	
 	void deferred_renderer::reload_shaders()
 	{
