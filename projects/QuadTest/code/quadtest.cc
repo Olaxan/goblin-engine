@@ -61,16 +61,16 @@ namespace efiilj
 	void quad_test::run()
 	{
 
-		auto g_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/dvs_geometry.glsl");
-		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_geometry.glsl");
+		auto g_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
+		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
 
-		auto l_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/dvs_lighting.glsl");
-		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/dfs_lighting.glsl");
+		auto l_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_lighting.glsl");
+		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_lighting.glsl");
 		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
 
-		auto h_vs = shader_resource(GL_VERTEX_SHADER, "./res/shaders/vs_gltf.glsl");
-		auto h_fs = shader_resource(GL_FRAGMENT_SHADER, "./res/shaders/fs_gltf.glsl");
+		auto h_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/vs_gltf.glsl");
+		auto h_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_gltf.glsl");
 		auto h_prog_ptr = std::make_shared<shader_program>(h_vs, h_fs);
 
 		auto cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -86,8 +86,8 @@ namespace efiilj
 		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
 		
-		gltf_model_loader gltf_sponza("./res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
-		gltf_model_loader gltf_helmet("./res/gltf/FlightHelmet/FlightHelmet.gltf", h_prog_ptr, helmet_trans_ptr);
+		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
+		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", h_prog_ptr, helmet_trans_ptr);
 
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());

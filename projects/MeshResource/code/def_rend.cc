@@ -125,11 +125,11 @@ namespace efiilj
 		if (!geometry_->use())
 			return;
 
-		// Geometry pass	
+		// ---------- Geometry Pass ----------
 		
-		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		
 		duration dt = frame_timer::now() - last_frame_;
@@ -146,12 +146,12 @@ namespace efiilj
 		if (!lighting_->use())
 			return;
 
-		// Lighting pass
+		// ---------- Lighting Passes ----------
 
-		glDepthMask(GL_TRUE);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Bind buffer textures
 		for (size_t i = 0; i < buffers_.size(); i++)
