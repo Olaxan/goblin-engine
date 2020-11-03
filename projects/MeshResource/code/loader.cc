@@ -192,8 +192,8 @@ namespace efiilj
 		is_valid_ = load_from_file(path);
 	}
 
-	mesh_resource object_loader::get_resource()
+	std::shared_ptr<mesh_resource> object_loader::get_resource()
 	{
-		return mesh_resource(vertex_list_.data(), vertex_count(), index_list_.data(), index_count());
+		return std::make_shared<mesh_resource>(vertex_list_.data(), vertex_count(), index_list_.data(), index_count());
 	}
 }

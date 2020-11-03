@@ -55,9 +55,9 @@ namespace efiilj
 
 		object_loader pl_loader(settings_.p_v_pointlight.c_str());
 		if (pl_loader.is_valid())
-		{
-			v_pointlight_ = pl_loader.get_resource();
-		}
+			v_pointlight_ = std::move(pl_loader.get_resource());
+		else 
+			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
 	}
 
 	void deferred_renderer::gen_buffer(unsigned type)
@@ -130,8 +130,11 @@ namespace efiilj
 		lighting_->set_uniform("source.falloff.exponential", light.falloff.exponential);
 	}
 
-	float get_attenuation_radius(const light_source& light)
+	float deferred_renderer::get_attenuation_radius(const light_source& light)
 	{
+
+		return 1.0f;
+
 		float max_channel = fmax(fmax(light.base.color.x(), light.base.color.y()), light.base.color.z());
 
     	float ret = (-light.falloff.linear + 
@@ -201,32 +204,41 @@ namespace efiilj
 			glUniform1i(i, i);
 		}
 
-		/* ---------- Point Lights ---------- */
-
 		for (size_t i = 0; i < light_sources_.size(); i++)
 		{
 			light_source& light = light_sources_[i];
 
-			set_light_uniforms(light);	
+			set_light_uniforms(light);
 
-			matrix4 scale = matrix4::get_scale(get_attenuation_radius(light));
-			matrix4 pos = matrix4::get_translation(vector4(light.position, 1)); 
-			matrix4 model = pos * scale;
+			switch (light.type)
+			{
+				case light_type::directional:
+				{
+					lighting_->set_uniform("light_model", matrix4());
 
-			lighting_->set_uniform("light_model", model);
-			v_pointlight_.draw_elements();
+					// Draw screenspace quad
+					glBindVertexArray(quad_vao_);
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+					glBindVertexArray(0);
+					break;
+				}
+
+				case light_type::pointlight:
+				{
+					matrix4 scale = matrix4::get_scale(get_attenuation_radius(light));
+					matrix4 pos = matrix4::get_translation(vector4(light.position, 1)); 
+					matrix4 model = pos * scale;
+
+					lighting_->set_uniform("light_model", model);
+					v_pointlight_->draw_elements();
+					break;
+				}
+
+				default:
+					fprintf(stderr, "ERROR: Light type not implemented!\n");
+			}	
 		}
 
-		/* ---------- Directional Light ---------- */
-
-		set_light_uniforms(directional_light_);
-		lighting_->set_uniform("light_model", matrix4());
-
-		// Draw screenspace quad
-		glBindVertexArray(quad_vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 
 		glDisable(GL_BLEND);

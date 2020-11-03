@@ -92,6 +92,16 @@ namespace efiilj
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
+		light_source sun = { 
+				{ vector3(1, 1, 1), 0.01f, 0.01f }, 
+				vector3(10, 10, 10), 
+				vector3(0, 0, 0), 
+				{ 0, 0, 0 }, 
+				light_type::pointlight
+		};
+
+		def_renderer.add_light(sun);
+
 		std::set<int> keys;
 		
 		window_->SetKeyPressFunction([&](const int key, int, const int action, int)

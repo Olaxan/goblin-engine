@@ -46,7 +46,7 @@ uniform light_source source;
 void main()
 {
 
-    vec3 ambient = source.ambient_intensity * source.base.color;
+    vec3 ambient = source.base.ambient_intensity * source.base.color;
 
 	vec3 normal = texture(g_normal, Uv).rgb;
 	vec3 fragment = texture(g_position, Uv).rgb;
@@ -60,7 +60,7 @@ void main()
 
 	float specular_power = max(1.0, 2 / pow(texture(g_orm, Uv).g, 4.0) - 2);	
 	float spec = pow(max(dot(normal, halfway_dir), 0.0), specular_power);
-	vec3 specular = specular_strength * spec * source.color;
+	vec3 specular = spec * source.base.color;
 	
 	vec3 result = (ambient + diffuse + specular);
 	

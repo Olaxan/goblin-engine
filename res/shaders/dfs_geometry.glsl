@@ -23,7 +23,12 @@ void main()
 	vec3 normal = texture(tex_normal, fs_in.Uv).rgb;
 	normal = normal * 2.0 - 1.0;
 	gNormal = normalize(fs_in.TBN * normal);
+	
+	vec4 albedo = texture(tex_base, fs_in.Uv);
 
-	gAlbedo = texture(tex_base, fs_in.Uv).rgb;
+	if (albedo.a == 0.0)
+			discard;
+
+	gAlbedo = albedo.rgb; 
 	gORM = texture(tex_orm, fs_in.Uv).rgb;
 }

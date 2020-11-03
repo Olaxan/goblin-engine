@@ -41,6 +41,6 @@ namespace efiilj
 		int vertex_count() const { return vertex_list_.size(); }
 		int index_count() const { return index_list_.size(); }
 
-		mesh_resource get_resource();
+		std::shared_ptr<mesh_resource> get_resource();
 	};
 }

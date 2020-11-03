@@ -36,10 +36,8 @@ namespace efiilj
 		std::shared_ptr<shader_program> geometry_;
 		std::shared_ptr<shader_program> lighting_;
 
-		mesh_resource v_pointlight_;
-		mesh_resource v_spotlight_;
-
-		light_source directional_light_;
+		std::shared_ptr<mesh_resource> v_pointlight_;
+		std::shared_ptr<mesh_resource> v_spotlight_;
 
 		std::vector<light_source> light_sources_;
 		std::vector<std::shared_ptr<graphics_node>> nodes_;
@@ -67,6 +65,7 @@ namespace efiilj
 		~deferred_renderer() = default;
 
 		void add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes);
+		void add_light(light_source light) { light_sources_.push_back(std::move(light)); }
 
 		void render();
 		void reload_shaders();
