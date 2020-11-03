@@ -1,10 +1,27 @@
 #version 430
 
-struct point_light
+
+struct light_base
 {
-	vec3 color;
+	vec3 rgb;
+	float ambient_intensity;
+	float diffuse_intensity;
+};
+
+struct attenuation
+{
+	float constant;
+	float linear;
+	float exponential;
+};
+
+struct light_source
+{
+	light_base base;
 	vec3 position;
-	float intensity;
+	vec3 direction;
+	attenuation falloff;
+	int type;
 };
 
 out vec4 Color;
@@ -18,11 +35,10 @@ layout (location = 3) uniform sampler2D g_orm;
 layout (location = 4) uniform sampler2D g_depth;
 
 uniform vec4 cam_pos;
+uniform mat4 light_model;
+uniform int light_type;
 
-uniform point_light sun;
-uniform vec3 ambient_color;
-uniform float ambient_strength;
-uniform float specular_strength;
+uniform light_source source;
 
 void main()
 {

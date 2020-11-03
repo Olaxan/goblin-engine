@@ -1,9 +1,11 @@
 #include "def_rend.h"
+#include "loader.h"
 
 #include "GL/glew.h"
 
 #include <cassert>
 #include <chrono>
+#include <memory>
 
 namespace efiilj
 {
@@ -50,6 +52,12 @@ namespace efiilj
 		setup_uniforms();
 
 		last_frame_ = frame_timer::now(); 
+
+		object_loader pl_loader(settings_.p_v_pointlight.c_str());
+		if (pl_loader.is_valid())
+		{
+			light_source_ = pl_loader.get_resource();
+		}
 	}
 
 	void deferred_renderer::gen_buffer(unsigned type)
@@ -109,6 +117,36 @@ namespace efiilj
 			geometry_->bind_block(settings_.ubo_camera, 0);
 	}
 
+	void deferred_renderer::set_light_uniforms(const light_source& light)
+	{
+		lighting_->set_uniform("source.type", static_cast<int>(light.type));
+		lighting_->set_uniform("source.base.rgb", light.base.rgb);	
+		lighting_->set_uniform("source.base.ambient_intensity", light.base.ambient_intensity);
+		lighting_->set_uniform("source.base.diffuse_intensity", light.base.diffuse_intensity);
+		lighting_->set_uniform("source.position", light.position);
+		lighting_->set_uniform("source.direction", light.direction);
+		lighting_->set_uniform("source.falloff.constant", light.falloff.constant);
+		lighting_->set_uniform("source.falloff.linear", light.falloff.linear);
+		lighting_->set_uniform("source.falloff.exponential", light.falloff.exponential);
+	}
+
+	float get_attenuation_radius(const light_source& light)
+	{
+		float max_channel = fmax(fmax(light.base.rgb.x(), light.base.rgb.y()), light.base.rgb.z());
+
+    	float ret = (-light.falloff.linear + 
+					sqrtf(light.falloff.linear * 
+							light.falloff.linear - 4 * 
+							light.falloff.exponential * (
+								light.falloff.exponential - 256 * 
+								max_channel * light.base.diffuse_intensity
+							)
+						)
+					) / (2 * light.falloff.exponential);
+
+    	return ret;
+	}
+
 	void deferred_renderer::add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
 	{
 		for (auto& node : nodes)
@@ -125,7 +163,7 @@ namespace efiilj
 		if (!geometry_->use())
 			return;
 
-		// ---------- Geometry Pass ----------
+		// ---------- Geometry Pass ---------- \\
 		
 		glDepthMask(GL_TRUE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -143,10 +181,10 @@ namespace efiilj
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		// ---------- Lighting Passes ----------
+		
 		if (!lighting_->use())
 			return;
-
-		// ---------- Lighting Passes ----------
 
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -161,14 +199,27 @@ namespace efiilj
 			glUniform1i(i, i);
 		}
 
-		// Set lighting uniforms (move to UBO)
-		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_camera()->get_transform()->position); // nasty
-		lighting_->set_uniform("light.color", settings_.sun.color);
-		lighting_->set_uniform("light.intensity", settings_.sun.intensity);
-		lighting_->set_uniform("light.position", settings_.sun.position);
-		lighting_->set_uniform("ambient_color", settings_.ambient_color);
-		lighting_->set_uniform("ambient_strength", settings_.ambient_strength);
-		lighting_->set_uniform("specular_strength", settings_.specular_strength);
+		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_position()) ; 
+
+		// ---------- Point Lights ---------- 
+
+		for (size_t i = 0; i < light_sources_.size(); i++)
+		{
+			light_source& light = light_sources_[i];
+
+			set_light_uniforms(light);	
+
+			matrix4 scale = matrix4::get_scale(get_attenuation_radius(light));
+			matrix4 pos = matrix4::get_translation(vector4(light.position, 1)); 
+			matrix4 model = pos * scale;
+
+			lighting_->set_uniform("light_model", model);
+			v_pointlight_.draw_elements();
+		}
+
+		// ---------- Directional Light ----------
+
+		set_light_uniforms(directional_light_);
 
 		// Draw screenspace quad
 		glBindVertexArray(quad_vao_);

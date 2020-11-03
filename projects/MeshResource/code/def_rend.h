@@ -4,6 +4,7 @@
 #include "cam_mgr.h"
 #include "rend_set.h"
 #include "node.h"
+#include "light.h"
 
 #include <vector>
 #include <chrono>
@@ -35,6 +36,12 @@ namespace efiilj
 		std::shared_ptr<shader_program> geometry_;
 		std::shared_ptr<shader_program> lighting_;
 
+		mesh_resource v_pointlight_;
+		mesh_resource v_spotlight_;
+
+		light_source directional_light_;
+
+		std::vector<light_source> light_sources_;
 		std::vector<std::shared_ptr<graphics_node>> nodes_;
 		std::vector<unsigned> buffers_;
 
@@ -43,6 +50,10 @@ namespace efiilj
 
 		void setup_quad();
 		void setup_uniforms();
+		
+		void set_light_uniforms(const light_source& light);
+
+		float get_attenuation_radius(const light_source& light);
 
 	public:
 		deferred_renderer

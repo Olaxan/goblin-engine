@@ -7,10 +7,6 @@ namespace efiilj
 		: program_(std::move(program))
 	{ }
 
-	gltf_pbr_base::gltf_pbr_base(std::shared_ptr<shader_program> program)
-		: material_base{ program } 
-	{ }
-
 	void gltf_pbr_base::apply()
 	{
 		if (program_ != nullptr)

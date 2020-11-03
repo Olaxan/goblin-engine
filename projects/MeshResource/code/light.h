@@ -4,13 +4,34 @@
 
 namespace efiilj
 {
-	struct point_light
+
+	enum class light_type
 	{
-		point_light(const vector3& rgb, const vector3& intensity, const vector3& position)
-		: rgb(rgb), position(position), intensity(intensity) { }
-		
+		directional = 0,
+		pointlight = 1,
+		spotlight = 2
+	};
+
+	struct light_base
+	{
 		vector3 rgb;
+		float ambient_intensity;
+		float diffuse_intensity;
+	};
+
+	struct attenuation
+	{
+		float constant;
+		float linear;
+		float exponential;
+	};
+
+	struct light_source
+	{
+		light_base base;
 		vector3 position;
-		vector3 intensity;
+		vector3 direction;
+		attenuation falloff;
+		light_type type;	
 	};
 }
