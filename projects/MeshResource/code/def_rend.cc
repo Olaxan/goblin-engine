@@ -56,7 +56,7 @@ namespace efiilj
 		object_loader pl_loader(settings_.p_v_pointlight.c_str());
 		if (pl_loader.is_valid())
 		{
-			light_source_ = pl_loader.get_resource();
+			v_pointlight_ = pl_loader.get_resource();
 		}
 	}
 
@@ -120,7 +120,7 @@ namespace efiilj
 	void deferred_renderer::set_light_uniforms(const light_source& light)
 	{
 		lighting_->set_uniform("source.type", static_cast<int>(light.type));
-		lighting_->set_uniform("source.base.rgb", light.base.rgb);	
+		lighting_->set_uniform("source.base.color", light.base.color);	
 		lighting_->set_uniform("source.base.ambient_intensity", light.base.ambient_intensity);
 		lighting_->set_uniform("source.base.diffuse_intensity", light.base.diffuse_intensity);
 		lighting_->set_uniform("source.position", light.position);
@@ -132,7 +132,7 @@ namespace efiilj
 
 	float get_attenuation_radius(const light_source& light)
 	{
-		float max_channel = fmax(fmax(light.base.rgb.x(), light.base.rgb.y()), light.base.rgb.z());
+		float max_channel = fmax(fmax(light.base.color.x(), light.base.color.y()), light.base.color.z());
 
     	float ret = (-light.falloff.linear + 
 					sqrtf(light.falloff.linear * 
@@ -163,7 +163,7 @@ namespace efiilj
 		if (!geometry_->use())
 			return;
 
-		// ---------- Geometry Pass ---------- \\
+		/* ---------- Geometry Pass ---------- */
 		
 		glDepthMask(GL_TRUE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -181,10 +181,12 @@ namespace efiilj
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// ---------- Lighting Passes ----------
+		/* ---------- Lighting Passes ---------- */
 		
 		if (!lighting_->use())
 			return;
+
+		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_position()) ; 
 
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -199,9 +201,7 @@ namespace efiilj
 			glUniform1i(i, i);
 		}
 
-		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_position()) ; 
-
-		// ---------- Point Lights ---------- 
+		/* ---------- Point Lights ---------- */
 
 		for (size_t i = 0; i < light_sources_.size(); i++)
 		{
@@ -217,9 +217,10 @@ namespace efiilj
 			v_pointlight_.draw_elements();
 		}
 
-		// ---------- Directional Light ----------
+		/* ---------- Directional Light ---------- */
 
 		set_light_uniforms(directional_light_);
+		lighting_->set_uniform("light_model", matrix4());
 
 		// Draw screenspace quad
 		glBindVertexArray(quad_vao_);

@@ -5,8 +5,10 @@ layout (location = 1) in vec2 uv;
 
 out vec2 Uv;
 
+uniform mat4 light_model;
+
 void main()
 {
     Uv = uv;
-    gl_Position = vec4(pos, 1.0);
+    gl_Position = light_model * vec4(pos, 1.0);
 }

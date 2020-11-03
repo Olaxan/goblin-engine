@@ -1,9 +1,12 @@
 #version 430
 
+#define LIGHT_DIRECTIONAL 0
+#define LIGHT_POINT 1
+#define LIGHT_SPOT 2
 
 struct light_base
 {
-	vec3 rgb;
+	vec3 color;
 	float ambient_intensity;
 	float diffuse_intensity;
 };
@@ -42,21 +45,22 @@ uniform light_source source;
 
 void main()
 {
-    	vec3 ambient = ambient_strength * ambient_color;
+
+    vec3 ambient = source.ambient_intensity * source.base.color;
 
 	vec3 normal = texture(g_normal, Uv).rgb;
 	vec3 fragment = texture(g_position, Uv).rgb;
 
-	vec3 sun_dir = normalize(sun.position - fragment);
+	vec3 source_dir = normalize(source.position - fragment);
 	vec3 view_dir = normalize(cam_pos.xyz - fragment);
-	vec3 halfway_dir = normalize(sun_dir + view_dir);
+	vec3 halfway_dir = normalize(source_dir + view_dir);
 	
-	float diff = max(dot(normal, sun_dir), 0.0);
-	vec3 diffuse = diff * sun.color;
+	float diff = max(dot(normal, source_dir), 0.0);
+	vec3 diffuse = diff * source.base.color;
 
 	float specular_power = max(1.0, 2 / pow(texture(g_orm, Uv).g, 4.0) - 2);	
 	float spec = pow(max(dot(normal, halfway_dir), 0.0), specular_power);
-	vec3 specular = specular_strength * spec * sun.color;
+	vec3 specular = specular_strength * spec * source.color;
 	
 	vec3 result = (ambient + diffuse + specular);
 	

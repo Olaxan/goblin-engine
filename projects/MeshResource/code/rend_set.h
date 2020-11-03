@@ -16,7 +16,6 @@ namespace efiilj
 		std::string ubo_camera = "Matrices";
 		std::string u_camera = "cam_pos";
 		std::string u_dt_seconds = "dt";
-		std::string u_light_type = "light_type";
 
 		// Volumes
 		std::string p_v_pointlight = "../res/volumes/v_pointlight2.obj";

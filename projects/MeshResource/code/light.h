@@ -14,7 +14,7 @@ namespace efiilj
 
 	struct light_base
 	{
-		vector3 rgb;
+		vector3 color;
 		float ambient_intensity;
 		float diffuse_intensity;
 	};
