@@ -98,7 +98,7 @@ namespace efiilj
 			{
 				fragment.normal,
 				fragment.fragment,
-				camera_->get_transform()->position,
+				camera_->get_transform()->get_position(),
 				vector4(0.5f, 0.5f, 0.5f, 1),
 				vector4(1, 1, 1, 1),
 				vector4(2, 2, 2, 1),
@@ -126,7 +126,7 @@ namespace efiilj
 		};
 
 		const vector4 face_normal = get_face_normal(vertices[0]->xyzw, vertices[1]->xyzw, vertices[2]->xyzw);
-		const vector4 camera_local = local * camera_->get_transform()->position;
+		const vector4 camera_local = local * camera_->get_transform()->get_position();
 
 		// Exit early if normal is facing away from camera
 		if (cull_backface(vertices[0]->xyzw, face_normal, camera_local))
@@ -134,7 +134,7 @@ namespace efiilj
 
 		// Create uniforms struct using camera view/perspective and node model transform
 		// TODO: Send perspective as well, this broke when updating other code.
-		const vertex_uniforms vertex_u(camera_->get_view(), node.transform().model());
+		const vertex_uniforms vertex_u(camera_->get_view(), node.transform().get_model());
 
 		// Get vertex data from node vertex shader
 		vertex_data data[] =
@@ -325,7 +325,7 @@ namespace efiilj
 
 		for (const auto& node_ptr : nodes_)
 		{
-			matrix4 local = node_ptr->transform().model_inv();
+			matrix4 local = node_ptr->transform().get_model_inv();
 
 			for (unsigned int i = 0; i < node_ptr->index_count(); i += 3)
 			{

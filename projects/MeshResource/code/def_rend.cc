@@ -9,37 +9,37 @@
 
 namespace efiilj
 {
-deferred_renderer::deferred_renderer
-(
-	std::shared_ptr<camera_manager> camera_manager,
-	const renderer_settings& settings,
-	std::shared_ptr<shader_program> geometry, 
-	std::shared_ptr<shader_program> lighting
-) : 
-	gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0),   
-	camera_mgr_(std::move(camera_manager)),
-	geometry_(std::move(geometry)), 
-	lighting_(std::move(lighting)),
-	settings_(settings) 
-{
-// Setup gbuffer
-glGenFramebuffers(1, &gbo_);
-glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
+	deferred_renderer::deferred_renderer
+	(
+		std::shared_ptr<camera_manager> camera_manager,
+		const renderer_settings& settings,
+		std::shared_ptr<shader_program> geometry, 
+		std::shared_ptr<shader_program> lighting
+	) : 
+		gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), frame_index_(0), 
+		camera_mgr_(std::move(camera_manager)),
+		geometry_(std::move(geometry)), 
+		lighting_(std::move(lighting)),
+		settings_(settings) 
+	{
+		// Setup gbuffer
+		glGenFramebuffers(1, &gbo_);
+		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
 
-gen_buffer(GL_FLOAT);		// Pos
-gen_buffer(GL_FLOAT);		// Normal
-gen_buffer(GL_UNSIGNED_BYTE);	// Albedo
-gen_buffer(GL_UNSIGNED_BYTE);	// ORM
+		gen_buffer(GL_FLOAT);		// Pos
+		gen_buffer(GL_FLOAT);		// Normal
+		gen_buffer(GL_UNSIGNED_BYTE);	// Albedo
+		gen_buffer(GL_UNSIGNED_BYTE);	// ORM
 
-// Setup render buffer + depth
-glGenTextures(1, &rbo_);
-glBindTexture(GL_TEXTURE_2D, rbo_);
-glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, settings_.width, settings_.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo_, 0);
+		// Setup render buffer + depth
+		glGenTextures(1, &rbo_);
+		glBindTexture(GL_TEXTURE_2D, rbo_);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, settings_.width, settings_.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo_, 0);
 
-attach_buffers();
+		attach_buffers();
 
 		buffers_.push_back(rbo_);
 
@@ -93,12 +93,12 @@ attach_buffers();
 		// https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 
 		float quad[] = {
-			// positions        
-			-1.0f,  1.0f, 0.0f, 1.0f,  
+			// positions		
+			-1.0f,	1.0f, 0.0f, 1.0f,  
 			-1.0f, -1.0f, 0.0f, 1.0f, 
-			 1.0f,  1.0f, 0.0f, 1.0f, 
+			 1.0f,	1.0f, 0.0f, 1.0f, 
 			 1.0f, -1.0f, 0.0f, 1.0f
-        	};	
+			};	
 
 		glGenVertexArrays(1, &quad_vao_);
 		glGenBuffers(1, &quad_vbo_);
@@ -121,29 +121,11 @@ attach_buffers();
 		lighting_->set_uniform("source.base.color", light.base.color);	
 		lighting_->set_uniform("source.base.ambient_intensity", light.base.ambient_intensity);
 		lighting_->set_uniform("source.base.diffuse_intensity", light.base.diffuse_intensity);
-		lighting_->set_uniform("source.position", light.position);
-		lighting_->set_uniform("source.direction", light.direction);
+		lighting_->set_uniform("source.position", light.transform.get_position());
+		lighting_->set_uniform("source.direction", light.transform.forward());
 		lighting_->set_uniform("source.falloff.constant", light.falloff.constant);
 		lighting_->set_uniform("source.falloff.linear", light.falloff.linear);
 		lighting_->set_uniform("source.falloff.exponential", light.falloff.exponential);
-	}
-
-	float deferred_renderer::get_attenuation_radius(const light_source& light) const
-	{
-
-		float max_channel = fmax(fmax(light.base.color.x(), light.base.color.y()), light.base.color.z());
-
-    	float ret = (-light.falloff.linear + 
-					sqrtf(light.falloff.linear * 
-							light.falloff.linear - 4 * 
-							light.falloff.exponential * (
-								light.falloff.exponential - 256 * 
-								max_channel * light.base.diffuse_intensity
-							)
-						)
-					) / (2 * light.falloff.exponential);
-
-    	return ret;
 	}
 
 	void deferred_renderer::draw_directional(const light_source& light) const
@@ -161,11 +143,7 @@ attach_buffers();
 		const matrix4& v = camera_mgr_->get_active_camera()->get_view();
 		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
 
-
-		matrix4 t = matrix4::get_translation(vector4(light.position, 1)); 
-		matrix4 s = matrix4::get_scale(radius);
-
-		matrix4 mvp = t * s * v * p;
+		matrix4 mvp = light.transform.get_model() * v * p;
 
 		lighting_->set_uniform("light_mvp", mvp);
 
@@ -173,12 +151,6 @@ attach_buffers();
 		v_pointlight_->bind();
 		v_pointlight_->draw_elements();
 		v_pointlight_->unbind();
-	}
-
-	void deferred_renderer::add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
-	{
-		for (auto& node : nodes)
-			this->nodes_.push_back(node);
 	}
 
 	void deferred_renderer::render() 
@@ -222,8 +194,6 @@ attach_buffers();
 		glDepthMask(GL_FALSE);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		
-
 		// Bind buffer textures
 		for (size_t i = 0; i < buffers_.size(); i++)
 		{
@@ -234,7 +204,7 @@ attach_buffers();
 
 		for (size_t i = 0; i < light_sources_.size(); i++)
 		{
-			light_source& light = light_sources_[i];
+			light_source& light = *light_sources_[i];
 
 			set_light_uniforms(light);
 
@@ -249,15 +219,15 @@ attach_buffers();
 				case light_type::pointlight:
 				{
 					
-						const vector4& cam_pos = camera_mgr_->get_active_position();
-						vector4 cam_dir = cam_pos - vector4(light.position, 1.0f);
+					const vector4& cam_pos = camera_mgr_->get_active_position();
+					vector4 cam_dir = cam_pos - light.transform.get_position();
 
-						float radius = get_attenuation_radius(light);
+					float radius = light.transform.get_scale().length();
 
-						if (cam_dir.length() < radius)
-							draw_directional(light);
-						else
-							draw_pointlight(light, radius);
+					if (cam_dir.length() < radius)
+						draw_directional(light);
+					else
+						draw_pointlight(light, radius);
 
 					break;
 				}
@@ -270,7 +240,9 @@ attach_buffers();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
-}
+
+		frame_index_++;
+	}
 	
 	void deferred_renderer::reload_shaders()
 	{

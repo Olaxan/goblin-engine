@@ -31,7 +31,7 @@ namespace efiilj
 		std::shared_ptr<camera_model> get_default_camera() const { return cameras_[0]; }
 		std::shared_ptr<camera_model> get_active_camera() const { return cameras_[active_camera_]; }
 
-		vector4 get_active_position() const { return get_active_camera()->get_transform()->position; };
-		vector4 get_active_rotation() const { return get_active_camera()->get_transform()->rotation; };
+		vector4 get_active_position() const { return get_active_camera()->get_transform()->get_position(); };
+		vector4 get_active_rotation() const { return get_active_camera()->get_transform()->get_rotation(); };
 	};
 }

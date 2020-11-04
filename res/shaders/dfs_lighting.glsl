@@ -21,8 +21,8 @@ struct attenuation
 struct light_source
 {
 	light_base base;
-	vec3 position;
-	vec3 direction;
+	vec4 position;
+	vec4 direction;
 	attenuation falloff;
 	int type;
 };
@@ -67,12 +67,12 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
 
 vec4 calc_directional(vec3 position, vec3 normal, vec3 orm)
 {
-	return calc_base(source.base, source.direction, position, normal, orm);
+	return calc_base(source.base, source.direction.xyz, position, normal, orm);
 }
 
 vec4 calc_pointlight(vec3 position, vec3 normal, vec3 orm)
 {
-	vec3 light_dir = position - source.position;
+	vec3 light_dir = position - source.position.xyz;
 	float light_dist = length(light_dir);
 	light_dir = normalize(light_dir);
 

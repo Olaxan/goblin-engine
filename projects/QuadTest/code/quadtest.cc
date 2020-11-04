@@ -92,24 +92,34 @@ namespace efiilj
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
-		light_source sun = { 
-				{ vector3(1.0f, 1.0f, 1.0f), 0.001f, 0.01f }, 
-				vector3(0, 0, 0), 
-				vector3(0, 0, 0), 
-				{ 0, 0, 0 }, 
-				light_type::directional
-		};
+		std::vector<light_source> lights;
 
-		light_source light = { 
-				{ vector3(1.0f, 0.0f, 0.0f), 0.5f, 1.0f }, 
-				vector3(0, 10, 0), 
-				vector3(0, 0, 0), 
-				{ 0, 0, 0.1f }, 
-				light_type::pointlight
-		};
+		auto sun_ptr = std::make_shared<light_source>();
+		sun_ptr->base.ambient_intensity = 0.0001f;
+		sun_ptr->base.diffuse_intensity = 0.01f;
+		sun_ptr->type = light_type::directional;
+		sun_ptr->update_falloff();
 
-		def_renderer.add_light(sun);
-		def_renderer.add_light(light);
+		def_renderer.add_light(sun_ptr);
+
+		auto l_red_ptr = std::make_shared<light_source>();
+		l_red_ptr->base.color = vector3(1.0f, 0.0f, 0.0f);
+		l_red_ptr->base.ambient_intensity = 0.5f;
+		l_red_ptr->base.diffuse_intensity = 1.0f;
+		l_red_ptr->transform.add_position(vector4(0, 10, 0, 0));
+		l_red_ptr->falloff.exponential = 0.1f;
+		l_red_ptr->update_falloff();
+		
+		auto l_blue_ptr = std::make_shared<light_source>();
+		l_blue_ptr->base.color = vector3(0.0f, 0.0f, 1.0f);
+		l_blue_ptr->base.ambient_intensity = 0.5f;
+		l_blue_ptr->base.diffuse_intensity = 1.0f;
+		l_blue_ptr->transform.add_position(vector4(0, 10, 0, 0));
+		l_blue_ptr->falloff.exponential = 0.1f;
+		l_blue_ptr->update_falloff();
+
+		def_renderer.add_light(l_red_ptr);
+		def_renderer.add_light(l_blue_ptr);
 
 		std::set<int> keys;
 		
@@ -172,35 +182,38 @@ namespace efiilj
 			auto camera_trans_ptr = camera_ptr->get_transform();
 
 			if (is_mouse_captured_)
-				camera_trans_ptr->rotation = vector4(-mouse_y_, 0, mouse_x_, 1);
+				camera_trans_ptr->set_rotation(vector4(-mouse_y_, 0, mouse_x_, 1));
 			else if (is_dragging_mouse_)
-				helmet_trans_ptr->rotation += vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f;
+				helmet_trans_ptr->add_rotation(vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window_->Update();
 	
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				camera_trans_ptr->position+= camera_trans_ptr->forward() * CAMERA_SPEED;
+				camera_trans_ptr->add_position(camera_trans_ptr->forward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->forward() * CAMERA_SPEED;
+				camera_trans_ptr->add_position(camera_trans_ptr->forward() * -CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->position += camera_trans_ptr->left() * CAMERA_SPEED;
+				camera_trans_ptr->add_position(camera_trans_ptr->left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->left() * CAMERA_SPEED;
+				camera_trans_ptr->add_position(camera_trans_ptr->left() * -CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				camera_trans_ptr->position += camera_trans_ptr->up() * CAMERA_SPEED;
+				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				camera_trans_ptr->position -= camera_trans_ptr->up() * CAMERA_SPEED;
+				camera_trans_ptr->add_position(camera_trans_ptr->up() * -CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 			
 			cam_mgr_ptr->update_camera();
+
+			l_red_ptr->transform.set_position(vector4(sinf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, 20.0f, 1.0));
+			l_blue_ptr->transform.set_position(vector4(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f, 1.0));
 
 			def_renderer.render();
 			fwd_renderer.render();

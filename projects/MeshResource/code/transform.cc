@@ -4,32 +4,39 @@ namespace efiilj
 {
 
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: model_(true), position(pos, 1), scale(scale, 1), rotation(rot, 1) { }
+	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), inverse_dirty_(true) 
+	{ 
+		update_model();
+	}
 	
-	const matrix4& transform_model::model()
+	void transform_model::update_model()
 	{
-		//TODO: Optimize transform model function.
-		const matrix4 t = matrix4::get_translation(position);
-		const matrix4 r = matrix4::get_rotation_xyz(rotation);
-		const matrix4 s = matrix4::get_scale(scale);
+		const matrix4 t = matrix4::get_translation(position_);
+		const matrix4 r = matrix4::get_rotation_xyz(rotation_);
+		const matrix4 s = matrix4::get_scale(scale_);
 
 		model_ = t * r * s;
-		
-		return model_;
+
+		inverse_dirty_ = true;
 	}
 
-	const matrix4& transform_model::model_inv()
+	const matrix4& transform_model::get_model_inv()
 	{
-		inverse_ = model_.inverse();
+		if (inverse_dirty_)
+		{
+			inverse_ = model_.inverse();
+			inverse_dirty_ = false;
+		}
+
 		return inverse_;
 	}
 
 	vector4 transform_model::forward() const
 	{
 		return vector4(
-			cos(rotation.x()) * cos(rotation.z()),
-			sin(rotation.x()),
-			cos(rotation.x()) * sin(rotation.z()), 1).norm();
+			cos(rotation_.x()) * cos(rotation_.z()),
+			sin(rotation_.x()),
+			cos(rotation_.x()) * sin(rotation_.z()), 1).norm();
 	}
 
 	vector4 transform_model::backward() const
