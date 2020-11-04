@@ -496,6 +496,11 @@ namespace efiilj
 			return get_scale(xyz.x(), xyz.y(), xyz.z());
 		}
 
+		static matrix4 get_scale(const float scale)
+		{
+			return get_scale(scale, scale, scale);
+		}
+
 		/// <summary>
 		/// Returns a rotation matrix for a specified rotation around the x-axis.
 		/// </summary>

@@ -49,9 +49,11 @@ namespace efiilj
 		void setup_quad();
 		void setup_uniforms();
 		
-		void set_light_uniforms(const light_source& light);
+		void set_light_uniforms(const light_source& light) const;
+		void draw_directional(const light_source& light) const;
+		void draw_pointlight(const light_source& light, float radius) const;
 
-		float get_attenuation_radius(const light_source& light);
+		float get_attenuation_radius(const light_source& light) const;
 
 	public:
 		deferred_renderer

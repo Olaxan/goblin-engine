@@ -93,14 +93,23 @@ namespace efiilj
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
 		light_source sun = { 
-				{ vector3(1, 1, 1), 0.01f, 0.01f }, 
-				vector3(10, 10, 10), 
+				{ vector3(1.0f, 1.0f, 1.0f), 0.001f, 0.01f }, 
+				vector3(0, 0, 0), 
 				vector3(0, 0, 0), 
 				{ 0, 0, 0 }, 
+				light_type::directional
+		};
+
+		light_source light = { 
+				{ vector3(1.0f, 0.0f, 0.0f), 0.5f, 1.0f }, 
+				vector3(0, 10, 0), 
+				vector3(0, 0, 0), 
+				{ 0, 0, 0.1f }, 
 				light_type::pointlight
 		};
 
 		def_renderer.add_light(sun);
+		def_renderer.add_light(light);
 
 		std::set<int> keys;
 		

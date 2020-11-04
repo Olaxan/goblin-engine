@@ -25,7 +25,7 @@ namespace efiilj
 		explicit transform_model(
 				const vector3& pos = vector3(0, 0, 0), 
 				const vector3& rot = vector3(0, 0, 0),
-			       	const vector3& scale = vector3(1, 1, 1));
+			    const vector3& scale = vector3(1, 1, 1));
 
 
 		vector4 position;

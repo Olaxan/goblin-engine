@@ -9,37 +9,37 @@
 
 namespace efiilj
 {
-	deferred_renderer::deferred_renderer
-		(
-			std::shared_ptr<camera_manager> camera_manager,
-			const renderer_settings& settings,
-			std::shared_ptr<shader_program> geometry, 
-			std::shared_ptr<shader_program> lighting
-		) : 
-			gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0),   
-			camera_mgr_(std::move(camera_manager)),
-			geometry_(std::move(geometry)), 
-			lighting_(std::move(lighting)),
-			settings_(settings) 
-	{
-		// Setup gbuffer
-		glGenFramebuffers(1, &gbo_);
-		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
+deferred_renderer::deferred_renderer
+(
+	std::shared_ptr<camera_manager> camera_manager,
+	const renderer_settings& settings,
+	std::shared_ptr<shader_program> geometry, 
+	std::shared_ptr<shader_program> lighting
+) : 
+	gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0),   
+	camera_mgr_(std::move(camera_manager)),
+	geometry_(std::move(geometry)), 
+	lighting_(std::move(lighting)),
+	settings_(settings) 
+{
+// Setup gbuffer
+glGenFramebuffers(1, &gbo_);
+glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
 
-		gen_buffer(GL_FLOAT);		// Pos
-		gen_buffer(GL_FLOAT);		// Normal
-		gen_buffer(GL_UNSIGNED_BYTE);	// Albedo
-		gen_buffer(GL_UNSIGNED_BYTE);	// ORM
+gen_buffer(GL_FLOAT);		// Pos
+gen_buffer(GL_FLOAT);		// Normal
+gen_buffer(GL_UNSIGNED_BYTE);	// Albedo
+gen_buffer(GL_UNSIGNED_BYTE);	// ORM
 
-		// Setup render buffer + depth
-		glGenTextures(1, &rbo_);
-		glBindTexture(GL_TEXTURE_2D, rbo_);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, settings_.width, settings_.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo_, 0);
+// Setup render buffer + depth
+glGenTextures(1, &rbo_);
+glBindTexture(GL_TEXTURE_2D, rbo_);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, settings_.width, settings_.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo_, 0);
 
-		attach_buffers();
+attach_buffers();
 
 		buffers_.push_back(rbo_);
 
@@ -93,11 +93,11 @@ namespace efiilj
 		// https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 
 		float quad[] = {
-			// positions        // texture Coords
-			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			// positions        
+			-1.0f,  1.0f, 0.0f, 1.0f,  
+			-1.0f, -1.0f, 0.0f, 1.0f, 
+			 1.0f,  1.0f, 0.0f, 1.0f, 
+			 1.0f, -1.0f, 0.0f, 1.0f
         	};	
 
 		glGenVertexArrays(1, &quad_vao_);
@@ -106,9 +106,7 @@ namespace efiilj
 		glBindBuffer(GL_ARRAY_BUFFER, quad_vbo_);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(quad), &quad, GL_STATIC_DRAW);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	}
 	
 	void deferred_renderer::setup_uniforms()
@@ -117,7 +115,7 @@ namespace efiilj
 			geometry_->bind_block(settings_.ubo_camera, 0);
 	}
 
-	void deferred_renderer::set_light_uniforms(const light_source& light)
+	void deferred_renderer::set_light_uniforms(const light_source& light) const
 	{
 		lighting_->set_uniform("source.type", static_cast<int>(light.type));
 		lighting_->set_uniform("source.base.color", light.base.color);	
@@ -130,10 +128,8 @@ namespace efiilj
 		lighting_->set_uniform("source.falloff.exponential", light.falloff.exponential);
 	}
 
-	float deferred_renderer::get_attenuation_radius(const light_source& light)
+	float deferred_renderer::get_attenuation_radius(const light_source& light) const
 	{
-
-		return 1.0f;
 
 		float max_channel = fmax(fmax(light.base.color.x(), light.base.color.y()), light.base.color.z());
 
@@ -148,6 +144,35 @@ namespace efiilj
 					) / (2 * light.falloff.exponential);
 
     	return ret;
+	}
+
+	void deferred_renderer::draw_directional(const light_source& light) const
+	{
+		lighting_->set_uniform("light_mvp", matrix4());
+
+		// Draw screenspace quad
+		glBindVertexArray(quad_vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+	}
+
+	void deferred_renderer::draw_pointlight(const light_source& light, float radius) const
+	{
+		const matrix4& v = camera_mgr_->get_active_camera()->get_view();
+		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
+
+
+		matrix4 t = matrix4::get_translation(vector4(light.position, 1)); 
+		matrix4 s = matrix4::get_scale(radius);
+
+		matrix4 mvp = t * s * v * p;
+
+		lighting_->set_uniform("light_mvp", mvp);
+
+		// Draw pointlight volume
+		v_pointlight_->bind();
+		v_pointlight_->draw_elements();
+		v_pointlight_->unbind();
 	}
 
 	void deferred_renderer::add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
@@ -194,7 +219,10 @@ namespace efiilj
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
+		glDepthMask(GL_FALSE);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		
 
 		// Bind buffer textures
 		for (size_t i = 0; i < buffers_.size(); i++)
@@ -214,23 +242,23 @@ namespace efiilj
 			{
 				case light_type::directional:
 				{
-					lighting_->set_uniform("light_model", matrix4());
-
-					// Draw screenspace quad
-					glBindVertexArray(quad_vao_);
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-					glBindVertexArray(0);
+					draw_directional(light);	
 					break;
 				}
 
 				case light_type::pointlight:
 				{
-					matrix4 scale = matrix4::get_scale(get_attenuation_radius(light));
-					matrix4 pos = matrix4::get_translation(vector4(light.position, 1)); 
-					matrix4 model = pos * scale;
+					
+						const vector4& cam_pos = camera_mgr_->get_active_position();
+						vector4 cam_dir = cam_pos - vector4(light.position, 1.0f);
 
-					lighting_->set_uniform("light_model", model);
-					v_pointlight_->draw_elements();
+						float radius = get_attenuation_radius(light);
+
+						if (cam_dir.length() < radius)
+							draw_directional(light);
+						else
+							draw_pointlight(light, radius);
+
 					break;
 				}
 
@@ -240,7 +268,7 @@ namespace efiilj
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
-
+		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
 }
 	

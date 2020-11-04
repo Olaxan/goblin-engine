@@ -143,7 +143,7 @@ namespace efiilj
 		if (uniform == -1)
 			return false;
 
-		glUniformMatrix4fv(uniform, 1, GL_TRUE, &mat.at(0));
+		glUniformMatrix4fv(uniform, 1, GL_FALSE, &mat.at(0));
 		return true;
 	}
 
@@ -163,7 +163,7 @@ namespace efiilj
 		if (uniform == -1)
 			return false;
 
-		glUniformMatrix3fv(uniform, 1, GL_TRUE, &mat.at(0));
+		glUniformMatrix3fv(uniform, 1, GL_FALSE, &mat.at(0));
 		return true;
 	}
 }
