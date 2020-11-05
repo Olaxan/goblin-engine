@@ -5,21 +5,56 @@
 #include "node.h"
 
 #include <memory>
+#include <chrono>
 
 namespace efiilj
 {
 	class forward_renderer
 	{
-	private:
+	protected:
+
 		std::vector<std::shared_ptr<graphics_node>> nodes_;
 		std::shared_ptr<camera_manager> camera_mgr_;
 		const renderer_settings& settings_;
+
+		unsigned frame_index_;
+
+	private:
+
+		typedef std::chrono::duration<float> duration;
+		typedef std::chrono::high_resolution_clock frame_timer; 
+		typedef std::chrono::time_point<frame_timer> frame_timer_point;
+
+		frame_timer_point last_frame_;
+		duration delta_time_;
+
 	public:
+
 		forward_renderer(std::shared_ptr<camera_manager> camera_manager, const renderer_settings& set);
 		~forward_renderer() = default;
 
-		void add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes);
-		void reload_shaders() const;
-		void render() const;
+		virtual void add_node(std::shared_ptr<graphics_node> node)
+		{
+			this->nodes_.push_back(node);
+		}
+
+		virtual void add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
+		{
+			for (auto& node : nodes)
+				add_node(node);
+		}
+
+		virtual void reload_shaders() const;
+
+		virtual void render() const;
+
+		void begin_frame();
+		void end_frame();
+
+		virtual void on_begin_frame() {}
+		virtual void on_end_frame() {}
+
+		unsigned get_frame_index() const { return frame_index_; }
+		float get_delta_time() const { return delta_time_.count(); }
 	};
 }

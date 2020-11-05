@@ -89,8 +89,8 @@ vec4 calc_pointlight(vec3 position, vec3 normal, vec3 orm)
 
 void main()
 {
-
 	ivec2 Uv = ivec2(gl_FragCoord.xy);
+
 	vec3 Normal = texelFetch(g_normal, Uv, 0).rgb;
 	vec3 WorldPos = texelFetch(g_position, Uv, 0).rgb;
 	vec3 Color = texelFetch(g_albedo, Uv, 0).rgb;

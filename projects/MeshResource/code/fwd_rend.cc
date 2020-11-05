@@ -3,13 +3,10 @@
 namespace efiilj
 {
 	forward_renderer::forward_renderer(std::shared_ptr<camera_manager> camera_manager, const renderer_settings& set)
-		: camera_mgr_(camera_manager), settings_(set) {}  
-
-	void forward_renderer::add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
+		: camera_mgr_(camera_manager), settings_(set), frame_index_(0), delta_time_() 
 	{
-		for (auto& node : nodes)
-			this->nodes_.push_back(node);
-	}
+		last_frame_ = frame_timer::now();
+	}  
 
 	void forward_renderer::reload_shaders() const
 	{
@@ -17,9 +14,24 @@ namespace efiilj
 			node->material().program().reload();
 	}
 
+	void forward_renderer::begin_frame()
+	{
+		delta_time_ = frame_timer::now() - last_frame_;
+		last_frame_ = frame_timer::now();
+
+		on_begin_frame();
+	}
+
 	void forward_renderer::render() const
 	{
 		for (auto& node : nodes_)
 			node->draw();
+	}
+
+	void forward_renderer::end_frame()
+	{
+		frame_index_++;	
+
+		on_end_frame();
 	}
 }

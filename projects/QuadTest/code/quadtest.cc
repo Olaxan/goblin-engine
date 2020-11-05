@@ -89,6 +89,8 @@ namespace efiilj
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", h_prog_ptr, helmet_trans_ptr);
 
+		object_loader light_sphere("../res/volumes/v_pointlight2.obj");
+
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
@@ -186,7 +188,9 @@ namespace efiilj
 			else if (is_dragging_mouse_)
 				helmet_trans_ptr->add_rotation(vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 			this->window_->Update();
 	
 			if (keys.find(GLFW_KEY_W) != keys.end())
@@ -215,8 +219,13 @@ namespace efiilj
 			l_red_ptr->transform.set_position(vector4(sinf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, 20.0f, 1.0));
 			l_blue_ptr->transform.set_position(vector4(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f, 1.0));
 
+			def_renderer.begin_frame();
 			def_renderer.render();
+			def_renderer.end_frame();
+
+			fwd_renderer.begin_frame();
 			fwd_renderer.render();
+			fwd_renderer.end_frame();
 
 			this->window_->SwapBuffers();
 			

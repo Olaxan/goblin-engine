@@ -16,18 +16,17 @@ namespace efiilj
 		std::shared_ptr<shader_program> geometry, 
 		std::shared_ptr<shader_program> lighting
 	) : 
-		gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), frame_index_(0), 
-		camera_mgr_(std::move(camera_manager)),
+		forward_renderer(camera_manager, settings),
+		gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
 		geometry_(std::move(geometry)), 
-		lighting_(std::move(lighting)),
-		settings_(settings) 
+		lighting_(std::move(lighting))
 	{
 		// Setup gbuffer
 		glGenFramebuffers(1, &gbo_);
 		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
 
-		gen_buffer(GL_FLOAT);		// Pos
-		gen_buffer(GL_FLOAT);		// Normal
+		gen_buffer(GL_FLOAT);			// Pos
+		gen_buffer(GL_FLOAT);			// Normal
 		gen_buffer(GL_UNSIGNED_BYTE);	// Albedo
 		gen_buffer(GL_UNSIGNED_BYTE);	// ORM
 
@@ -50,14 +49,8 @@ namespace efiilj
 
 		setup_quad();
 		setup_uniforms();
+		setup_volumes();
 
-		last_frame_ = frame_timer::now(); 
-
-		object_loader pl_loader(settings_.p_v_pointlight.c_str());
-		if (pl_loader.is_valid())
-			v_pointlight_ = std::move(pl_loader.get_resource());
-		else 
-			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
 	}
 
 	void deferred_renderer::gen_buffer(unsigned type)
@@ -115,6 +108,16 @@ namespace efiilj
 			geometry_->bind_block(settings_.ubo_camera, 0);
 	}
 
+	void deferred_renderer::setup_volumes()
+	{
+		object_loader pl_loader(settings_.p_v_pointlight.c_str());
+
+		if (pl_loader.is_valid())
+			v_pointlight_ = std::move(pl_loader.get_resource());
+		else 
+			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
+	}
+
 	void deferred_renderer::set_light_uniforms(const light_source& light) const
 	{
 		lighting_->set_uniform("source.type", static_cast<int>(light.type));
@@ -153,12 +156,10 @@ namespace efiilj
 		v_pointlight_->unbind();
 	}
 
-	void deferred_renderer::render() 
+	void deferred_renderer::render() const
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
+		
 
 		if (!geometry_->use())
 			return;
@@ -166,13 +167,8 @@ namespace efiilj
 		/* ---------- Geometry Pass ---------- */
 		
 		glDepthMask(GL_TRUE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		
-		duration dt = frame_timer::now() - last_frame_;
-		last_frame_ = frame_timer::now();	
-		lighting_->set_uniform(settings_.u_dt_seconds, dt.count());
 
 		for (auto& node : nodes_)
 		{
@@ -187,6 +183,7 @@ namespace efiilj
 			return;
 
 		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_position()) ; 
+		lighting_->set_uniform(settings_.u_dt_seconds, get_delta_time());
 
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -236,15 +233,24 @@ namespace efiilj
 					fprintf(stderr, "ERROR: Light type not implemented!\n");
 			}	
 		}
+	}
+
+	void deferred_renderer::on_begin_frame()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void deferred_renderer::on_end_frame()
+	{
+		// Reset GL state for forward pass
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
-
-		frame_index_++;
 	}
 	
-	void deferred_renderer::reload_shaders()
+	void deferred_renderer::reload_shaders() const
 	{
 		geometry_->reload();
 		lighting_->reload();
