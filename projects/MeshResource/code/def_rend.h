@@ -24,7 +24,14 @@ namespace efiilj
 	{
 	private:
 
-		unsigned gbo_, rbo_, ubo_, quad_vao_, quad_vbo_, frame_index_;
+		enum class tex_type
+		{
+			component_draw,
+			component_read,
+			target
+		};
+
+		unsigned rbo_, depth_texture_, target_texture_, ubo_, quad_vao_, quad_vbo_, frame_index_;
 
 		std::shared_ptr<shader_program> geometry_;
 		std::shared_ptr<shader_program> lighting_;
@@ -33,10 +40,11 @@ namespace efiilj
 		std::shared_ptr<mesh_resource> v_spotlight_;
 
 		std::vector<std::shared_ptr<light_source>> light_sources_;
-		std::vector<unsigned> buffers_;
+		std::vector<unsigned> textures_;
 
-		void gen_buffer(unsigned type);
-		void attach_buffers();
+		unsigned gen_texture(unsigned index, unsigned type);
+		unsigned gen_texture(unsigned attach, unsigned internal, unsigned format, unsigned type);
+		void attach_textures(tex_type textures) const;
 
 		void setup_quad();
 		void setup_uniforms();

@@ -17,7 +17,7 @@ namespace efiilj
 		std::shared_ptr<shader_program> lighting
 	) : 
 		forward_renderer(camera_manager, settings),
-		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
+		gbo_(0), rbo_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
 		geometry_(std::move(geometry)), 
 		lighting_(std::move(lighting))
 	{
@@ -25,20 +25,23 @@ namespace efiilj
 		glGenFramebuffers(1, &rbo_);
 		glBindFramebuffer(GL_FRAMEBUFFER, rbo_);
 
-		unsigned i = 0;
-		textures_.push_back(gen_texture(i++, GL_FLOAT));			// Pos
-		textures_.push_back(gen_texture(i++, GL_FLOAT));			// Normal
-		textures_.push_back(gen_texture(i++, GL_UNSIGNED_BYTE));	// Albedo
-		textures_.push_back(gen_texture(i++, GL_UNSIGNED_BYTE));	// ORM
+		gen_texture(GL_FLOAT);			// Pos
+		gen_texture(GL_FLOAT);			// Normal
+		gen_texture(GL_UNSIGNED_BYTE);	// Albedo
+		gen_texture(GL_UNSIGNED_BYTE);	// ORM
+		gen_texture(GL_FLOAT);			// Final
 
-		target_texture_ = gen_texture(i++, GL_FLOAT);				// Final
+		attach_textures();
 
-		depth_texture_ = gen_texture(
-				GL_DEPTH_ATTACHMENT, 
-				GL_DEPTH_COMPONENT32F,
-				GL_DEPTH_COMPONENT,
-				GL_FLOAT
-				);
+		// Setup render buffer + depth
+		glGenTextures(1, &depth_buffer_);
+		glBindTexture(GL_TEXTURE_2D, depth_buffer_);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, settings_.width, settings_.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo_, 0);
+
+//		buffers_.push_back(rbo_);
 
 		// Check if framebuffer is ready
 		assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
@@ -51,63 +54,32 @@ namespace efiilj
 
 	}
 
-	unsigned deferred_renderer::gen_texture(unsigned attach, unsigned internal, unsigned format, unsigned type)
+	void deferred_renderer::gen_texture(unsigned type)
 	{
-		printf("Generating texture %u...\n", attach);
+		unsigned index = textures_.size();
+		
+		textures_.push_back(0);
 
-		unsigned handle;
+		unsigned* handle = &textures_[index];
 
-		glGenTextures(1, &handle);
-		glBindTexture(GL_TEXTURE_2D, handle);
-		glTexImage2D(GL_TEXTURE_2D, 0, internal, settings_.width, settings_.height, 0, format, type, NULL);
+		glGenTextures(1, handle);
+		glBindTexture(GL_TEXTURE_2D, *handle);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, settings_.width, settings_.height, 0, GL_RGBA, type, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, handle, 0);
-
-		return handle;
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, *handle, 0);
 	}
 
-	unsigned deferred_renderer::gen_texture(unsigned index, unsigned type)
+	void deferred_renderer::attach_textures()
 	{
-		return gen_texture(GL_COLOR_ATTACHMENT0 + index, GL_RGBA16F, GL_RGBA, type);
-	}
+		std::vector<unsigned> attach;
 
-	void deferred_renderer::attach_textures(tex_type texture) const
-	{
-		switch (texture)
+		for (size_t i = 0; i < textures_.size(); i++)
 		{
-			case tex_type::component_draw:
-			{
-				std::vector<unsigned> attach;
-
-				for (size_t i = 0; i < textures_.size(); i++)
-				{
-					attach.push_back(GL_COLOR_ATTACHMENT0 + i);
-				}
-
-				glDrawBuffers(attach.size(), attach.data());	
-
-				break;
-			}
-
-			case tex_type::component_read:
-			{
-				for (size_t i = 0; i < textures_.size(); i++)
-				{
-					glActiveTexture(GL_TEXTURE0 + i);
-					glBindTexture(GL_TEXTURE_2D, textures_[i]);
-					glUniform1i(i, i);
-				}
-
-				break;
-			}
-
-			case tex_type::target:
-			{
-				glDrawBuffer(GL_COLOR_ATTACHMENT0 + textures_.size());
-				break;
-			}
+			attach.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
+
+		glDrawBuffers(attach.size(), attach.data());
 	}	
 
 	void deferred_renderer::setup_quad()
@@ -185,13 +157,6 @@ namespace efiilj
 		v_pointlight_->unbind();
 	}
 
-	void deferred_renderer::on_begin_frame()
-	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, rbo_);
-		attach_textures(tex_type::target);
-		glClear(GL_COLOR_BUFFER_BIT);
-	}
-
 	void deferred_renderer::render() const
 	{
 
@@ -202,33 +167,36 @@ namespace efiilj
 		
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
-
-		attach_textures(tex_type::component_draw);
 
 		for (auto& node : nodes_)
 		{
 			node->draw();
 		}
 
-		glDepthMask(GL_FALSE);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		/* ---------- Lighting Passes ---------- */
 		
 		if (!lighting_->use())
 			return;
 
-		attach_textures(tex_type::target);	
-		attach_textures(tex_type::component_read);
-
 		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_position()) ; 
 		lighting_->set_uniform(settings_.u_dt_seconds, get_delta_time());
 
 		glEnable(GL_BLEND);
-		glDisable(GL_DEPTH_TEST);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
+		glDepthMask(GL_FALSE);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Bind buffer textures
+		for (size_t i = 0; i < buffers_.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, buffers_[i]);
+			glUniform1i(i, i);
+		}
 
 		for (size_t i = 0; i < light_sources_.size(); i++)
 		{
@@ -264,23 +232,22 @@ namespace efiilj
 					fprintf(stderr, "ERROR: Light type not implemented!\n");
 			}	
 		}
+	}
 
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-	}	
+	void deferred_renderer::on_begin_frame()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, gbo_);
+		glDrawBuffer(GL_COLOR_ATTACHMENT5);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
 
 	void deferred_renderer::on_end_frame()
 	{
 		// Reset GL state for forward pass
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, rbo_);
-		glReadBuffer(GL_COLOR_ATTACHMENT0 + textures_.size());
-
-		glBlitFramebuffer(0, 0, settings_.width, settings_.height,
-						  0, 0, settings_.width, settings_.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
 		glDepthMask(GL_TRUE);
+		glDisable(GL_BLEND);
 	}
 	
 	void deferred_renderer::reload_shaders() const

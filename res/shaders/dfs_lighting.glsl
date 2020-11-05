@@ -33,7 +33,6 @@ layout (location = 0) uniform sampler2D g_position;
 layout (location = 1) uniform sampler2D g_normal;
 layout (location = 2) uniform sampler2D g_albedo;
 layout (location = 3) uniform sampler2D g_orm;
-layout (location = 4) uniform sampler2D g_depth;
 
 uniform vec4 cam_pos;
 uniform mat4 light_model;
@@ -104,6 +103,4 @@ void main()
 	{
 		FragColor = vec4(Color, 1.0) * calc_pointlight(WorldPos, Normal, ORM);
 	}
-	
-	gl_FragDepth = texelFetch(g_depth, Uv, 0).r;
 }
