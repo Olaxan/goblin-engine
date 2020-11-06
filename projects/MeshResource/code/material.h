@@ -18,6 +18,7 @@ namespace efiilj
 	public:
 
 		bool doubleSided;
+		vector4 color;
 
 		material_base(std::shared_ptr<shader_program> program);
 
@@ -26,10 +27,10 @@ namespace efiilj
 			textures_[type] = std::move(texture);
 		}
 
-		shader_program& program() const { return *this->program_; }
-		void program(std::shared_ptr<shader_program>& program) { this->program_ = std::move(program); }
+		std::shared_ptr<shader_program> get_program() const { return this->program_; }
+		void set_program(std::shared_ptr<shader_program> program) { this->program_ = std::move(program); }
 
-		virtual void apply() = 0;
+		virtual void apply();
 	};
 
 	class gltf_pbr_base : public material_base
@@ -42,6 +43,6 @@ namespace efiilj
 		double metallicFactor;
 		double roughnessFactor;
 		
-		void apply();
+		void apply() override;
 	};
 }

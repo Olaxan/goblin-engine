@@ -11,13 +11,22 @@ namespace efiilj
 			: material_base(program)
 	{}
 
+	void material_base::apply()
+	{
+		if (program_ != nullptr)
+		{
+			program_->use();
+			program_->set_uniform("color", color);
+		}
+	}
+
 	void gltf_pbr_base::apply()
 	{
 		if (program_ != nullptr)
 		{
-			program_->set_uniform("shininess", 128);
 
 			program_->use();
+			program_->set_uniform("shininess", 128);
 
 			auto it = textures_.find("BASE");
 			if (it != textures_.end())

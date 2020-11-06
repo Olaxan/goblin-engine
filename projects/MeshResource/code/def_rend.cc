@@ -18,6 +18,7 @@ namespace efiilj
 	) : 
 		forward_renderer(camera_manager, settings),
 		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
+		debug_(false),
 		geometry_(std::move(geometry)), 
 		lighting_(std::move(lighting))
 	{
@@ -115,7 +116,6 @@ namespace efiilj
 		// https://learnopengl.com/Advanced-Lighting/Deferred-Shading
 
 		float quad[] = {
-			// positions		
 			-1.0f,	1.0f, 0.0f, 1.0f,  
 			-1.0f, -1.0f, 0.0f, 1.0f, 
 			 1.0f,	1.0f, 0.0f, 1.0f, 
@@ -182,6 +182,15 @@ namespace efiilj
 		// Draw pointlight volume
 		v_pointlight_->bind();
 		v_pointlight_->draw_elements();
+
+		// Draw debug pointlight volume
+		if (debug_)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			v_pointlight_->draw_elements();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
 		v_pointlight_->unbind();
 	}
 
@@ -209,7 +218,9 @@ namespace efiilj
 
 		for (auto& node : nodes_)
 		{
+			node->bind();
 			node->draw();
+			node->unbind();
 		}
 
 		glDepthMask(GL_FALSE);
@@ -226,7 +237,6 @@ namespace efiilj
 		lighting_->set_uniform(settings_.u_dt_seconds, get_delta_time());
 
 		glEnable(GL_BLEND);
-		glDisable(GL_DEPTH_TEST);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 
@@ -266,7 +276,7 @@ namespace efiilj
 		}
 
 		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
 	}	
 
 	void deferred_renderer::on_end_frame()
@@ -279,8 +289,6 @@ namespace efiilj
 
 		glBlitFramebuffer(0, 0, settings_.width, settings_.height,
 						  0, 0, settings_.width, settings_.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-		glDepthMask(GL_TRUE);
 	}
 	
 	void deferred_renderer::reload_shaders() const

@@ -9,7 +9,6 @@ out VS_OUT
 {
 	vec3 Fragment;
 	vec2 Uv;
-	mat3 TBN;
 } vs_out;
 
 layout (std140) uniform Matrices
@@ -27,11 +26,6 @@ void main()
 	vec4 mod_pos = model * vec4(pos, 1.0);
 	gl_Position = projection * view * mod_pos;
 
-	vec3 T = normalize(vec3(model * tangent));
-	vec3 N = normalize(vec3(model * vec4(normal, 0.0)));
-	vec3 B = cross(N, T) * tangent.w;
-
 	vs_out.Fragment = mod_pos.xyz;
 	vs_out.Uv = uv;
-	vs_out.TBN = mat3(T, B, N);
 }

@@ -69,9 +69,13 @@ namespace efiilj
 		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_lighting.glsl");
 		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
 
-		auto h_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/vs_gltf.glsl");
-		auto h_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_gltf.glsl");
-		auto h_prog_ptr = std::make_shared<shader_program>(h_vs, h_fs);
+		auto gltf_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/vs_gltf.glsl");
+		auto gltf_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_gltf.glsl");
+		auto gltf_prog_ptr = std::make_shared<shader_program>(gltf_vs, gltf_fs);
+
+		auto color_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/vs_color.glsl");
+		auto color_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
+		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
 
 		auto cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
 		
@@ -87,9 +91,7 @@ namespace efiilj
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
 		
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
-		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", h_prog_ptr, helmet_trans_ptr);
-
-		object_loader light_sphere("../res/volumes/v_pointlight2.obj");
+		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", gltf_prog_ptr, helmet_trans_ptr);
 
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
@@ -97,7 +99,7 @@ namespace efiilj
 		std::vector<light_source> lights;
 
 		auto sun_ptr = std::make_shared<light_source>();
-		sun_ptr->base.ambient_intensity = 0.0001f;
+		sun_ptr->base.ambient_intensity = 0.001f;
 		sun_ptr->base.diffuse_intensity = 0.01f;
 		sun_ptr->type = light_type::directional;
 		sun_ptr->update_falloff();
@@ -109,7 +111,7 @@ namespace efiilj
 		l_red_ptr->base.ambient_intensity = 0.5f;
 		l_red_ptr->base.diffuse_intensity = 1.0f;
 		l_red_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_red_ptr->falloff.exponential = 0.1f;
+		l_red_ptr->falloff.exponential = 1.0f;
 		l_red_ptr->update_falloff();
 		
 		auto l_blue_ptr = std::make_shared<light_source>();
@@ -117,11 +119,21 @@ namespace efiilj
 		l_blue_ptr->base.ambient_intensity = 0.5f;
 		l_blue_ptr->base.diffuse_intensity = 1.0f;
 		l_blue_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_blue_ptr->falloff.exponential = 0.1f;
+		l_blue_ptr->falloff.exponential = 1.0f;
 		l_blue_ptr->update_falloff();
 
 		def_renderer.add_light(l_red_ptr);
 		def_renderer.add_light(l_blue_ptr);
+
+		object_loader light_sphere("../res/volumes/v_pointlight2.obj");
+		auto light_sphere_mesh_ptr = light_sphere.get_resource();
+		auto light_sphere_trf_ptr = std::make_shared<transform_model>(l_red_ptr->transform);
+		auto light_sphere_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
+		light_sphere_mat_ptr->color = vector4(1.0f, 0.0f, 0.0f, 1.0f);
+
+		auto light_sphere_node_ptr = std::make_shared<graphics_node>(light_sphere_mesh_ptr, light_sphere_mat_ptr, light_sphere_trf_ptr);
+
+		fwd_renderer.add_node(light_sphere_node_ptr);
 
 		std::set<int> keys;
 		
@@ -213,6 +225,9 @@ namespace efiilj
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
+
+			if (keys.find(GLFW_KEY_T) != keys.end())
+				def_renderer.toggle_debug();
 			
 			cam_mgr_ptr->update_camera();
 
@@ -220,11 +235,14 @@ namespace efiilj
 			l_blue_ptr->transform.set_position(vector4(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f, 1.0));
 
 			def_renderer.begin_frame();
-			def_renderer.render();
-			def_renderer.end_frame();
-
 			fwd_renderer.begin_frame();
+
+			glDisable(GL_CULL_FACE);
+			def_renderer.render();
 			fwd_renderer.render();
+			glEnable(GL_CULL_FACE);
+
+			def_renderer.end_frame();
 			fwd_renderer.end_frame();
 
 			this->window_->SwapBuffers();

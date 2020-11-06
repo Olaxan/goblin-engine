@@ -27,9 +27,7 @@ namespace efiilj
 
 	void graphics_node::draw() const
 	{
-		bind();
-		material_->program().set_uniform("model", transform_->get_model());
+		material_->get_program()->set_uniform("model", transform_->get_model());
 		mesh_->draw_elements();
-		unbind();
 	}
 }

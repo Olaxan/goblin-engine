@@ -11,7 +11,7 @@ namespace efiilj
 	void forward_renderer::reload_shaders() const
 	{
 		for (auto& node : nodes_)
-			node->material().program().reload();
+			node->material().get_program()->reload();
 	}
 
 	void forward_renderer::begin_frame()
@@ -25,7 +25,11 @@ namespace efiilj
 	void forward_renderer::render() const
 	{
 		for (auto& node : nodes_)
+		{
+			node->bind();
 			node->draw();
+			node->unbind();
+		}
 	}
 
 	void forward_renderer::end_frame()
