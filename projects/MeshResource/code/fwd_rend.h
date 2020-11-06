@@ -17,6 +17,8 @@ namespace efiilj
 		std::shared_ptr<camera_manager> camera_mgr_;
 		const renderer_settings& settings_;
 
+		bool debug_;
+
 		unsigned frame_index_;
 
 	private:
@@ -56,5 +58,8 @@ namespace efiilj
 
 		unsigned get_frame_index() const { return frame_index_; }
 		float get_delta_time() const { return delta_time_.count(); }
+
+		void set_debug(bool enabled) { debug_ = enabled; printf("Debug mode %i\n", debug_); }
+		void toggle_debug() { set_debug(!debug_); }
 	};
 }

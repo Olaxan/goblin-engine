@@ -99,7 +99,7 @@ namespace efiilj
 		std::vector<light_source> lights;
 
 		auto sun_ptr = std::make_shared<light_source>();
-		sun_ptr->base.ambient_intensity = 0.001f;
+		sun_ptr->base.ambient_intensity = 0.005f;
 		sun_ptr->base.diffuse_intensity = 0.01f;
 		sun_ptr->type = light_type::directional;
 		sun_ptr->update_falloff();
@@ -124,16 +124,6 @@ namespace efiilj
 
 		def_renderer.add_light(l_red_ptr);
 		def_renderer.add_light(l_blue_ptr);
-
-		object_loader light_sphere("../res/volumes/v_pointlight2.obj");
-		auto light_sphere_mesh_ptr = light_sphere.get_resource();
-		auto light_sphere_trf_ptr = std::make_shared<transform_model>(l_red_ptr->transform);
-		auto light_sphere_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-		light_sphere_mat_ptr->color = vector4(1.0f, 0.0f, 0.0f, 1.0f);
-
-		auto light_sphere_node_ptr = std::make_shared<graphics_node>(light_sphere_mesh_ptr, light_sphere_mat_ptr, light_sphere_trf_ptr);
-
-		fwd_renderer.add_node(light_sphere_node_ptr);
 
 		std::set<int> keys;
 		
@@ -193,9 +183,7 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 			auto camera_ptr = cam_mgr_ptr->get_active_camera();
-			auto camera_trans_ptr = camera_ptr->get_transform();
-
-			if (is_mouse_captured_)
+			auto camera_trans_ptr = camera_ptr->get_transform(); if (is_mouse_captured_)
 				camera_trans_ptr->set_rotation(vector4(-mouse_y_, 0, mouse_x_, 1));
 			else if (is_dragging_mouse_)
 				helmet_trans_ptr->add_rotation(vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f);
@@ -226,8 +214,23 @@ namespace efiilj
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 
-			if (keys.find(GLFW_KEY_T) != keys.end())
+			if (keys.find(GLFW_KEY_LEFT_CONTROL) != keys.end())
+			{
 				def_renderer.toggle_debug();
+				fwd_renderer.toggle_debug();
+			}
+
+			if (keys.find(GLFW_KEY_E) != keys.end())
+			{
+				l_red_ptr->falloff.exponential += 0.01;
+				l_red_ptr->update_falloff();
+			}
+
+			if (keys.find(GLFW_KEY_Q) != keys.end())
+			{
+				l_red_ptr->falloff.exponential -= 0.01;
+				l_red_ptr->update_falloff();
+			}
 			
 			cam_mgr_ptr->update_camera();
 
@@ -237,10 +240,8 @@ namespace efiilj
 			def_renderer.begin_frame();
 			fwd_renderer.begin_frame();
 
-			glDisable(GL_CULL_FACE);
 			def_renderer.render();
 			fwd_renderer.render();
-			glEnable(GL_CULL_FACE);
 
 			def_renderer.end_frame();
 			fwd_renderer.end_frame();

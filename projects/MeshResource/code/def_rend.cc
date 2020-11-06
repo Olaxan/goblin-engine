@@ -18,7 +18,6 @@ namespace efiilj
 	) : 
 		forward_renderer(camera_manager, settings),
 		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
-		debug_(false),
 		geometry_(std::move(geometry)), 
 		lighting_(std::move(lighting))
 	{
@@ -175,6 +174,7 @@ namespace efiilj
 		const matrix4& v = camera_mgr_->get_active_camera()->get_view();
 		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
 
+		//matrix4 mvp = p * v * light.transform.get_model();
 		matrix4 mvp = light.transform.get_model() * v * p;
 
 		lighting_->set_uniform("light_mvp", mvp);
@@ -182,15 +182,6 @@ namespace efiilj
 		// Draw pointlight volume
 		v_pointlight_->bind();
 		v_pointlight_->draw_elements();
-
-		// Draw debug pointlight volume
-		if (debug_)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			v_pointlight_->draw_elements();
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-
 		v_pointlight_->unbind();
 	}
 
@@ -211,10 +202,10 @@ namespace efiilj
 		
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
 
 		attach_textures(tex_type::component_draw);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		for (auto& node : nodes_)
 		{

@@ -33,8 +33,6 @@ namespace efiilj
 
 		unsigned rbo_, depth_texture_, target_texture_, ubo_, quad_vao_, quad_vbo_, frame_index_;
 
-		bool debug_;
-
 		std::shared_ptr<shader_program> geometry_;
 		std::shared_ptr<shader_program> lighting_;
 
@@ -78,9 +76,6 @@ namespace efiilj
 			for (auto& light : lights)
 				add_light(light);
 		}
-
-		void set_debug(bool enabled) { debug_ = enabled; printf("Debug mode %i\n", debug_); }
-		void toggle_debug() { set_debug(!debug_); }
 
 		void reload_shaders() const override;
 		void render() const override;

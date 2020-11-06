@@ -1,9 +1,10 @@
 #include "fwd_rend.h"
+#include <GL/glew.h>
 
 namespace efiilj
 {
 	forward_renderer::forward_renderer(std::shared_ptr<camera_manager> camera_manager, const renderer_settings& set)
-		: camera_mgr_(camera_manager), settings_(set), frame_index_(0), delta_time_() 
+		: camera_mgr_(camera_manager), settings_(set), frame_index_(0), debug_(false), delta_time_() 
 	{
 		last_frame_ = frame_timer::now();
 	}  
@@ -24,11 +25,28 @@ namespace efiilj
 
 	void forward_renderer::render() const
 	{
-		for (auto& node : nodes_)
+		if (debug_)
 		{
-			node->bind();
-			node->draw();
-			node->unbind();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			for (auto& node : nodes_)
+			{
+				node->bind();
+				node->draw();
+				node->unbind();
+			}
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		else
+		{
+			// boo
+			for (auto& node : nodes_)
+			{
+				node->bind();
+				node->draw();
+				node->unbind();
+			}
 		}
 	}
 
