@@ -4,23 +4,27 @@ namespace efiilj
 {
 
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), inverse_dirty_(true) 
-	{ 
-		update_model();
-	}
-	
-	void transform_model::update_model()
+	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), model_dirty_(true), inverse_dirty_(true) 
+	{ }
+
+	const matrix4& transform_model::get_model() const 
 	{
-		const matrix4 t = matrix4::get_translation(position_);
-		const matrix4 r = matrix4::get_rotation_xyz(rotation_);
-		const matrix4 s = matrix4::get_scale(scale_);
+		if (model_dirty_)
+		{
+			const matrix4 t = matrix4::get_translation(position_);
+			const matrix4 r = matrix4::get_rotation_xyz(rotation_);
+			const matrix4 s = matrix4::get_scale(scale_);
 
-		model_ = s * r * t;
+			model_ = s * r * t;
 
-		inverse_dirty_ = true;
+			model_dirty_ = false;
+			inverse_dirty_ = true;
+		}
+
+		return model_;
 	}
 
-	const matrix4& transform_model::get_model_inv()
+	const matrix4& transform_model::get_model_inv() const
 	{
 		if (inverse_dirty_)
 		{

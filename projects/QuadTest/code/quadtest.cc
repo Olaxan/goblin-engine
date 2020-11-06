@@ -19,6 +19,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <set>
 
 #define flase false
@@ -99,7 +100,7 @@ namespace efiilj
 		std::vector<light_source> lights;
 
 		auto sun_ptr = std::make_shared<light_source>();
-		sun_ptr->base.ambient_intensity = 0.005f;
+		sun_ptr->base.ambient_intensity = 0.001f;
 		sun_ptr->base.diffuse_intensity = 0.01f;
 		sun_ptr->type = light_type::directional;
 		sun_ptr->update_falloff();
@@ -111,7 +112,7 @@ namespace efiilj
 		l_red_ptr->base.ambient_intensity = 0.5f;
 		l_red_ptr->base.diffuse_intensity = 1.0f;
 		l_red_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_red_ptr->falloff.exponential = 1.0f;
+		l_red_ptr->falloff.exponential = 0.3f;
 		l_red_ptr->update_falloff();
 		
 		auto l_blue_ptr = std::make_shared<light_source>();
@@ -119,8 +120,10 @@ namespace efiilj
 		l_blue_ptr->base.ambient_intensity = 0.5f;
 		l_blue_ptr->base.diffuse_intensity = 1.0f;
 		l_blue_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_blue_ptr->falloff.exponential = 1.0f;
+		l_blue_ptr->falloff.exponential = 0.3f;
 		l_blue_ptr->update_falloff();
+
+		auto asdasd = std::make_shared<transform_model>(l_red_ptr->transform);
 
 		def_renderer.add_light(l_red_ptr);
 		def_renderer.add_light(l_blue_ptr);

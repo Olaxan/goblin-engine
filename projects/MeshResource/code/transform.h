@@ -11,16 +11,15 @@ namespace efiilj
 	{
 	private:
 
-		matrix4 model_;
-		matrix4 inverse_;
+		mutable matrix4 model_;
+		mutable matrix4 inverse_;
 
 		vector4 position_;
 		vector4 scale_;
 		vector4 rotation_;
 
-		bool inverse_dirty_;
-
-		void update_model();
+		mutable bool model_dirty_;
+		mutable bool inverse_dirty_;
 
 	public:
 
@@ -39,21 +38,21 @@ namespace efiilj
 		 * \brief Retrieves a model matrix for the current transform.
 		 * \return A 4-dimensional matrix which represents the point in 3D-space
 		 */
-		const matrix4& get_model() const { return model_; }
-		const matrix4& get_model_inv();
+		const matrix4& get_model() const;
+		const matrix4& get_model_inv() const;
 
 		const vector4& get_position() const { return position_; }
 		const vector4& get_rotation() const { return rotation_; }
 		const vector4& get_scale() const { return scale_; }
 
-		void set_position(const vector4& position) { position_ = position; update_model(); }
-		void set_rotation(const vector4& rotation) { rotation_ = rotation; update_model(); }
-		void set_scale(const vector4& scale) { scale_ = scale; update_model(); }
-		void set_scale(const float& scale) { scale_ = vector4(scale, scale, scale, 1.0); update_model(); }
+		void set_position(const vector4& position) { position_ = position; model_dirty_ = true; }
+		void set_rotation(const vector4& rotation) { rotation_ = rotation; model_dirty_ = true; }
+		void set_scale(const vector4& scale) { scale_ = scale; model_dirty_ = true; }
+		void set_scale(const float& scale) { scale_ = vector4(scale, scale, scale, 1.0); model_dirty_ = true; }
 
-		void add_position(const vector4& delta) { position_ += delta; update_model(); }
-		void add_rotation(const vector4& delta) { rotation_ += delta; update_model(); }
-		void add_scale(const vector4& delta) { scale_ += delta; update_model(); }
+		void add_position(const vector4& delta) { position_ += delta; model_dirty_ = true; }
+		void add_rotation(const vector4& delta) { rotation_ += delta; model_dirty_ = true; }
+		void add_scale(const vector4& delta) { scale_ += delta; model_dirty_ = true; }
 
 		/**
 		 * \brief Returns a forward vector relative to the current transform
