@@ -27,6 +27,16 @@
 #define WINDOW_HEIGHT 1200
 #define CAMERA_SPEED 0.5f
 
+float randf(float max)
+{
+	return static_cast<float>(rand()) / static_cast <float> (RAND_MAX / max);
+}
+
+float randf(float min, float max)
+{
+	return min + static_cast<float>(rand()) / ( static_cast<float>(RAND_MAX / (max - min)));
+}
+
 namespace efiilj
 {
 
@@ -89,15 +99,19 @@ namespace efiilj
 		forward_renderer fwd_renderer(cam_mgr_ptr, set);
 		
 		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
-		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
+		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
 		
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", gltf_prog_ptr, helmet_trans_ptr);
 
+		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
+		auto sphere_mesh_ptr = obj_sphere.get_resource();
+
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
-		std::vector<light_source> lights;
+		std::vector<std::shared_ptr<light_source>> lights;
+		std::vector<std::shared_ptr<transform_model>> light_transforms;
 
 		auto sun_ptr = std::make_shared<light_source>();
 		sun_ptr->base.ambient_intensity = 0.001f;
@@ -112,7 +126,7 @@ namespace efiilj
 		l_red_ptr->base.ambient_intensity = 0.5f;
 		l_red_ptr->base.diffuse_intensity = 1.0f;
 		l_red_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_red_ptr->falloff.exponential = 0.1f;
+		l_red_ptr->falloff.exponential = 0.3f;
 		l_red_ptr->update_falloff();
 		
 		auto l_blue_ptr = std::make_shared<light_source>();
@@ -120,10 +134,33 @@ namespace efiilj
 		l_blue_ptr->base.ambient_intensity = 0.5f;
 		l_blue_ptr->base.diffuse_intensity = 1.0f;
 		l_blue_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_blue_ptr->falloff.exponential = 0.1f;
+		l_blue_ptr->falloff.exponential = 0.3f;
 		l_blue_ptr->update_falloff();
 
-		auto asdasd = std::make_shared<transform_model>(l_red_ptr->transform);
+		for (size_t i = 0; i < 20; i++)
+		{
+
+			auto light = std::make_shared<light_source>();
+			light->base.color = vector3(randf(1), randf(1), randf(1));
+			light->base.ambient_intensity = randf(0.5f);
+			light->base.diffuse_intensity = randf(1.0f);
+			light->falloff.exponential = randf(1.0f);
+			light->transform.add_position(vector4(randf(25), randf(25), randf(25), 0));
+			light->update_falloff();
+			lights.push_back(light);
+
+			auto mat_ptr = std::make_shared<material_base>(color_prog_ptr);
+			mat_ptr->color = vector4(light->base.color, 1.0f);
+
+			float exp = light->falloff.exponential;
+			auto trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(exp, exp, exp));
+			light_transforms.push_back(trf_ptr);
+
+			auto node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, mat_ptr, trf_ptr);
+
+			def_renderer.add_light(light);
+			fwd_renderer.add_node(node_ptr);
+		}
 
 		def_renderer.add_light(l_red_ptr);
 		def_renderer.add_light(l_blue_ptr);
@@ -239,6 +276,27 @@ namespace efiilj
 
 			l_red_ptr->transform.set_position(vector4(sinf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, 20.0f, 1.0));
 			l_blue_ptr->transform.set_position(vector4(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f, 1.0));
+
+			float dt = def_renderer.get_delta_time();
+
+			for (size_t i = 0; i < 20; i++)
+			{
+				auto& light = lights[i];
+				auto& trf = light_transforms[i];
+
+				srand(i + 13);
+
+				float d = def_renderer.get_frame_index() / 100.0f;
+
+				float x = sinf(randf(3.1415f) + d) * randf(-25, 25);
+				float y = cosf(randf(3.1415f) + d) * randf(-25, 25);
+				float z = sinf(randf(3.1415f) + d) * randf(-25, 25);
+
+				light->transform.set_position(vector4(x, 25 + y, z, 1.0f));
+
+				// sorry
+				trf->set_position(light->transform.get_position());
+			}
 
 			def_renderer.begin_frame();
 			fwd_renderer.begin_frame();
