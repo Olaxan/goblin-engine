@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "config.h"
 
-#include "quadtest.h"
+#include "app.h"
 #include "loader.h"
 #include "light.h"
 #include "node.h"
@@ -30,12 +30,12 @@
 namespace efiilj
 {
 
-	quad_test::quad_test()
+	application::application()
 	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
 
-	quad_test::~quad_test() = default;
+	application::~application() = default;
 
-	bool quad_test::open()
+	bool application::open()
 	{
 		app::open();
 
@@ -59,7 +59,7 @@ namespace efiilj
 		return false;
 	}
 
-	void quad_test::run()
+	void application::run()
 	{
 
 		auto g_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
@@ -112,7 +112,7 @@ namespace efiilj
 		l_red_ptr->base.ambient_intensity = 0.5f;
 		l_red_ptr->base.diffuse_intensity = 1.0f;
 		l_red_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_red_ptr->falloff.exponential = 0.3f;
+		l_red_ptr->falloff.exponential = 0.1f;
 		l_red_ptr->update_falloff();
 		
 		auto l_blue_ptr = std::make_shared<light_source>();
@@ -120,7 +120,7 @@ namespace efiilj
 		l_blue_ptr->base.ambient_intensity = 0.5f;
 		l_blue_ptr->base.diffuse_intensity = 1.0f;
 		l_blue_ptr->transform.add_position(vector4(0, 10, 0, 0));
-		l_blue_ptr->falloff.exponential = 0.3f;
+		l_blue_ptr->falloff.exponential = 0.1f;
 		l_blue_ptr->update_falloff();
 
 		auto asdasd = std::make_shared<transform_model>(l_red_ptr->transform);

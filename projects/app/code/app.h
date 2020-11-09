@@ -11,7 +11,7 @@
 
 namespace efiilj
 {
-	class quad_test final : public core::app
+	class application final : public core::app
 	{
 	private:
 
@@ -21,8 +21,8 @@ namespace efiilj
 		
 	public:
 
-		quad_test();
-		~quad_test();
+		application();
+		~application();
 
 		bool open() override;
 		void run() override;
