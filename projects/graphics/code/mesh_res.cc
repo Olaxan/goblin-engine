@@ -5,20 +5,12 @@
 namespace efiilj
 {
 	mesh_resource::mesh_resource() : type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), vertex_count_(0), index_count_(0)
-	{
-		init_array_object();
-		glGenBuffers(1, &this->vbo_);
-		glGenBuffers(1, &this->ibo_);
-		unbind();
-	}
+	{ }
 
 	mesh_resource::
 	mesh_resource(vertex* vertex_list, const int vertex_count, unsigned int* index_list, const int index_count) 
-	: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0)
+	: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), vertex_count_(vertex_count), index_count_(index_count)
 	{
-		this->vertex_count_ = vertex_count;
-		this->index_count_ = index_count;
-
 		init_array_object();
 		init_vertex_buffer(vertex_list, vertex_count);
 		init_index_buffer(index_list, index_count);
@@ -38,13 +30,11 @@ namespace efiilj
 
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), nullptr);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, normal)));
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, rgba)));
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, uv)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, uv)));
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
 	}
 
 	void mesh_resource::init_index_buffer(unsigned int* index_list, const int count)

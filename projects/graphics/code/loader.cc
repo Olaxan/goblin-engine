@@ -135,7 +135,7 @@ namespace efiilj
 				vector3 norm = normals[normal_index - 1];
 				vector2 uv = uvs[uv_index - 1];
 
-				packed_vertices.emplace_back(xyzw, norm, vector4(1, 1, 1, 1), uv);
+				packed_vertices.emplace_back(xyzw, norm, uv);
 			}
 		}
 		else

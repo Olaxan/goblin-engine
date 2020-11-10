@@ -12,7 +12,5 @@ namespace efiilj
 		public:
 
 			rect();
-
-			void draw_elements() const override;
 	};
 }

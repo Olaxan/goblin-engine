@@ -7,19 +7,18 @@ namespace efiilj
 {
 	
 	/**
-	 * \brief Struct to represent a single vertex with position and color.
+	 * \brief Struct to represent a single vertex with position, normals, and UV.
 	 */
 	struct vertex
 	{
 		vertex()
-		: xyzw(0, 0, 0, 0), normal(0, 0, 0, 0), rgba(1, 1, 1, 1), uv(0, 0) { }
+		: xyzw(0, 0, 0, 0), normal(0, 0, 0, 0), uv(0, 0) { }
 
-		vertex(const vector3& xyzw, const vector3& normal, const vector4& rgba, const vector2& uv)
-		: xyzw(xyzw, 1), normal(normal, 1), rgba(rgba), uv(uv) { }
+		vertex(const vector3& xyzw, const vector3& normal, const vector2& uv)
+		: xyzw(xyzw, 1), normal(normal, 1), uv(uv) { }
 
 		vector4 xyzw;
 		vector4 normal;
-		vector4 rgba;
 		vector2 uv;
 
 		bool operator < (const vertex& other) const
@@ -34,7 +33,6 @@ namespace efiilj
 		{
 			return vector4::is_near(lhs.xyzw, rhs.xyzw)
 				&& vector4::is_near(lhs.normal, rhs.normal)
-				&& vector4::is_near(lhs.rgba, rhs.rgba)
 				&& vector2::is_near(lhs.uv, rhs.uv);
 		}
 	};
