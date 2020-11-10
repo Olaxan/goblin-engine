@@ -1,16 +1,22 @@
 #include "node.h"
+#include <memory>
 #include <utility>
 
 namespace efiilj
 {
-	graphics_node::graphics_node()
-	= default;
 
 	graphics_node::graphics_node(
 		std::shared_ptr<mesh_resource> mesh_ptr,
 		std::shared_ptr<material_base> material_ptr,
 		std::shared_ptr<transform_model> transform_ptr)
-			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), transform_(std::move(transform_ptr)) { }
+			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), transform_(std::move(transform_ptr)) 
+	{}
+
+	graphics_node::graphics_node(
+			std::shared_ptr<mesh_resource> mesh_ptr,
+			std::shared_ptr<material_base> material_ptr)
+		: graphics_node(mesh_ptr, material_ptr, std::make_shared<transform_model>())
+	{}
 
 	void graphics_node::bind() const
 	{

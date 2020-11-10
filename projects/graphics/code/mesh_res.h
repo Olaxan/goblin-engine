@@ -12,7 +12,7 @@ namespace efiilj
 	 */
 	class mesh_resource
 	{
-	private:
+		protected:
 
 		/**
 		 * \brief Vertex buffer object
@@ -119,7 +119,7 @@ namespace efiilj
 		/**
 		 * \brief Performs a draw call with the correct index specifications.
 		 */
-		void draw_elements() const;
+		virtual void draw_elements() const;
 
 		~mesh_resource();
 	};

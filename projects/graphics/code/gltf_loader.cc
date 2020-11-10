@@ -314,7 +314,7 @@ namespace efiilj
 			pbr_mat->baseColorFactor = mat.pbrMetallicRoughness.baseColorFactor;
 			pbr_mat->metallicFactor = mat.pbrMetallicRoughness.metallicFactor;
 			pbr_mat->roughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
-			pbr_mat->doubleSided = mat.doubleSided;
+			pbr_mat->double_sided = mat.doubleSided;
 
 			materials_.push_back(std::move(pbr_mat));
 		}

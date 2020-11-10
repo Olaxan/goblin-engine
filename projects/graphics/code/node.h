@@ -30,6 +30,11 @@ namespace efiilj
 		 * \param transform_ptr Shared pointer to Transform Model of node
 		 * \param camera_ptr Shared pointer to Camera Model of node
 		 */
+
+		graphics_node(
+			std::shared_ptr<mesh_resource> mesh_ptr,
+			std::shared_ptr<material_base> material_ptr);
+
 		graphics_node(
 			std::shared_ptr<mesh_resource> mesh_ptr,
 			std::shared_ptr<material_base> material_ptr,
