@@ -1,3 +1,5 @@
+#pragma once
+
 #include "plane.h"
 #include "mesh_res.h"
 #include "transform.h"

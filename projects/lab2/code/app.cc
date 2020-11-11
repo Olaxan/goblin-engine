@@ -18,6 +18,7 @@
 #include "cam_mgr.h"
 #include "imgui.h"
 #include "rect.h"
+#include "line.h"
 
 #include <chrono>
 #include <iostream>
@@ -163,9 +164,10 @@ namespace efiilj
 
 			auto mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 			mat_ptr->color = vector4(light->base.color, 1.0f);
+			mat_ptr->wireframe = true;
 
-			float exp = light->falloff.exponential;
-			auto trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(exp, exp, exp));
+			float size = 0.5f - light->falloff.exponential;
+			auto trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(size, size, size));
 			light_transforms.push_back(trf_ptr);
 
 			auto node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, mat_ptr, trf_ptr);
@@ -184,8 +186,13 @@ namespace efiilj
 		rect_mat_ptr->double_sided = true;
 
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr);
-
 		fwd_renderer.add_node(rect_node_ptr);
+
+		auto l1_mesh_ptr = std::make_shared<line>(vector4(), vector4(10, 10, 10, 1.0f));
+		auto l1_node_ptr = std::make_shared<graphics_node>(l1_mesh_ptr, rect_mat_ptr);
+		l1_node_ptr->set_absolute(true);
+
+		fwd_renderer.add_node(l1_node_ptr);
 
 		std::set<int> keys;
 		

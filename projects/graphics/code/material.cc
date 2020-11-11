@@ -5,7 +5,7 @@ namespace efiilj
 {
 
 	material_base::material_base(std::shared_ptr<shader_program> program)
-		: program_(std::move(program)), double_sided(false), color(vector4(1.0f, 1.0f, 1.0f, 1.0f))
+		: program_(std::move(program)), double_sided(false), wireframe(false), color(vector4(1.0f, 1.0f, 1.0f, 1.0f))
 	{ }
 
 	gltf_pbr_base::gltf_pbr_base(std::shared_ptr<shader_program> program)
@@ -24,6 +24,8 @@ namespace efiilj
 			glDisable(GL_CULL_FACE);
 		else
 			glEnable(GL_CULL_FACE);
+
+		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
 		program_->set_uniform("color", color);
 		

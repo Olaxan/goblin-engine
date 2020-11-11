@@ -14,11 +14,13 @@ namespace efiilj
 	 */
 	class graphics_node
 	{
-	private:
+	protected:
 
 		std::shared_ptr<mesh_resource> mesh_;
 		std::shared_ptr<material_base> material_;
 		std::shared_ptr<transform_model> transform_;
+
+		bool is_absolute_;
 
 	public:
 
@@ -49,6 +51,8 @@ namespace efiilj
 		transform_model& transform() const { return *this->transform_; }
 		void transform(std::shared_ptr<transform_model> transform) { this->transform_ = std::move(transform); }
 		
+		void set_absolute(bool a) { is_absolute_ = a; }
+
 		/**
 		 * \brief Prepares the node for drawing, binding mesh, texture, and shader resources.
 		 */

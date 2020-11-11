@@ -9,7 +9,7 @@ namespace efiilj
 		std::shared_ptr<mesh_resource> mesh_ptr,
 		std::shared_ptr<material_base> material_ptr,
 		std::shared_ptr<transform_model> transform_ptr)
-			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), transform_(std::move(transform_ptr)) 
+			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), transform_(std::move(transform_ptr)), is_absolute_(false) 
 	{}
 
 	graphics_node::graphics_node(
@@ -33,7 +33,8 @@ namespace efiilj
 
 	void graphics_node::draw() const
 	{
-		material_->get_program()->set_uniform("model", transform_->get_model());
+		matrix4 model = is_absolute_ ? matrix4() : transform_->get_model();
+		material_->get_program()->set_uniform("model", model);
 		mesh_->draw_elements();
 	}
 }

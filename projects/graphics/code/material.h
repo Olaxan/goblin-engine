@@ -18,6 +18,7 @@ namespace efiilj
 	public:
 
 		bool double_sided;
+		bool wireframe;
 		vector4 color;
 
 		material_base(std::shared_ptr<shader_program> program);

@@ -1,3 +1,7 @@
+#pragma once
+
+#pragma once
+
 #include "vector4.h"
 #include "plane.h"
 
