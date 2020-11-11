@@ -67,12 +67,15 @@ namespace efiilj
 			// set clear color
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-			this->window_->SetUiRender([]()
+			this->window_->SetUiRender([this]()
 					{
-						ImGui::Begin("Test stuff");
-						if (ImGui::Button("Test"))
+						ImGui::Begin("Camera");
+						ImGui::Text("Position: %s", cam_mgr_ptr->get_active_position().to_mem_string().c_str());
+						ImGui::Text("Rotation: %s", cam_mgr_ptr->get_active_rotation().to_mem_string().c_str());
+						if (ImGui::Button("Reset"))
 						{
-							printf("Yes the button works\n");
+							auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
+							trf->set_rotation(vector4(0));
 						}
 						ImGui::End();
 					});
@@ -101,7 +104,7 @@ namespace efiilj
 		auto color_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
 		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
 
-		auto cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
+		cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		renderer_settings set;
 
@@ -164,7 +167,6 @@ namespace efiilj
 
 			auto mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 			mat_ptr->color = vector4(light->base.color, 1.0f);
-			mat_ptr->wireframe = true;
 
 			float size = 0.5f - light->falloff.exponential;
 			auto trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(size, size, size));
@@ -188,7 +190,7 @@ namespace efiilj
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
 
-		auto l1_mesh_ptr = std::make_shared<line>(vector4(), vector4(10, 10, 10, 1.0f));
+		auto l1_mesh_ptr = std::make_shared<line>(vector4(), vector4(10, 10, 10, 1.0f), 3.0f);
 		auto l1_node_ptr = std::make_shared<graphics_node>(l1_mesh_ptr, rect_mat_ptr);
 		l1_node_ptr->set_absolute(true);
 
@@ -252,8 +254,10 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 			auto camera_ptr = cam_mgr_ptr->get_active_camera();
-			auto camera_trans_ptr = camera_ptr->get_transform(); if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector4(-mouse_y_, 0, mouse_x_, 1));
+			auto camera_trans_ptr = camera_ptr->get_transform(); 
+
+			if (is_mouse_captured_)
+				camera_trans_ptr->set_rotation(vector4(mouse_y_, mouse_x_, 0, 1));
 			else if (is_dragging_mouse_)
 				helmet_trans_ptr->add_rotation(vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			

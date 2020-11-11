@@ -35,8 +35,16 @@ namespace efiilj
 		return inverse_;
 	}
 
+	// PITCH, YAW, ROLL
 	vector4 transform_model::forward() const
 	{
+		return vector4(
+				sin(rotation_.y()),
+				-(sin(rotation_.x()) * cos(rotation_.y())),
+				-(cos(rotation_.x()) * cos(rotation_.y())),
+				1.0f).norm();
+
+
 		return vector4(
 			cos(rotation_.x()) * cos(rotation_.z()),
 			sin(rotation_.x()),
@@ -50,7 +58,7 @@ namespace efiilj
 
 	vector4 transform_model::left() const
 	{
-		return vector4::cross(vector4(0, 1, 0, 0), forward()).norm();
+		return vector4::cross(vector4(0, 1, 0, 1), forward()).norm();
 	}
 
 	vector4 transform_model::right() const

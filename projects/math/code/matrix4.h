@@ -511,8 +511,8 @@ namespace efiilj
 			matrix4 mat;
 
 			mat(1, 1) = cosf(rad);
-			mat(2, 1) = -sinf(rad);
-			mat(1, 2) = sinf(rad);
+			mat(1, 2) = -sinf(rad);
+			mat(2, 1) = sinf(rad);
 			mat(2, 2) = cosf(rad);
 
 			return mat;
@@ -528,8 +528,8 @@ namespace efiilj
 			matrix4 mat;
 
 			mat(0, 0) = cosf(rad);
-			mat(2, 0) = sinf(rad);
-			mat(0, 2) = -sinf(rad);
+			mat(0, 2) = sinf(rad);
+			mat(2, 0) = -sinf(rad);
 			mat(2, 2) = cosf(rad);
 
 			return mat;
@@ -545,8 +545,8 @@ namespace efiilj
 			matrix4 mat;
 
 			mat(0, 0) = cosf(rad);
-			mat(1, 0) = -sinf(rad);
-			mat(0, 1) = sinf(rad);
+			mat(0, 1) = -sinf(rad);
+			mat(1, 0) = sinf(rad);
 			mat(1, 1) = cosf(rad);
 
 			return mat;
@@ -571,30 +571,33 @@ namespace efiilj
 			matrix4 mat;
 
 			mat(0, 0) = cos + (x * x) * (1 - cos);
-			mat(1, 0) = y * x * (1 - cos) + z * sin;
-			mat(2, 0) = z * x * (1 - cos) - y * sin;
+			mat(0, 1) = y * x * (1 - cos) + z * sin;
+			mat(0, 2) = z * x * (1 - cos) - y * sin;
 
-			mat(0, 1) = x * y * (1 - cos) - z * sin;
+			mat(1, 0) = x * y * (1 - cos) - z * sin;
 			mat(1, 1) = cos + y * y * (1 - cos);
-			mat(2, 1) = z * y * (1 - cos) + x * sin;
+			mat(1, 2) = z * y * (1 - cos) + x * sin;
 
-			mat(0, 2) = x * z * (1 - cos) + y * sin;
-			mat(1, 2) = y * z * (1 - cos) - x * sin;
+			mat(2, 0) = x * z * (1 - cos) + y * sin;
+			mat(2, 1) = y * z * (1 - cos) - x * sin;
 			mat(2, 2) = cos + z * z * (1 - cos);
 
 			return mat;
 		}
 
+		static matrix4 get_rotation_xyz(const float pitch, const float yaw, const float roll)
+		{
+			return get_rotation_x(pitch) * get_rotation_y(yaw) * get_rotation_z(roll);
+		}
+
 		static matrix4 get_rotation_xyz(const vector3& eulers)
 		{
-			// TODO: Optimize
-			return get_rotation_z(eulers.z()) * get_rotation_y(eulers.y()) * get_rotation_x(eulers.x());
+			return get_rotation_xyz(eulers.x(), eulers.y(), eulers.z());
 		}
 
 		static matrix4 get_rotation_xyz(const vector4& eulers)
 		{
-			// TODO: Optimize
-			return get_rotation_z(eulers.z()) * get_rotation_y(eulers.y()) * get_rotation_x(eulers.x());
+			return get_rotation_xyz(eulers.x(), eulers.y(), eulers.z());
 		}
 
 		static matrix4 get_perspective(const float left, const float right, const float top, const float bottom, const float near, const float far)

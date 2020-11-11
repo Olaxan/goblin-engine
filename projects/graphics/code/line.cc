@@ -4,8 +4,8 @@
 
 namespace efiilj
 {
-	line::line(const ray& line)
-		: line_(line), width_(1.0f)
+	line::line(const ray& line, float width)
+		: line_(line), width_(width)
 	{ 
 		init_array_object();
 		
@@ -16,12 +16,14 @@ namespace efiilj
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 	}
 
-	line::line(const vector4& start, const vector4& end)
-		: line(ray(start, end)) 
+	line::line(const vector4& start, const vector4& end, float width)
+		: line(ray(start, end), width) 
 	{}
 
 	void line::draw_elements() const
 	{
+		glLineWidth(width_);
 		glDrawArrays(GL_LINES, 0, 2);
+		glLineWidth(1.0f);
 	}
 }

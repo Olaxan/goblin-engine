@@ -26,5 +26,4 @@ namespace efiilj
 		init_vertex_buffer(quad, 4);
 		init_index_buffer(indices, 6);
 	} 	
-
 }

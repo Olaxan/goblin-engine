@@ -44,6 +44,11 @@ namespace Display
 			glfwSetInputMode(window, GLFW_CURSOR, mode);
 		}
 
+		void SetCursorPosition(const double x, const double y)
+		{
+			glfwSetCursorPos(window, x, y);
+		}
+
 		/// update a tick
 		void Update();
 		/// swap buffers at end of frame
