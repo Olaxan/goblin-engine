@@ -233,8 +233,8 @@ namespace efiilj
 
 		window_->SetMouseMoveFunction([&](const float x, const float y)
 		{
-			mouse_x_ = x / 1000.0f - 0.5f;
-			mouse_y_ = y / 1000.0f - 0.5f;
+			mouse_x_ = x / WINDOW_WIDTH - 0.5f;
+			mouse_y_ = y / WINDOW_HEIGHT - 0.5f;
 		});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 

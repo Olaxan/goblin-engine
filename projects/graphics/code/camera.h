@@ -2,6 +2,7 @@
 
 #include "matrix4.h"
 #include "transform.h"
+#include "ray.h"
 
 #include <memory>
 
@@ -17,6 +18,9 @@ namespace efiilj
 		vector3 up_axis_;
 		matrix4 perspective_;
 		matrix4 view_;
+
+		float width_, height_;
+
 		std::shared_ptr<transform_model> transform_;
 
 	public:
@@ -30,7 +34,7 @@ namespace efiilj
 		 * \param trans_ptr Pointer to the transform object moving this camera
 		 * \param up The vector representing up in this world space
 		 */
-		camera_model(float fov, float aspect, float near, float far, std::shared_ptr<transform_model>& trans_ptr, const vector3& up);
+		camera_model(float fov, unsigned width, unsigned height, float near, float far, std::shared_ptr<transform_model>& trans_ptr, const vector3& up);
 
 		camera_model(camera_model& copy)
 			= default;
@@ -55,6 +59,8 @@ namespace efiilj
 		 * \return A 4-dimensional matrix for view projection of a vertex in 3D space
 		 */
 		const matrix4& get_view();
+
+		ray raycast(const int x, const int y, const float len);
 
 		~camera_model()
 			= default;

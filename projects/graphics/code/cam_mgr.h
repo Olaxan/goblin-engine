@@ -12,8 +12,9 @@ namespace efiilj
 	private:
 
 		unsigned ubo_, active_camera_;
-		float aspect_;
 		
+		unsigned width_, height_;
+
 		vector3 up_;
 
 		std::vector<std::shared_ptr<camera_model>> cameras_;
