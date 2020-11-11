@@ -20,7 +20,8 @@ namespace efiilj
 	private:
 
 		Display::Window* window_;
-		float time_, mouse_x_, mouse_y_, mouse_down_x_, mouse_down_y_;
+		double mouse_x_, mouse_y_, mouse_norm_x_, mouse_norm_y_, mouse_down_x_, mouse_down_y_;
+		float time_;
 		bool is_dragging_mouse_, is_mouse_captured_, is_software_renderer_;
 
 		std::shared_ptr<camera_manager> cam_mgr_ptr;

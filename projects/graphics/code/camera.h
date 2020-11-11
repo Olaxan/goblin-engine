@@ -17,6 +17,7 @@ namespace efiilj
 
 		vector3 up_axis_;
 		matrix4 perspective_;
+		matrix4 perspective_inverse_;
 		matrix4 view_;
 
 		float width_, height_;

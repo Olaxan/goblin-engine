@@ -233,17 +233,27 @@ namespace efiilj
 
 		window_->SetMouseMoveFunction([&](const float x, const float y)
 		{
-			mouse_x_ = x / WINDOW_WIDTH - 0.5f;
-			mouse_y_ = y / WINDOW_HEIGHT - 0.5f;
+			mouse_x_ = x;
+			mouse_y_ = y;
+
+			mouse_norm_x_ = x / WINDOW_WIDTH - 0.5f;
+			mouse_norm_y_ = y / WINDOW_HEIGHT - 0.5f;
 		});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
 		{
 			if (action == 1)
 			{
-				mouse_down_x_ = mouse_x_;
-				mouse_down_y_ = mouse_y_;
+				mouse_down_x_ = mouse_norm_x_;
+				mouse_down_y_ = mouse_norm_y_;
+				printf("Clicked %f, %f\n", mouse_x_, mouse_y_);
 				is_dragging_mouse_ = true;
+
+				auto cam = cam_mgr_ptr->get_active_camera();
+				ray r = cam->raycast(mouse_x_, mouse_y_, 10.0f);
+				auto bububu = std::make_shared<line>(r);
+				auto node = std::make_shared<graphics_node>(bububu, rect_mat_ptr);
+				fwd_renderer.add_node(node);
 			}
 			else
 			{
@@ -257,9 +267,9 @@ namespace efiilj
 			auto camera_trans_ptr = camera_ptr->get_transform(); 
 
 			if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector4(mouse_y_, mouse_x_, 0, 1));
+				camera_trans_ptr->set_rotation(vector4(mouse_norm_y_, mouse_norm_x_, 0, 1));
 			else if (is_dragging_mouse_)
-				helmet_trans_ptr->add_rotation(vector4(mouse_y_ - mouse_down_y_, mouse_x_ - mouse_down_x_, 0, 1) * 0.5f);
+				helmet_trans_ptr->add_rotation(vector4(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

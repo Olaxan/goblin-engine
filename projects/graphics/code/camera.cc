@@ -11,6 +11,7 @@ namespace efiilj
 	{
 		float aspect = width_ / height_;
 		perspective_ = matrix4::get_perspective(fov, aspect, near, far);
+		perspective_inverse_ = perspective_.inverse();
 		get_view();
 	}
 
@@ -37,11 +38,15 @@ namespace efiilj
 
 		vector3 ray_nds(x, y, z);
 		vector4 ray_clip(x, y, -z, 1.0);
-		vector4 ray_eye = perspective_.inverse() * ray_clip;
+		vector4 ray_eye = perspective_inverse_ * ray_clip;
 		ray_eye = vector4(ray_eye.x(), ray_eye.y(), -z, 0.0f);
+
+		printf("PERSP: %s \n VIEW: %s\n", perspective_.to_string().c_str(),
+				perspective_inverse_.to_string().c_str());
 
 		vector4 ray_world = view_.inverse() * ray_eye;
 		ray_world = ray_world.norm();
+		ray_world.w(1.0f);
 
 		return ray(transform_->get_position(), ray_world * len);
 	}
