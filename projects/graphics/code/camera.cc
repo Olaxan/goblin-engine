@@ -20,7 +20,7 @@ namespace efiilj
 		view_ = matrix4::get_lookat(
 					transform_->get_position(),
 					transform_->get_position() + transform_->forward(),
-					vector4(0, 1.0f, 0, 0)
+					vector4(0, 1.0f, 0, 1.0f)
 				);
 
 		return view_;
@@ -30,8 +30,6 @@ namespace efiilj
 	{
 		float x = (2.0f * mouse_x) / width_ - 1.0f;
 		float y = 1.0f - (2.0f * mouse_y) / height_;
-
-		printf("NDC X %f, %f\n", x, y);
 
 		vector4 ray_clip(x, y, -1.0f, 1.0f);
 		vector4 ray_eye = perspective_inverse_ * ray_clip;

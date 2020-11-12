@@ -276,7 +276,7 @@ namespace efiilj
 			auto camera_trans_ptr = camera_ptr->get_transform(); 
 
 			if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector4(-mouse_norm_y_ * 10, -mouse_norm_x_ * 10, 0, 1));
+				camera_trans_ptr->set_rotation(vector4(mouse_norm_y_, -mouse_norm_x_, 0, 1));
 			else if (is_dragging_mouse_)
 				helmet_trans_ptr->add_rotation(vector4(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			

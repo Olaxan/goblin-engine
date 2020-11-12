@@ -12,7 +12,7 @@ namespace efiilj
 	camera_manager::camera_manager(unsigned width, unsigned height)
 	: ubo_(0), active_camera_(0), width_(width), height_(height), up_(vector3(0, 1, 0))
 	{
-		auto trf_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(1, 1, 1));
+		auto trf_ptr = std::make_shared<transform_model>(vector3(0), vector3(0), vector3(1, 1, 1));
 		auto cam = std::make_shared<camera_model>(DEFAULT_FOV, width, height, DEFAULT_NEAR, DEFAULT_FAR, trf_ptr, up_);
 
 		cameras_.push_back(cam);
