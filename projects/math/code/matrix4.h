@@ -592,7 +592,7 @@ namespace efiilj
 
 		static matrix4 get_rotation_xyz(const float pitch, const float yaw, const float roll)
 		{
-			return get_rotation_z(roll) * get_rotation_x(pitch) * get_rotation_y(yaw);
+			//return get_rotation_z(roll) * get_rotation_x(pitch) * get_rotation_y(yaw);
 			return get_rotation_y(yaw) * get_rotation_x(pitch) * get_rotation_z(roll);
 		}
 
@@ -644,8 +644,6 @@ namespace efiilj
 			a(12) = vector4::dot(camera_right, camera_pos) * -1;
 			a(13) = vector4::dot(camera_up, camera_pos) * -1;
 			a(14) = vector4::dot(camera_direction, camera_pos);
-
-			printf("\nMEM: %s\n", a.to_mem_string().c_str());
 
 			return a;
 		}

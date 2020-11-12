@@ -17,7 +17,7 @@ namespace efiilj
 			const matrix4 s = matrix4::get_scale(scale_);
 
 			m_rotation_ = r;
-			model_ = s * r * t;
+			model_ = t * r * s;
 
 			model_dirty_ = false;
 			inverse_dirty_ = true;

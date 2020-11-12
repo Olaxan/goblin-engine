@@ -68,18 +68,18 @@ namespace efiilj
 			// set clear color
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-			//this->window_->SetUiRender([this]()
-			//		{
-			//			ImGui::Begin("Camera");
-			//			ImGui::Text("Position: %s", cam_mgr_ptr->get_active_position().to_mem_string().c_str());
-			//			ImGui::Text("Rotation: %s", cam_mgr_ptr->get_active_rotation().to_mem_string().c_str());
-			//			if (ImGui::Button("Reset"))
-			//			{
-			//				auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
-			//				trf->set_rotation(vector4(0));
-			//			}
-			//			ImGui::End();
-			//		});
+			this->window_->SetUiRender([this]()
+					{
+						ImGui::Begin("Camera");
+						ImGui::Text("Position: %s", cam_mgr_ptr->get_active_position().to_mem_string().c_str());
+						ImGui::Text("Rotation: %s", cam_mgr_ptr->get_active_rotation().to_mem_string().c_str());
+						if (ImGui::Button("Reset"))
+						{
+							auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
+							trf->set_rotation(vector4(0));
+						}
+						ImGui::End();
+					});
 
 			return true;
 		}
@@ -90,8 +90,7 @@ namespace efiilj
 	{
 
 		MathTest();
-		int i = 5 / 0;
-exit();
+
 		auto g_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -277,7 +276,7 @@ exit();
 			auto camera_trans_ptr = camera_ptr->get_transform(); 
 
 			if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector4(mouse_norm_y_, -mouse_norm_x_, 0, 1));
+				camera_trans_ptr->set_rotation(vector4(-mouse_norm_y_ * 10, -mouse_norm_x_ * 10, 0, 1));
 			else if (is_dragging_mouse_)
 				helmet_trans_ptr->add_rotation(vector4(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			
@@ -311,10 +310,10 @@ exit();
 				helmet_trans_ptr->add_position(helmet_trans_ptr->backward() * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_LEFT) != keys.end())
-				helmet_trans_ptr->add_rotation(vector4(0, 0.05f, 0, 0));
+				helmet_trans_ptr->add_position(helmet_trans_ptr->left() * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
-				helmet_trans_ptr->add_rotation(vector4(0, -0.05f, 0, 0));
+				helmet_trans_ptr->add_position(helmet_trans_ptr->right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();

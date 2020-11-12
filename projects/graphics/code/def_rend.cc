@@ -175,7 +175,7 @@ namespace efiilj
 		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
 
 		//matrix4 mvp = p * v * light.transform.get_model();
-		matrix4 mvp = light.transform.get_model() * v * p;
+		matrix4 mvp = p * v * light.transform.get_model();
 
 		lighting_->set_uniform("light_mvp", mvp);
 
