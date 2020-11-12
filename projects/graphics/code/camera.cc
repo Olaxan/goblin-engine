@@ -17,37 +17,30 @@ namespace efiilj
 
 	const matrix4& camera_model::get_view()
 	{
-		const vector4 camera_pos = transform_->get_position();
-		const vector4 camera_direction = transform_->backward();
-		const vector4 camera_right = transform_->right();
-		const vector4 camera_up = transform_->up();
-
-		view_ = matrix4(camera_right, camera_up, camera_direction, vector4(), true);
-		view_(12) = vector4::dot(camera_right, camera_pos) * -1;
-		view_(13) = vector4::dot(camera_up, camera_pos) * -1;
-		view_(14) = vector4::dot(camera_direction, camera_pos) * -1;
+		view_ = matrix4::get_lookat(
+					transform_->get_position(),
+					transform_->get_position() + transform_->forward(),
+					transform_->up()
+				);
 
 		return view_;
 	}
 
-	ray camera_model::raycast(const int mouse_x, const int mouse_y, const float len)
+	ray camera_model::get_ray_from_camera(const int mouse_x, const int mouse_y)
 	{
 		float x = (2.0f * mouse_x) / width_ - 1.0f;
 		float y = 1.0f - (2.0f * mouse_y) / height_;
-		float z = 1.0f;
 
-		vector3 ray_nds(x, y, z);
-		vector4 ray_clip(x, y, -z, 1.0);
+		printf("NDC X %f, %f\n", x, y);
+
+		vector4 ray_clip(x, y, -1.0f, 1.0f);
 		vector4 ray_eye = perspective_inverse_ * ray_clip;
-		ray_eye = vector4(ray_eye.x(), ray_eye.y(), -z, 0.0f);
-
-		printf("PERSP: %s \n VIEW: %s\n", perspective_.to_string().c_str(),
-				perspective_inverse_.to_string().c_str());
+		ray_eye = vector4(ray_eye.x(), ray_eye.y(), -1.0f, 0.0f);
 
 		vector4 ray_world = view_.inverse() * ray_eye;
-		ray_world = ray_world.norm();
-		ray_world.w(1.0f);
+		vector3 fuck_you(ray_world.x(), ray_world.y(), ray_world.z());
+		fuck_you = fuck_you.norm();
 
-		return ray(transform_->get_position(), ray_world * len);
+		return ray(transform_->get_position(), vector4(fuck_you, 1.0f));
 	}
 }

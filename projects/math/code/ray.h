@@ -11,15 +11,16 @@ namespace efiilj
 	{
 		private:
 
-			vector4 start_, end_;
 
 		public:
 
-			ray(const vector4& a, const vector4& b)
+			ray(const vector4& origin, const vector4& direction)
 			{
-				start_ = a;
-				end_ = b;
+				start = origin;
+				dir = direction;
 			}
+
+			vector4 start, dir;
 
 			vector4 intersect(const plane& plane)
 			{

@@ -13,6 +13,7 @@ namespace efiilj
 
 		mutable matrix4 model_;
 		mutable matrix4 inverse_;
+		mutable matrix4 m_rotation_;
 
 		vector4 position_;
 		vector4 scale_;

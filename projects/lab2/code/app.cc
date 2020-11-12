@@ -19,6 +19,7 @@
 #include "imgui.h"
 #include "rect.h"
 #include "line.h"
+#include "math_test.h"
 
 #include <chrono>
 #include <iostream>
@@ -67,18 +68,18 @@ namespace efiilj
 			// set clear color
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-			this->window_->SetUiRender([this]()
-					{
-						ImGui::Begin("Camera");
-						ImGui::Text("Position: %s", cam_mgr_ptr->get_active_position().to_mem_string().c_str());
-						ImGui::Text("Rotation: %s", cam_mgr_ptr->get_active_rotation().to_mem_string().c_str());
-						if (ImGui::Button("Reset"))
-						{
-							auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
-							trf->set_rotation(vector4(0));
-						}
-						ImGui::End();
-					});
+			//this->window_->SetUiRender([this]()
+			//		{
+			//			ImGui::Begin("Camera");
+			//			ImGui::Text("Position: %s", cam_mgr_ptr->get_active_position().to_mem_string().c_str());
+			//			ImGui::Text("Rotation: %s", cam_mgr_ptr->get_active_rotation().to_mem_string().c_str());
+			//			if (ImGui::Button("Reset"))
+			//			{
+			//				auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
+			//				trf->set_rotation(vector4(0));
+			//			}
+			//			ImGui::End();
+			//		});
 
 			return true;
 		}
@@ -88,6 +89,9 @@ namespace efiilj
 	void application::run()
 	{
 
+		MathTest();
+		int i = 5 / 0;
+exit();
 		auto g_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -190,7 +194,8 @@ namespace efiilj
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
 
-		auto l1_mesh_ptr = std::make_shared<line>(vector4(), vector4(10, 10, 10, 1.0f), 3.0f);
+		//auto l1_mesh_ptr = std::make_shared<line>(vector4(-10, 0, 0, 1.0f), vector4(10, 10, 0, 1.0f), 3.0f);
+		auto l1_mesh_ptr = std::make_shared<line>(ray(vector4(0, 10, 0, 1.0f), vector4(1, 1, 1, 1.0f)), 10.0f, 3.0f);
 		auto l1_node_ptr = std::make_shared<graphics_node>(l1_mesh_ptr, rect_mat_ptr);
 		l1_node_ptr->set_absolute(true);
 
@@ -231,7 +236,7 @@ namespace efiilj
 			}
 		});
 
-		window_->SetMouseMoveFunction([&](const float x, const float y)
+			window_->SetMouseMoveFunction([&](const double x, const double y)
 		{
 			mouse_x_ = x;
 			mouse_y_ = y;
@@ -250,10 +255,15 @@ namespace efiilj
 				is_dragging_mouse_ = true;
 
 				auto cam = cam_mgr_ptr->get_active_camera();
-				ray r = cam->raycast(mouse_x_, mouse_y_, 10.0f);
-				auto bububu = std::make_shared<line>(r);
-				auto node = std::make_shared<graphics_node>(bububu, rect_mat_ptr);
+				auto cam_trf = cam->get_transform();
+
+				ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
+				auto ray_line_ptr = std::make_shared<line>(r, 100.0f);
+				auto node = std::make_shared<graphics_node>(ray_line_ptr, rect_mat_ptr);
+				node->set_absolute(true);
+
 				fwd_renderer.add_node(node);
+				
 			}
 			else
 			{
@@ -267,7 +277,7 @@ namespace efiilj
 			auto camera_trans_ptr = camera_ptr->get_transform(); 
 
 			if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector4(mouse_norm_y_, mouse_norm_x_, 0, 1));
+				camera_trans_ptr->set_rotation(vector4(mouse_norm_y_, -mouse_norm_x_, 0, 1));
 			else if (is_dragging_mouse_)
 				helmet_trans_ptr->add_rotation(vector4(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0, 1) * 0.5f);
 			
@@ -280,19 +290,31 @@ namespace efiilj
 				camera_trans_ptr->add_position(camera_trans_ptr->forward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->forward() * -CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
 				camera_trans_ptr->add_position(camera_trans_ptr->left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->left() * -CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
 				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->up() * -CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->down() * CAMERA_SPEED);
+
+			if (keys.find(GLFW_KEY_UP) != keys.end())
+				helmet_trans_ptr->add_position(helmet_trans_ptr->forward() * CAMERA_SPEED);
+
+			if (keys.find(GLFW_KEY_DOWN) != keys.end())
+				helmet_trans_ptr->add_position(helmet_trans_ptr->backward() * CAMERA_SPEED);
+
+			if (keys.find(GLFW_KEY_LEFT) != keys.end())
+				helmet_trans_ptr->add_rotation(vector4(0, 0.05f, 0, 0));
+
+			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
+				helmet_trans_ptr->add_rotation(vector4(0, -0.05f, 0, 0));
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();

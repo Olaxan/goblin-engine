@@ -14,7 +14,7 @@ namespace efiilj
 
 		public:
 
-			line(const ray& line, float width = 1.0f);
+			line(const ray& line, float length, float width = 1.0f);
 			line(const vector4& start, const vector4& end, float width = 1.0f);
 
 			void set_width(float w) { width_ = w; }

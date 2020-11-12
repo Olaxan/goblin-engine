@@ -145,25 +145,25 @@ namespace efiilj
 		{
 			matrix4 mat;
 
-			mat(0, 0) = vector4::dot4(row(0), other.col(0));
-			mat(0, 1) = vector4::dot4(row(1), other.col(0));
-			mat(0, 2) = vector4::dot4(row(2), other.col(0));
-			mat(0, 3) = vector4::dot4(row(3), other.col(0));
+			mat(0, 0) = vector4::dot4(col(0), other.row(0));
+			mat(0, 1) = vector4::dot4(col(0), other.row(1));
+			mat(0, 2) = vector4::dot4(col(0), other.row(2));
+			mat(0, 3) = vector4::dot4(col(0), other.row(3));
 
-			mat(1, 0) = vector4::dot4(row(0), other.col(1));
-			mat(1, 1) = vector4::dot4(row(1), other.col(1));
-			mat(1, 2) = vector4::dot4(row(2), other.col(1));
-			mat(1, 3) = vector4::dot4(row(3), other.col(1));
+			mat(1, 0) = vector4::dot4(col(1), other.row(0));
+			mat(1, 1) = vector4::dot4(col(1), other.row(1));
+			mat(1, 2) = vector4::dot4(col(1), other.row(2));
+			mat(1, 3) = vector4::dot4(col(1), other.row(3));
 
-			mat(2, 0) = vector4::dot4(row(0), other.col(2));
-			mat(2, 1) = vector4::dot4(row(1), other.col(2));
-			mat(2, 2) = vector4::dot4(row(2), other.col(2));
-			mat(2, 3) = vector4::dot4(row(3), other.col(2));
+			mat(2, 0) = vector4::dot4(col(2), other.row(0));
+			mat(2, 1) = vector4::dot4(col(2), other.row(1));
+			mat(2, 2) = vector4::dot4(col(2), other.row(2));
+			mat(2, 3) = vector4::dot4(col(2), other.row(3));
 
-			mat(3, 0) = vector4::dot4(row(0), other.col(3));
-			mat(3, 1) = vector4::dot4(row(1), other.col(3));
-			mat(3, 2) = vector4::dot4(row(2), other.col(3));
-			mat(3, 3) = vector4::dot4(row(3), other.col(3));
+			mat(3, 0) = vector4::dot4(col(3), other.row(0));
+			mat(3, 1) = vector4::dot4(col(3), other.row(1));
+			mat(3, 2) = vector4::dot4(col(3), other.row(2));
+			mat(3, 3) = vector4::dot4(col(3), other.row(3));
 
 			return mat;
 		}
@@ -193,10 +193,10 @@ namespace efiilj
 		vector4 operator * (const vector4& other) const
 		{
 			vector4 vect;
-			vect.x(other.dot4(row(0)));
-			vect.y(other.dot4(row(1)));
-			vect.z(other.dot4(row(2)));
-			vect.w(other.dot4(row(3)));
+			vect.x(other.dot4(col(0)));
+			vect.y(other.dot4(col(1)));
+			vect.z(other.dot4(col(2)));
+			vect.w(other.dot4(col(3)));
 			return vect;
 		}
 
@@ -246,6 +246,11 @@ namespace efiilj
 		float& operator () (const int x, const int y)
 		{
 			return arr_[y][x];
+		}
+
+		float& operator [] (const int i)
+		{
+			return arr_[i / 4][i % 4];
 		}
 
 		/// <summary>
@@ -587,7 +592,8 @@ namespace efiilj
 
 		static matrix4 get_rotation_xyz(const float pitch, const float yaw, const float roll)
 		{
-			return get_rotation_x(pitch) * get_rotation_y(yaw) * get_rotation_z(roll);
+			return get_rotation_z(roll) * get_rotation_x(pitch) * get_rotation_y(yaw);
+			return get_rotation_y(yaw) * get_rotation_x(pitch) * get_rotation_z(roll);
 		}
 
 		static matrix4 get_rotation_xyz(const vector3& eulers)
@@ -609,8 +615,8 @@ namespace efiilj
 			mat(0, 2) = -((right + left) / (right - left));
 			mat(1, 1) = (2.0f * near) / (top - bottom);
 			mat(1, 2) = -((top + bottom) / (top - bottom));
-			mat(2, 2) = -(far / (far - near));
-			mat(2, 3) = -((far * near) / (far - near));
+			mat(2, 2) = -((far + near) / (far - near));
+			mat(2, 3) = -((2 * far * near) / (far - near));
 			mat(3, 2) = -1.0f;
 
 			return mat;
@@ -628,16 +634,18 @@ namespace efiilj
 			return get_perspective(left, right, top, bottom, near, far);
 		}
 
-		static matrix4 get_lookat(const vector3& camera_pos, const vector3& camera_target, const vector3& up_direction)
+		static matrix4 get_lookat(const vector4& camera_pos, const vector4& camera_target, const vector4& up_direction)
 		{
-			const vector3 camera_direction = (camera_pos - camera_target).norm();
-			const vector3 camera_right = vector3::cross(up_direction, camera_direction).norm();
-			const vector3 camera_up = vector3::cross(camera_direction, camera_right);
+			const vector4 camera_direction = (camera_target - camera_pos).norm();
+			const vector4 camera_right = vector4::cross(camera_direction, up_direction).norm();
+			const vector4 camera_up = vector4::cross(camera_right, camera_direction);
 
-			matrix4 a = matrix4(vector4(camera_right, 1), vector4(camera_up, 1), vector4(camera_direction, 1), vector4(), true);
-			a(12) = vector3::dot(camera_right, camera_pos) * -1;
-			a(13) = vector3::dot(camera_up, camera_pos) * -1;
-			a(14) = vector3::dot(camera_direction, camera_pos) * -1;
+			matrix4 a = matrix4(camera_right, camera_up, camera_direction * -1, vector4(), true);
+			a(12) = vector4::dot(camera_right, camera_pos) * -1;
+			a(13) = vector4::dot(camera_up, camera_pos) * -1;
+			a(14) = vector4::dot(camera_direction, camera_pos);
+
+			printf("\nMEM: %s\n", a.to_mem_string().c_str());
 
 			return a;
 		}

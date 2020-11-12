@@ -4,7 +4,8 @@ namespace efiilj
 {
 
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), model_dirty_(true), inverse_dirty_(true) 
+	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1),
+	m_rotation_(matrix4()), model_dirty_(true), inverse_dirty_(true) 
 	{ }
 
 	const matrix4& transform_model::get_model() const 
@@ -15,6 +16,7 @@ namespace efiilj
 			const matrix4 r = matrix4::get_rotation_xyz(rotation_);
 			const matrix4 s = matrix4::get_scale(scale_);
 
+			m_rotation_ = r;
 			model_ = s * r * t;
 
 			model_dirty_ = false;
@@ -35,44 +37,36 @@ namespace efiilj
 		return inverse_;
 	}
 
-	// PITCH, YAW, ROLL
-	vector4 transform_model::forward() const
+	vector4 transform_model::right() const
 	{
-		return vector4(
-				sin(rotation_.y()),
-				-(sin(rotation_.x()) * cos(rotation_.y())),
-				-(cos(rotation_.x()) * cos(rotation_.y())),
-				1.0f).norm();
-
-
-		return vector4(
-			cos(rotation_.x()) * cos(rotation_.z()),
-			sin(rotation_.x()),
-			cos(rotation_.x()) * sin(rotation_.z()), 1).norm();
-	}
-
-	vector4 transform_model::backward() const
-	{
-		return forward() * -1;
+		get_model();
+		return m_rotation_.row(0);
 	}
 
 	vector4 transform_model::left() const
 	{
-		return vector4::cross(vector4(0, 1, 0, 1), forward()).norm();
-	}
-
-	vector4 transform_model::right() const
-	{
-		return left() * -1;
+		return right() * -1;
 	}
 
 	vector4 transform_model::up() const
 	{
-		return vector4::cross(forward(), left());
+		get_model();
+		return m_rotation_.row(1);
 	}
 
 	vector4 transform_model::down() const
 	{
 		return up() * -1;
+	}
+
+	vector4 transform_model::forward() const
+	{
+		get_model();
+		return m_rotation_.row(2);
+	}
+
+	vector4 transform_model::backward() const
+	{
+		return forward() * -1;
 	}
 }

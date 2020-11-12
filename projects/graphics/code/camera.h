@@ -61,7 +61,7 @@ namespace efiilj
 		 */
 		const matrix4& get_view();
 
-		ray raycast(const int x, const int y, const float len);
+		ray get_ray_from_camera(const int x, const int y);
 
 		~camera_model()
 			= default;
