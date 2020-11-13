@@ -36,8 +36,10 @@ namespace efiilj
 		ray_eye = vector4(ray_eye.x, ray_eye.y, -1.0f, 0.0f);
 
 		vector4 ray_world = view_.inverse() * ray_eye;
-		vector3 ray_dir(ray_world.x, ray_world.y, ray_world.z);
+		vector3 ray_dir = ray_world.xyz();
 		ray_dir = ray_dir.norm();
+
+		printf("Ray: %s\n", ray_dir.to_mem_string().c_str());
 
 		return ray(transform_->get_position(), ray_dir);
 	}
