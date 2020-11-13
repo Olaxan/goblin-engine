@@ -258,6 +258,8 @@ namespace efiilj
 
 				ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
 
+				
+
 				vector3 hit;
 				if (r.intersect(mid, hit))
 				{
