@@ -16,27 +16,16 @@ namespace efiilj
 	class matrix2
 	{
 	private:
-		vector2 arr_[2];
+
 	public:
 
+		union
+		{
+			struct { float a, b, c, d; };
+			vector2 arr_[2];
+		};
+
 		/* === CONSTRUCTORS === */
-
-		/// <summary>
-		/// Creates a new identity Matrix2.
-		/// </summary>
-		matrix2()
-		{
-			clear();
-		}
-
-		/// <summary>
-		/// Constructs a copy of the specified Matrix2.
-		/// </summary>
-		/// <param name="copy">The matrix of which to create a copy</param>
-		matrix2(const matrix2& copy)
-		{
-			*this = copy;
-		}
 
 		/// <summary>
 		/// Creates a matrix from the specified a, b, c, d values (from top-left to bottom-right).
@@ -47,25 +36,49 @@ namespace efiilj
 		/// <param name="d">Bottom right</param>
 		matrix2(float a, float b, float c, float d)
 		{
-			this->a(a);
-			this->b(b);
-			this->c(c);
-			this->d(d);
+			this->a = a;
+			this->b = b;
+			this->c = c;
+			this->d = d;
+		}
+
+		/// <summary>
+		/// Creates a new identity Matrix2.
+		/// </summary>
+		matrix2()
+			: matrix2(0, 1, 0, 1)
+		{
+			clear();
+		}
+
+		/// <summary>
+		/// Constructs a copy of the specified Matrix2.
+		/// </summary>
+		/// <param name="copy">The matrix of which to create a copy</param>
+		matrix2(const matrix2& copy)
+			: matrix2(copy.a, copy.b, copy.c, copy.d)
+		{
+			*this = copy;
 		}
 
 		/* === ACCESSORS === */
 
-		const float& a() const { return this->arr_[0].x(); }
-		void a(const float& a) { this->arr_[0].x(a); }
+		//float& a;
+		//float& b;
+		//float& c;
+		//float& d;
 
-		const float& b() const { return this->arr_[0].y(); }
-		void b(const float& b) { this->arr_[0].y(b); }
+		//const float& a const { return this->arr_[0].x(); }
+		//void a(const float& a) { this->arr_[0].x(a); }
 
-		const float& c() const { return this->arr_[1].x(); }
-		void c(const float& c) { this->arr_[1].x(c); }
+		//const float& b const { return this->arr_[0].y(); }
+		//void b(const float& b) { this->arr_[0].y(b); }
 
-		const float& d() const { return this->arr_[1].y(); }
-		void d(const float& d) { this->arr_[1].y(d); }
+		//const float& c const { return this->arr_[1].x(); }
+		//void c(const float& c) { this->arr_[1].x(c); }
+
+		//const float& d const { return this->arr_[1].y(); }
+		//void d(const float& d) { this->arr_[1].y(d); }
 
 		/* === OPERATORS === */
 
@@ -76,10 +89,10 @@ namespace efiilj
 		/// <returns>A reference to the current matrix, after modification</returns>
 		matrix2& operator = (const matrix2& other)
 		{
-			this->a(other.a());
-			this->b(other.b());
-			this->c(other.c());
-			this->d(other.d());
+			this->a = other.a;
+			this->b = other.b;
+			this->c = other.c;
+			this->d = other.d;
 
 			return *this;
 		}
@@ -127,8 +140,8 @@ namespace efiilj
 		vector2 operator * (const vector2& other) const
 		{
 			vector2 vect;
-			vect.x(other.dot(row(0)));
-			vect.y(other.dot(row(1)));
+			vect.x = other.dot(row(0));
+			vect.y = other.dot(row(1));
 			return vect;
 		}
 
@@ -241,7 +254,7 @@ namespace efiilj
 		/// <returns>The determinant of the matrix</returns>
 		float determinant() const
 		{
-			return a() * d() - b() * c();
+			return a * d - b * c;
 		}
 
 		/// <summary>
@@ -250,7 +263,7 @@ namespace efiilj
 		/// <returns>Transposed copy of the current matrix</returns>
 		matrix2 transpose() const
 		{
-			return matrix2(this->a(), this->c(), this->b(), this->d());
+			return matrix2(this->a, this->c, this->b, this->d);
 		}
 
 		/// <summary>
@@ -264,7 +277,7 @@ namespace efiilj
 			if (det == 0)
 				return matrix2();
 
-			return matrix2(d(), -b(), -c(), a()) / det;
+			return matrix2(d, -b, -c, a) / det;
 		}
 
 
@@ -289,7 +302,7 @@ namespace efiilj
 		std::string to_string()
 		{
 			std::stringstream ss;
-			ss << a() << ", " << b() << ";\n" << c() << ", " << d() << ";\n";
+			ss << a << ", " << b << ";\n" << c << ", " << d << ";\n";
 			return ss.str();
 		}
 

@@ -16,9 +16,18 @@ namespace efiilj
 	class vector4
 	{
 	private:
-		float arr_[4]{};
 
 	public:
+
+		union
+		{
+			struct { float x, y, z, w; };
+
+			//struct { vector2 xy; float zw_pad_[2]; };
+			//struct { vector3 xyz; float w_pad_; };
+
+			float arr_[4]{};
+		};
 
 		/* === CONSTRUCTORS === */
 
@@ -31,10 +40,10 @@ namespace efiilj
 		/// <param name="w">Fourth value</param>
 		vector4(const float x, const float y, const float z, const float w)
 		{
-			this->x(x);
-			this->y(y);
-			this->z(z);
-			this->w(w);
+			this->x = x;
+			this->y = y;
+			this->z = z;
+			this->w = w;
 		}
 
 		/// <summary>
@@ -47,50 +56,54 @@ namespace efiilj
 		/// Inserts the specified Vector2 into the top of a new Vector4.
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
-		explicit vector4(const vector2& copy)
-		{
-			this->x(copy.x());
-			this->y(copy.y());
-			this->z(0);
-			this->w(0);
-		}
+		explicit vector4(const vector2& copy, float z = 0.0f, float w = 1.0f)
+			: vector4(copy.x, copy.y, z, w)
+		{ }
 
 		/// <summary>
 		/// Inserts the specified Vector3 into the top of a new Vector4.
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
 		vector4(const vector3& copy, float w)
-		{
-			this->x(copy.x());
-			this->y(copy.y());
-			this->z(copy.z());
-			this->w(w);
-		}
+			: vector4(copy.x, copy.y, copy.z, w)
+		{ }
 
 		/// <summary>
 		/// Constructs a copy of the specified vector.
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
 		vector4(const vector4& copy)
-		{
-			*this = copy;
-		}
+			: vector4(copy.x, copy.y, copy.z, copy.w)
+		{ }
 
 		/* === ACCESSORS === */
 
-		const float& x() const { return this->arr_[0]; }
-		void x(const float& x) { this->arr_[0] = x; }
+		//float& x;
+		//float& y;
+		//float& z;
+		//float& w;
 
-		const float& y() const { return arr_[1]; }
-		void y(const float& y) { this->arr_[1] = y; }
+		//const float& x() const { return this->arr_[0]; }
+		//void x(const float& x) { this->arr_[0] = x; }
 
-		const float& z() const { return arr_[2]; }
-		void z(const float& z) { this->arr_[2] = z; }
+		//const float& y() const { return arr_[1]; }
+		//void y(const float& y) { this->arr_[1] = y; }
 
-		const float& w() const { return arr_[3]; }
-		void w(const float& w) { this->arr_[3] = w; }
+		//const float& z() const { return arr_[2]; }
+		//void z(const float& z) { this->arr_[2] = z; }
+
+		//const float& w() const { return arr_[3]; }
+		//void w(const float& w) { this->arr_[3] = w; }
 
 		/* === OPERATORS === */
+
+		void operator = (const vector4& other)
+		{
+			this->x = other.x;
+			this->y = other.y;
+			this->z = other.z;
+			this->w = other.w;
+		}
 
 		/// <summary>
 		/// Adds two Vector4 instances together, and returns the result.
@@ -100,9 +113,9 @@ namespace efiilj
 		vector4 operator + (const vector4& other) const
 		{
 			vector4 vect;
-			vect.x(this->x() + other.x());
-			vect.y(this->y() + other.y());
-			vect.z(this->z() + other.z());
+			vect.x = this->x + other.x;
+			vect.y = this->y + other.y;
+			vect.z = this->z + other.z;
 			return vect;
 		}
 
@@ -114,10 +127,15 @@ namespace efiilj
 		vector4 operator - (const vector4& other) const
 		{
 			vector4 vect;
-			vect.x(this->x() - other.x());
-			vect.y(this->y() - other.y());
-			vect.z(this->z() - other.z());
+			vect.x = this->x - other.x;
+			vect.y = this->y - other.y;
+			vect.z = this->z - other.z;
 			return vect;
+		}
+
+		vector4 operator - () const 
+		{
+			return *this * -1;
 		}
 
 		/// <summary>
@@ -128,10 +146,10 @@ namespace efiilj
 		vector4 operator * (const vector4& other) const
 		{
 			vector4 vect;
-			vect.x(this->x() * other.x());
-			vect.y(this->y() * other.y());
-			vect.z(this->z() * other.z());
-			vect.w(this->w() * other.w());
+			vect.x = this->x * other.x;
+			vect.y = this->y * other.y;
+			vect.z = this->z * other.z;
+			vect.w = this->w * other.w;
 			return vect;
 		}
 
@@ -143,10 +161,10 @@ namespace efiilj
 		vector4 operator * (const float& other) const
 		{
 			vector4 vect;
-			vect.x(this->x() * other);
-			vect.y(this->y() * other);
-			vect.z(this->z() * other);
-			vect.w(this->w() * other);
+			vect.x = this->x * other;
+			vect.y = this->y * other;
+			vect.z = this->z * other;
+			vect.w = this->w * other;
 			return vect;
 		}
 
@@ -169,7 +187,7 @@ namespace efiilj
 		/// <returns>True if equal, false otherwise</returns>
 		bool operator == (const vector4& other) const
 		{
-			return x() == other.x() && y() == other.y() && z() == other.z() && w() == other.w();
+			return x == other.x && y == other.y && z == other.z && w == other.w;
 		}
 
 		/// <summary>
@@ -179,7 +197,7 @@ namespace efiilj
 		/// <returns>True if not equal, false otherwise</returns>
 		bool operator != (const vector4& other) const
 		{
-			return x() != other.x() || y() != other.y() || z() != other.z() || w() != other.w();
+			return !(*this == other);
 		}
 
 		/* === SHORTHAND OPERATORS === */
@@ -328,7 +346,7 @@ namespace efiilj
 		/// <returns>The dot product as a float</returns>
 		float dot(const vector4& other) const
 		{
-			return (this->x() * other.x() + this->y() * other.y() + this->z() * other.z());
+			return (this->x * other.x + this->y * other.y + this->z * other.z);
 		}
 
 		/// <summary>
@@ -338,7 +356,7 @@ namespace efiilj
 		/// <returns>The dot product as a float</returns>
 		float dot4(const vector4& other) const
 		{
-			return dot(other) + w() * other.w();
+			return dot(other) + w * other.w;
 		}
 
 		/// <summary>
@@ -349,10 +367,10 @@ namespace efiilj
 		vector4 cross(const vector4& other) const
 		{
 			vector4 vect;
-			vect.x(y() * other.z() - z() * other.y());
-			vect.y(z() * other.x() - x() * other.z());
-			vect.z(x() * other.y() - y() * other.x());
-			vect.w(1.0);
+			vect.x = y * other.z - z * other.y;
+			vect.y = z * other.x - x * other.z;
+			vect.z = x * other.y - y * other.x;
+			vect.w = 1.0;
 			return vect;
 		}
 
@@ -363,7 +381,7 @@ namespace efiilj
 		/// <returns>The vector length as a float</returns>
 		float length() const
 		{
-			return sqrt(powf(this->x(), 2) + powf(this->y(), 2) + powf(this->z(), 2));
+			return sqrt(powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2));
 		}
 
 		/// <summary>
@@ -401,7 +419,7 @@ namespace efiilj
 		std::string to_string() const
 		{
 			std::stringstream ss;
-			ss << x() << ";\n" << y() << ";\n" << z() << ";\n" << w() << ";\n";
+			ss << x << ";\n" << y << ";\n" << z << ";\n" << w << ";\n";
 			return ss.str();
 		}
 

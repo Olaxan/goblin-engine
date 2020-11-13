@@ -20,6 +20,12 @@ namespace efiilj
 				dir = direction;
 			}
 
+			ray(const vector3& origin, const vector3& direction)
+			{
+				start = vector4(origin, 1.0f);
+				dir = vector4(direction, 1.0f);
+			}
+
 			vector4 start, dir;
 
 			vector4 intersect(const plane& plane)

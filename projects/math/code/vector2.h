@@ -14,8 +14,14 @@ namespace efiilj
 	class vector2
 	{
 	private:
-		float arr_[2]{};
 	public:
+
+		union
+		{
+			struct { float u, v; };
+			struct { float x, y; };
+			float arr_[2]{};
+		};
 
 		/* === CONSTRUCTORS === */
 
@@ -26,8 +32,8 @@ namespace efiilj
 		/// <param name="y">Bottom value</param>
 		explicit vector2(const float x = 0, const float y = 0)
 		{
-			this->x(x);
-			this->y(y);
+			this->x = x;
+			this->y = y;
 		}
 
 		/// <summary>
@@ -35,20 +41,24 @@ namespace efiilj
 		/// </summary>
 		/// <param name="copy">The vector of which to create a copy</param>
 		vector2(const vector2& copy)
-		{
-			this->x(copy.x());
-			this->y(copy.y());
-		}
+			: vector2(copy.x, copy.y)
+		{ }
 
 		/* === ACCESSORS === */
 
-		const float& x() const { return this->arr_[0]; }
-		void x(const float& x) { this->arr_[0] = x; }
+		//const float& x const { return this->arr_[0]; }
+		//void x(const float& x) { this->arr_[0] = x; }
 
-		const float& y() const { return arr_[1]; }
-		void y(const float& y) { this->arr_[1] = y; }
+		//const float& y const { return arr_[1]; }
+		//void y(const float& y) { this->arr_[1] = y; }
 
 		/* === OPERATORS === */
+
+		void operator = (const vector2& other)
+		{
+			this->x = other.x;
+			this->y = other.y;
+		}
 
 		/// <summary>
 		/// Adds two Vector2 instances together, and returns the result.
@@ -58,8 +68,8 @@ namespace efiilj
 		vector2 operator + (const vector2& other) const
 		{
 			vector2 vect;
-			vect.x(this->x() + other.x());
-			vect.y(this->y() + other.y());
+			vect.x = this->x + other.x;
+			vect.y = this->y + other.y;
 			return vect;
 		}
 
@@ -71,8 +81,8 @@ namespace efiilj
 		vector2 operator - (const vector2& other) const
 		{
 			vector2 vect;
-			vect.x(this->x() - other.x());
-			vect.y(this->y() - other.y());
+			vect.x = this->x - other.x;
+			vect.y = this->y - other.y;
 			return vect;
 		}
 
@@ -84,8 +94,8 @@ namespace efiilj
 		vector2 operator * (const vector2& other) const
 		{
 			vector2 vect;
-			vect.x(this->x() * other.x());
-			vect.y(this->y() * other.y());
+			vect.x = this->x * other.x;
+			vect.y = this->y * other.y;
 			return vect;
 		}
 
@@ -97,8 +107,8 @@ namespace efiilj
 		vector2 operator * (const float& other) const
 		{
 			vector2 vect;
-			vect.x(this->x() * other);
-			vect.y(this->y() * other);
+			vect.x = this->x * other;
+			vect.y = this->y * other;
 			return vect;
 		}
 
@@ -121,7 +131,7 @@ namespace efiilj
 		/// <returns>True if equal, false otherwise</returns>
 		bool operator == (const vector2& other) const
 		{
-			return x() == other.x() && y() == other.y();
+			return x == other.x && y == other.y;
 		}
 
 		/// <summary>
@@ -131,7 +141,7 @@ namespace efiilj
 		/// <returns>True if not equal, false otherwise</returns>
 		bool operator != (const vector2& other) const
 		{
-			return x() != other.x() || y() != other.y();
+			return x != other.x || y != other.y;
 		}
 
 		/* === SHORTHAND OPERATORS === */
@@ -143,8 +153,8 @@ namespace efiilj
 		/// <returns>A reference to the Vector2 resulting from the operation</returns>
 		vector2& operator += (const vector2& other)
 		{
-			this->x(this->x() + other.x());
-			this->y(this->y() + other.y());
+			this->x = this->x + other.x;
+			this->y = this->y + other.y;
 			return *this;
 		}
 
@@ -155,8 +165,8 @@ namespace efiilj
 		/// <returns>A reference to the Vector2 resulting from the operation</returns>
 		vector2& operator -= (const vector2& other)
 		{
-			this->x(this->x() - other.x());
-			this->y(this->y() - other.y());
+			this->x = this->x - other.x;
+			this->y = this->y - other.y;
 			return *this;
 		}
 
@@ -257,7 +267,7 @@ namespace efiilj
 		/// <returns>The dot product as a float</returns>
 		float dot(const vector2& other) const
 		{
-			return (this->x() * other.x() + this->y() * other.y());
+			return (this->x * other.x + this->y * other.y);
 		}
 
 		/// <summary>
@@ -266,7 +276,7 @@ namespace efiilj
 		/// <returns>The vector length as a float</returns>
 		float length() const
 		{
-			return sqrt(powf(this->x(), 2) + powf(this->y(), 2));
+			return sqrt(powf(this->x, 2) + powf(this->y, 2));
 		}
 
 		/// <summary>
@@ -301,7 +311,7 @@ namespace efiilj
 		/// <returns>A formatted multi-line string representation of the vector</returns>
 		std::string to_string() const
 		{
-			return std::to_string(this->x()) + ";\n" + std::to_string(this->y()) + ";\n";
+			return std::to_string(this->x) + ";\n" + std::to_string(this->y) + ";\n";
 		}
 
 		~vector2() { }

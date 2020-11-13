@@ -25,7 +25,7 @@ namespace efiilj
 
 		std::function<bool(const vertex_data& a, const vertex_data& b)> vertex_comparator_ = [this](const vertex_data& a, const vertex_data& b)
 		{
-			return static_cast<int>(a.pos.x()) + width_ * static_cast<int>(a.pos.y()) < static_cast<int>(b.pos.x()) + width_ * static_cast<int>(b.pos.y());
+			return static_cast<int>(a.pos.x) + width_ * static_cast<int>(a.pos.y) < static_cast<int>(b.pos.x) + width_ * static_cast<int>(b.pos.y);
 		};
 
 		/**

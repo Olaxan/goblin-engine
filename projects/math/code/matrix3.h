@@ -18,9 +18,14 @@ namespace efiilj
 	class matrix3
 	{
 	private:
-		vector3 arr_[3];
 
 	public:
+
+		union
+		{
+			struct { float a, b, c, d, e, f, g, h, i; };
+			vector3 arr_[3];
+		};
 
 		/* === CONSTRUCTORS === */
 
@@ -40,10 +45,10 @@ namespace efiilj
 		{
 			clear();
 
-			(*this)(0, 0) = copy.a();
-			(*this)(1, 0) = copy.b();
-			(*this)(0, 1) = copy.c();
-			(*this)(1, 1) = copy.d();
+			(*this)(0, 0) = copy.a;
+			(*this)(1, 0) = copy.b;
+			(*this)(0, 1) = copy.c;
+			(*this)(1, 1) = copy.d;
 		}
 
 		/// <summary>
@@ -141,9 +146,9 @@ namespace efiilj
 		vector3 operator * (const vector3& other) const
 		{
 			vector3 vect;
-			vect.x(other.dot(row(0)));
-			vect.y(other.dot(row(1)));
-			vect.z(other.dot(row(2)));
+			vect.x = other.dot(row(0));
+			vect.y = other.dot(row(1));
+			vect.z = other.dot(row(2));
 			return vect;
 		}
 
@@ -361,9 +366,9 @@ namespace efiilj
 		static matrix3 getTranslation(const vector3& v)
 		{
 			matrix3 mat = matrix3();
-			mat(2, 0) = v.x();
-			mat(2, 1) = v.y();
-			mat(2, 2) = v.z();
+			mat(2, 0) = v.x;
+			mat(2, 1) = v.y;
+			mat(2, 2) = v.z;
 			return mat;
 		}
 

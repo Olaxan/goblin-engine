@@ -193,6 +193,13 @@ namespace efiilj
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
 
+		//auto l1_mesh_ptr = std::make_shared<line>(vector4(-10, 0, 0, 1.0f), vector4(10, 10, 0, 1.0f), 3.0f);
+		auto l1_mesh_ptr = std::make_shared<line>(ray(vector4(0, 10, 0, 1.0f), vector4(1, 1, 1, 1.0f)), 10.0f, 3.0f);
+		auto l1_node_ptr = std::make_shared<graphics_node>(l1_mesh_ptr, rect_mat_ptr);
+		l1_node_ptr->set_absolute(true);
+
+		fwd_renderer.add_node(l1_node_ptr);
+
 		std::set<int> keys;
 		
 		window_->SetKeyPressFunction([&](const int key, int, const int action, int)
@@ -285,10 +292,10 @@ namespace efiilj
 				camera_trans_ptr->add_position(camera_trans_ptr->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->add_position(camera_ptr->camera_left() * CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_ptr->camera_right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->add_position(camera_ptr->camera_right() * CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_ptr->camera_left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
 				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);

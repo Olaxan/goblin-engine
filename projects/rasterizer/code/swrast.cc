@@ -28,13 +28,13 @@ namespace efiilj
 
 	void rasterizer::convert_screenspace(vertex_data& vertex) const
 	{
-		vertex.pos /= vertex.pos.w();
+		vertex.pos /= vertex.pos.w;
 
-		const float x = vertex.pos.x() + 1;
-		const float y = vertex.pos.y() + 1;
+		const float x = vertex.pos.x + 1;
+		const float y = vertex.pos.y + 1;
 		
-		vertex.pos.x(x * x_offset_);
-		vertex.pos.y(y * y_offset_);
+		vertex.pos.x = x * x_offset_;
+		vertex.pos.y = y * y_offset_;
 	}
 
 	bool rasterizer::cull_backface(const vector4& p0, const vector4& face_normal, const vector4& camera_local) const
@@ -83,14 +83,14 @@ namespace efiilj
 			vector3 bc = get_barycentric(static_cast<float>(x), static_cast<float>(y), face_normal, data);
 
 			// Exit early if any barycentric weight is negative (as the pixel will be outside the face)
-			if (bc.x() < 0 || bc.y() < 0 || bc.z() < 0)
+			if (bc.x < 0 || bc.y < 0 || bc.z < 0)
 				continue;
 
 			// Interpolate the fragment data using barycentric coordinates
 			vertex_data fragment = interpolate_fragment(bc, data);
 
 			// Exit early if the pixel fails depth testing
-			if (!depth_test(x, y, fragment.pos.z()))
+			if (!depth_test(x, y, fragment.pos.z))
 				continue;
 
 			// TODO: Remove hard-coded fragment uniforms
@@ -221,11 +221,11 @@ namespace efiilj
 	{
 		const float area = face_normal.length();
 
-		const float first = (data[1].pos.y() - data[2].pos.y()) * (x - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (y - data[2].pos.y());
-		const float lower = (data[1].pos.y() - data[2].pos.y()) * (data[0].pos.x() - data[2].pos.x()) + (data[2].pos.x() - data[1].pos.x()) * (data[0].pos.y() - data[2].pos.y());
+		const float first = (data[1].pos.y - data[2].pos.y) * (x - data[2].pos.x) + (data[2].pos.x - data[1].pos.x) * (y - data[2].pos.y);
+		const float lower = (data[1].pos.y - data[2].pos.y) * (data[0].pos.x - data[2].pos.x) + (data[2].pos.x - data[1].pos.x) * (data[0].pos.y - data[2].pos.y);
 		const float p1 = first / lower;
 
-		const float second = (data[2].pos.y() - data[0].pos.y()) * (x - data[2].pos.x()) + (data[0].pos.x() - data[2].pos.x()) * (y - data[2].pos.y());
+		const float second = (data[2].pos.y - data[0].pos.y) * (x - data[2].pos.x) + (data[0].pos.x - data[2].pos.x) * (y - data[2].pos.y);
 		const float p2 = second / lower;
 
 		const float p3 = 1 - (p1 + p2);
@@ -235,7 +235,7 @@ namespace efiilj
 
 	vector3 rasterizer::get_barycentric(const vector4& point, const vector4& face_normal, vertex_data* data)
 	{
-		return get_barycentric(point.x(), point.y(), face_normal, data);
+		return get_barycentric(point.x, point.y, face_normal, data);
 	}
 
 	vector3 rasterizer::get_barycentric(const point_data& point, const vector4& face_normal, vertex_data* data)
@@ -245,11 +245,11 @@ namespace efiilj
 
 	vertex_data rasterizer::interpolate_fragment(const vector3& barycentric, vertex_data* data)
 	{
-		const vector4 position = data[0].pos * barycentric.x() + data[1].pos * barycentric.y() + data[2].pos * barycentric.z();
-		const vector4 fragment = data[0].fragment * barycentric.x() + data[1].fragment * barycentric.y() + data[2].fragment * barycentric.z();
-		const vector4 normal = data[0].normal * barycentric.x() + data[1].normal * barycentric.y() + data[2].normal * barycentric.z();
-		const vector4 color = data[0].color * barycentric.x() + data[1].color * barycentric.y() + data[2].color * barycentric.z();
-		const vector2 uv = data[0].uv * barycentric.x() + data[1].uv * barycentric.y() + data[2].uv * barycentric.z();
+		const vector4 position = data[0].pos * barycentric.x + data[1].pos * barycentric.y + data[2].pos * barycentric.z;
+		const vector4 fragment = data[0].fragment * barycentric.x + data[1].fragment * barycentric.y + data[2].fragment * barycentric.z;
+		const vector4 normal = data[0].normal * barycentric.x + data[1].normal * barycentric.y + data[2].normal * barycentric.z;
+		const vector4 color = data[0].color * barycentric.x + data[1].color * barycentric.y + data[2].color * barycentric.z;
+		const vector2 uv = data[0].uv * barycentric.x + data[1].uv * barycentric.y + data[2].uv * barycentric.z;
 
 		return vertex_data{position, fragment, normal, color, uv};
 	}
@@ -264,10 +264,10 @@ namespace efiilj
 	float rasterizer::get_winding_order(const vector4& a, const vector4& b, const vector4& c)
 	{
 		const matrix2 test(
-			b.x() - a.x(),
-			c.x() - a.x(),
-			b.y() - a.y(),
-			c.y() - a.y()
+			b.x - a.x,
+			c.x - a.x,
+			b.y - a.y,
+			c.y - a.y
 		);
 
 		return test.determinant();

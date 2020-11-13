@@ -19,9 +19,12 @@ namespace efiilj
 	class matrix4
 	{
 	private:
+
 		vector4 arr_[4];
 
 	public:
+
+		~matrix4() = default;
 
 		/* === CONSTRUCTORS === */
 
@@ -41,10 +44,10 @@ namespace efiilj
 		{
 			clear();
 
-			(*this)(0, 0) = copy.a();
-			(*this)(1, 0) = copy.b();
-			(*this)(0, 1) = copy.c();
-			(*this)(1, 1) = copy.d();
+			(*this)(0, 0) = copy.a;
+			(*this)(1, 0) = copy.b;
+			(*this)(0, 1) = copy.c;
+			(*this)(1, 1) = copy.d;
 		}
 
 		/// <summary>
@@ -193,10 +196,10 @@ namespace efiilj
 		vector4 operator * (const vector4& other) const
 		{
 			vector4 vect;
-			vect.x(other.dot4(col(0)));
-			vect.y(other.dot4(col(1)));
-			vect.z(other.dot4(col(2)));
-			vect.w(other.dot4(col(3)));
+			vect.x = other.dot4(col(0));
+			vect.y = other.dot4(col(1));
+			vect.z = other.dot4(col(2));
+			vect.w = other.dot4(col(3));
 			return vect;
 		}
 
@@ -331,10 +334,10 @@ namespace efiilj
 			if (x > 4)
 				throw std::out_of_range("Row index out of range");
 
-			(*this)(x, 0) = col.x();
-			(*this)(x, 1) = col.y();
-			(*this)(x, 2) = col.z();
-			(*this)(x, 3) = col.w();
+			(*this)(x, 0) = col.x;
+			(*this)(x, 1) = col.y;
+			(*this)(x, 2) = col.z;
+			(*this)(x, 3) = col.w;
 		}
 
 		/* === MATRIX FUNCTIONS === */
@@ -493,12 +496,12 @@ namespace efiilj
 
 		static matrix4 get_scale(const vector3& xyz)
 		{
-			return get_scale(xyz.x(), xyz.y(), xyz.z());
+			return get_scale(xyz.x, xyz.y, xyz.z);
 		}
 
 		static matrix4 get_scale(const vector4& xyz)
 		{
-			return get_scale(xyz.x(), xyz.y(), xyz.z());
+			return get_scale(xyz.x, xyz.y, xyz.z);
 		}
 
 		static matrix4 get_scale(const float scale)
@@ -569,9 +572,9 @@ namespace efiilj
 
 			const float sin = sinf(rad);
 			const float cos = cosf(rad);
-			const float x = unit.x();
-			const float y = unit.y();
-			const float z = unit.z();
+			const float x = unit.x;
+			const float y = unit.y;
+			const float z = unit.z;
 
 			matrix4 mat;
 
@@ -590,20 +593,43 @@ namespace efiilj
 			return mat;
 		}
 
+		static matrix4 get_rotation_euler(const float pitch, const float yaw, const float roll) 
+		{
+			const float sinP = sin(pitch); const float cosP = cos(pitch);
+			const float sinY = sin(yaw);   const float cosY = cos(yaw);
+			const float sinR = sin(roll);  const float cosR = cos(roll);
+
+			const vector4 right(cosY, 0, -sinY, 0.0f);
+			const vector4 up(sinY * sinP, cosP, cosY * sinP, 0.0f);
+			const vector4 forward(sinY * cosP, -sinP, cosP * cosY, 0.0f);
+
+			// OpenGL
+			return matrix4(right, up, forward, vector4(), true);
+			
+			//A = right.x;    B = up.x;    C = forward.x;
+			//E = right.y;    F = up.y;    G = forward.y;
+			//I = right.z;    J = up.z;    K = forward.z;
+
+    	}
+
+		static matrix4 get_rotation_euler(const vector4& angles)
+		{
+			return get_rotation_euler(angles.x, angles.y, angles.z);
+		}
+
 		static matrix4 get_rotation_xyz(const float pitch, const float yaw, const float roll)
 		{
-			//return get_rotation_z(roll) * get_rotation_x(pitch) * get_rotation_y(yaw);
 			return get_rotation_y(yaw) * get_rotation_x(pitch) * get_rotation_z(roll);
 		}
 
 		static matrix4 get_rotation_xyz(const vector3& eulers)
 		{
-			return get_rotation_xyz(eulers.x(), eulers.y(), eulers.z());
+			return get_rotation_xyz(eulers.x, eulers.y, eulers.z);
 		}
 
 		static matrix4 get_rotation_xyz(const vector4& eulers)
 		{
-			return get_rotation_xyz(eulers.x(), eulers.y(), eulers.z());
+			return get_rotation_xyz(eulers.x, eulers.y, eulers.z);
 		}
 
 		static matrix4 get_perspective(const float left, const float right, const float top, const float bottom, const float near, const float far)
@@ -640,9 +666,9 @@ namespace efiilj
 			const vector4 camera_right = vector4::cross(camera_direction, up_direction).norm();
 			const vector4 camera_up = vector4::cross(camera_right, camera_direction);
 
-			matrix4 a = matrix4(camera_right, camera_up, camera_direction * -1, vector4(), true);
-			a(12) = vector4::dot(camera_right, camera_pos) * -1;
-			a(13) = vector4::dot(camera_up, camera_pos) * -1;
+			matrix4 a = matrix4(camera_right, camera_up, -camera_direction, vector4(), true);
+			a(12) = -vector4::dot(camera_right, camera_pos);
+			a(13) = -vector4::dot(camera_up, camera_pos);
 			a(14) = vector4::dot(camera_direction, camera_pos);
 
 			return a;
@@ -675,9 +701,6 @@ namespace efiilj
 			ss << std::endl;
 			return ss.str();
 		}
-
-		~matrix4()
-			= default;
 
 		friend vector4;
 	};

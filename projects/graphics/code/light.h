@@ -59,7 +59,7 @@ namespace efiilj
 
 		void update_falloff()
 		{
-			float max_channel = fmax(fmax(base.color.x(), base.color.y()), base.color.z());
+			float max_channel = fmax(fmax(base.color.x, base.color.y), base.color.z);
 
 			float ret = (-falloff.linear + 
 					sqrtf(falloff.linear * 

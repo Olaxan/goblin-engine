@@ -13,7 +13,7 @@ namespace efiilj
 		if (model_dirty_)
 		{
 			const matrix4 t = matrix4::get_translation(position_);
-			const matrix4 r = matrix4::get_rotation_xyz(rotation_);
+			const matrix4 r = matrix4::get_rotation_euler(rotation_);
 			const matrix4 s = matrix4::get_scale(scale_);
 
 			m_rotation_ = r;
@@ -40,7 +40,7 @@ namespace efiilj
 	vector4 transform_model::right() const
 	{
 		get_model();
-		return m_rotation_.row(0);
+		return m_rotation_.col(0);
 	}
 
 	vector4 transform_model::left() const
@@ -51,7 +51,7 @@ namespace efiilj
 	vector4 transform_model::up() const
 	{
 		get_model();
-		return m_rotation_.row(1);
+		return m_rotation_.col(1);
 	}
 
 	vector4 transform_model::down() const
@@ -62,7 +62,7 @@ namespace efiilj
 	vector4 transform_model::forward() const
 	{
 		get_model();
-		return m_rotation_.row(2);
+		return m_rotation_.col(2);
 	}
 
 	vector4 transform_model::backward() const

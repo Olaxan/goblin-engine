@@ -49,6 +49,9 @@ namespace efiilj
 		const vector3& get_up() const { return this->up_axis_; }
 		void set_up(const vector3& xyz) { up_axis_ = xyz; }
 		
+		const vector4 camera_right() const { return this->view_.col(0); }
+		const vector4 camera_left() const { return -camera_right(); }
+
 		/**
 		 * \brief Returns the perspective matrix for the camera.
 		 * \return A 4D matrix for perspective calculations.
