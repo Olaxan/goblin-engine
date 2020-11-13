@@ -86,8 +86,6 @@ namespace efiilj
 
 	mesh_resource::~mesh_resource()
 	{
-		std::cout << "Deleting mesh resource " << this << std::endl;
-
 		unbind();
 		glDeleteBuffers(1, &vao_);
 		glDeleteBuffers(1, &vbo_);

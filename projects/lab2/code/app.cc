@@ -30,6 +30,7 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1200
 #define CAMERA_SPEED 0.5f
+#define PI 3.14159f
 
 float randf(float max = 1.0f)
 {
@@ -119,14 +120,19 @@ namespace efiilj
 		
 		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
+		auto visp_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
 		
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
+		gltf_model_loader gltf_visp("../res/gltf/visp.gltf", g_prog_ptr, visp_trans_ptr);
+
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", gltf_prog_ptr, helmet_trans_ptr);
 
 		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 
 		def_renderer.add_nodes(gltf_sponza.get_nodes());
+		def_renderer.add_nodes(gltf_visp.get_nodes());
+
 		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
 
 		std::vector<std::shared_ptr<light_source>> lights;
@@ -158,7 +164,6 @@ namespace efiilj
 
 		for (size_t i = 0; i < 20; i++)
 		{
-
 			auto light = std::make_shared<light_source>();
 			light->base.color = vector3(randf(1), randf(1), randf(1));
 			light->base.ambient_intensity = randf(0.5f);
@@ -192,6 +197,8 @@ namespace efiilj
 
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
+
+		plane mid(vector3(0), vector3(0, 0, 1));
 
 		std::set<int> keys;
 		
@@ -243,13 +250,22 @@ namespace efiilj
 			{
 				mouse_down_x_ = mouse_norm_x_;
 				mouse_down_y_ = mouse_norm_y_;
-				printf("Clicked %f, %f\n", mouse_x_, mouse_y_);
+
 				is_dragging_mouse_ = true;
 
 				auto cam = cam_mgr_ptr->get_active_camera();
 				auto cam_trf = cam->get_transform();
 
 				ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
+
+				vector3 hit;
+				if (r.intersect(mid, hit))
+				{
+					auto hit_sphere_trf_ptr = std::make_shared<transform_model>(hit, vector3(), vector3(0.1f, 0.1f, 0.1f));
+					auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
+					fwd_renderer.add_node(hit_sphere_node_ptr);
+				}
+
 				auto ray_line_ptr = std::make_shared<line>(r, 100.0f);
 				auto node = std::make_shared<graphics_node>(ray_line_ptr, rect_mat_ptr);
 				node->set_absolute(true);
@@ -345,9 +361,9 @@ namespace efiilj
 
 				float d = def_renderer.get_frame_index() / 100.0f;
 
-				float x = sinf(randf(3.1415f) + d) * randf(-25, 25);
-				float y = cosf(randf(3.1415f) + d) * randf(-25, 25);
-				float z = sinf(randf(3.1415f) + d) * randf(-25, 25);
+				float x = sinf(randf(PI) + d) * randf(-25, 25);
+				float y = cosf(randf(PI) + d) * randf(-25, 25);
+				float z = sinf(randf(PI) + d) * randf(-25, 25);
 
 				light->transform.set_position(vector3(x, 25 + y, z));
 

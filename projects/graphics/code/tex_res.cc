@@ -76,8 +76,6 @@ namespace efiilj
 
 	texture_resource::~texture_resource()
 	{
-		std::cout << "Deleting texture resource " << this << std::endl;
-
 		unbind();
 		glDeleteTextures(1, &tex_id_);
 	}

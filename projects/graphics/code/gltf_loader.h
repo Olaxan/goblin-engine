@@ -42,7 +42,7 @@ namespace efiilj
 		static unsigned get_format(int components);
 		static unsigned get_type(int bits);
 
-		bool load_from_file(tinygltf::Model& model, const std::string& path);
+		bool load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary);
 		const std::vector<std::shared_ptr<graphics_node>>& get_nodes() const 
 		{
 			return nodes_;

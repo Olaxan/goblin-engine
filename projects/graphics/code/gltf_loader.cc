@@ -33,7 +33,11 @@ namespace efiilj
 		: shader_(std::move(shader)), transform_(std::move(transform))
 	{
 		tinygltf::Model model;
-		if (load_from_file(model, path))
+
+		const char* ext = strrchr(path.c_str(), '.');
+		bool is_binary = (strncmp(ext + 1, "glb", 3) == 0);
+
+		if (load_from_file(model, path, is_binary))
 		{
 			printf("GLTF file successfully loaded\n");
 			get_materials(model);
@@ -121,14 +125,11 @@ namespace efiilj
 		}	
 	}
 
-	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path)
+	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary = false)
 	{
 		tinygltf::TinyGLTF loader;
 		std::string err;
 		std::string warn;
-
-		const char* ext = strrchr(path.c_str(), '.');
-		bool is_binary = (strncmp(ext + 1, "glb", 3) == 0);
 
 		bool ret;
 		

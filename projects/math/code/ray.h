@@ -28,10 +28,14 @@ namespace efiilj
 			{
 				float denom = vector3::dot(direction, plane.normal);
 
-				if (denom > EPSILON)
+				if (fabs(denom) > EPSILON)
 				{
 					vector3 pl = plane.offset - origin;
-					vector3 t = vector3::dot(pl, plane.normal) / denom;
+					float t = vector3::dot(pl, plane.normal) / denom;
+
+					if (t < 0)
+						return false;
+
 					result = origin + direction * t;
 
 					return true;
