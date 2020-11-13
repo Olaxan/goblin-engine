@@ -2,8 +2,10 @@
 
 #pragma once
 
-#include "vector4.h"
+#include "vector3.h"
 #include "plane.h"
+
+#define EPSILON 0.00001
 
 namespace efiilj
 {
@@ -14,24 +16,28 @@ namespace efiilj
 
 		public:
 
-			ray(const vector4& origin, const vector4& direction)
-			{
-				start = origin;
-				dir = direction;
-			}
-
 			ray(const vector3& origin, const vector3& direction)
 			{
-				start = vector4(origin, 1.0f);
-				dir = vector4(direction, 1.0f);
+				this->origin = origin;
+				this->direction = direction;
 			}
 
-			vector4 start, dir;
+			vector3 origin, direction;
 
-			vector4 intersect(const plane& plane)
+			bool intersect(const plane& plane, vector3& result)
 			{
-				//float denom = 	
-				return vector4();
+				float denom = vector3::dot(direction, plane.normal);
+
+				if (denom > EPSILON)
+				{
+					vector3 pl = plane.offset - origin;
+					vector3 t = vector3::dot(pl, plane.normal) / denom;
+					result = origin + direction * t;
+
+					return true;
+				}
+
+				return false;
 			}
 	};
 }

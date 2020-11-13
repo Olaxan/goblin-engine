@@ -174,7 +174,6 @@ namespace efiilj
 		const matrix4& v = camera_mgr_->get_active_camera()->get_view();
 		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
 
-		//matrix4 mvp = p * v * light.transform.get_model();
 		matrix4 mvp = p * v * light.transform.get_model();
 
 		lighting_->set_uniform("light_mvp", mvp);
@@ -248,8 +247,8 @@ namespace efiilj
 				case light_type::pointlight:
 				{
 					
-					const vector4& cam_pos = camera_mgr_->get_active_position();
-					vector4 cam_dir = cam_pos - light.transform.get_position();
+					vector3 cam_pos = camera_mgr_->get_active_position();
+					vector3 cam_dir = cam_pos - light.transform.get_position();
 
 					float radius = light.transform.get_scale().length();
 

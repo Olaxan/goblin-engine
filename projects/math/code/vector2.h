@@ -44,17 +44,20 @@ namespace efiilj
 			: vector2(copy.x, copy.y)
 		{ }
 
-		/* === ACCESSORS === */
-
-		//const float& x const { return this->arr_[0]; }
-		//void x(const float& x) { this->arr_[0] = x; }
-
-		//const float& y const { return arr_[1]; }
-		//void y(const float& y) { this->arr_[1] = y; }
+		vector2(const vector2&& move)
+		{
+			*this = std::move(move);
+		}
 
 		/* === OPERATORS === */
 
 		void operator = (const vector2& other)
+		{
+			this->x = other.x;
+			this->y = other.y;
+		}
+
+		void operator = (const vector2&& other)
 		{
 			this->x = other.x;
 			this->y = other.y;

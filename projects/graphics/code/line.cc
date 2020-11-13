@@ -11,8 +11,8 @@ namespace efiilj
 
 		vector4 points[] = 
 		{
-			line.start,
-			line.start + line.dir * length
+			vector4(line.origin, 1.0f),
+			vector4(line.origin + line.direction * length, 1.0f)
 		};
 		
 		glGenBuffers(1, &vbo_);
@@ -22,7 +22,7 @@ namespace efiilj
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 	}
 
-	line::line(const vector4& start, const vector4& end, float width)
+	line::line(const vector3& start, const vector3& end, float width)
 		: line(ray(start, (end - start).norm()), (end - start).length(), width) 
 	{}
 

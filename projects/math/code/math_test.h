@@ -156,7 +156,7 @@ static void MathTest() {
 		if (test_View) {
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f) + 1.0f; mat1[i] = r; mat1_glm[i / 4][i % 4] = r; }
 			printf("\nView transform\n\n");
-			mat3 = mat3.get_lookat(vector4(4.0f, 2.0f, 1.0f, 1.0f), vector4(-5.0f, -2.0f, 4.0f, 1.0f), vector4(0.0f, 1.0f, 0.0f, 0.0f));
+			mat3 = mat3.get_lookat(vector3(4.0f, 2.0f, 1.0f), vector3(-5.0f, -2.0f, 4.0f), vector3(0.0f, 1.0f, 0.0f));
 			printf("you: | % 6.2f, % 6.2f, % 6.2f, % 6.2f  |\n", mat3[0], mat3[1], mat3[2], mat3[3]);
 			printf("     | % 6.2f, % 6.2f, % 6.2f, % 6.2f  |\n", mat3[4], mat3[5], mat3[6], mat3[7]);
 			printf("     | % 6.2f, % 6.2f, % 6.2f, % 6.2f  |\n", mat3[8], mat3[9], mat3[10], mat3[11]);

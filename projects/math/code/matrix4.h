@@ -660,16 +660,16 @@ namespace efiilj
 			return get_perspective(left, right, top, bottom, near, far);
 		}
 
-		static matrix4 get_lookat(const vector4& camera_pos, const vector4& camera_target, const vector4& up_direction)
+		static matrix4 get_lookat(const vector3& camera_pos, const vector3& camera_target, const vector3& up_direction)
 		{
-			const vector4 camera_direction = (camera_target - camera_pos).norm();
-			const vector4 camera_right = vector4::cross(camera_direction, up_direction).norm();
-			const vector4 camera_up = vector4::cross(camera_right, camera_direction);
+			const vector3 camera_direction = (camera_target - camera_pos).norm();
+			const vector3 camera_right = vector3::cross(camera_direction, up_direction).norm();
+			const vector3 camera_up = vector3::cross(camera_right, camera_direction);
 
-			matrix4 a = matrix4(camera_right, camera_up, -camera_direction, vector4(), true);
-			a(12) = -vector4::dot(camera_right, camera_pos);
-			a(13) = -vector4::dot(camera_up, camera_pos);
-			a(14) = vector4::dot(camera_direction, camera_pos);
+			matrix4 a = matrix4(vector4(camera_right, 0), vector4(camera_up, 0), -vector4(camera_direction, 0), vector4(), true);
+			a(12) = -vector3::dot(camera_right, camera_pos);
+			a(13) = -vector3::dot(camera_up, camera_pos);
+			a(14) = vector3::dot(camera_direction, camera_pos);
 
 			return a;
 		}

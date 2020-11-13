@@ -27,13 +27,14 @@ namespace efiilj
 
 		/* === CONSTRUCTORS === */
 
+
 		/// <summary>
 		/// Creates a new 3D vector with the specified values.
 		/// </summary>
 		/// <param name="x">Top value</param>
 		/// <param name="y">Middle value</param>
 		/// <param name="z">Bottom value</param>
-		vector3(float x = 0.0f, float y = 0.0f, float z = 0.0f)
+		vector3(float x, float y = 0.0f, float z = 0.0f)
 			: x(arr_[0]), y(arr_[1]), z(arr_[2])
 		{ 
 			this->x = x;
@@ -57,6 +58,18 @@ namespace efiilj
 			: vector3(copy.x, copy.y, copy.z)
 		{ }
 
+		vector3()
+		{
+			this->x = 0;
+			this->y = 0;
+			this->z = 0;
+		}
+
+		vector3(const vector3&& move)
+		{
+			*this = std::move(move);
+		}
+
 		/* === ACCESSORS === */
 
 		//const float& x const { return this->arr_[0]; }
@@ -71,6 +84,13 @@ namespace efiilj
 		/* === OPERATORS === */
 
 		void operator = (const vector3& other)
+		{
+			this->x = other.x;
+			this->y = other.y;
+			this->z = other.z;
+		}
+
+		void operator = (const vector3&& other)
 		{
 			this->x = other.x;
 			this->y = other.y;
@@ -103,6 +123,11 @@ namespace efiilj
 			vect.y = this->y - other.y;
 			vect.z = this->z - other.z;
 			return vect;
+		}
+
+		vector3 operator - () const
+		{
+			return *this * -1;
 		}
 
 		/// <summary>
@@ -354,6 +379,18 @@ namespace efiilj
 		std::string to_string() const
 		{
 			return std::to_string(this->x) + ";\n" + std::to_string(this->y) + ";\n" + std::to_string(this->z) + ";\n";
+		}
+
+		std::string to_mem_string() const
+		{
+			std::stringstream ss;
+			for (int i = 0; i < 3; i++)
+			{
+				ss << *(&(*this).at(0) + i) << ", ";
+			}
+
+			ss << std::endl;
+			return ss.str();
 		}
 
 		~vector3() { }

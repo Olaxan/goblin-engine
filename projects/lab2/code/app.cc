@@ -33,12 +33,12 @@
 
 float randf(float max = 1.0f)
 {
-	return static_cast<float>(rand()) / static_cast <float> (RAND_MAX / max);
+	return static_cast<float>(rand()) / static_cast <float> (static_cast<float>(RAND_MAX) / max);
 }
 
 float randf(float min, float max)
 {
-	return min + static_cast<float>(rand()) / ( static_cast<float>(RAND_MAX / (max - min)));
+	return min + static_cast<float>(rand()) / ( static_cast<float>(static_cast<float>(RAND_MAX) / (max - min)));
 }
 
 namespace efiilj
@@ -76,7 +76,7 @@ namespace efiilj
 						if (ImGui::Button("Reset"))
 						{
 							auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
-							trf->set_rotation(vector4(0));
+							trf->set_rotation(vector3());
 						}
 						ImGui::End();
 					});
@@ -144,7 +144,7 @@ namespace efiilj
 		l_red_ptr->base.color = vector3(1.0f, 0.0f, 0.0f);
 		l_red_ptr->base.ambient_intensity = 0.5f;
 		l_red_ptr->base.diffuse_intensity = 1.0f;
-		l_red_ptr->transform.add_position(vector4(0, 10, 0, 0));
+		l_red_ptr->transform.add_position(vector3(0, 10, 0));
 		l_red_ptr->falloff.exponential = 0.3f;
 		l_red_ptr->update_falloff();
 		
@@ -152,7 +152,7 @@ namespace efiilj
 		l_blue_ptr->base.color = vector3(0.0f, 0.0f, 1.0f);
 		l_blue_ptr->base.ambient_intensity = 0.5f;
 		l_blue_ptr->base.diffuse_intensity = 1.0f;
-		l_blue_ptr->transform.add_position(vector4(0, 10, 0, 0));
+		l_blue_ptr->transform.add_position(vector3(0, 10, 0));
 		l_blue_ptr->falloff.exponential = 0.3f;
 		l_blue_ptr->update_falloff();
 
@@ -164,7 +164,7 @@ namespace efiilj
 			light->base.ambient_intensity = randf(0.5f);
 			light->base.diffuse_intensity = randf(1.0f);
 			light->falloff.exponential = randf(1.0f);
-			light->transform.add_position(vector4(randf(25), randf(25), randf(25), 0));
+			light->transform.add_position(vector3(randf(25), randf(25), randf(25)));
 			light->update_falloff();
 			lights.push_back(light);
 
@@ -269,9 +269,9 @@ namespace efiilj
 			auto camera_trans_ptr = camera_ptr->get_transform(); 
 
 			if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector4(mouse_norm_y_ * 15, -mouse_norm_x_ * 15, 0, 1.0f));
+				camera_trans_ptr->set_rotation(vector3(mouse_norm_y_ * 15, -mouse_norm_x_ * 15, 0));
 			else if (is_dragging_mouse_)
-				helmet_trans_ptr->add_rotation(vector4(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0, 1) * 0.5f);
+				helmet_trans_ptr->add_rotation(vector3(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0) * 0.5f);
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -331,8 +331,8 @@ namespace efiilj
 			
 			cam_mgr_ptr->update_camera();
 
-			l_red_ptr->transform.set_position(vector4(sinf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, 20.0f, 1.0));
-			l_blue_ptr->transform.set_position(vector4(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f, 1.0));
+			l_red_ptr->transform.set_position(vector3(sinf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, 20.0f));
+			l_blue_ptr->transform.set_position(vector3(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f));
 
 			float dt = def_renderer.get_delta_time();
 
@@ -349,7 +349,7 @@ namespace efiilj
 				float y = cosf(randf(3.1415f) + d) * randf(-25, 25);
 				float z = sinf(randf(3.1415f) + d) * randf(-25, 25);
 
-				light->transform.set_position(vector4(x, 25 + y, z, 1.0f));
+				light->transform.set_position(vector3(x, 25 + y, z));
 
 				// sorry
 				trf->set_position(light->transform.get_position());

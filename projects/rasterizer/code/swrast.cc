@@ -98,7 +98,7 @@ namespace efiilj
 			{
 				fragment.normal,
 				fragment.fragment,
-				camera_->get_transform()->get_position(),
+				vector4(camera_->get_transform()->get_position(), 1.0f),
 				vector4(0.5f, 0.5f, 0.5f, 1),
 				vector4(1, 1, 1, 1),
 				vector4(2, 2, 2, 1),
@@ -126,7 +126,7 @@ namespace efiilj
 		};
 
 		const vector4 face_normal = get_face_normal(vertices[0]->xyzw, vertices[1]->xyzw, vertices[2]->xyzw);
-		const vector4 camera_local = local * camera_->get_transform()->get_position();
+		const vector4 camera_local = local * vector4(camera_->get_transform()->get_position(), 1.0f);
 
 		// Exit early if normal is facing away from camera
 		if (cull_backface(vertices[0]->xyzw, face_normal, camera_local))

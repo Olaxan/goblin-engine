@@ -21,8 +21,8 @@ struct attenuation
 struct light_source
 {
 	light_base base;
-	vec4 position;
-	vec4 direction;
+	vec3 position;
+	vec3 direction;
 	attenuation falloff;
 	int type;
 };
@@ -34,7 +34,7 @@ layout (location = 1) uniform sampler2D g_normal;
 layout (location = 2) uniform sampler2D g_albedo;
 layout (location = 3) uniform sampler2D g_orm;
 
-uniform vec4 cam_pos;
+uniform vec3 cam_pos;
 uniform mat4 light_model;
 uniform int light_type;
 
@@ -49,7 +49,7 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
 		return ambient;
 
 	vec4 diffuse = vec4(light.color * light.diffuse_intensity * diff_factor, 1.0);
-	vec3 view_dir = normalize(cam_pos.xyz - position);
+	vec3 view_dir = normalize(cam_pos - position);
 	vec3 halfway_dir = normalize(direction + view_dir);
 
 	float specular_factor = dot(normal, halfway_dir);
@@ -66,12 +66,12 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
 
 vec4 calc_directional(vec3 position, vec3 normal, vec3 orm)
 {
-	return calc_base(source.base, source.direction.xyz, position, normal, orm);
+	return calc_base(source.base, source.direction, position, normal, orm);
 }
 
 vec4 calc_pointlight(vec3 position, vec3 normal, vec3 orm)
 {
-	vec3 light_dir = position - source.position.xyz;
+	vec3 light_dir = position - source.position;
 	float light_dist = length(light_dir);
 	light_dir = normalize(light_dir);
 

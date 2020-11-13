@@ -37,35 +37,35 @@ namespace efiilj
 		return inverse_;
 	}
 
-	vector4 transform_model::right() const
+	vector3 transform_model::right() const
 	{
 		get_model();
-		return m_rotation_.col(0);
+		return m_rotation_.col(0).xyz();
 	}
 
-	vector4 transform_model::left() const
+	vector3 transform_model::left() const
 	{
 		return right() * -1;
 	}
 
-	vector4 transform_model::up() const
+	vector3 transform_model::up() const
 	{
 		get_model();
-		return m_rotation_.col(1);
+		return m_rotation_.col(1).xyz();
 	}
 
-	vector4 transform_model::down() const
+	vector3 transform_model::down() const
 	{
 		return up() * -1;
 	}
 
-	vector4 transform_model::forward() const
+	vector3 transform_model::forward() const
 	{
 		get_model();
-		return m_rotation_.col(2);
+		return m_rotation_.col(2).xyz();
 	}
 
-	vector4 transform_model::backward() const
+	vector3 transform_model::backward() const
 	{
 		return forward() * -1;
 	}

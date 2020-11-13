@@ -42,54 +42,55 @@ namespace efiilj
 		const matrix4& get_model() const;
 		const matrix4& get_model_inv() const;
 
-		const vector4& get_position() const { return position_; }
-		const vector4& get_rotation() const { return rotation_; }
-		const vector4& get_scale() const { return scale_; }
+		// once swizzling works, re-make this to be refs
+		vector3 get_position() const { return position_.xyz(); }
+		vector3 get_rotation() const { return rotation_.xyz(); }
+		vector3 get_scale() const { return scale_.xyz(); }
 
-		void set_position(const vector4& position) { position_ = position; model_dirty_ = true; }
-		void set_rotation(const vector4& rotation) { rotation_ = rotation; model_dirty_ = true; }
-		void set_scale(const vector4& scale) { scale_ = scale; model_dirty_ = true; }
+		void set_position(const vector3& position) { position_ = vector4(position, 1.0f); model_dirty_ = true; }
+		void set_rotation(const vector3& rotation) { rotation_ = vector4(rotation, 1.0f); model_dirty_ = true; }
+		void set_scale(const vector3& scale) { scale_ = vector4(scale, 1.0f); model_dirty_ = true; }
 		void set_scale(const float& scale) { scale_ = vector4(scale, scale, scale, 1.0); model_dirty_ = true; }
 
-		void add_position(const vector4& delta) { position_ += delta; model_dirty_ = true; }
-		void add_rotation(const vector4& delta) { rotation_ += delta; model_dirty_ = true; }
-		void add_scale(const vector4& delta) { scale_ += delta; model_dirty_ = true; }
+		void add_position(const vector3& delta) { position_ += vector4(delta, 0); model_dirty_ = true; }
+		void add_rotation(const vector3& delta) { rotation_ += vector4(delta, 0); model_dirty_ = true; }
+		void add_scale(const vector3& delta) { scale_ += vector4(delta, 0); model_dirty_ = true; }
 
 		/**
 		 * \brief Returns a forward vector relative to the current transform
 		 * \return Unit vector forward relative to transform
 		 */
-		vector4 forward() const;
+		vector3 forward() const;
 
 		/**
 		 * \brief Returns a reverse forward vector relative to the current transform
 		 * \return Unit vector backward relative to transform
 		 */
-		vector4 backward() const;
+		vector3 backward() const;
 
 		/**
 		 * \brief Returns a left pointing vector relative to the current transform
 		 * \return Unit vector left relative to transform
 		 */
-		vector4 left() const;
+		vector3 left() const;
 
 		/**
 		 * \brief Returns a right pointing vector relative to the current transform
 		 * \return Unit vector right relative to transform
 		 */
-		vector4 right() const;
+		vector3 right() const;
 
 		/**
 		 * \brief Returns a upwards vector relative to the current transform
 		 * \return Unit vector up relative to transform
 		 */
-		vector4 up() const;
+		vector3 up() const;
 
 		/**
 		 * \brief Returns a downward vector relative to the current transform
 		 * \return Unit vector down relative to transform
 		 */
-		vector4 down() const;
+		vector3 down() const;
 
 		~transform_model()
 			= default;

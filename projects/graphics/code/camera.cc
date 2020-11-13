@@ -20,7 +20,7 @@ namespace efiilj
 		view_ = matrix4::get_lookat(
 					transform_->get_position(),
 					transform_->get_position() + transform_->forward(),
-					vector4(up_axis_, 1.0f)
+					up_axis_
 				);
 
 		return view_;
@@ -39,6 +39,6 @@ namespace efiilj
 		vector3 ray_dir(ray_world.x, ray_world.y, ray_world.z);
 		ray_dir = ray_dir.norm();
 
-		return ray(transform_->get_position(), vector4(ray_dir, 1.0f));
+		return ray(transform_->get_position(), ray_dir);
 	}
 }

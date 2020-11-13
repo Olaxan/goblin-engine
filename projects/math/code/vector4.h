@@ -23,8 +23,9 @@ namespace efiilj
 		{
 			struct { float x, y, z, w; };
 
-			//struct { vector2 xy; float zw_pad_[2]; };
-			//struct { vector3 xyz; float w_pad_; };
+			//struct { vector3 xyz; float __w_pad_; };
+
+			//struct { vector2 xy;  float __xy_pad_[2]; };
 
 			float arr_[4]{};
 		};
@@ -76,24 +77,10 @@ namespace efiilj
 			: vector4(copy.x, copy.y, copy.z, copy.w)
 		{ }
 
-		/* === ACCESSORS === */
-
-		//float& x;
-		//float& y;
-		//float& z;
-		//float& w;
-
-		//const float& x() const { return this->arr_[0]; }
-		//void x(const float& x) { this->arr_[0] = x; }
-
-		//const float& y() const { return arr_[1]; }
-		//void y(const float& y) { this->arr_[1] = y; }
-
-		//const float& z() const { return arr_[2]; }
-		//void z(const float& z) { this->arr_[2] = z; }
-
-		//const float& w() const { return arr_[3]; }
-		//void w(const float& w) { this->arr_[3] = w; }
+		vector4(const vector4&& move)
+		{
+			*this = std::move(move);	
+		}
 
 		/* === OPERATORS === */
 
@@ -103,6 +90,19 @@ namespace efiilj
 			this->y = other.y;
 			this->z = other.z;
 			this->w = other.w;
+		}
+
+		void operator = (const vector4&& other)
+		{
+			this->x = other.x;
+			this->y = other.y;
+			this->z = other.z;
+			this->w = other.w;
+		}
+
+		vector3 xyz() const 
+		{
+			return vector3(x, y, z);
 		}
 
 		/// <summary>

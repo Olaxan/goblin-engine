@@ -8,14 +8,15 @@ namespace efiilj
 	{
 		private:
 
-			vector4 point_, normal_;
 
 		public:
 
-			plane(const vector4& point, const vector4& normal)
+			plane(const vector3& offset, const vector3& normal)
 			{
-				point_ = point;
-				normal_ = normal;
+				this->offset = offset;
+				this->normal = normal;
 			}
+
+			vector3 offset, normal;
 	};
 }
