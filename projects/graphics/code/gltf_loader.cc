@@ -152,10 +152,6 @@ namespace efiilj
 
 	void gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
 	{
-		printf("Constructing mesh %s\n", mesh.name.c_str());
-
-		//TODO: Loop through primitives, not just first one.
-
 		for (auto& prim : mesh.primitives)
 		{
 			//tinygltf::Primitive prim = mesh.primitives[0]; 

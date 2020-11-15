@@ -53,8 +53,6 @@ namespace efiilj
 
 	unsigned deferred_renderer::gen_texture(unsigned attach, unsigned internal, unsigned format, unsigned type)
 	{
-		printf("Generating texture %u...\n", attach);
-
 		unsigned handle;
 
 		glGenTextures(1, &handle);

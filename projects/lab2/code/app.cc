@@ -191,14 +191,16 @@ namespace efiilj
 
 		auto rect_mesh_ptr = std::make_shared<rect>();
 
+		auto rect_trf_ptr = std::make_shared<transform_model>(vector3(-10, 10, -10), vector3(PI / 4, PI / 4, PI / 4), vector3(2, 2, 2));
+
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
 		rect_mat_ptr->double_sided = true;
 
-		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr);
+		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr, rect_trf_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
 
-		plane mid(vector3(0), vector3(0, 0, 1));
+		plane mid(vector3(0), vector3(0, 1, 0));
 
 		std::set<int> keys;
 		

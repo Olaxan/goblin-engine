@@ -20,7 +20,7 @@ namespace efiilj
 		stbi_set_flip_vertically_on_load(flip);
 		unsigned char* buffer = stbi_load(path, &width_, &height_, &bits_per_pixel_, 4);
 
-		printf("Loaded texture %u (type %u): %ux%u / %i\n", tex_id_, type_, width_, height_, bits_per_pixel_);
+		//printf("Loaded texture %u (type %u): %ux%u / %i\n", tex_id_, type_, width_, height_, bits_per_pixel_);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -44,7 +44,7 @@ namespace efiilj
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_,
 			0, format_, type_, buffer);
 
-		printf("Loaded texture %u (type %u): %ux%u / %i\n", tex_id_, type_, width_, height_, bits_per_pixel_);
+		//printf("Loaded texture %u (type %u): %ux%u / %i\n", tex_id_, type_, width_, height_, bits_per_pixel_);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
