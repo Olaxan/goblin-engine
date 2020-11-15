@@ -42,6 +42,16 @@ namespace efiilj
 				return false;
 			}
 
+			bool intersect(const plane& test, const vector2 bounds, vector3& result)
+			{
+				if (intersect(test, result))
+				{
+					
+				}
+
+				return false;
+			}
+
 			bool intersect(const plane& test, const matrix4& transform, vector3& result)
 			{
 				vector4 plane_offset = transform * vector4(test.offset, 1.0f);

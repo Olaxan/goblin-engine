@@ -20,6 +20,7 @@
 #include "rect.h"
 #include "line.h"
 #include "math_test.h"
+#include "cube.h"
 
 #include <chrono>
 #include <iostream>
@@ -190,15 +191,26 @@ namespace efiilj
 		def_renderer.add_light(l_blue_ptr);
 
 		auto rect_mesh_ptr = std::make_shared<rect>();
-
 		auto rect_trf_ptr = std::make_shared<transform_model>(vector3(-10, 10, -10), vector3(PI / 4, PI / 4, PI / 4), vector3(2, 2, 2));
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
 		rect_mat_ptr->double_sided = true;
+		rect_mat_ptr->wireframe = true;
 
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr, rect_trf_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
+
+		auto cube_mesh_ptr = std::make_shared<cube>();
+
+		auto cube_min_trf_ptr = std::make_shared<transform_model>(rect_mesh_ptr->get_bounds(rect_trf_ptr->get_model()).min, vector3(0), vector3(0.1f, 0.1f, 0.1f));
+		auto cube_max_trf_ptr = std::make_shared<transform_model>(rect_mesh_ptr->get_bounds(rect_trf_ptr->get_model()).max, vector3(0), vector3(0.1f, 0.1f, 0.1f));
+
+		auto cube_min_node_ptr = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, cube_min_trf_ptr);
+		auto cube_max_node_ptr = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, cube_max_trf_ptr);
+
+		fwd_renderer.add_node(cube_min_node_ptr);
+		fwd_renderer.add_node(cube_max_node_ptr);
 
 		plane mid(vector3(0), vector3(0, 1, 0));
 
@@ -260,11 +272,12 @@ namespace efiilj
 
 				ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
 
-				
-
 				vector3 hit;
-				if (r.intersect(mid, hit))
+				if (r.intersect(mid, rect_trf_ptr->get_model(), hit))
 				{
+					if (rect_node_ptr->point_inside_bounds(hit))
+						printf("Hit!");
+
 					auto hit_sphere_trf_ptr = std::make_shared<transform_model>(hit, vector3(), vector3(0.1f, 0.1f, 0.1f));
 					auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
 					fwd_renderer.add_node(hit_sphere_node_ptr);
@@ -305,10 +318,10 @@ namespace efiilj
 				camera_trans_ptr->add_position(camera_trans_ptr->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->add_position(camera_ptr->camera_left() * CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->add_position(camera_ptr->camera_right() * CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
 				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);

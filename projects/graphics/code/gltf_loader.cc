@@ -165,6 +165,9 @@ namespace efiilj
 			glBindVertexArray(vao);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+			vector3 pos_min;
+			vector3 pos_max;
+
 			// Calculate size of required VBO (to fit all attributes)
 			
 			size_t vbo_size = 0;
@@ -197,6 +200,14 @@ namespace efiilj
 				{
 					vaa = 0;
 					vertex_count = accessor.count;
+
+					auto& max = accessor.maxValues;
+					auto& min = accessor.minValues;
+					if (max.size() >= 3 && min.size() >= 3)
+					{
+						pos_max = vector3(max[0], max[1], max[2]);
+						pos_min = vector3(min[0], min[1], min[2]);
+					}
 				}	
 
 				if (attrib.first.compare("NORMAL") == 0)
@@ -228,6 +239,7 @@ namespace efiilj
 			glBindVertexArray(0);
 
 			auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
+			mesh_ptr->set_bounds(pos_min, pos_max);
 
 			// Do textures now!
 			

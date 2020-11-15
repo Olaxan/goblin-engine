@@ -6,12 +6,12 @@
 
 namespace efiilj
 {
-	class rect : public mesh_resource
+	class cube : public mesh_resource
 	{
 		private:
 
 		public:
 
-			rect();
+			cube(float size = 1.0f);
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vertex.h"
+#include "bounds.h"
 
 #include <memory>
 
@@ -14,43 +15,14 @@ namespace efiilj
 	{
 		protected:
 
-		/**
-		 * \brief Vertex buffer object
-		 */
-		unsigned int vbo_;
-		/**
-		 * \brief Index buffer object
-		 */
-		unsigned int ibo_;
-		/**
-		 * \brief Vertex array object
-		 */
-		unsigned int vao_;
+		unsigned vbo_, ibo_, vao_, type_;
+		int vertex_count_, index_count_;
 
-		int vertex_count_;
-		int index_count_;
-
-		unsigned type_;
-
-		/**
-		 * \brief Creates and initializes the Vertex Buffer, configures vertex attribute pointers, and enables attribute arrays.
-		 *  Ensure a Vertex Array Object has been configured and bound before running this function.
-		 * \param vertex_list The list of vertices to buffer
-		 * \param count Size of vertex list
-		 */
 		void init_vertex_buffer(vertex* vertex_list, int count);
-
-		/**
-		 * \brief Creates and initializes the Index Buffer.
-		 * \param index_list The list of indices to buffer
-		 * \param count Size of index list
-		 */
 		void init_index_buffer(unsigned int* index_list, int count);
-
-		/**
-		 * \brief Creates and initializes the Vertex Array Object.
-		 */
 		void init_array_object();
+
+		bounds bounds_;
 
 	public:
 
@@ -59,54 +31,25 @@ namespace efiilj
 		 */
 		mesh_resource();
 
-		/**
-		 * \brief Creates a new MeshResource instance with the specified vertex and index lists.
-		 * \param vertex_list List of vertices to buffer
-		 * \param vertex_count Size of the vertex list
-		 * \param index_list List of indices to buffer
-		 * \param index_count Size of the index list
-		 */
 		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
-
 		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
-
-	//	mesh_resource(mesh_resource& copy)
-	//		= default;
-
-	//	mesh_resource(mesh_resource&& move)
-	//		= default;
 
 		unsigned vao() const { return this->vao_; }
 		unsigned vbo() const { return this->vbo_; }
 		unsigned ibo() const { return this->ibo_; }
 
-		/**
-		 * \brief Gets mesh vertex count
-		 * \returns The number of vertices in the mesh
-		 */
-		int vertex_count() const
-		{
-			return vertex_count_;
-		}
+		int vertex_count() const { return vertex_count_; }
+		int index_count() const { return index_count_; }
 
-		/**
-		 * \brief Gets mesh index count
-		 * \returns The number of indices in the mesh
-		 */
-		int index_count() const
-		{
-			return index_count_;
-		}
-
-		/**
-		 * \brief Binds Vertex Array Object and Index Buffer to prepare OpenGL for drawing this mesh.
-		 */
 		void bind() const;
+		void unbind();
 
-		/**
-		 * \brief Unbinds vertex, index, and array object buffers on GPU
-		 */
-		static void unbind();
+		virtual void draw_elements() const;
+
+		void set_bounds(const vector3& min, const vector3& max) { bounds_ = bounds(min,  max); }
+		void set_bounds(const bounds& bounds) { bounds_ = bounds; }
+		const bounds& get_bounds() { return bounds_; }
+		bounds get_bounds(const matrix4& mat) { return bounds_.get_transformed_bounds(mat); }
 
 		void buffer(unsigned target, size_t size, void* data, unsigned usage);
 
@@ -116,10 +59,6 @@ namespace efiilj
 		 */
 		void update_vertex_buffer(vertex* vertex_list) const;
 
-		/**
-		 * \brief Performs a draw call with the correct index specifications.
-		 */
-		virtual void draw_elements() const;
 
 		~mesh_resource();
 	};

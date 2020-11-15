@@ -53,6 +53,8 @@ namespace efiilj
 		
 		void set_absolute(bool a) { is_absolute_ = a; }
 
+		bool point_inside_bounds(const vector3& point);
+
 		/**
 		 * \brief Prepares the node for drawing, binding mesh, texture, and shader resources.
 		 */

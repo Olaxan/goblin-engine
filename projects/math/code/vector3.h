@@ -310,6 +310,22 @@ namespace efiilj
 			return x.cross(y);
 		}
 
+		static vector3 min(const vector3& a, const vector3& b)
+		{
+			float sum_a = a.x + a.y + a.z;
+			float sum_b = b.x + b.y + b.z;
+
+			return sum_a < sum_b ? a : b;
+		}
+
+		static vector3 max(const vector3& a, const vector3& b)
+		{
+			float sum_a = a.x + a.y + a.z;
+			float sum_b = b.x + b.y + b.z;
+
+			return sum_a > sum_b ? a : b;
+		}
+
 		/// <summary>
 		/// Calculates the dot product between this vector and another.
 		/// </summary>

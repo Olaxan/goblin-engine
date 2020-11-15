@@ -25,5 +25,7 @@ namespace efiilj
 		init_array_object();
 		init_vertex_buffer(quad, 4);
 		init_index_buffer(indices, 6);
+
+		bounds_ = bounds(vector3(-1.0f, -1.0f, 0.0f), vector3(1.0f, 1.0f, 0.0f));
 	} 	
 }

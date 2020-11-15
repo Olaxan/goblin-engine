@@ -37,4 +37,11 @@ namespace efiilj
 		material_->get_program()->set_uniform("model", model);
 		mesh_->draw_elements();
 	}
+
+	bool graphics_node::point_inside_bounds(const vector3& point)
+	{
+		bounds b = mesh_->get_bounds(transform_->get_model());
+
+		return point.x > b.min.x && point.x < b.max.x && point.y > b.min.y && point.y < b.max.y && point.z > b.min.z && point.z < b.max.z;
+	}
 }
