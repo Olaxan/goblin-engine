@@ -39,8 +39,6 @@ namespace efiilj
 		vector3 ray_dir = ray_world.xyz();
 		ray_dir = ray_dir.norm();
 
-		printf("Ray: %s\n", ray_dir.to_mem_string().c_str());
-
 		return ray(transform_->get_position(), ray_dir);
 	}
 }

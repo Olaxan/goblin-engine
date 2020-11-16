@@ -478,7 +478,7 @@ namespace efiilj
 		static matrix4 get_translation(const float x, const float y, const float z)
 		{
 			matrix4 mat = matrix4();
-			mat.col(3, vector4(x, y, z, 1));
+			mat.col(3, vector4(x, y, z, 1.0f));
 			
 			return mat;
 		}
@@ -572,11 +572,6 @@ namespace efiilj
 
 			// OpenGL
 			return matrix4(right, up, forward, vector4(), true);
-			
-			//A = right.x;    B = up.x;    C = forward.x;
-			//E = right.y;    F = up.y;    G = forward.y;
-			//I = right.z;    J = up.z;    K = forward.z;
-
     	}
 
 		static matrix4 get_rotation_euler(const vector4& angles)
@@ -636,7 +631,7 @@ namespace efiilj
 			matrix4 a = matrix4(vector4(camera_right, 0), vector4(camera_up, 0), -vector4(camera_direction, 0), vector4(), false);
 			a(12) = -vector3::dot(camera_right, camera_pos);
 			a(13) = -vector3::dot(camera_up, camera_pos);
-			a(14) = vector3::dot(camera_direction, camera_pos);
+			a(14) =  vector3::dot(camera_direction, camera_pos);
 
 			return a;
 		}

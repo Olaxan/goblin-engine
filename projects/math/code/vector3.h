@@ -312,18 +312,12 @@ namespace efiilj
 
 		static vector3 min(const vector3& a, const vector3& b)
 		{
-			float sum_a = a.x + a.y + a.z;
-			float sum_b = b.x + b.y + b.z;
-
-			return sum_a < sum_b ? a : b;
+			return vector3(fmin(a.x, b.x), fmin(a.y, b.y), fmin(a.z, b.z));
 		}
 
 		static vector3 max(const vector3& a, const vector3& b)
 		{
-			float sum_a = a.x + a.y + a.z;
-			float sum_b = b.x + b.y + b.z;
-
-			return sum_a > sum_b ? a : b;
+			return vector3(fmax(a.x, b.x), fmax(a.y, b.y), fmax(a.z, b.z));
 		}
 
 		/// <summary>

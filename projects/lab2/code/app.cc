@@ -124,17 +124,24 @@ namespace efiilj
 		auto visp_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
 		
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
+		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", g_prog_ptr, helmet_trans_ptr);
 		gltf_model_loader gltf_visp("../res/gltf/visp.gltf", g_prog_ptr, visp_trans_ptr);
-
-		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", gltf_prog_ptr, helmet_trans_ptr);
 
 		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 
-		def_renderer.add_nodes(gltf_sponza.get_nodes());
-		def_renderer.add_nodes(gltf_visp.get_nodes());
+		std::vector<std::shared_ptr<graphics_node>> all_nodes;
 
-		fwd_renderer.add_nodes(gltf_helmet.get_nodes());
+		auto sponza_nodes = gltf_sponza.get_nodes();
+		auto helmet_nodes = gltf_helmet.get_nodes();
+		auto visp_nodes = gltf_visp.get_nodes();
+		
+		all_nodes.insert(all_nodes.end(), sponza_nodes.begin(), sponza_nodes.end());
+		all_nodes.insert(all_nodes.end(), helmet_nodes.begin(), helmet_nodes.end());
+		all_nodes.insert(all_nodes.end(), visp_nodes.begin(), visp_nodes.end());
+
+		def_renderer.add_nodes(all_nodes);
+
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
@@ -203,15 +210,6 @@ namespace efiilj
 
 		auto cube_mesh_ptr = std::make_shared<cube>();
 
-		auto cube_min_trf_ptr = std::make_shared<transform_model>(rect_mesh_ptr->get_bounds(rect_trf_ptr->get_model()).min, vector3(0), vector3(0.1f, 0.1f, 0.1f));
-		auto cube_max_trf_ptr = std::make_shared<transform_model>(rect_mesh_ptr->get_bounds(rect_trf_ptr->get_model()).max, vector3(0), vector3(0.1f, 0.1f, 0.1f));
-
-		auto cube_min_node_ptr = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, cube_min_trf_ptr);
-		auto cube_max_node_ptr = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, cube_max_trf_ptr);
-
-		fwd_renderer.add_node(cube_min_node_ptr);
-		fwd_renderer.add_node(cube_max_node_ptr);
-
 		plane mid(vector3(0), vector3(0, 1, 0));
 
 		std::set<int> keys;
@@ -239,6 +237,23 @@ namespace efiilj
 				{
 					def_renderer.reload_shaders();
 					fwd_renderer.reload_shaders();
+				}
+				else if (key == GLFW_KEY_B)
+				{
+					vector3 min( 99999,  99999,  99999);
+					vector3 max(-99999, -99999, -99999);
+
+					for (auto& node : helmet_nodes)
+					{
+						bounds b = node->get_bounds();
+						min = vector3::min(min, b.min);
+						max = vector3::max(max, b.max);
+					}
+
+					auto block_mesh_ptr = std::make_shared<cube>(min, max);
+					auto block_node = std::make_shared<graphics_node>(block_mesh_ptr, rect_mat_ptr);
+					block_node->set_absolute(true);
+					fwd_renderer.add_node(block_node);
 				}
 			}
 			else if (action == 0)
@@ -272,23 +287,19 @@ namespace efiilj
 
 				ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
 
-				vector3 hit;
-				if (r.intersect(mid, rect_trf_ptr->get_model(), hit))
+				for (auto& node : all_nodes)
 				{
-					if (rect_node_ptr->point_inside_bounds(hit))
-						printf("Hit!");
+					vector3 hit;
+					if (node->ray_intersect_bounds(r, hit))
+					{
+						printf("Hit! (%s)\n", node->name.c_str());
+						rect_mat_ptr->color = vector4(randf(), randf(), randf(), randf());
+						auto hit_sphere_trf_ptr = std::make_shared<transform_model>(hit, vector3(), vector3(0.1f, 0.1f, 0.1f));
+						auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
 
-					auto hit_sphere_trf_ptr = std::make_shared<transform_model>(hit, vector3(), vector3(0.1f, 0.1f, 0.1f));
-					auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
-					fwd_renderer.add_node(hit_sphere_node_ptr);
+						fwd_renderer.add_node(hit_sphere_node_ptr);
+					}
 				}
-
-				auto ray_line_ptr = std::make_shared<line>(r, 100.0f);
-				auto node = std::make_shared<graphics_node>(ray_line_ptr, rect_mat_ptr);
-				node->set_absolute(true);
-
-				fwd_renderer.add_node(node);
-				
 			}
 			else
 			{
@@ -318,10 +329,10 @@ namespace efiilj
 				camera_trans_ptr->add_position(camera_trans_ptr->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->left() * CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->left() * -CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->right() * CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->right() * -CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
 				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);
@@ -387,6 +398,8 @@ namespace efiilj
 				// sorry
 				trf->set_position(light->transform.get_position());
 			}
+
+			srand(def_renderer.get_frame_index());
 
 			def_renderer.begin_frame();
 			fwd_renderer.begin_frame();

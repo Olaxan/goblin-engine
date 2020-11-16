@@ -37,15 +37,15 @@ namespace efiilj
 		return inverse_;
 	}
 
-	vector3 transform_model::left() const
+	vector3 transform_model::right() const
 	{
 		get_model();
 		return m_rotation_.col(0).xyz();
 	}
 
-	vector3 transform_model::right() const
+	vector3 transform_model::left() const
 	{
-		return left() * -1;
+		return right() * -1;
 	}
 
 	vector3 transform_model::up() const

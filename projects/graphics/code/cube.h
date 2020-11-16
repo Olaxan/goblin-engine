@@ -12,6 +12,8 @@ namespace efiilj
 
 		public:
 
+			cube(const vector3& min, const vector3& max);
+			cube(const vector3& scale);
 			cube(float size = 1.0f);
 	};
 }

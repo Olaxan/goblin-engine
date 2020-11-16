@@ -239,6 +239,7 @@ namespace efiilj
 			glBindVertexArray(0);
 
 			auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
+
 			mesh_ptr->set_bounds(pos_min, pos_max);
 
 			// Do textures now!
@@ -247,10 +248,11 @@ namespace efiilj
 			{	
 				auto mat_ptr = materials_[prim.material];
 				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, transform_);
+				node_ptr->name = mesh.name;
 				nodes_.push_back(node_ptr);
 			}
 			else
-				printf("Error: No material assigned to mesh!\n");
+				fprintf(stderr, "Error: No material assigned to mesh!\n");
 		
 		}
 	}

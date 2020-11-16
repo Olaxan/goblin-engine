@@ -22,7 +22,7 @@ namespace efiilj
 
 			vector3 origin, direction;
 
-			bool intersect(const plane& test, vector3& result)
+			bool intersect(const plane& test, vector3& result) const
 			{
 				float denom = vector3::dot(direction, test.normal);
 
@@ -42,17 +42,7 @@ namespace efiilj
 				return false;
 			}
 
-			bool intersect(const plane& test, const vector2 bounds, vector3& result)
-			{
-				if (intersect(test, result))
-				{
-					
-				}
-
-				return false;
-			}
-
-			bool intersect(const plane& test, const matrix4& transform, vector3& result)
+			bool intersect(const plane& test, const matrix4& transform, vector3& result) const
 			{
 				vector4 plane_offset = transform * vector4(test.offset, 1.0f);
 				vector4 plane_normal = transform * vector4(test.normal, 1.0f);

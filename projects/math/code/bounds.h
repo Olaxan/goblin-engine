@@ -34,8 +34,8 @@ namespace efiilj
 				const vector3 t = mat.col(3).xyz();
 
 				return bounds(
-					vector3(vector3::min(x1, x2) + vector3::min(y1, y2) + vector3::min(z1, z2) + t),
-					vector3(vector3::max(x1, x2) + vector3::max(y1, y2) + vector3::max(z1, z2) + t)
+					vector3::min(x1, x2) + vector3::min(y1, y2) + vector3::min(z1, z2) + t,
+					vector3::max(x1, x2) + vector3::max(y1, y2) + vector3::max(z1, z2) + t
 				);
 			}
 	};

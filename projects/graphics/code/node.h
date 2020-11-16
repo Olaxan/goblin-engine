@@ -4,6 +4,7 @@
 #include "transform.h"
 #include "material.h"
 #include "camera.h"
+#include "ray.h"
 
 #include <memory>
 
@@ -42,6 +43,8 @@ namespace efiilj
 			std::shared_ptr<material_base> material_ptr,
 			std::shared_ptr<transform_model> transform_ptr);
 
+		std::string name;
+
 		const mesh_resource& mesh() const { return *this->mesh_; }
 		void mesh(std::shared_ptr<mesh_resource> mesh) { this->mesh_ = std::move(mesh); }
 
@@ -53,7 +56,9 @@ namespace efiilj
 		
 		void set_absolute(bool a) { is_absolute_ = a; }
 
-		bool point_inside_bounds(const vector3& point);
+		bounds get_bounds() const;
+		bool point_inside_bounds(const vector3& point) const;
+		bool ray_intersect_bounds(const ray& ray, vector3& hit) const;
 
 		/**
 		 * \brief Prepares the node for drawing, binding mesh, texture, and shader resources.
