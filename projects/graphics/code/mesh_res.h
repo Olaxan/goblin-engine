@@ -34,6 +34,8 @@ namespace efiilj
 		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
 		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
 
+		int material_index;
+
 		unsigned vao() const { return this->vao_; }
 		unsigned vbo() const { return this->vbo_; }
 		unsigned ibo() const { return this->ibo_; }

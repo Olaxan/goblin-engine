@@ -119,26 +119,24 @@ namespace efiilj
 		deferred_renderer def_renderer(cam_mgr_ptr, set, g_prog_ptr, l_prog_ptr);
 		forward_renderer fwd_renderer(cam_mgr_ptr, set);
 		
+		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
+		auto sphere_mesh_ptr = obj_sphere.get_resource();
+
 		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
 		auto visp_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
 		
-		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf", g_prog_ptr, sponza_trans_ptr);
-		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf", g_prog_ptr, helmet_trans_ptr);
-		gltf_model_loader gltf_visp("../res/gltf/visp.gltf", g_prog_ptr, visp_trans_ptr);
-
-		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
-		auto sphere_mesh_ptr = obj_sphere.get_resource();
+		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf");
+		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		gltf_model_loader gltf_visp("../res/gltf/visp.gltf");
 
 		std::vector<std::shared_ptr<graphics_node>> all_nodes;
+		std::vector<std::shared_ptr<gltf_pbr_base>> all_materials;
+		std::vector<std::shared_ptr<mesh_resource>> all_meshes;
 
-		auto sponza_nodes = gltf_sponza.get_nodes();
-		auto helmet_nodes = gltf_helmet.get_nodes();
-		auto visp_nodes = gltf_visp.get_nodes();
-		
-		all_nodes.insert(all_nodes.end(), sponza_nodes.begin(), sponza_nodes.end());
-		all_nodes.insert(all_nodes.end(), helmet_nodes.begin(), helmet_nodes.end());
-		all_nodes.insert(all_nodes.end(), visp_nodes.begin(), visp_nodes.end());
+		auto sponza_nodes = gltf_sponza.get_nodes(all_nodes, all_meshes, all_materials);
+		auto helmet_nodes = gltf_helmet.get_nodes(all_nodes, all_meshes, all_materials);
+		auto visp_nodes = gltf_visp.get_nodes(all_nodes, all_meshes, all_materials);
 
 		def_renderer.add_nodes(all_nodes);
 
@@ -240,20 +238,20 @@ namespace efiilj
 				}
 				else if (key == GLFW_KEY_B)
 				{
-					vector3 min( 99999,  99999,  99999);
-					vector3 max(-99999, -99999, -99999);
+					//vector3 min( 99999,  99999,  99999);
+					//vector3 max(-99999, -99999, -99999);
 
-					for (auto& node : helmet_nodes)
-					{
-						bounds b = node->get_bounds();
-						min = vector3::min(min, b.min);
-						max = vector3::max(max, b.max);
-					}
+					//for (auto& node : helmet_nodes)
+					//{
+					//	bounds b = node->get_bounds();
+					//	min = vector3::min(min, b.min);
+					//	max = vector3::max(max, b.max);
+					//}
 
-					auto block_mesh_ptr = std::make_shared<cube>(min, max);
-					auto block_node = std::make_shared<graphics_node>(block_mesh_ptr, rect_mat_ptr);
-					block_node->set_absolute(true);
-					fwd_renderer.add_node(block_node);
+					//auto block_mesh_ptr = std::make_shared<cube>(min, max);
+					//auto block_node = std::make_shared<graphics_node>(block_mesh_ptr, rect_mat_ptr);
+					//block_node->set_absolute(true);
+					//fwd_renderer.add_node(block_node);
 				}
 			}
 			else if (action == 0)

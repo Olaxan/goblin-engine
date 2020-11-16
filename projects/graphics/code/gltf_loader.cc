@@ -24,29 +24,23 @@
 
 namespace efiilj
 {
-	gltf_model_loader::gltf_model_loader()
+	gltf_model_loader::gltf_model_loader(const std::string path, bool is_binary)
 	{
+		model_ready_ = load_from_file(model_, path, is_binary);
 
-	}
-
-	gltf_model_loader::gltf_model_loader(const std::string& path, std::shared_ptr<shader_program> shader, std::shared_ptr<transform_model> transform)
-		: shader_(std::move(shader)), transform_(std::move(transform))
-	{
-		tinygltf::Model model;
-
-		const char* ext = strrchr(path.c_str(), '.');
-		bool is_binary = (strncmp(ext + 1, "glb", 3) == 0);
-
-		if (load_from_file(model, path, is_binary))
+		if (model_ready_)
 		{
 			printf("GLTF file successfully loaded\n");
-			get_materials(model);
-			get_meshes(model);
 		}
 		else
 		{
 			printf("Failed to load GLTF\n");
 		}
+	}
+
+	gltf_model_loader::gltf_model_loader(const std::string& path, std::shared_ptr<shader_program> shader, std::shared_ptr<transform_model> transform)
+		: shader_(std::move(shader)), transform_(std::move(transform))
+	{
 	}
 
 	size_t gltf_model_loader::type_component_count(const std::string& type)
@@ -150,119 +144,133 @@ namespace efiilj
 	
 	}
 
-	void gltf_model_loader::build_mesh(tinygltf::Model& model, tinygltf::Mesh& mesh)
+	bool gltf_model_loader::get_nodes(
+				std::vector<std::shared_ptr<graphics_node>>& nodes,
+				std::vector<std::shared_ptr<mesh_resource>>& meshes,
+				std::vector<std::shared_ptr<gltf_pbr_base>>& materials)
 	{
-		for (auto& prim : mesh.primitives)
+		if (!model_ready_)
 		{
-			//tinygltf::Primitive prim = mesh.primitives[0]; 
+			fprintf(stderr, "ERROR: Model not loaded!\n");
+			return false;
+		}
 
-			unsigned err;
-			unsigned vbo, vao, ibo;
-			glGenBuffers(1, &vbo);
-			glGenBuffers(1, &ibo);
-			glGenVertexArrays(1, &vao);
+		int material_offset = materials.size();
 
-			glBindVertexArray(vao);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		get_materials(materials);
+		get_meshes(meshes);
 
-			vector3 pos_min;
-			vector3 pos_max;
+		for (auto& mesh : meshes)
+		{
+			int mat = material_offset + mesh->material_index;
 
-			// Calculate size of required VBO (to fit all attributes)
-			
-			size_t vbo_size = 0;
-			for (auto &attrib : prim.attributes)
-			{
-				tinygltf::Accessor accessor = model.accessors[attrib.second];
-				tinygltf::BufferView view = model.bufferViews[accessor.bufferView];
-				vbo_size += accessor.count * accessor.ByteStride(view); 
-			}
-
-			glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
-		
-			int vertex_count = -1;
-			size_t block_offset = 0;
-			for (auto &attrib : prim.attributes)
-			{
-				tinygltf::Accessor accessor = model.accessors[attrib.second];
-				tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
-				tinygltf::Buffer& buf = model.buffers[view.buffer];
-				
-				size_t stride = accessor.ByteStride(view);
-				size_t block_size = stride * accessor.count;
-				size_t offset = view.byteOffset + accessor.byteOffset;
-
-				glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
-				
-				int vaa = -1;
-				int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
-				if (attrib.first.compare("POSITION") == 0)
-				{
-					vaa = 0;
-					vertex_count = accessor.count;
-
-					auto& max = accessor.maxValues;
-					auto& min = accessor.minValues;
-					if (max.size() >= 3 && min.size() >= 3)
-					{
-						pos_max = vector3(max[0], max[1], max[2]);
-						pos_min = vector3(min[0], min[1], min[2]);
-					}
-				}	
-
-				if (attrib.first.compare("NORMAL") == 0)
-					vaa = 1;
-
-				if (attrib.first.compare("TEXCOORD_0") == 0)
-					vaa = 2;
-
-				if (attrib.first.compare("TANGENT") == 0)
-					vaa = 3;
-
-				glEnableVertexAttribArray(vaa);
-				glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, (void*)block_offset);
-
-				block_offset += block_size;
-			
-			}
-
-			// Buffer mesh indices
-			tinygltf::Accessor i_accessor = model.accessors[prim.indices];
-			tinygltf::BufferView& i_bufView = model.bufferViews[i_accessor.bufferView];
-			tinygltf::Buffer& i_buf = model.buffers[i_bufView.buffer];
-			size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
-					&i_buf.data.at(i_offset), GL_STATIC_DRAW);
-
-			glBindVertexArray(0);
-
-			auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
-
-			mesh_ptr->set_bounds(pos_min, pos_max);
-
-			// Do textures now!
-			
-			if (prim.material > -1 && prim.material < materials_.size())
+			if (mat > -1 && mat < materials.size())
 			{	
-				auto mat_ptr = materials_[prim.material];
-				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, transform_);
-				node_ptr->name = mesh.name;
-				nodes_.push_back(node_ptr);
+				auto mat_ptr = materials[mat];
+				auto node_ptr = std::make_shared<graphics_node>(mesh, mat_ptr, transform_);
+				nodes.push_back(node_ptr);
 			}
 			else
+			{
 				fprintf(stderr, "Error: No material assigned to mesh!\n");
-		
+				return false;
+			}
 		}
+
+		return true;
 	}
 
-	void gltf_model_loader::calculate_bitangents(tinygltf::Model& model, size_t offset, size_t count)
+	std::shared_ptr<mesh_resource> gltf_model_loader::build_mesh(tinygltf::Primitive& prim)
 	{
-		for (int i = 0; i < count; i++)
+		unsigned err;
+		unsigned vbo, vao, ibo;
+		glGenBuffers(1, &vbo);
+		glGenBuffers(1, &ibo);
+		glGenVertexArrays(1, &vao);
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		vector3 pos_min;
+		vector3 pos_max;
+
+		// Calculate size of required VBO (to fit all attributes)
+		
+		size_t vbo_size = 0;
+		for (auto &attrib : prim.attributes)
 		{
+			tinygltf::Accessor accessor = model_.accessors[attrib.second];
+			tinygltf::BufferView view = model_.bufferViews[accessor.bufferView];
+			vbo_size += accessor.count * accessor.ByteStride(view); 
+		}
+
+		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
+	
+		int vertex_count = -1;
+		size_t block_offset = 0;
+		for (auto &attrib : prim.attributes)
+		{
+			tinygltf::Accessor accessor = model_.accessors[attrib.second];
+			tinygltf::BufferView& view = model_.bufferViews[accessor.bufferView];
+			tinygltf::Buffer& buf = model_.buffers[view.buffer];
+			
+			size_t stride = accessor.ByteStride(view);
+			size_t block_size = stride * accessor.count;
+			size_t offset = view.byteOffset + accessor.byteOffset;
+
+			glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
+			
+			int vaa = -1;
+			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
+			if (attrib.first.compare("POSITION") == 0)
+			{
+				vaa = 0;
+				vertex_count = accessor.count;
+
+				auto& max = accessor.maxValues;
+				auto& min = accessor.minValues;
+
+				if (max.size() >= 3 && min.size() >= 3)
+				{
+					pos_max = vector3(max[0], max[1], max[2]);
+					pos_min = vector3(min[0], min[1], min[2]);
+				}
+			}	
+
+			if (attrib.first.compare("NORMAL") == 0)
+				vaa = 1;
+
+			if (attrib.first.compare("TEXCOORD_0") == 0)
+				vaa = 2;
+
+			if (attrib.first.compare("TANGENT") == 0)
+				vaa = 3;
+
+			glEnableVertexAttribArray(vaa);
+			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, (void*)block_offset);
+
+			block_offset += block_size;
 		
 		}
+
+		// Buffer mesh indices
+		tinygltf::Accessor i_accessor = model_.accessors[prim.indices];
+		tinygltf::BufferView& i_bufView = model_.bufferViews[i_accessor.bufferView];
+		tinygltf::Buffer& i_buf = model_.buffers[i_bufView.buffer];
+		size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
+				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
+
+		glBindVertexArray(0);
+
+		auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
+		mesh_ptr->set_bounds(pos_min, pos_max);
+
+		mesh_ptr->material_index = prim.material;
+
+		return mesh_ptr;	
 	}
 
 	void gltf_model_loader::link_texture(tinygltf::Model& model, std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type)
@@ -284,7 +292,12 @@ namespace efiilj
 	{
 		if (node.mesh >= 0 && node.mesh < model.meshes.size())
 		{
-			build_mesh(model, model.meshes[node.mesh]);
+			tinygltf::Mesh mesh = model_.meshes[node.mesh];
+
+			for (auto& prim : mesh.primitives)
+			{
+				build_mesh(prim);
+			}
 		}
 
 		for (size_t i = 0; i < node.children.size(); i++) 
@@ -294,32 +307,33 @@ namespace efiilj
 		}
 	}
 
-	unsigned gltf_model_loader::get_meshes(tinygltf::Model& model)
-	{
-		const tinygltf::Scene scene = model.scenes[model.defaultScene];
 
-		printf("Parsing GLTF file, %lu nodes in default scene %d\n", scene.nodes.size(), model.defaultScene);
+	unsigned gltf_model_loader::get_meshes(std::vector<std::shared_ptr<mesh_resource>>& nodes)
+	{
+		const tinygltf::Scene scene = model_.scenes[model_.defaultScene];
+
+		printf("Parsing GLTF file, %lu nodes in default scene %d\n", scene.nodes.size(), model_.defaultScene);
 
 		for (int i = 0; i < scene.nodes.size(); i++)
 		{
-			tinygltf::Node& node = model.nodes[scene.nodes[i]];
-			parse_node(model, node);
+			tinygltf::Node& node = model_.nodes[scene.nodes[i]];
+			parse_node(model_, node);
 		}
 
 		return 0;
 	}
 
-	unsigned gltf_model_loader::get_materials(tinygltf::Model& model)
+	unsigned gltf_model_loader::get_materials(std::vector<std::shared_ptr<gltf_pbr_base>>& materials)
 	{
-		for (int i = 0; i < model.materials.size(); i++)
+		for (int i = 0; i < model_.materials.size(); i++)
 		{
-			tinygltf::Material mat = model.materials[i];
+			tinygltf::Material mat = model_.materials[i];
 			auto pbr_mat = std::make_shared<gltf_pbr_base>(shader_);
 
-			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");
-			link_texture(model, pbr_mat, mat.pbrMetallicRoughness.metallicRoughnessTexture.index, "METAL_ROUGHNESS");
-			link_texture(model, pbr_mat, mat.normalTexture.index, "NORMAL");
-			link_texture(model, pbr_mat, mat.emissiveTexture.index, "EMISSIVE");
+			link_texture(model_, pbr_mat, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");
+			link_texture(model_, pbr_mat, mat.pbrMetallicRoughness.metallicRoughnessTexture.index, "METAL_ROUGHNESS");
+			link_texture(model_, pbr_mat, mat.normalTexture.index, "NORMAL");
+			link_texture(model_, pbr_mat, mat.emissiveTexture.index, "EMISSIVE");
 
 			pbr_mat->emissiveFactor = mat.emissiveFactor;
 			pbr_mat->baseColorFactor = mat.pbrMetallicRoughness.baseColorFactor;
@@ -327,7 +341,7 @@ namespace efiilj
 			pbr_mat->roughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
 			pbr_mat->double_sided = mat.doubleSided;
 
-			materials_.push_back(std::move(pbr_mat));
+			materials.push_back(std::move(pbr_mat));
 		}
 
 		return 0;
