@@ -124,22 +124,23 @@ namespace efiilj
 
 		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
-		auto visp_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
+		auto beater_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
 		
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf");
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		gltf_model_loader gltf_visp("../res/gltf/visp.gltf");
+		gltf_model_loader gltf_beater("../res/gltf/visp.gltf");
 
 		std::vector<std::shared_ptr<graphics_node>> all_nodes;
 		std::vector<std::shared_ptr<gltf_pbr_base>> all_materials;
 		std::vector<std::shared_ptr<mesh_resource>> all_meshes;
 
-		auto sponza_nodes = gltf_sponza.get_nodes(all_nodes, all_meshes, all_materials);
-		auto helmet_nodes = gltf_helmet.get_nodes(all_nodes, all_meshes, all_materials);
-		auto visp_nodes = gltf_visp.get_nodes(all_nodes, all_meshes, all_materials);
+		auto sponza = gltf_sponza.get_scene(g_prog_ptr, sponza_trans_ptr);
+		auto helmet = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr);
+		auto beater = gltf_beater.get_scene(g_prog_ptr, beater_trans_ptr);
 
-		def_renderer.add_nodes(all_nodes);
-
+		def_renderer.add_scene(sponza);
+		def_renderer.add_scene(helmet);
+		def_renderer.add_scene(beater);
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;

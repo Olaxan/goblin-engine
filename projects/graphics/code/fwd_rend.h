@@ -3,6 +3,7 @@
 #include "rend_set.h"
 #include "cam_mgr.h"
 #include "node.h"
+#include "scene.h"
 
 #include <memory>
 #include <chrono>
@@ -43,6 +44,12 @@ namespace efiilj
 		virtual void add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
 		{
 			for (auto& node : nodes)
+				add_node(node);
+		}
+
+		virtual void add_scene(const std::shared_ptr<scene> scene)
+		{
+			for (auto& node : scene->nodes)
 				add_node(node);
 		}
 

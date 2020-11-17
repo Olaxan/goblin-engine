@@ -7,6 +7,7 @@
 #include "material.h"
 #include "camera.h"
 #include "col_data.h"
+#include "scene.h"
 
 #include <string>
 #include <memory>
@@ -17,13 +18,15 @@ namespace efiilj
 	{
 	private:
 
-		void link_texture(tinygltf::Model&, std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type);
-		void parse_node(tinygltf::Model&, tinygltf::Node&);
+		void link_texture(std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type);
+		void parse_node(tinygltf::Node&, std::shared_ptr<scene> scene);
 
 		std::shared_ptr<mesh_resource> build_mesh(tinygltf::Primitive&);
 
-		unsigned get_meshes(std::vector<std::shared_ptr<mesh_resource>>& nodes);
-		unsigned get_materials(std::vector<std::shared_ptr<gltf_pbr_base>>& materials);
+		unsigned get_meshes(std::shared_ptr<scene> scene);
+		unsigned get_materials(
+				std::shared_ptr<shader_program> program,
+				std::shared_ptr<scene> scene);
 		
 		bool load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary);
 
@@ -35,13 +38,9 @@ namespace efiilj
 		tinygltf::Model model_;
 		bool model_ready_;
 
-		std::shared_ptr<shader_program> shader_;
-		std::shared_ptr<transform_model> transform_;
-
 	public:
 
 		gltf_model_loader(const std::string path, bool is_binary = false);
-		gltf_model_loader(const std::string& path, std::shared_ptr<shader_program> shader, std::shared_ptr<transform_model> transform);
 
 		gltf_model_loader(gltf_model_loader&)
 			= default;
@@ -49,10 +48,11 @@ namespace efiilj
 		gltf_model_loader(gltf_model_loader&&)
 			= default;
 
-		bool get_nodes(
-				std::vector<std::shared_ptr<graphics_node>>& nodes,
-				std::vector<std::shared_ptr<mesh_resource>>& meshes,
-				std::vector<std::shared_ptr<gltf_pbr_base>>& materials_); 
+		std::shared_ptr<scene> get_scene(
+				std::shared_ptr<shader_program> shader, 
+				std::shared_ptr<transform_model> transform
+		);
+
 		std::shared_ptr<mesh_data> get_mesh_data();
 	
 		~gltf_model_loader();
