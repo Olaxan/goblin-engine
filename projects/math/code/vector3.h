@@ -399,7 +399,6 @@ namespace efiilj
 				ss << *(&(*this).at(0) + i) << ", ";
 			}
 
-			ss << std::endl;
 			return ss.str();
 		}
 

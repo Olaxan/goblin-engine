@@ -6,16 +6,10 @@
 
 namespace efiilj
 {
-	class mesh_data
+	struct mesh_data
 	{
-		private:
-
-			std::vector<vector3> positions_;
-			std::vector<unsigned> indices_;
-
-		public:
-
-			mesh_data();
-
+		std::vector<vector3> positions;
+		std::vector<vector3> normals;
+		std::vector<unsigned> indices;
 	};
 }

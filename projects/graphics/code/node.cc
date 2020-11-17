@@ -83,4 +83,12 @@ namespace efiilj
 
 		return false;
 	}
+
+	bool graphics_node::ray_intersect_triangle(const ray& test, vector3& hit) const
+	{
+		if (!ray_intersect_bounds(test, hit))
+			return false;
+
+		return true;
+	}
 }

@@ -18,6 +18,7 @@
 #include <string.h>
 #include <GL/glew.h>
 
+#include <memory>
 #include <vector>
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -141,9 +142,11 @@ namespace efiilj
 
 	std::shared_ptr<scene> gltf_model_loader::get_scene(
 				std::shared_ptr<shader_program> program,
-				std::shared_ptr<transform_model> transform)
+				std::shared_ptr<transform_model> transform,
+				std::string name)
 	{
 		auto new_scene = std::make_shared<scene>();
+		new_scene->name = name;
 
 		if (!model_ready_)
 		{
@@ -158,20 +161,20 @@ namespace efiilj
 				new_scene->meshes.size(), 
 				new_scene->materials.size());
 
-		for (auto& mesh : new_scene->meshes)
+		int i = 0;
+		for (auto mesh_ptr : new_scene->meshes)
 		{
-			int mat = mesh->material_index;
+			i++;
+			int mat = mesh_ptr->material_index;
 
 			if (mat > -1 && mat < new_scene->materials.size())
 			{	
 				auto mat_ptr = new_scene->materials[mat];
-				auto node_ptr = std::make_shared<graphics_node>(mesh, mat_ptr, transform);
-				new_scene->nodes.push_back(node_ptr);
+				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, transform);
+				node_ptr->name = name + "_" + std::to_string(i);
+				new_scene->nodes.push_back(std::move(node_ptr));
 			}
-			else
-			{
-				fprintf(stderr, "Error: Invalid material assigned to mesh!\n");
-			}
+			else fprintf(stderr, "Error: Invalid material assigned to mesh!\n");
 		}
 
 		return new_scene;
@@ -179,8 +182,10 @@ namespace efiilj
 
 	std::shared_ptr<mesh_resource> gltf_model_loader::build_mesh(tinygltf::Primitive& prim)
 	{
+
 		unsigned err;
 		unsigned vbo, vao, ibo;
+
 		glGenBuffers(1, &vbo);
 		glGenBuffers(1, &ibo);
 		glGenVertexArrays(1, &vao);
@@ -190,6 +195,8 @@ namespace efiilj
 
 		vector3 pos_min;
 		vector3 pos_max;
+
+		auto data = std::make_shared<mesh_data>();
 
 		// Calculate size of required VBO (to fit all attributes)
 		
@@ -232,10 +239,23 @@ namespace efiilj
 					pos_max = vector3(max[0], max[1], max[2]);
 					pos_min = vector3(min[0], min[1], min[2]);
 				}
+
+				// Stopgap fix, demand 3 comp. vectors for position
+				assert(accessor.type == 3);
+
+				data->positions.resize(accessor.count);
+				memcpy(data->positions.data(), &buf.data.at(0) + offset, block_size);
 			}	
 
 			if (attrib.first.compare("NORMAL") == 0)
+			{
 				vaa = 1;
+
+				assert(accessor.type == 3);
+
+				data->normals.resize(accessor.count);
+				memcpy(data->normals.data(), &buf.data.at(0) + offset, block_size);
+			}
 
 			if (attrib.first.compare("TEXCOORD_0") == 0)
 				vaa = 2;
@@ -252,20 +272,23 @@ namespace efiilj
 
 		// Buffer mesh indices
 		tinygltf::Accessor i_accessor = model_.accessors[prim.indices];
-		tinygltf::BufferView& i_bufView = model_.bufferViews[i_accessor.bufferView];
-		tinygltf::Buffer& i_buf = model_.buffers[i_bufView.buffer];
-		size_t i_offset = i_bufView.byteOffset + i_accessor.byteOffset;
+		tinygltf::BufferView& i_view = model_.bufferViews[i_accessor.bufferView];
+		tinygltf::Buffer& i_buf = model_.buffers[i_view.buffer];
+		size_t i_offset = i_view.byteOffset + i_accessor.byteOffset;
+		size_t i_block_size = i_accessor.count * i_accessor.ByteStride(i_view);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_accessor.count * i_accessor.ByteStride(i_bufView), 
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_block_size, 
 				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
+
+		data->indices.insert(data->indices.end(), &i_buf.data.at(0) + i_offset, &i_buf.data.at(0) + i_offset + i_block_size);
 
 		glBindVertexArray(0);
 
 		auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
-		mesh_ptr->set_bounds(pos_min, pos_max);
-
 		mesh_ptr->material_index = prim.material;
+		mesh_ptr->set_bounds(pos_min, pos_max);
+		mesh_ptr->set_mesh_data(data);
 
 		return mesh_ptr;	
 	}

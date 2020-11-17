@@ -59,6 +59,7 @@ namespace efiilj
 		bounds get_bounds() const;
 		bool point_inside_bounds(const vector3& point) const;
 		bool ray_intersect_bounds(const ray& ray, vector3& hit) const;
+		bool ray_intersect_triangle(const ray& ray, vector3& hit) const;
 
 		/**
 		 * \brief Prepares the node for drawing, binding mesh, texture, and shader resources.

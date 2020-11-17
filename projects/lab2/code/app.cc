@@ -121,26 +121,24 @@ namespace efiilj
 		
 		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
-
-		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
-		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
-		auto beater_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
-		
+		auto cube_mesh_ptr = std::make_shared<cube>();
+		auto rect_mesh_ptr = std::make_shared<rect>();
+	
 		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf");
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
 		gltf_model_loader gltf_beater("../res/gltf/visp.gltf");
 
-		std::vector<std::shared_ptr<graphics_node>> all_nodes;
-		std::vector<std::shared_ptr<gltf_pbr_base>> all_materials;
-		std::vector<std::shared_ptr<mesh_resource>> all_meshes;
+		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
+		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
+		auto beater_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
 
-		auto sponza = gltf_sponza.get_scene(g_prog_ptr, sponza_trans_ptr);
-		auto helmet = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr);
-		auto beater = gltf_beater.get_scene(g_prog_ptr, beater_trans_ptr);
+		auto sponza_scene_ptr = gltf_sponza.get_scene(g_prog_ptr, sponza_trans_ptr, "Sponza");
+		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
+		auto beater_scene_ptr = gltf_beater.get_scene(g_prog_ptr, beater_trans_ptr, "Beater");
 
-		def_renderer.add_scene(sponza);
-		def_renderer.add_scene(helmet);
-		def_renderer.add_scene(beater);
+		//def_renderer.add_scene(sponza_scene_ptr);
+		def_renderer.add_scene(helmet_scene_ptr);
+		def_renderer.add_scene(beater_scene_ptr);
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
@@ -196,7 +194,6 @@ namespace efiilj
 		def_renderer.add_light(l_red_ptr);
 		def_renderer.add_light(l_blue_ptr);
 
-		auto rect_mesh_ptr = std::make_shared<rect>();
 		auto rect_trf_ptr = std::make_shared<transform_model>(vector3(-10, 10, -10), vector3(PI / 4, PI / 4, PI / 4), vector3(2, 2, 2));
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
@@ -207,9 +204,9 @@ namespace efiilj
 		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr, rect_trf_ptr);
 		fwd_renderer.add_node(rect_node_ptr);
 
-		auto cube_mesh_ptr = std::make_shared<cube>();
-
-		plane mid(vector3(0), vector3(0, 1, 0));
+		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.1f, 0.1f, 0.1f));
+		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
+		fwd_renderer.add_node(hit_sphere_node_ptr);
 
 		std::set<int> keys;
 		
@@ -239,20 +236,13 @@ namespace efiilj
 				}
 				else if (key == GLFW_KEY_B)
 				{
-					//vector3 min( 99999,  99999,  99999);
-					//vector3 max(-99999, -99999, -99999);
-
-					//for (auto& node : helmet_nodes)
-					//{
-					//	bounds b = node->get_bounds();
-					//	min = vector3::min(min, b.min);
-					//	max = vector3::max(max, b.max);
-					//}
-
-					//auto block_mesh_ptr = std::make_shared<cube>(min, max);
-					//auto block_node = std::make_shared<graphics_node>(block_mesh_ptr, rect_mat_ptr);
-					//block_node->set_absolute(true);
-					//fwd_renderer.add_node(block_node);
+					for (auto& node : def_renderer.get_nodes())
+					{
+						bounds b = node->get_bounds();
+						auto bbox_mesh = std::make_shared<cube>(b.min, b.max);
+						auto bbox_node = std::make_shared<graphics_node>(bbox_mesh, rect_mat_ptr);
+						fwd_renderer.add_node(bbox_node);
+					}
 				}
 			}
 			else if (action == 0)
@@ -270,6 +260,20 @@ namespace efiilj
 
 			mouse_norm_x_ = x / WINDOW_WIDTH - 0.5f;
 			mouse_norm_y_ = y / WINDOW_HEIGHT - 0.5f;
+
+			auto cam = cam_mgr_ptr->get_active_camera();
+			auto cam_trf = cam->get_transform();
+
+			ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
+
+			vector3 hit;
+			for (auto& node : def_renderer.get_nodes())
+			{
+				if (node->ray_intersect_triangle(r, hit))
+				{
+					hit_sphere_trf_ptr->set_position(hit);
+				}
+			}
 		});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
@@ -280,25 +284,6 @@ namespace efiilj
 				mouse_down_y_ = mouse_norm_y_;
 
 				is_dragging_mouse_ = true;
-
-				auto cam = cam_mgr_ptr->get_active_camera();
-				auto cam_trf = cam->get_transform();
-
-				ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
-
-				for (auto& node : all_nodes)
-				{
-					vector3 hit;
-					if (node->ray_intersect_bounds(r, hit))
-					{
-						printf("Hit! (%s)\n", node->name.c_str());
-						rect_mat_ptr->color = vector4(randf(), randf(), randf(), randf());
-						auto hit_sphere_trf_ptr = std::make_shared<transform_model>(hit, vector3(), vector3(0.1f, 0.1f, 0.1f));
-						auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
-
-						fwd_renderer.add_node(hit_sphere_node_ptr);
-					}
-				}
 			}
 			else
 			{

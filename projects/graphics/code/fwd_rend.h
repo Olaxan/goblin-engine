@@ -53,6 +53,11 @@ namespace efiilj
 				add_node(node);
 		}
 
+		const std::vector<std::shared_ptr<graphics_node>>& get_nodes() const 
+		{ 
+			return nodes_; 
+		}
+
 		virtual void reload_shaders() const;
 
 		virtual void render() const;

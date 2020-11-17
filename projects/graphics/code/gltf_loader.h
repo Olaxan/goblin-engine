@@ -50,7 +50,8 @@ namespace efiilj
 
 		std::shared_ptr<scene> get_scene(
 				std::shared_ptr<shader_program> shader, 
-				std::shared_ptr<transform_model> transform
+				std::shared_ptr<transform_model> transform,
+				std::string name = "GLTF"
 		);
 
 		std::shared_ptr<mesh_data> get_mesh_data();

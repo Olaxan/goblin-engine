@@ -5,12 +5,14 @@
 namespace efiilj
 {
 	mesh_resource::mesh_resource() 
-		: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), vertex_count_(0), index_count_(0), material_index(-1)
+		: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), vertex_count_(0), index_count_(0), material_index(-1), has_mesh_data_(false)
 	{ }
 
 	mesh_resource::
 	mesh_resource(vertex* vertex_list, const int vertex_count, unsigned int* index_list, const int index_count) 
-	: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), vertex_count_(vertex_count), index_count_(index_count), material_index(-1)
+		: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), 
+		vertex_count_(vertex_count), index_count_(index_count), 
+		material_index(-1), has_mesh_data_(false)
 	{
 		init_array_object();
 		init_vertex_buffer(vertex_list, vertex_count);
@@ -18,7 +20,10 @@ namespace efiilj
 	}
 
 	mesh_resource::mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo, int vertex_count, int index_count)
-		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), vertex_count_(vertex_count), index_count_(index_count), material_index(-1) {}
+		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), 
+		vertex_count_(vertex_count), index_count_(index_count), 
+		material_index(-1), has_mesh_data_(false)
+	{}
 
 	void mesh_resource::init_vertex_buffer(vertex* vertex_list, const int count)
 	{

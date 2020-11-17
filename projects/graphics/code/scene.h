@@ -11,5 +11,7 @@ namespace efiilj
 		std::vector<std::shared_ptr<graphics_node>> nodes;
 		std::vector<std::shared_ptr<mesh_resource>> meshes;
 		std::vector<std::shared_ptr<gltf_pbr_base>> materials;
+
+		std::string name;
 	};
 }
