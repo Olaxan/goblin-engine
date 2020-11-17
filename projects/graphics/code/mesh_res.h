@@ -56,6 +56,7 @@ namespace efiilj
 		const bounds& get_bounds() { return bounds_; }
 		bounds get_bounds(const matrix4& mat) { return bounds_.get_transformed_bounds(mat); }
 
+		bool has_mesh_data() const { return has_mesh_data_; }
 		void set_mesh_data(std::shared_ptr<mesh_data> data) { mesh_ = std::move(data); has_mesh_data_ = true; }
 		std::shared_ptr<mesh_data> get_mesh_data() const { return mesh_; }
 

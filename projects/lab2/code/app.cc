@@ -244,6 +244,19 @@ namespace efiilj
 						fwd_renderer.add_node(bbox_node);
 					}
 				}
+				else if (key == GLFW_KEY_V)
+				{
+					for (auto node : beater_scene_ptr->nodes)
+					{
+						auto mesh = node->mesh().get_mesh_data();
+						for (auto v : mesh->positions)
+						{
+							auto vnode_trf = std::make_shared<transform_model>((beater_trans_ptr->get_model() * vector4(v, 1.0f)).xyz(), vector3(0), vector3(0.01f, 0.01, 0.01f));
+							auto vnode = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, vnode_trf);
+							fwd_renderer.add_node(vnode);
+						}
+					}
+				}
 			}
 			else if (action == 0)
 			{
@@ -261,19 +274,6 @@ namespace efiilj
 			mouse_norm_x_ = x / WINDOW_WIDTH - 0.5f;
 			mouse_norm_y_ = y / WINDOW_HEIGHT - 0.5f;
 
-			auto cam = cam_mgr_ptr->get_active_camera();
-			auto cam_trf = cam->get_transform();
-
-			ray r = cam->get_ray_from_camera(mouse_x_, mouse_y_);
-
-			vector3 hit;
-			for (auto& node : def_renderer.get_nodes())
-			{
-				if (node->ray_intersect_triangle(r, hit))
-				{
-					hit_sphere_trf_ptr->set_position(hit);
-				}
-			}
 		});
 
 		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
@@ -384,6 +384,21 @@ namespace efiilj
 			}
 
 			srand(def_renderer.get_frame_index());
+
+			if (def_renderer.get_frame_index() % 15 == 0)
+			{
+				ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
+
+				vector3 hit, norm;
+				for (auto& node : def_renderer.get_nodes())
+				{
+					if (node->ray_intersect_triangle(r, hit, norm))
+					{
+						hit_sphere_trf_ptr->set_position(hit);
+						printf("Hit!\n");
+					}
+				}
+			}
 
 			def_renderer.begin_frame();
 			fwd_renderer.begin_frame();
