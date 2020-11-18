@@ -65,21 +65,21 @@ namespace efiilj
 			this->z = 0;
 		}
 
-		vector3(const vector3&& move)
+		vector3(vector3&& move) noexcept
 		{
 			*this = std::move(move);
 		}
 
 		/* === OPERATORS === */
 
-		void operator = (const vector3& other)
+		void operator = (const vector3& other) noexcept
 		{
 			this->x = other.x;
 			this->y = other.y;
 			this->z = other.z;
 		}
 
-		void operator = (const vector3&& other)
+		void operator = (const vector3&& other) noexcept
 		{
 			this->x = other.x;
 			this->y = other.y;

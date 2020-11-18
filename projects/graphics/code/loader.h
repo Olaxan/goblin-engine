@@ -38,8 +38,8 @@ namespace efiilj
 		std::vector<vertex> get_vertices() const { return vertex_list_; }
 		std::vector<unsigned> get_indices() const { return index_list_; }
 		
-		int vertex_count() const { return vertex_list_.size(); }
-		int index_count() const { return index_list_.size(); }
+		size_t vertex_count() const { return vertex_list_.size(); }
+		size_t index_count() const { return index_list_.size(); }
 
 		std::shared_ptr<mesh_resource> get_resource();
 	};

@@ -77,14 +77,14 @@ namespace efiilj
 			: vector4(copy.x, copy.y, copy.z, copy.w)
 		{ }
 
-		vector4(const vector4&& move)
+		vector4(vector4&& move) noexcept
 		{
 			*this = std::move(move);	
 		}
 
 		/* === OPERATORS === */
 
-		void operator = (const vector4& other)
+		void operator = (const vector4& other) noexcept
 		{
 			this->x = other.x;
 			this->y = other.y;
@@ -92,7 +92,7 @@ namespace efiilj
 			this->w = other.w;
 		}
 
-		void operator = (const vector4&& other)
+		void operator = (const vector4&& other) noexcept
 		{
 			this->x = other.x;
 			this->y = other.y;

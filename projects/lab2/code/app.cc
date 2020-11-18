@@ -50,7 +50,9 @@ namespace efiilj
 {
 
 	application::application()
-	: window_(nullptr), time_(0), mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
+	: window_(nullptr), time_(0), 
+		mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), mouse_norm_x_(0), mouse_norm_y_(0), 
+		is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
 
 	application::~application() = default;
 

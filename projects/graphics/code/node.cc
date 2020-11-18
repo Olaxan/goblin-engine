@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 #include <limits>
+#include <algorithm>
 #include <glm/glm.hpp>
 
 namespace efiilj

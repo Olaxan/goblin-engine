@@ -20,16 +20,15 @@ namespace efiilj
 		program_id_ = glCreateProgram();
 		program_state_ = false;
 
-		int err;
 		if (vs_.attach(program_id_) && fs_.attach(program_id_))
 		{
 			glLinkProgram(program_id_);
-			if (!shader_resource::debug_shader(program_id_, shader_resource::type_program, 
+			if (!shader_resource::debug_shader(program_id_, shader_resource::shader_debug_type::type_program, 
 					GL_LINK_STATUS, std::cout, "Program linking failed!"))
 				return false;
 			
 			glValidateProgram(program_id_);
-			if (!shader_resource::debug_shader(program_id_, shader_resource::type_program, 
+			if (!shader_resource::debug_shader(program_id_, shader_resource::shader_debug_type::type_program,
 					GL_VALIDATE_STATUS, std::cout, "Program validation failed!"))
 				return false;
 			
@@ -52,7 +51,7 @@ namespace efiilj
 		glDeleteProgram(program_id_);
 		vs_.recompile_shader();
 		fs_.recompile_shader();
-		create_program();	
+		return create_program();	
 	}
 
 	bool shader_program::use()

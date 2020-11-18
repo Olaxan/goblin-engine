@@ -44,20 +44,20 @@ namespace efiilj
 			: vector2(copy.x, copy.y)
 		{ }
 
-		vector2(const vector2&& move)
+		vector2(vector2&& move) noexcept
 		{
 			*this = std::move(move);
 		}
 
 		/* === OPERATORS === */
 
-		void operator = (const vector2& other)
+		void operator = (const vector2& other) noexcept
 		{
 			this->x = other.x;
 			this->y = other.y;
 		}
 
-		void operator = (const vector2&& other)
+		void operator = (const vector2&& other) noexcept
 		{
 			this->x = other.x;
 			this->y = other.y;

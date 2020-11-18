@@ -20,7 +20,7 @@ namespace efiilj
 
 	public:
 
-		enum shader_debug_type
+		enum class shader_debug_type
 		{
 			type_shader,
 			type_program

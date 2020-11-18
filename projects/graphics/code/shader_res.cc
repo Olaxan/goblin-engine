@@ -8,7 +8,7 @@
 namespace efiilj
 {
 	shader_resource::shader_resource()
-		: shader_id_(0), type_(0), shader_state_(GL_FALSE) { }
+		: path_("/res/shaders"), shader_id_(0), type_(0), shader_state_(GL_FALSE) { }
 
 	shader_resource::shader_resource(unsigned type, const char* path) 
 		: shader_id_(0), type_(type), shader_state_(GL_FALSE)
@@ -51,7 +51,7 @@ namespace efiilj
 		glShaderSource(shader_id_, 1, &source, nullptr);
 		glCompileShader(shader_id_);
 		glGetShaderiv(shader_id_, GL_COMPILE_STATUS, &result);
-		debug_shader(shader_id_, type_shader, GL_COMPILE_STATUS, std::cout,
+		debug_shader(shader_id_, shader_debug_type::type_shader, GL_COMPILE_STATUS, std::cout,
 		            (type == GL_VERTEX_SHADER ? "Vertex compilation failed!" : "Fragment compilation failed!"));
 
 		return result;
@@ -63,6 +63,7 @@ namespace efiilj
 		{
 			std::string source = load_shader(path_);
 			shader_state_ = compile_shader(type_, source.c_str());
+			return shader_state_;
 		}	
 	}
 
@@ -82,8 +83,12 @@ namespace efiilj
 		glDeleteShader(shader_id_);
 	}
 
-	bool shader_resource::debug_shader(const unsigned int id, 
-			const shader_debug_type type, const unsigned int status, std::ostream& stream, const char* header)
+	bool shader_resource::debug_shader(
+		const unsigned id, 
+		const shader_debug_type type, 
+		const unsigned status, 
+		std::ostream& stream, 
+		const char* header)
 	{
 		int result = 0;
 		int log_size = 0;
@@ -91,21 +96,21 @@ namespace efiilj
 
 		switch (type)
 		{
-		case type_shader:
+		case shader_debug_type::type_shader:
 			glGetShaderiv(id, status, &result);
 			if (result == GL_FALSE)
 			{
 				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(alloca(log_size * sizeof(char)));
+				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
 				glGetShaderInfoLog(id, log_size, nullptr, message);
 			}
 			break;
-		case type_program:
+		case shader_debug_type::type_program:
 			glGetProgramiv(id, status, &result);
 			if (result == GL_FALSE)
 			{
 				glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(alloca(log_size * sizeof(char)));
+				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
 				glGetProgramInfoLog(id, log_size, nullptr, message);
 			}
 			break;

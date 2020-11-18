@@ -7,6 +7,12 @@
 #include <map>
 #include <string.h>
 
+#ifdef _MSC_VER 
+//not #if defined(_WIN32) || defined(_WIN64) because we have strncasecmp in mingw
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
+
 namespace efiilj
 {
 	bool object_loader::load_from_file(const char* path)
@@ -14,7 +20,7 @@ namespace efiilj
 		std::string s;
 		std::ifstream file(path);
 
-		std::vector<unsigned int> vertex_indices, uv_indices, normal_indices;
+		std::vector<unsigned> vertex_indices, uv_indices, normal_indices;
 		std::vector<vector3> vertices;
 		std::vector<vector3> normals;
 		std::vector<vector2> uvs;
