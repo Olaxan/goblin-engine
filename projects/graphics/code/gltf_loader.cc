@@ -281,7 +281,16 @@ namespace efiilj
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_block_size, 
 				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
 
-		data->indices.insert(data->indices.end(), &i_buf.data.at(0) + i_offset, &i_buf.data.at(0) + i_offset + i_block_size);
+		unsigned short* temp = new unsigned short[i_accessor.count];
+		memcpy(temp, &i_buf.data.at(0) + i_offset, i_block_size);
+		data->indices.resize(i_accessor.count);
+
+		for (size_t i = 0; i < i_accessor.count; i++)
+		{
+			data->indices[i] = static_cast<unsigned>(temp[i]);	
+		}
+
+		delete[] temp;
 
 		glBindVertexArray(0);
 

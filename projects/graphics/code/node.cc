@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 #include <limits>
+#include <glm/glm.hpp>
 
 namespace efiilj
 {
@@ -62,29 +63,42 @@ namespace efiilj
 
 	bool graphics_node::ray_intersect_bounds(const ray& test, vector3& hit) const
 	{
-		bounds b = get_bounds();
+		float tmax = 100000000.0f;
+		float tmin = -tmax;
 
-		plane planes[] = {
-			plane(b.min.x, vector3(1, 0, 0)),
-			plane(b.min.y, vector3(0, 1, 0)),
-			plane(b.min.z, vector3(0, 0, 1)),
+		bounds bounds = get_bounds();
 
-			plane(b.max.x, vector3(1, 0, 0)),
-			plane(b.max.y, vector3(0, 1, 0)),
-			plane(b.max.z, vector3(0, 0, 1))
-		};
+		const vector3 dir = vector3(
+            1.0f / ((std::fabs(test.direction.x) < 1e-6) ? 0.0001f : test.direction.x),
+            1.0f / ((std::fabs(test.direction.y) < 1e-6) ? 0.0001f : test.direction.y),
+            1.0f / ((std::fabs(test.direction.z) < 1e-6) ? 0.0001f : test.direction.z)
+        );
 
-		for (plane& p : planes)
+        const float tx1 = (bounds.min.x - test.origin.x) * dir.x;
+        const float tx2 = (bounds.max.x - test.origin.x) * dir.x;
+
+        tmin = std::max(tmin, std::min(tx1, tx2));
+        tmax = std::min(tmax, std::max(tx1, tx2));
+        
+        const float ty1 = (bounds.min.y - test.origin.y) * dir.y;
+        const float ty2 = (bounds.max.y - test.origin.y) * dir.y;
+
+        tmin = std::max(tmin, std::min(ty1, ty2));
+        tmax = std::min(tmax, std::max(ty1, ty2));
+       
+        const float tz1 = (bounds.min.z - test.origin.z) * dir.z;
+        const float tz2 = (bounds.max.z - test.origin.z) * dir.z;
+
+        tmin = std::max(tmin, std::min(tz1, tz2));
+        tmax = std::min(tmax, std::max(tz1, tz2));
+        
+        if (tmin > 0.0f && tmax >= tmin) 
 		{
-			vector3 result;
-			if (test.intersect(p, result) && point_inside_bounds(result))
-			{
-				hit = result;
-				return true;
-			}
-		}
+			hit = test.origin + test.direction * tmin;
+            return true;
+        }
 
-		return false;
+        return false;
 	}
 
 	bool graphics_node::ray_intersect_triangle(const ray& test, vector3& hit, vector3& norm) const
@@ -100,11 +114,13 @@ namespace efiilj
 		float nearest = std::numeric_limits<float>::max();
 		vector3 nearest_hit;
 
-		ray r = ray((transform_->get_model_inv() * vector4(test.origin, 1.0f)).xyz(),
-				(transform_->get_model_inv() * vector4(test.origin + test.direction * 100.0f, 1.0f)).xyz());
+		vector3 ra = transform_->get_model_inv() * test.origin;
+		vector3 rb = transform_->get_model_inv() * (test.origin + test.direction * 1000.0f);
+
+		ray r = ray(ra, (rb - ra).norm());
 
 		const vector3 d = r.direction;
-		const vector3 o = r.origin; 
+		const vector3 o = r.origin;
 
 		auto data = mesh_->get_mesh_data();
 

@@ -45,14 +45,14 @@ namespace efiilj
 
 		std::string name;
 
-		const mesh_resource& mesh() const { return *this->mesh_; }
-		void mesh(std::shared_ptr<mesh_resource> mesh) { this->mesh_ = std::move(mesh); }
+		std::shared_ptr<mesh_resource> get_mesh() const { return mesh_; }
+		void set_mesh(std::shared_ptr<mesh_resource> mesh) { this->mesh_ = std::move(mesh); }
 
-		const material_base& material() const { return *this->material_; }
-		void material(std::shared_ptr<material_base> material) { this->material_ = std::move(material); }
+		std::shared_ptr<material_base> get_material() const { return material_; }
+		void set_material(std::shared_ptr<material_base> material) { this->material_ = std::move(material); }
 
-		transform_model& transform() const { return *this->transform_; }
-		void transform(std::shared_ptr<transform_model> transform) { this->transform_ = std::move(transform); }
+		std::shared_ptr<transform_model> get_transform() const { return transform_; }
+		void set_transform(std::shared_ptr<transform_model> transform) { this->transform_ = std::move(transform); }
 		
 		void set_absolute(bool a) { is_absolute_ = a; }
 

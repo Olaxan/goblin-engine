@@ -203,6 +203,11 @@ namespace efiilj
 			return vect;
 		}
 
+		vector3 operator * (const vector3& other) const
+		{
+			return (*this * vector4(other, 1.0f)).xyz();
+		}
+
 		/// <summary>
 		/// Performs a matrix division with a scalar.
 		/// </summary>

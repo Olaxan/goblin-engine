@@ -142,20 +142,7 @@ namespace efiilj
 			v_pointlight_ = std::move(pl_loader.get_resource());
 		else 
 			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
-	}
-
-	void deferred_renderer::set_light_uniforms(const light_source& light) const
-	{
-		lighting_->set_uniform("source.type", static_cast<int>(light.type));
-		lighting_->set_uniform("source.base.color", light.base.color);	
-		lighting_->set_uniform("source.base.ambient_intensity", light.base.ambient_intensity);
-		lighting_->set_uniform("source.base.diffuse_intensity", light.base.diffuse_intensity);
-		lighting_->set_uniform("source.position", light.transform.get_position());
-		lighting_->set_uniform("source.direction", light.transform.forward());
-		lighting_->set_uniform("source.falloff.constant", light.falloff.constant);
-		lighting_->set_uniform("source.falloff.linear", light.falloff.linear);
-		lighting_->set_uniform("source.falloff.exponential", light.falloff.exponential);
-	}
+	}	
 
 	void deferred_renderer::draw_directional(const light_source& light) const
 	{
@@ -172,7 +159,7 @@ namespace efiilj
 		const matrix4& v = camera_mgr_->get_active_camera()->get_view();
 		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
 
-		matrix4 mvp = p * v * light.transform.get_model();
+		matrix4 mvp = p * v * light.get_transform()->get_model();
 
 		lighting_->set_uniform("light_mvp", mvp);
 
@@ -227,14 +214,15 @@ namespace efiilj
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
+		glEnable(GL_CULL_FACE);
 
 		for (size_t i = 0; i < light_sources_.size(); i++)
 		{
 			light_source& light = *light_sources_[i];
 
-			set_light_uniforms(light);
+			light.set_uniforms(lighting_);
 
-			switch (light.type)
+			switch (light.get_type())
 			{
 				case light_type::directional:
 				{
@@ -245,10 +233,12 @@ namespace efiilj
 				case light_type::pointlight:
 				{
 					
-					vector3 cam_pos = camera_mgr_->get_active_position();
-					vector3 cam_dir = cam_pos - light.transform.get_position();
+					auto light_trf = light.get_transform();
 
-					float radius = light.transform.get_scale().length();
+					vector3 cam_pos = camera_mgr_->get_active_position();
+					vector3 cam_dir = cam_pos - light_trf->get_position();
+
+					float radius = light_trf->get_scale().length();
 
 					if (cam_dir.length() < radius)
 						draw_directional(light);

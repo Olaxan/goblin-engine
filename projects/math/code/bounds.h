@@ -15,7 +15,7 @@ namespace efiilj
 			{}
 
 			bounds(const vector3& min, const vector3 max)
-				: min(min), max(max)
+				: min(vector3::min(min, max)), max(vector3::max(min, max))
 			{}
 
 			vector3 min, max;

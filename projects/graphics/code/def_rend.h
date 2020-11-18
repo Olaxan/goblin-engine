@@ -50,7 +50,6 @@ namespace efiilj
 		void setup_uniforms();
 		void setup_volumes();
 
-		void set_light_uniforms(const light_source& light) const;
 		void draw_directional(const light_source& light) const;
 		void draw_pointlight(const light_source& light, float radius) const;
 

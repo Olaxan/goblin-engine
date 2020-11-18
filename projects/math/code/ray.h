@@ -4,8 +4,6 @@
 #include "vector3.h"
 #include "plane.h"
 
-#define EPSILON 0.00001
-
 namespace efiilj
 {
 	class ray
@@ -26,7 +24,7 @@ namespace efiilj
 			{
 				float denom = vector3::dot(direction, test.normal);
 
-				if (fabs(denom) > EPSILON)
+				if (fabs(denom) > 1e-6)
 				{
 					vector3 pl = test.offset - origin;
 					float t = vector3::dot(pl, test.normal) / denom;
@@ -44,10 +42,10 @@ namespace efiilj
 
 			bool intersect(const plane& test, const matrix4& transform, vector3& result) const
 			{
-				vector4 plane_offset = transform * vector4(test.offset, 1.0f);
-				vector4 plane_normal = transform * vector4(test.normal, 1.0f);
+				vector3 plane_offset = transform * test.offset;
+				vector3 plane_normal = transform * test.normal;
 
-				plane p(plane_offset.xyz(), plane_normal.xyz());
+				plane p(plane_offset, plane_normal);
 
 				return intersect(p, result);
 					

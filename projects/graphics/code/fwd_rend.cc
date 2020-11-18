@@ -12,7 +12,7 @@ namespace efiilj
 	void forward_renderer::reload_shaders() const
 	{
 		for (auto& node : nodes_)
-			node->material().get_program()->reload();
+			node->get_material()->get_program()->reload();
 	}
 
 	void forward_renderer::begin_frame()

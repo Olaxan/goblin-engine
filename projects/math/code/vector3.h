@@ -70,17 +70,6 @@ namespace efiilj
 			*this = std::move(move);
 		}
 
-		/* === ACCESSORS === */
-
-		//const float& x const { return this->arr_[0]; }
-		//void x(const float& x) { this->arr_[0] = x; }
-
-		//const float& y const { return arr_[1]; }
-		//void y(const float& y) { this->arr_[1] = y; }
-
-		//const float& z const { return arr_[2]; }
-		//void z(const float& z) { this->arr_[2] = z; }
-
 		/* === OPERATORS === */
 
 		void operator = (const vector3& other)
@@ -364,7 +353,7 @@ namespace efiilj
 			vector3 v = (*this);
 			float len = v.length();
 
-			return len > 0 ? v * (1 / v.length()) : v;
+			return len > 0 ? v / len : v;
 		}
 
 		/* === FACTORY FUNCTIONS === */

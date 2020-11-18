@@ -7,6 +7,7 @@
 #include "app.h"
 #include "loader.h"
 #include "light.h"
+#include "material.h"
 #include "node.h"
 #include "swrast.h"
 #include "bufrend.h"
@@ -24,6 +25,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <set>
 
@@ -31,6 +33,7 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1200
 #define CAMERA_SPEED 0.5f
+#define NUM_LIGHTS 10
 #define PI 3.14159f
 
 float randf(float max = 1.0f)
@@ -119,7 +122,7 @@ namespace efiilj
 		deferred_renderer def_renderer(cam_mgr_ptr, set, g_prog_ptr, l_prog_ptr);
 		forward_renderer fwd_renderer(cam_mgr_ptr, set);
 		
-		object_loader obj_sphere("../res/volumes/v_pointlight2.obj");
+		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
@@ -136,52 +139,39 @@ namespace efiilj
 		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
 		auto beater_scene_ptr = gltf_beater.get_scene(g_prog_ptr, beater_trans_ptr, "Beater");
 
-		//def_renderer.add_scene(sponza_scene_ptr);
+		def_renderer.add_scene(sponza_scene_ptr);
 		def_renderer.add_scene(helmet_scene_ptr);
 		def_renderer.add_scene(beater_scene_ptr);
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 
-		auto sun_ptr = std::make_shared<light_source>();
-		sun_ptr->base.ambient_intensity = 0.001f;
-		sun_ptr->base.diffuse_intensity = 0.01f;
-		sun_ptr->type = light_type::directional;
-		sun_ptr->update_falloff();
-
+		auto sun_ptr = std::make_shared<light_source>(light_type::directional);
+		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.001f, 0.01f);
 		def_renderer.add_light(sun_ptr);
 
-		auto l_red_ptr = std::make_shared<light_source>();
-		l_red_ptr->base.color = vector3(1.0f, 0.0f, 0.0f);
-		l_red_ptr->base.ambient_intensity = 0.5f;
-		l_red_ptr->base.diffuse_intensity = 1.0f;
-		l_red_ptr->transform.add_position(vector3(0, 10, 0));
-		l_red_ptr->falloff.exponential = 0.3f;
-		l_red_ptr->update_falloff();
-		
-		auto l_blue_ptr = std::make_shared<light_source>();
-		l_blue_ptr->base.color = vector3(0.0f, 0.0f, 1.0f);
-		l_blue_ptr->base.ambient_intensity = 0.5f;
-		l_blue_ptr->base.diffuse_intensity = 1.0f;
-		l_blue_ptr->transform.add_position(vector3(0, 10, 0));
-		l_blue_ptr->falloff.exponential = 0.3f;
-		l_blue_ptr->update_falloff();
-
-		for (size_t i = 0; i < 20; i++)
+		for (size_t i = 0; i < NUM_LIGHTS; i++)
 		{
 			auto light = std::make_shared<light_source>();
-			light->base.color = vector3(randf(1), randf(1), randf(1));
-			light->base.ambient_intensity = randf(0.5f);
-			light->base.diffuse_intensity = randf(1.0f);
-			light->falloff.exponential = randf(1.0f);
-			light->transform.add_position(vector3(randf(25), randf(25), randf(25)));
-			light->update_falloff();
+
+			light_base base;
+			base.color = vector3(randf(1.0f), randf(1.0f), randf(1.0f));
+			base.ambient_intensity = randf(0.5f);
+			base.diffuse_intensity = randf(1.0f);
+			light->set_base(base);
+
+			attenuation falloff;
+			falloff.constant = 0;
+			falloff.linear = 0;
+			falloff.exponential = 0.3f;
+			light->set_falloff(falloff);
+
 			lights.push_back(light);
 
 			auto mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-			mat_ptr->color = vector4(light->base.color, 1.0f);
+			mat_ptr->color = vector4(base.color, 1.0f);
 
-			float size = 0.5f - light->falloff.exponential;
+			float size = 0.5f - falloff.exponential;
 			auto trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(size, size, size));
 			light_transforms.push_back(trf_ptr);
 
@@ -191,22 +181,20 @@ namespace efiilj
 			fwd_renderer.add_node(node_ptr);
 		}
 
-		def_renderer.add_light(l_red_ptr);
-		def_renderer.add_light(l_blue_ptr);
-
-		auto rect_trf_ptr = std::make_shared<transform_model>(vector3(-10, 10, -10), vector3(PI / 4, PI / 4, PI / 4), vector3(2, 2, 2));
-
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
 		rect_mat_ptr->double_sided = true;
 		rect_mat_ptr->wireframe = true;
 
-		auto rect_node_ptr = std::make_shared<graphics_node>(rect_mesh_ptr, rect_mat_ptr, rect_trf_ptr);
-		fwd_renderer.add_node(rect_node_ptr);
-
-		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.1f, 0.1f, 0.1f));
+		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
 		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
 		fwd_renderer.add_node(hit_sphere_node_ptr);
+
+		auto beater_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
+		beater_mat_ptr->color = vector4(1.0f, 1.0f, 1.0f, 1.0f); 
+		for (auto node : beater_scene_ptr->nodes)
+			node->set_material(beater_mat_ptr);	
+
 
 		std::set<int> keys;
 		
@@ -248,10 +236,11 @@ namespace efiilj
 				{
 					for (auto node : beater_scene_ptr->nodes)
 					{
-						auto mesh = node->mesh().get_mesh_data();
+						auto mesh = node->get_mesh()->get_mesh_data();
+
 						for (auto v : mesh->positions)
 						{
-							auto vnode_trf = std::make_shared<transform_model>((beater_trans_ptr->get_model() * vector4(v, 1.0f)).xyz(), vector3(0), vector3(0.01f, 0.01, 0.01f));
+							auto vnode_trf = std::make_shared<transform_model>(beater_trans_ptr->get_model() * v, vector3(0), vector3(0.01f, 0.01, 0.01f));
 							auto vnode = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, vnode_trf);
 							fwd_renderer.add_node(vnode);
 						}
@@ -284,6 +273,29 @@ namespace efiilj
 				mouse_down_y_ = mouse_norm_y_;
 
 				is_dragging_mouse_ = true;
+
+				auto camera_ptr = cam_mgr_ptr->get_active_camera();
+				ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
+				float nearest = std::numeric_limits<float>::max();
+				vector3 hit, norm;
+				std::shared_ptr<graphics_node> hover_node;
+
+				for (auto node : def_renderer.get_nodes())
+				{
+					if (node->ray_intersect_triangle(r, hit, norm))
+					{
+						float len = (hit - r.origin).length();
+						if (len < nearest)
+						{
+							hit_sphere_trf_ptr->set_position(hit);
+							nearest = len;
+							hover_node = node;
+						}
+					}
+				}
+
+				if (hover_node != nullptr && hover_node->get_material() == beater_mat_ptr)
+					beater_mat_ptr->color = vector4(randf(1.0f), randf(1.0f), randf(1.0f), 1.0f); 
 			}
 			else
 			{
@@ -345,26 +357,10 @@ namespace efiilj
 				fwd_renderer.toggle_debug();
 			}
 
-			if (keys.find(GLFW_KEY_E) != keys.end())
-			{
-				l_red_ptr->falloff.exponential += 0.01;
-				l_red_ptr->update_falloff();
-			}
-
-			if (keys.find(GLFW_KEY_Q) != keys.end())
-			{
-				l_red_ptr->falloff.exponential -= 0.01;
-				l_red_ptr->update_falloff();
-			}
-			
 			cam_mgr_ptr->update_camera();
-
-			l_red_ptr->transform.set_position(vector3(sinf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, 20.0f));
-			l_blue_ptr->transform.set_position(vector3(cosf(def_renderer.get_frame_index() / 100.0f) * 25, 10.0f, -20.0f));
-
 			float dt = def_renderer.get_delta_time();
 
-			for (size_t i = 0; i < 20; i++)
+			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{
 				auto& light = lights[i];
 				auto& trf = light_transforms[i];
@@ -377,28 +373,11 @@ namespace efiilj
 				float y = cosf(randf(PI) + d) * randf(-25, 25);
 				float z = sinf(randf(PI) + d) * randf(-25, 25);
 
-				light->transform.set_position(vector3(x, 25 + y, z));
-
-				// sorry
-				trf->set_position(light->transform.get_position());
+				light->get_transform()->set_position(vector3(x, 25 + y, z));
+				trf->set_position(light->get_transform()->get_position());
 			}
 
 			srand(def_renderer.get_frame_index());
-
-			if (def_renderer.get_frame_index() % 15 == 0)
-			{
-				ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
-
-				vector3 hit, norm;
-				for (auto& node : def_renderer.get_nodes())
-				{
-					if (node->ray_intersect_triangle(r, hit, norm))
-					{
-						hit_sphere_trf_ptr->set_position(hit);
-						printf("Hit!\n");
-					}
-				}
-			}
 
 			def_renderer.begin_frame();
 			fwd_renderer.begin_frame();

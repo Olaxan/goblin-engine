@@ -33,7 +33,6 @@ namespace efiilj
 		 * \brief Creates an empty MeshResource object.
 		 */
 		mesh_resource();
-
 		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
 		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
 
@@ -61,11 +60,6 @@ namespace efiilj
 		std::shared_ptr<mesh_data> get_mesh_data() const { return mesh_; }
 
 		void buffer(unsigned target, size_t size, void* data, unsigned usage);
-
-		/**
-		 * \brief Pushes a new vertex list (of the same size) to the Vertex Buffer.
-		 * \param vertex_list The updated vertex list
-		 */
 		void update_vertex_buffer(vertex* vertex_list) const;
 
 

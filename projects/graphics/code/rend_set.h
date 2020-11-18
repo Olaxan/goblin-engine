@@ -18,7 +18,7 @@ namespace efiilj
 		std::string u_dt_seconds = "dt";
 
 		// Volumes
-		std::string p_v_pointlight = "../res/volumes/v_pointlight2.obj";
+		std::string p_v_pointlight = "../res/volumes/v_pointlight.obj";
 		std::string p_v_spotlight = "../res/volumes/v_spotlight.obj";
 	};
 }
