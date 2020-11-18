@@ -147,7 +147,7 @@ namespace efiilj
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 
 		auto sun_ptr = std::make_shared<light_source>(light_type::directional);
-		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.001f, 0.01f);
+		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.01f, 0.01f);
 		def_renderer.add_light(sun_ptr);
 
 		for (size_t i = 0; i < NUM_LIGHTS; i++)
@@ -189,12 +189,6 @@ namespace efiilj
 		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
 		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
 		fwd_renderer.add_node(hit_sphere_node_ptr);
-
-		auto beater_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-		beater_mat_ptr->color = vector4(1.0f, 1.0f, 1.0f, 1.0f); 
-		for (auto node : beater_scene_ptr->nodes)
-			node->set_material(beater_mat_ptr);	
-
 
 		std::set<int> keys;
 		
@@ -294,8 +288,11 @@ namespace efiilj
 					}
 				}
 
-				if (hover_node != nullptr && hover_node->get_material() == beater_mat_ptr)
-					beater_mat_ptr->color = vector4(randf(1.0f), randf(1.0f), randf(1.0f), 1.0f); 
+				if (hover_node != nullptr)
+				{
+					auto mat = hover_node->get_material();
+					mat->wireframe = !mat->wireframe;
+				}
 			}
 			else
 			{

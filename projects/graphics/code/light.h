@@ -53,7 +53,7 @@ namespace efiilj
 							)
 						) / (2 * falloff_.exponential);
 
-				transform_->set_scale(ret);
+				transform_->set_scale(ret * 2.0f);
 			}
 
 		public:
