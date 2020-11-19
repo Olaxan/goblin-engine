@@ -86,6 +86,10 @@ namespace efiilj
 							trf->set_rotation(vector3());
 						}
 						ImGui::End();
+
+						ImGui::Begin("Material");
+						ImGui::Text("Hello!!!");
+						ImGui::End();
 					});
 
 			return true;
@@ -98,20 +102,20 @@ namespace efiilj
 
 		MathTest();
 
-		auto g_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
-		auto g_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
+		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
+		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
 
-		auto l_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/dvs_lighting.glsl");
-		auto l_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/dfs_lighting.glsl");
+		auto l_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_lighting.glsl");
+		auto l_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_lighting.glsl");
 		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
 
-		auto gltf_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/vs_gltf.glsl");
-		auto gltf_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_gltf.glsl");
+		auto gltf_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/vs_gltf.glsl");
+		auto gltf_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_gltf.glsl");
 		auto gltf_prog_ptr = std::make_shared<shader_program>(gltf_vs, gltf_fs);
 
-		auto color_vs = shader_resource(GL_VERTEX_SHADER, "../res/shaders/vs_color.glsl");
-		auto color_fs = shader_resource(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
+		auto color_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/vs_color.glsl");
+		auto color_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
 		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
 
 		cam_mgr_ptr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);

@@ -6,51 +6,84 @@ namespace efiilj
 {
 	unsigned shader_program::active_program_ = 0;
 
-	shader_program::shader_program(shader_resource vs, shader_resource fs)
-		: vs_(vs), fs_(fs), program_id_(0), program_state_(false)
+	shader_program::shader_program()
+		: program_id_(0), program_state_(false)
+	{}
+
+	shader_program::shader_program(
+			std::shared_ptr<shader_resource> vs, 
+			std::shared_ptr<shader_resource> fs)
+		: shader_program()
 	{
+
+		add_shader(vs);
+		add_shader(fs);
+
 		if (create_program())
 			printf("Created shader program %d\n", program_id_);
 		else
 			printf("Error: Failed to create program!\n");
 	}
 
+	void shader_program::add_shader(std::shared_ptr<shader_resource> shader)
+	{
+		shaders_.emplace_back(std::move(shader));
+
+		if (program_state_)
+			printf("WARN: Shader added to already compiled program!\n");
+	}
+
 	bool shader_program::create_program()
 	{
+
+		if (program_state_ == true)
+			return false;
+
 		program_id_ = glCreateProgram();
-		program_state_ = false;
 
-		if (vs_.attach(program_id_) && fs_.attach(program_id_))
+		for (auto& shader : shaders_)
 		{
-			glLinkProgram(program_id_);
-			if (!shader_resource::debug_shader(program_id_, shader_resource::shader_debug_type::type_program, 
-					GL_LINK_STATUS, std::cout, "Program linking failed!"))
+			if (!shader->attach(program_id_))
 				return false;
-			
-			glValidateProgram(program_id_);
-			if (!shader_resource::debug_shader(program_id_, shader_resource::shader_debug_type::type_program,
-					GL_VALIDATE_STATUS, std::cout, "Program validation failed!"))
-				return false;
-			
-			vs_.detach(program_id_);
-			vs_.free();
-
-			fs_.detach(program_id_);
-			fs_.free();
-
-			program_state_ = true;
-
-			return true;
 		}
 
-		return false;
+		if (link() && validate())
+		{
+			for (auto& shader : shaders_)
+			{
+				shader->detach(program_id_);
+				shader->free();
+			}
+		}
+
+		program_state_ = true;
+
+		return true;
+	}
+
+	bool shader_program::link()
+	{
+		glLinkProgram(program_id_);
+		return shader_resource::debug_shader(program_id_, 
+				shader_resource::shader_debug_type::program, 
+				GL_LINK_STATUS, std::cerr, "Program linking failed!");
+	}
+
+	bool shader_program::validate()
+	{
+		glValidateProgram(program_id_);
+		return shader_resource::debug_shader(program_id_,
+				shader_resource::shader_debug_type::program,
+				GL_VALIDATE_STATUS, std::cerr, "Program validation failed!");
 	}
 
 	bool shader_program::reload()
 	{
 		glDeleteProgram(program_id_);
-		vs_.recompile_shader();
-		fs_.recompile_shader();
+
+		for (auto& shader : shaders_)
+			shader->recompile_shader();
+
 		return create_program();	
 	}
 

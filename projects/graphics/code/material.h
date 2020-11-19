@@ -39,11 +39,11 @@ namespace efiilj
 	public:
 		gltf_pbr_base(std::shared_ptr<shader_program> program);
 
-		std::vector<double> emissiveFactor;
-		std::vector<double> baseColorFactor;
-		double metallicFactor;
-		double roughnessFactor;
-		
+		vector3 emissive_factor;
+		float metallic_factor;
+		float roughness_factor;
+		float alpha_cutoff;
+
 		void apply() override;
 	};
 }

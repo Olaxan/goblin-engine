@@ -366,11 +366,15 @@ namespace efiilj
 			link_texture(pbr_mat, mat.normalTexture.index, "NORMAL");
 			link_texture(pbr_mat, mat.emissiveTexture.index, "EMISSIVE");
 
-			pbr_mat->emissiveFactor = mat.emissiveFactor;
-			pbr_mat->baseColorFactor = mat.pbrMetallicRoughness.baseColorFactor;
-			pbr_mat->metallicFactor = mat.pbrMetallicRoughness.metallicFactor;
-			pbr_mat->roughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
+			auto& emit = mat.emissiveFactor;
+			auto& base = mat.pbrMetallicRoughness.baseColorFactor;
+
+			pbr_mat->color = vector4(static_cast<float>(base[0]), static_cast<float>(base[1]), static_cast<float>(base[2]), static_cast<float>(base[3])); 
+			pbr_mat->emissive_factor = vector3(static_cast<float>(emit[0]), static_cast<float>(emit[1]), static_cast<float>(emit[2]));
+			pbr_mat->metallic_factor = static_cast<float>( mat.pbrMetallicRoughness.metallicFactor);
+			pbr_mat->roughness_factor = static_cast<float>( mat.pbrMetallicRoughness.roughnessFactor);
 			pbr_mat->double_sided = mat.doubleSided;
+			pbr_mat->alpha_cutoff = static_cast<float>(mat.alphaCutoff);
 
 			new_scene->materials.push_back(std::move(pbr_mat));
 		}

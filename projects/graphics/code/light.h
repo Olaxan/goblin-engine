@@ -18,22 +18,22 @@ namespace efiilj
 
 	struct light_base
 	{
-		vector3 color {};
-		float ambient_intensity {};
-		float diffuse_intensity {};
+		vector3 color;
+		float ambient_intensity;
+		float diffuse_intensity;
 	};
 
 	struct attenuation
 	{
-		float constant {};
-		float linear {};
-		float exponential {};
+		float constant;
+		float linear;
+		float exponential;
 	};
 
 	struct cutoff
 	{
-		float inner_angle {};
-		float outer_angle{};
+		float inner_angle;
+		float outer_angle;
 	};
 
 	class light_source

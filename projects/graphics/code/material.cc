@@ -9,7 +9,11 @@ namespace efiilj
 	{ }
 
 	gltf_pbr_base::gltf_pbr_base(std::shared_ptr<shader_program> program)
-			: material_base(program)
+			: material_base(program), 
+			emissive_factor(vector3(0, 0, 0)),
+			metallic_factor(1.0f),
+			roughness_factor(1.0f),
+			alpha_cutoff(0.5f)
 	{}
 
 	void material_base::apply()
@@ -27,7 +31,7 @@ namespace efiilj
 
 		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
-		program_->set_uniform("color", color);
+		program_->set_uniform("base_color_factor", color);
 		
 	}
 
@@ -35,7 +39,10 @@ namespace efiilj
 	{
 		material_base::apply();
 
-		program_->set_uniform("shininess", 128);
+		program_->set_uniform("emissive_factor", emissive_factor);
+		program_->set_uniform("metallic_factor", metallic_factor);
+		program_->set_uniform("roughness_factor", roughness_factor);
+		program_->set_uniform("alpha_cutoff", alpha_cutoff);
 
 		auto it = textures_.find("BASE");
 		if (it != textures_.end())
@@ -56,6 +63,13 @@ namespace efiilj
 		{
 			it->second->bind(2);
 			program_->set_uniform("tex_orm", 2);
+		}
+
+		it = textures_.find("EMISSIVE");
+		if (it != textures_.end())
+		{
+			it->second->bind(3);
+			program_->set_uniform("tex_emissive", 3);
 		}
 	}
 }	

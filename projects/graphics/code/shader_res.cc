@@ -5,23 +5,21 @@
 #include <fstream>
 #include <sstream>
 
+#ifdef _MSC_VER 
+#define alloca _malloca
+#endif
+
 namespace efiilj
 {
-	shader_resource::shader_resource()
-		: path_("/res/shaders"), shader_id_(0), type_(0), shader_state_(GL_FALSE) { }
-
-	shader_resource::shader_resource(unsigned type, const char* path) 
-		: shader_id_(0), type_(type), shader_state_(GL_FALSE)
-	{
-		path_ = path;
-		std::string source = load_shader(path);
-		shader_state_ = compile_shader(type, source.c_str());
-	}
 
 	shader_resource::shader_resource(unsigned type, const std::string& path)
-		: shader_resource(type, path.c_str()) { }
+		: path_(path), shader_id_(0), type_(type), shader_state_(false)
+	{ 
+		std::string source = load_shader(path);
+		shader_state_ = compile_shader(type, source);
+	}
 
-	std::string shader_resource::load_shader(const char* file_path)
+	std::string shader_resource::load_shader(const std::string& file_path)
 	{
 		std::string s;
 		std::stringstream ss;
@@ -38,41 +36,40 @@ namespace efiilj
 		return ss.str();
 	}
 
-	std::string shader_resource::load_shader(const std::string& file_path)
-	{
-		return load_shader(file_path.c_str());
-	}
-
-	int shader_resource::compile_shader(const unsigned type, const char* source)
+	bool shader_resource::compile_shader(const unsigned type, const std::string& source)
 	{
 		int result;
 		shader_id_ = glCreateShader(type);
 
-		glShaderSource(shader_id_, 1, &source, nullptr);
-		glCompileShader(shader_id_);
-		glGetShaderiv(shader_id_, GL_COMPILE_STATUS, &result);
-		debug_shader(shader_id_, shader_debug_type::type_shader, GL_COMPILE_STATUS, std::cout,
-		            (type == GL_VERTEX_SHADER ? "Vertex compilation failed!" : "Fragment compilation failed!"));
+		const char* c_str = source.c_str();
 
-		return result;
+		glShaderSource(shader_id_, 1, &c_str, nullptr);
+		glCompileShader(shader_id_);
+
+		return debug_shader(shader_id_, shader_debug_type::shader, 
+				GL_COMPILE_STATUS, std::cerr, "Failed to compile " + path_ + "!");
+
 	}
 
-	int shader_resource::recompile_shader()
+	bool shader_resource::recompile_shader()
 	{
-		if (path_ != nullptr && shader_state_ != 0)
+		if (!path_.empty() && shader_state_ != 0)
 		{
 			std::string source = load_shader(path_);
-			shader_state_ = compile_shader(type_, source.c_str());
+			shader_state_ = compile_shader(type_, source);
 			return shader_state_;
 		}	
 	}
 
 	bool shader_resource::attach(unsigned program)
 	{ 
+		if (!shader_state_)
+			return false;
+
 		glAttachShader(program, shader_id_);
-		return shader_state_ == GL_TRUE;
+		return true;
 	}
-        
+
 	void shader_resource::detach(unsigned program)
 	{ 
 		glDetachShader(program, shader_id_); 
@@ -88,45 +85,42 @@ namespace efiilj
 		const shader_debug_type type, 
 		const unsigned status, 
 		std::ostream& stream, 
-		const char* header)
+		const std::string& header)
 	{
 		int result = 0;
 		int log_size = 0;
-		char* message = "";
+		char* message;
 
 		switch (type)
 		{
-		case shader_debug_type::type_shader:
+		case shader_debug_type::shader:
 			glGetShaderiv(id, status, &result);
 			if (result == GL_FALSE)
 			{
 				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
+				message = static_cast<char*>(alloca(log_size * sizeof(char)));
 				glGetShaderInfoLog(id, log_size, nullptr, message);
 			}
 			break;
-		case shader_debug_type::type_program:
+		case shader_debug_type::program:
 			glGetProgramiv(id, status, &result);
 			if (result == GL_FALSE)
 			{
 				glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_size);
-				message = static_cast<char*>(_malloca(log_size * sizeof(char)));
+				message = static_cast<char*>(alloca(log_size * sizeof(char)));
 				glGetProgramInfoLog(id, log_size, nullptr, message);
 			}
 			break;
 		default:
-			message = "Unknown debug type!";
 			break;
 		}
 
-		if (!result)
+		if (result == GL_FALSE)
 			stream << "DEBUG: " << header << "\n" << message << std::endl;
 
-		return result;
+		return result == GL_TRUE;
 	}	
 
 	shader_resource::~shader_resource()
-	{
-		//glDeleteProgram(program_id_);
-	}
+	{ }
 }

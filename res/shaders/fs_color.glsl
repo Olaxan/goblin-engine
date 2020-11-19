@@ -7,11 +7,11 @@ in VS_OUT
 } fs_in;
 
 uniform vec4 camera_position;
-uniform vec4 color;
+uniform vec4 base_color_factor;
 
 out vec4 Color;
 
 void main()
 {
-	Color = color;
+	Color = base_color_factor;
 }
