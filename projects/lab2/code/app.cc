@@ -152,6 +152,13 @@ namespace efiilj
 		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.01f, 0.01f);
 		def_renderer.add_light(sun_ptr);
 
+		bool spotlight_on = false;
+		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(0.0f, 10.0f, 0.0f));
+		auto spotlight_ptr = std::make_shared<light_source>(cam_mgr_ptr->get_active_camera()->get_transform(), light_type::spotlight);
+		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
+		spotlight_ptr->set_cutoff(0.91f, 0.82f);
+		def_renderer.add_light(spotlight_ptr);
+
 		for (size_t i = 0; i < NUM_LIGHTS; i++)
 		{
 			auto light = std::make_shared<light_source>();
@@ -241,6 +248,15 @@ namespace efiilj
 							fwd_renderer.add_node(vnode);
 						}
 					}
+				}
+				else if (key == GLFW_KEY_F)
+				{
+					if (spotlight_on)
+						spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
+					else
+						spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
+
+					spotlight_on = !spotlight_on;
 				}
 			}
 			else if (action == 0)
@@ -357,7 +373,11 @@ namespace efiilj
 			}
 
 			cam_mgr_ptr->update_camera();
+
 			float dt = def_renderer.get_delta_time();
+			float d = def_renderer.get_frame_index() / 100.0f;
+
+			spotlight_trf_ptr->set_rotation(vector3(d, d, 0.0f));
 
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{
@@ -366,7 +386,7 @@ namespace efiilj
 
 				srand(i + 13);
 
-				float d = def_renderer.get_frame_index() / 100.0f;
+				
 
 				float x = sinf(randf(PI) + d) * randf(-25, 25);
 				float y = cosf(randf(PI) + d) * randf(-25, 25);

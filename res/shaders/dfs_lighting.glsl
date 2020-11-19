@@ -18,12 +18,19 @@ struct attenuation
 	float exponential;
 };
 
+struct spotlight_data
+{
+	float inner;
+	float outer;
+};
+
 struct light_source
 {
 	light_base base;
 	vec3 position;
 	vec3 direction;
 	attenuation falloff;
+	spotlight_data cutoff;
 	int type;
 };
 
@@ -131,6 +138,21 @@ vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 	return color / atten;
 }
 
+vec4 calc_spotlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
+{
+	vec3 light_dir = source.position - position;
+	float light_dist = length(light_dir);
+	light_dir = normalize(light_dir);
+
+	vec4 color = calc_pointlight(position, normal, albedo, orm);
+
+	float theta = dot(light_dir, normalize(-source.direction));
+	float epsilon = source.cutoff.inner - source.cutoff.outer;
+	float intensity = clamp((theta - source.cutoff.outer) / max(epsilon, 0.001), 0.0, 1.0);
+
+	return color * intensity;
+}
+
 void main()
 {
 	ivec2 Uv = ivec2(gl_FragCoord.xy);
@@ -147,5 +169,9 @@ void main()
 	else if (source.type == LIGHT_POINT)
 	{
 		FragColor = calc_pointlight(WorldPos, Normal, Color, ORM);
+	}
+	else if (source.type == LIGHT_SPOT)
+	{
+		FragColor = calc_spotlight(WorldPos, Normal, Color, ORM);
 	}
 }

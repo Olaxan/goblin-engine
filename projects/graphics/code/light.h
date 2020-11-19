@@ -25,9 +25,15 @@ namespace efiilj
 
 	struct attenuation
 	{
-		float constant;
-		float linear;
-		float exponential;
+		float constant {};
+		float linear {};
+		float exponential {};
+	};
+
+	struct cutoff
+	{
+		float inner_angle {};
+		float outer_angle{};
 	};
 
 	class light_source
@@ -36,9 +42,10 @@ namespace efiilj
 
 			std::shared_ptr<transform_model> transform_;
 
+			light_type type_;
 			light_base base_;
 			attenuation falloff_;
-			light_type type_;
+			cutoff cutoff_;
 
 			void update_falloff()
 			{
@@ -63,6 +70,7 @@ namespace efiilj
 				base_({vector3(1, 1, 1), 0.1f, 0.2f}),
 				transform_(std::move(transform)),
 				falloff_({0, 0, 0.3f}),
+				cutoff_({0, 0}),
 				type_(type) 
 			{
 				update_falloff();
@@ -71,6 +79,10 @@ namespace efiilj
 			light_source(light_type type = light_type::pointlight)
 				: light_source(std::make_shared<transform_model>(), type) 
 			{}
+
+			std::shared_ptr<transform_model> get_transform() const { return transform_; }
+
+			light_type get_type() const { return type_; }
 
 			void set_base(const light_base& base) { base_ = base; update_falloff(); }
 			void set_base(const vector3& color, float ambient, float diffuse) { set_base( {color, ambient, diffuse} ); }
@@ -82,9 +94,10 @@ namespace efiilj
 
 			attenuation get_falloff() const { return falloff_; }
 
-			light_type get_type() const { return type_; }
+			void set_cutoff(const cutoff& cutoff) { cutoff_ = cutoff; update_falloff(); }
+			void set_cutoff(float inner, float outer) { set_cutoff( { inner, outer }); }
 
-			std::shared_ptr<transform_model> get_transform() const { return transform_; } 
+			cutoff get_cutoff() const { return cutoff_; }
 			
 			void set_uniforms(std::shared_ptr<shader_program> program) const
 			{
@@ -97,6 +110,8 @@ namespace efiilj
 				program->set_uniform("source.falloff.constant", falloff_.constant);
 				program->set_uniform("source.falloff.linear", falloff_.linear);
 				program->set_uniform("source.falloff.exponential", falloff_.exponential);
+				program->set_uniform("source.cutoff.inner", cutoff_.inner_angle);
+				program->set_uniform("source.cutoff.outer", cutoff_.outer_angle);
 			}
 	};
 }

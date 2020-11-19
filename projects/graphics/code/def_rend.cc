@@ -230,6 +230,12 @@ namespace efiilj
 					break;
 				}
 
+				case light_type::spotlight:
+				{
+					draw_directional(light);
+					break;
+				}
+
 				case light_type::pointlight:
 				{
 					
