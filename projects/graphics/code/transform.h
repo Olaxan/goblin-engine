@@ -1,6 +1,7 @@
 #pragma once
 
 #include "matrix4.h"
+#include <memory>
 
 namespace efiilj
 {
@@ -13,7 +14,10 @@ namespace efiilj
 
 		mutable matrix4 model_;
 		mutable matrix4 inverse_;
-		mutable matrix4 m_rotation_;
+
+		mutable matrix4 rotation_m_;
+		mutable matrix4 scale_m_;
+		mutable matrix4 position_m_;
 
 		vector4 position_;
 		vector4 scale_;
@@ -21,6 +25,8 @@ namespace efiilj
 
 		mutable bool model_dirty_;
 		mutable bool inverse_dirty_;
+
+		std::shared_ptr<transform_model> parent_;
 
 	public:
 
@@ -42,8 +48,11 @@ namespace efiilj
 		const matrix4& get_model() const;
 		const matrix4& get_model_inv() const;
 
+		void set_parent(std::shared_ptr<transform_model> parent) { parent_ = std::move(parent); }
+		std::shared_ptr<transform_model> get_parent() const { return parent_; }
+
 		// once swizzling works, re-make this to be refs
-		vector3 get_position() const { return position_.xyz(); }
+		vector3 get_position() const { return position_m_.col(3).xyz(); }
 		vector3 get_rotation() const { return rotation_.xyz(); }
 		vector3 get_scale() const { return scale_.xyz(); }
 

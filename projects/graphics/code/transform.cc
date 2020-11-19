@@ -5,19 +5,27 @@ namespace efiilj
 
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
 	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1),
-	m_rotation_(matrix4()), model_dirty_(true), inverse_dirty_(true) 
+	rotation_m_(matrix4()), position_m_(matrix4()), scale_m_(matrix4()),
+	model_dirty_(true), inverse_dirty_(true) 
 	{ }
 
 	const matrix4& transform_model::get_model() const 
 	{
 		if (model_dirty_)
 		{
-			const matrix4 t = matrix4::get_translation(position_);
-			const matrix4 r = matrix4::get_rotation_euler(rotation_);
-			const matrix4 s = matrix4::get_scale(scale_);
+			position_m_ = matrix4::get_translation(position_);
+			rotation_m_ = matrix4::get_rotation_euler(rotation_);
+			scale_m_ 	= matrix4::get_scale(scale_);
 
-			m_rotation_ = r;
-			model_ = t * r * s;
+			if (parent_ != nullptr)
+			{
+				parent_->get_model();
+				position_m_ = parent_->position_m_ * position_m_;
+				rotation_m_ = parent_->rotation_m_ * rotation_m_;
+				scale_m_ 	= parent_->scale_m_ * scale_m_;
+			}
+
+			model_ = position_m_ * rotation_m_ * scale_m_;
 
 			model_dirty_ = false;
 			inverse_dirty_ = true;
@@ -40,7 +48,7 @@ namespace efiilj
 	vector3 transform_model::right() const
 	{
 		get_model();
-		return m_rotation_.col(0).xyz();
+		return rotation_m_.col(0).xyz();
 	}
 
 	vector3 transform_model::left() const
@@ -51,7 +59,7 @@ namespace efiilj
 	vector3 transform_model::up() const
 	{
 		get_model();
-		return m_rotation_.col(1).xyz();
+		return rotation_m_.col(1).xyz();
 	}
 
 	vector3 transform_model::down() const
@@ -62,7 +70,7 @@ namespace efiilj
 	vector3 transform_model::forward() const
 	{
 		get_model();
-		return m_rotation_.col(2).xyz();
+		return rotation_m_.col(2).xyz();
 	}
 
 	vector3 transform_model::backward() const

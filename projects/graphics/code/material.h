@@ -32,6 +32,7 @@ namespace efiilj
 		void set_program(std::shared_ptr<shader_program> program) { this->program_ = std::move(program); }
 
 		virtual void apply();
+		virtual void draw_editor_gui();
 	};
 
 	class gltf_pbr_base : public material_base
@@ -45,5 +46,6 @@ namespace efiilj
 		float alpha_cutoff;
 
 		void apply() override;
+		void draw_editor_gui() override;
 	};
 }

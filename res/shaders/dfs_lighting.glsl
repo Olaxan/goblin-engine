@@ -40,6 +40,7 @@ layout (location = 0) uniform sampler2D g_position;
 layout (location = 1) uniform sampler2D g_normal;
 layout (location = 2) uniform sampler2D g_albedo;
 layout (location = 3) uniform sampler2D g_orm;
+layout (location = 4) uniform sampler2D g_emissive;
 
 uniform vec3 cam_pos;
 uniform mat4 light_model;
@@ -127,7 +128,7 @@ vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 	float light_dist = length(light_dir);
 	light_dir = normalize(light_dir);
 
-	vec4 color = calc_base(source.base, light_dir, position, normal, albedo, orm);
+	vec4 base_color = calc_base(source.base, light_dir, position, normal, albedo, orm);
 
 	float atten = source.falloff.constant +
 			source.falloff.linear * light_dist + 
@@ -135,22 +136,20 @@ vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 
 	atten = max(1.0, atten);
 	
-	return color / atten;
+	return base_color / atten;
 }
 
 vec4 calc_spotlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 {
-	vec3 light_dir = source.position - position;
-	float light_dist = length(light_dir);
-	light_dir = normalize(light_dir);
+	vec3 light_dirrry = normalize(source.position - position);
 
-	vec4 color = calc_pointlight(position, normal, albedo, orm);
+	vec4 point_color = calc_pointlight(position, normal, albedo, orm);
 
-	float theta = dot(light_dir, normalize(-source.direction));
+	float theta = dot(light_dirrry, normalize(-source.direction));
 	float epsilon = source.cutoff.inner - source.cutoff.outer;
 	float intensity = clamp((theta - source.cutoff.outer) / max(epsilon, 0.001), 0.0, 1.0);
 
-	return color * intensity;
+	return point_color * intensity;
 }
 
 void main()
@@ -161,6 +160,7 @@ void main()
 	vec3 WorldPos = texelFetch(g_position, Uv, 0).rgb;
 	vec3 Color = texelFetch(g_albedo, Uv, 0).rgb;
 	vec3 ORM = texelFetch(g_orm, Uv, 0).rgb;
+	vec4 Emissive = texelFetch(g_emissive, Uv, 0);
 
 	if (source.type == LIGHT_DIRECTIONAL)
 	{

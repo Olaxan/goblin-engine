@@ -1,5 +1,6 @@
 #include "material.h"
 #include <GL/glew.h>
+#include <imgui.h>
 
 namespace efiilj
 {
@@ -33,6 +34,14 @@ namespace efiilj
 
 		program_->set_uniform("base_color_factor", color);
 		
+	}
+
+	void material_base::draw_editor_gui()
+	{
+		ImGui::Text("Material base");
+		ImGui::Checkbox("Double-sided", &double_sided);
+		ImGui::Checkbox("Wireframe", &wireframe);
+		ImGui::ColorEdit4("Base color factor", &color.x);
 	}
 
 	void gltf_pbr_base::apply()
@@ -71,5 +80,16 @@ namespace efiilj
 			it->second->bind(3);
 			program_->set_uniform("tex_emissive", 3);
 		}
+	}
+
+	void gltf_pbr_base::draw_editor_gui()
+	{
+		material_base::draw_editor_gui();
+
+		ImGui::Text("PBR properties");
+		ImGui::ColorEdit3("Emissive factor", &emissive_factor.x);
+		ImGui::SliderFloat("Metallic factor", &metallic_factor, 0.0f, 1.0f);
+		ImGui::SliderFloat("Roughness factor", &roughness_factor, 0.0f, 1.0f);
+		ImGui::SliderFloat("Alpha cutoff", &alpha_cutoff, 0.0f, 1.0f);
 	}
 }	

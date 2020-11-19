@@ -23,6 +23,8 @@
 #include "math_test.h"
 #include "cube.h"
 
+#include "gui_matedit.h"
+
 #include <chrono>
 #include <iostream>
 #include <limits>
@@ -77,19 +79,16 @@ namespace efiilj
 
 			this->window_->SetUiRender([this]()
 					{
-						ImGui::Begin("Camera");
-						ImGui::Text("Position: %s", cam_mgr_ptr->get_active_position().to_mem_string().c_str());
-						ImGui::Text("Rotation: %s", cam_mgr_ptr->get_active_rotation().to_mem_string().c_str());
-						if (ImGui::Button("Reset"))
+						if (selected_node_ != nullptr)
 						{
-							auto trf = cam_mgr_ptr->get_active_camera()->get_transform();
-							trf->set_rotation(vector3());
+							auto mat = selected_node_->get_material();
+							if (mat != nullptr)
+							{
+								ImGui::Begin("Material");
+								mat->draw_editor_gui();
+								ImGui::End();
+							}
 						}
-						ImGui::End();
-
-						ImGui::Begin("Material");
-						ImGui::Text("Hello!!!");
-						ImGui::End();
 					});
 
 			return true;
@@ -157,9 +156,11 @@ namespace efiilj
 		def_renderer.add_light(sun_ptr);
 
 		bool spotlight_on = false;
-		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(0.0f, 10.0f, 0.0f));
-		auto spotlight_ptr = std::make_shared<light_source>(cam_mgr_ptr->get_active_camera()->get_transform(), light_type::spotlight);
-		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
+		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(0.0f, 10.0f, 0.0f), vector3(0.13f));
+		spotlight_trf_ptr->set_parent(helmet_trans_ptr);
+		auto spotlight_ptr = std::make_shared<light_source>(spotlight_trf_ptr, light_type::spotlight);
+		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 1);
+		spotlight_ptr->set_falloff(0, 0, 0.1f);
 		spotlight_ptr->set_cutoff(0.91f, 0.82f);
 		def_renderer.add_light(spotlight_ptr);
 
@@ -294,7 +295,6 @@ namespace efiilj
 				ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
 				float nearest = std::numeric_limits<float>::max();
 				vector3 hit, norm;
-				std::shared_ptr<graphics_node> hover_node;
 
 				for (auto node : def_renderer.get_nodes())
 				{
@@ -305,15 +305,9 @@ namespace efiilj
 						{
 							hit_sphere_trf_ptr->set_position(hit);
 							nearest = len;
-							hover_node = node;
+							selected_node_ = node;
 						}
 					}
-				}
-
-				if (hover_node != nullptr)
-				{
-					auto mat = hover_node->get_material();
-					mat->wireframe = !mat->wireframe;
 				}
 			}
 			else
@@ -381,16 +375,12 @@ namespace efiilj
 			float dt = def_renderer.get_delta_time();
 			float d = def_renderer.get_frame_index() / 100.0f;
 
-			spotlight_trf_ptr->set_rotation(vector3(d, d, 0.0f));
-
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{
 				auto& light = lights[i];
 				auto& trf = light_transforms[i];
 
 				srand(i + 13);
-
-				
 
 				float x = sinf(randf(PI) + d) * randf(-25, 25);
 				float y = cosf(randf(PI) + d) * randf(-25, 25);

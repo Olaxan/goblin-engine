@@ -36,9 +36,7 @@ namespace efiilj
 	bool shader_program::create_program()
 	{
 
-		if (program_state_ == true)
-			return false;
-
+		program_state_ = false;
 		program_id_ = glCreateProgram();
 
 		for (auto& shader : shaders_)
