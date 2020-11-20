@@ -390,7 +390,7 @@ namespace efiilj
 			float dt = def_renderer_->get_delta_time();
 			float d = def_renderer_->get_frame_index() / 100.0f;
 			
-			spotlight_trf_ptr->set_rotation(vector3(0, sinf(d), 0));
+			//spotlight_trf_ptr->set_rotation(vector3(0, sinf(d), 0));
 
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{
