@@ -159,12 +159,12 @@ namespace efiilj
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 
-		auto sun_ptr = std::make_shared<light_source>(light_type::directional);
+		auto sun_ptr = std::make_shared<light_source>(std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), light_type::directional);
 		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.01f, 0.01f);
 		def_renderer_->add_light(sun_ptr);
 
 		bool spotlight_on = false;
-		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(0.0f, 20.0f, 0.0f), vector3(0.13f));
+		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(20.0f, 20.0f, 20.0f), vector3(PI / 2, PI / 2));
 		//spotlight_trf_ptr->set_parent(helmet_trans_ptr);
 		auto spotlight_ptr = std::make_shared<light_source>(spotlight_trf_ptr, light_type::spotlight);
 		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 1);
