@@ -11,6 +11,7 @@
 
 #include "cam_mgr.h"
 #include "node.h"
+#include "def_rend.h"
 
 #include <memory>
 
@@ -27,6 +28,9 @@ namespace efiilj
 
 		std::shared_ptr<camera_manager> cam_mgr_ptr;
 		std::shared_ptr<graphics_node> selected_node_;
+
+		std::shared_ptr<deferred_renderer> def_renderer_;
+		std::shared_ptr<forward_renderer> fwd_renderer_;
 		
 	public:
 

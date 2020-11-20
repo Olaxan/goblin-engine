@@ -1,11 +1,12 @@
 #include "transform.h"
 
+#include <imgui.h>
+
 namespace efiilj
 {
-
+	
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1),
-	rotation_m_(matrix4()), position_m_(matrix4()), scale_m_(matrix4()),
+	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), rot_(matrix4()),
 	model_dirty_(true), inverse_dirty_(true) 
 	{ }
 
@@ -13,23 +14,18 @@ namespace efiilj
 	{
 		if (model_dirty_)
 		{
-			position_m_ = matrix4::get_translation(position_);
-			rotation_m_ = matrix4::get_rotation_euler(rotation_);
-			scale_m_ 	= matrix4::get_scale(scale_);
+			matrix4 t = matrix4::get_translation(position_);
+			rot_ = matrix4::get_rotation_euler(rotation_);
+			matrix4 s 	= matrix4::get_scale(scale_);
 
-			if (parent_ != nullptr)
-			{
-				parent_->get_model();
-				position_m_ = parent_->position_m_ * position_m_;
-				rotation_m_ = parent_->rotation_m_ * rotation_m_;
-				scale_m_ 	= parent_->scale_m_ * scale_m_;
-			}
-
-			model_ = position_m_ * rotation_m_ * scale_m_;
+			model_ = t * rot_ * s;
 
 			model_dirty_ = false;
 			inverse_dirty_ = true;
 		}
+
+		if (parent_)
+			model_ =  model_ * parent_->get_model();
 
 		return model_;
 	}
@@ -48,7 +44,7 @@ namespace efiilj
 	vector3 transform_model::right() const
 	{
 		get_model();
-		return rotation_m_.col(0).xyz();
+		return rot_.col(0).xyz();
 	}
 
 	vector3 transform_model::left() const
@@ -59,7 +55,7 @@ namespace efiilj
 	vector3 transform_model::up() const
 	{
 		get_model();
-		return rotation_m_.col(1).xyz();
+		return rot_.col(1).xyz();
 	}
 
 	vector3 transform_model::down() const
@@ -70,11 +66,20 @@ namespace efiilj
 	vector3 transform_model::forward() const
 	{
 		get_model();
-		return rotation_m_.col(2).xyz();
+		return rot_.col(2).xyz();
 	}
 
 	vector3 transform_model::backward() const
 	{
 		return forward() * -1;
+	}
+
+	void transform_model::draw_transform_gui()
+	{
+		ImGui::Text("Transform");
+		if (ImGui::DragFloat3("Position", &position_.x)
+			|| ImGui::DragFloat3("Rotation", &rotation_.x)
+			|| ImGui::DragFloat3("Scale", &scale_.x))
+			get_model();
 	}
 }

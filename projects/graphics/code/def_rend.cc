@@ -2,6 +2,7 @@
 #include "loader.h"
 
 #include "GL/glew.h"
+#include <imgui.h>
 
 #include <cassert>
 #include <chrono>
@@ -279,5 +280,19 @@ namespace efiilj
 	{
 		geometry_->reload();
 		lighting_->reload();
+	}
+
+	void deferred_renderer::draw_renderer_gui()
+	{
+		static int selected_light = 0;
+		
+		if (light_sources_.size() > 0)
+		{
+			ImGui::Text("Lighting");
+			ImGui::SliderInt("Light", &selected_light, 0, light_sources_.size() - 1);
+
+			auto light = light_sources_[selected_light];
+			light->draw_light_gui();
+		}
 	}
 }

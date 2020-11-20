@@ -575,7 +575,6 @@ namespace efiilj
 			const vector4 up(sinY * sinP, cosP, cosY * sinP, 0.0f);
 			const vector4 forward(sinY * cosP, -sinP, cosP * cosY, 0.0f);
 
-			// OpenGL
 			return matrix4(right, up, forward, vector4(), true);
     	}
 

@@ -82,5 +82,7 @@ namespace efiilj
 		void on_begin_frame() override;
 		void on_end_frame() override;
 
+		void draw_renderer_gui();
+
 	};
 }

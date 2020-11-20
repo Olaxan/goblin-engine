@@ -119,7 +119,7 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
 
 vec4 calc_directional(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 {
-	return calc_base(source.base, source.direction, position, normal, albedo, orm);
+	return calc_base(source.base, -source.direction, position, normal, albedo, orm);
 }
 
 vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)

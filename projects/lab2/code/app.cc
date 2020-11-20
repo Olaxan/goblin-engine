@@ -84,11 +84,19 @@ namespace efiilj
 							auto mat = selected_node_->get_material();
 							if (mat != nullptr)
 							{
+								ImGui::Begin("Node");
+								selected_node_->draw_node_gui();
+								ImGui::End();
+
 								ImGui::Begin("Material");
-								mat->draw_editor_gui();
+								mat->draw_material_gui();
 								ImGui::End();
 							}
 						}
+
+						ImGui::Begin("Light");
+						def_renderer_->draw_renderer_gui();
+						ImGui::End();
 					});
 
 			return true;
@@ -124,8 +132,8 @@ namespace efiilj
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
 
-		deferred_renderer def_renderer(cam_mgr_ptr, set, g_prog_ptr, l_prog_ptr);
-		forward_renderer fwd_renderer(cam_mgr_ptr, set);
+		def_renderer_ = std::make_shared<deferred_renderer>(cam_mgr_ptr, set, g_prog_ptr, l_prog_ptr);
+		fwd_renderer_ = std::make_shared<forward_renderer>(cam_mgr_ptr, set);
 		
 		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
@@ -144,25 +152,25 @@ namespace efiilj
 		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
 		auto beater_scene_ptr = gltf_beater.get_scene(g_prog_ptr, beater_trans_ptr, "Beater");
 
-		def_renderer.add_scene(sponza_scene_ptr);
-		def_renderer.add_scene(helmet_scene_ptr);
-		def_renderer.add_scene(beater_scene_ptr);
+		def_renderer_->add_scene(sponza_scene_ptr);
+		def_renderer_->add_scene(helmet_scene_ptr);
+		def_renderer_->add_scene(beater_scene_ptr);
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 
 		auto sun_ptr = std::make_shared<light_source>(light_type::directional);
 		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.01f, 0.01f);
-		def_renderer.add_light(sun_ptr);
+		def_renderer_->add_light(sun_ptr);
 
 		bool spotlight_on = false;
-		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(0.0f, 10.0f, 0.0f), vector3(0.13f));
-		spotlight_trf_ptr->set_parent(helmet_trans_ptr);
+		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(0.0f, 20.0f, 0.0f), vector3(0.13f));
+		//spotlight_trf_ptr->set_parent(helmet_trans_ptr);
 		auto spotlight_ptr = std::make_shared<light_source>(spotlight_trf_ptr, light_type::spotlight);
 		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 1);
 		spotlight_ptr->set_falloff(0, 0, 0.1f);
 		spotlight_ptr->set_cutoff(0.91f, 0.82f);
-		def_renderer.add_light(spotlight_ptr);
+		def_renderer_->add_light(spotlight_ptr);
 
 		for (size_t i = 0; i < NUM_LIGHTS; i++)
 		{
@@ -191,8 +199,8 @@ namespace efiilj
 
 			auto node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, mat_ptr, trf_ptr);
 
-			def_renderer.add_light(light);
-			fwd_renderer.add_node(node_ptr);
+			def_renderer_->add_light(light);
+			fwd_renderer_->add_node(node_ptr);
 		}
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
@@ -202,7 +210,12 @@ namespace efiilj
 
 		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
 		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
-		fwd_renderer.add_node(hit_sphere_node_ptr);
+		fwd_renderer_->add_node(hit_sphere_node_ptr);
+
+		auto parent_test_trf = std::make_shared<transform_model>(vector3(0, 0, 1.0f));
+		parent_test_trf->set_parent(helmet_trans_ptr);
+		auto parent_test_node = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, parent_test_trf);
+		fwd_renderer_->add_node(parent_test_node);
 
 		std::set<int> keys;
 		
@@ -227,17 +240,17 @@ namespace efiilj
 				}
 				else if (key == GLFW_KEY_R)
 				{
-					def_renderer.reload_shaders();
-					fwd_renderer.reload_shaders();
+					def_renderer_->reload_shaders();
+					fwd_renderer_->reload_shaders();
 				}
 				else if (key == GLFW_KEY_B)
 				{
-					for (auto& node : def_renderer.get_nodes())
+					for (auto& node : def_renderer_->get_nodes())
 					{
 						bounds b = node->get_bounds();
 						auto bbox_mesh = std::make_shared<cube>(b.min, b.max);
 						auto bbox_node = std::make_shared<graphics_node>(bbox_mesh, rect_mat_ptr);
-						fwd_renderer.add_node(bbox_node);
+						fwd_renderer_->add_node(bbox_node);
 					}
 				}
 				else if (key == GLFW_KEY_V)
@@ -250,7 +263,7 @@ namespace efiilj
 						{
 							auto vnode_trf = std::make_shared<transform_model>(beater_trans_ptr->get_model() * v, vector3(0), vector3(0.01f, 0.01, 0.01f));
 							auto vnode = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, vnode_trf);
-							fwd_renderer.add_node(vnode);
+							fwd_renderer_->add_node(vnode);
 						}
 					}
 				}
@@ -296,7 +309,7 @@ namespace efiilj
 				float nearest = std::numeric_limits<float>::max();
 				vector3 hit, norm;
 
-				for (auto node : def_renderer.get_nodes())
+				for (auto node : def_renderer_->get_nodes())
 				{
 					if (node->ray_intersect_triangle(r, hit, norm))
 					{
@@ -366,14 +379,18 @@ namespace efiilj
 
 			if (keys.find(GLFW_KEY_LEFT_CONTROL) != keys.end())
 			{
-				def_renderer.toggle_debug();
-				fwd_renderer.toggle_debug();
+				def_renderer_->toggle_debug();
+				fwd_renderer_->toggle_debug();
 			}
 
 			cam_mgr_ptr->update_camera();
 
-			float dt = def_renderer.get_delta_time();
-			float d = def_renderer.get_frame_index() / 100.0f;
+			//spotlight_trf_ptr->set_position(camera_trans_ptr->get_position());
+
+			float dt = def_renderer_->get_delta_time();
+			float d = def_renderer_->get_frame_index() / 100.0f;
+			
+			spotlight_trf_ptr->set_rotation(vector3(0, sinf(d), 0));
 
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{
@@ -390,16 +407,16 @@ namespace efiilj
 				trf->set_position(light->get_transform()->get_position());
 			}
 
-			srand(def_renderer.get_frame_index());
+			srand(def_renderer_->get_frame_index());
 
-			def_renderer.begin_frame();
-			fwd_renderer.begin_frame();
+			def_renderer_->begin_frame();
+			fwd_renderer_->begin_frame();
 
-			def_renderer.render();
-			fwd_renderer.render();
+			def_renderer_->render();
+			fwd_renderer_->render();
 
-			def_renderer.end_frame();
-			fwd_renderer.end_frame();
+			def_renderer_->end_frame();
+			fwd_renderer_->end_frame();
 
 			this->window_->SwapBuffers();
 			

@@ -15,9 +15,7 @@ namespace efiilj
 		mutable matrix4 model_;
 		mutable matrix4 inverse_;
 
-		mutable matrix4 rotation_m_;
-		mutable matrix4 scale_m_;
-		mutable matrix4 position_m_;
+		mutable matrix4 rot_;
 
 		vector4 position_;
 		vector4 scale_;
@@ -52,9 +50,9 @@ namespace efiilj
 		std::shared_ptr<transform_model> get_parent() const { return parent_; }
 
 		// once swizzling works, re-make this to be refs
-		vector3 get_position() const { return position_m_.col(3).xyz(); }
+		vector3 get_position() const { return get_model() * vector3(0, 0, 0); /* position_.xyz();*/ }
 		vector3 get_rotation() const { return rotation_.xyz(); }
-		vector3 get_scale() const { return scale_.xyz(); }
+		vector3 get_scale()	   const { return scale_.xyz(); }
 
 		void set_position(const vector3& position) { position_ = vector4(position, 1.0f); model_dirty_ = true; }
 		void set_rotation(const vector3& rotation) { rotation_ = vector4(rotation, 1.0f); model_dirty_ = true; }
@@ -100,6 +98,8 @@ namespace efiilj
 		 * \return Unit vector down relative to transform
 		 */
 		vector3 down() const;
+
+		void draw_transform_gui();
 
 		~transform_model()
 			= default;

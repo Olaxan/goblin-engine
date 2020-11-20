@@ -4,7 +4,8 @@
 #include <utility>
 #include <limits>
 #include <algorithm>
-#include <glm/glm.hpp>
+
+#include <imgui.h>
 
 namespace efiilj
 {
@@ -162,5 +163,11 @@ namespace efiilj
 		norm = (transform_->get_model() * vector4(norm, 1.0f)).xyz();
 
 		return is_hit;
+	}
+
+	void graphics_node::draw_node_gui()
+	{
+		ImGui::Text("Node");
+		transform_->draw_transform_gui();
 	}
 }

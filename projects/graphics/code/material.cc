@@ -36,7 +36,7 @@ namespace efiilj
 		
 	}
 
-	void material_base::draw_editor_gui()
+	void material_base::draw_material_gui()
 	{
 		ImGui::Text("Material base");
 		ImGui::Checkbox("Double-sided", &double_sided);
@@ -82,9 +82,9 @@ namespace efiilj
 		}
 	}
 
-	void gltf_pbr_base::draw_editor_gui()
+	void gltf_pbr_base::draw_material_gui()
 	{
-		material_base::draw_editor_gui();
+		material_base::draw_material_gui();
 
 		ImGui::Text("PBR properties");
 		ImGui::ColorEdit3("Emissive factor", &emissive_factor.x);

@@ -73,5 +73,7 @@ namespace efiilj
 		 * \brief Performs a draw call. View/perspective + model matrices are pushed shader uniforms "u_camera" and "u_model" respectively.
 		 */
 		virtual void draw() const;
+
+		void draw_node_gui();
 	};
 }
