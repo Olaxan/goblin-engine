@@ -66,8 +66,6 @@ namespace efiilj
 				: light_source(std::make_shared<transform_model>(), type) 
 			{}
 
-			std::shared_ptr<transform_model> get_transform() const { return transform_; }
-
 			light_type get_type() const { return type_; }
 
 			void set_base(const light_base& base) { base_ = base; update_falloff(); }
@@ -86,6 +84,8 @@ namespace efiilj
 			cutoff get_cutoff() const { return cutoff_; }
 
 			void set_uniforms(std::shared_ptr<shader_program> program) const;
+
+			std::shared_ptr<transform_model> get_transform() const { return transform_; }
 
 			void draw_light_gui();
 	};

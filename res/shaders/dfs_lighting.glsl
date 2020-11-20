@@ -119,7 +119,7 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
 
 vec4 calc_directional(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 {
-	return calc_base(source.base, -source.direction, position, normal, albedo, orm);
+	return calc_base(source.base, source.direction, position, normal, albedo, orm);
 }
 
 vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
@@ -128,7 +128,7 @@ vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 	float light_dist = length(light_dir);
 	light_dir = normalize(light_dir);
 
-	vec4 base_color = calc_base(source.base, light_dir, position, normal, albedo, orm);
+	vec4 color = calc_base(source.base, light_dir, position, normal, albedo, orm);
 
 	float atten = source.falloff.constant +
 			source.falloff.linear * light_dist + 
@@ -136,20 +136,20 @@ vec4 calc_pointlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 
 	atten = max(1.0, atten);
 	
-	return base_color / atten;
+	return color / atten;
 }
 
 vec4 calc_spotlight(vec3 position, vec3 normal, vec3 albedo, vec3 orm)
 {
-	vec3 light_dirrry = normalize(source.position - position);
+	vec3 light_dir = normalize(source.position - position);
 
-	vec4 point_color = calc_pointlight(position, normal, albedo, orm);
+	vec4 color = calc_pointlight(position, normal, albedo, orm);
 
-	float theta = dot(light_dirrry, normalize(-source.direction));
+	float theta = dot(light_dir, normalize(-source.direction));
 	float epsilon = source.cutoff.inner - source.cutoff.outer;
 	float intensity = clamp((theta - source.cutoff.outer) / max(epsilon, 0.001), 0.0, 1.0);
 
-	return point_color * intensity;
+	return color * intensity;
 }
 
 void main()

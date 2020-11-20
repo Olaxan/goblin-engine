@@ -47,13 +47,13 @@ namespace efiilj
 
 		ImGui::Text("Light base");
 		ImGui::ColorPicker3("Color", &base_.color.x);
-		ImGui::DragFloat("Ambient intensity", &base_.ambient_intensity);
-		ImGui::DragFloat("Diffuse intensity", &base_.diffuse_intensity);
+		ImGui::DragFloat("Ambient intensity", &base_.ambient_intensity, 0.01f);
+		ImGui::DragFloat("Diffuse intensity", &base_.diffuse_intensity, 0.01f);
 
 		ImGui::Text("Attenuation");
-		ImGui::DragFloat("Constant", &falloff_.constant, 0, FLT_MAX);
-		ImGui::DragFloat("Linear", &falloff_.linear, 0, FLT_MAX);
-		ImGui::DragFloat("Exponential", &falloff_.exponential, 0, FLT_MAX);
+		ImGui::DragFloat("Constant", &falloff_.constant, 0.01f, 0, FLT_MAX);
+		ImGui::DragFloat("Linear", &falloff_.linear, 0.01f, 0, FLT_MAX);
+		ImGui::DragFloat("Exponential", &falloff_.exponential, 0.01f, 0, FLT_MAX);
 
 		if (type_ == light_type::spotlight)
 		{

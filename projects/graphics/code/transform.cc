@@ -77,9 +77,9 @@ namespace efiilj
 	void transform_model::draw_transform_gui()
 	{
 		ImGui::Text("Transform");
-		if (ImGui::DragFloat3("Position", &position_.x)
-			|| ImGui::DragFloat3("Rotation", &rotation_.x)
-			|| ImGui::DragFloat3("Scale", &scale_.x))
-			get_model();
+		if (ImGui::DragFloat3("Position", &position_.x, 0.1f)
+			|| ImGui::DragFloat3("Rotation", &rotation_.x, 0.1f)
+			|| ImGui::DragFloat3("Scale", &scale_.x, 0.1f))
+			model_dirty_ = true;
 	}
 }
