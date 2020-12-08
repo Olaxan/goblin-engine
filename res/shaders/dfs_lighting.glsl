@@ -112,7 +112,7 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
 	vec3 specular     = numerator / max(denominator, 0.001);  
 		
 	float NdotL = max(dot(normal, direction), 0.0);                
-	vec3 result = (kD * albedo / PI + specular) * light.color * light.diffuse_intensity * NdotL;
+	vec3 result = (kD * albedo / PI + specular) * light.color * light.diffuse_intensity * max(NdotL, light.ambient_intensity);
 
 	return vec4(result, 1.0);
 }
