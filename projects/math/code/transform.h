@@ -8,7 +8,7 @@ namespace efiilj
 	/**
 	 * \brief A class to represent a point in 3D-space.
 	 */
-	struct transform_model
+	class transform_model
 	{
 	private:
 

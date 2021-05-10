@@ -115,6 +115,23 @@ namespace efiilj
 		}	
 	}
 
+	int gltf_model_loader::get_attribute_type(const std::string& name)
+	{
+		if (name.compare("POSITION") == 0)
+			return 0;
+
+		if (name.compare("NORMAL") == 0)
+			return 1;
+
+		if (name.compare("TEXCOORD_0") == 0)
+			return 2;
+
+		if (name.compare("TANGENT") == 0)
+			return 3;
+
+		return -1;
+	}
+
 	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary = false)
 	{
 		tinygltf::TinyGLTF loader;
@@ -151,7 +168,7 @@ namespace efiilj
 		if (!model_ready_)
 		{
 			fprintf(stderr, "ERROR: Model not loaded!\n");
-			return new_scene ;
+			return new_scene;
 		}
 
 		get_materials(program, new_scene);
@@ -180,6 +197,34 @@ namespace efiilj
 		return new_scene;
 	}
 
+	size_t gltf_model_loader::calculate_vbo_size(tinygltf::Primitive& prim)
+	{
+		size_t vbo_size = 0;
+		for (auto &attrib : prim.attributes)
+		{
+			tinygltf::Accessor accessor = model_.accessors[attrib.second];
+			tinygltf::BufferView view = model_.bufferViews[accessor.bufferView];
+			vbo_size += accessor.count * accessor.ByteStride(view); 
+		}
+
+		return vbo_size;
+	}
+
+	accessor_data gltf_model_loader::calculate_accessor_data(tinygltf::Accessor& accessor)
+	{
+		tinygltf::BufferView& view = model_.bufferViews[accessor.bufferView];
+		tinygltf::Buffer& buf = model_.buffers[view.buffer];
+
+		unsigned char* data_start = &buf.data.at(0);
+
+		size_t stride = accessor.ByteStride(view);
+		size_t block_size = stride * accessor.count;
+		size_t offset = view.byteOffset + accessor.byteOffset;
+		size_t size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
+
+		return accessor_data { data_start, stride, block_size, offset, size };
+	}
+
 	std::shared_ptr<mesh_resource> gltf_model_loader::build_mesh(tinygltf::Primitive& prim)
 	{
 
@@ -192,21 +237,8 @@ namespace efiilj
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		vector3 pos_min;
-		vector3 pos_max;
-
-		auto data = std::make_shared<mesh_data>();
-
-		// Calculate size of required VBO (to fit all attributes)
 		
-		size_t vbo_size = 0;
-		for (auto &attrib : prim.attributes)
-		{
-			tinygltf::Accessor accessor = model_.accessors[attrib.second];
-			tinygltf::BufferView view = model_.bufferViews[accessor.bufferView];
-			vbo_size += accessor.count * accessor.ByteStride(view); 
-		}
+		size_t vbo_size = calculate_vbo_size(prim);
 
 		glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
 	
@@ -215,91 +247,98 @@ namespace efiilj
 		for (auto &attrib : prim.attributes)
 		{
 			tinygltf::Accessor accessor = model_.accessors[attrib.second];
-			tinygltf::BufferView& view = model_.bufferViews[accessor.bufferView];
-			tinygltf::Buffer& buf = model_.buffers[view.buffer];
-			
-			size_t stride = accessor.ByteStride(view);
-			size_t block_size = stride * accessor.count;
-			size_t offset = view.byteOffset + accessor.byteOffset;
+			accessor_data data = calculate_accessor_data(accessor);
 
-			glBufferSubData(GL_ARRAY_BUFFER, block_offset, block_size, &buf.data.at(0) + offset);
+			glBufferSubData(GL_ARRAY_BUFFER, block_offset, data.block_size, data.data_start + data.offset);
 			
-			int vaa = -1;
-			int size = (accessor.type == TINYGLTF_TYPE_SCALAR) ? 1 : accessor.type;
-			if (attrib.first.compare("POSITION") == 0)
-			{
-				vaa = 0;
+			int vaa = get_attribute_type(attrib.first);
+
+			if (vaa == 0)
 				vertex_count = accessor.count;
 
-				auto& max = accessor.maxValues;
-				auto& min = accessor.minValues;
-
-				if (max.size() >= 3 && min.size() >= 3)
-				{
-					pos_max = vector3(max[0], max[1], max[2]);
-					pos_min = vector3(min[0], min[1], min[2]);
-				}
-
-				// Stopgap fix, demand 3 comp. vectors for position
-				assert(accessor.type == 3);
-
-				data->positions.resize(accessor.count);
-				memcpy(data->positions.data(), &buf.data.at(0) + offset, block_size);
-			}	
-
-			if (attrib.first.compare("NORMAL") == 0)
-			{
-				vaa = 1;
-
-				assert(accessor.type == 3);
-
-				data->normals.resize(accessor.count);
-				memcpy(data->normals.data(), &buf.data.at(0) + offset, block_size);
-			}
-
-			if (attrib.first.compare("TEXCOORD_0") == 0)
-				vaa = 2;
-
-			if (attrib.first.compare("TANGENT") == 0)
-				vaa = 3;
-
 			glEnableVertexAttribArray(vaa);
-			glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized, 0, (void*)block_offset);
+			glVertexAttribPointer(vaa, data.size, accessor.componentType, accessor.normalized, 0, (void*)block_offset);
 
-			block_offset += block_size;
-		
+			block_offset += data.block_size;
 		}
 
-		// Buffer mesh indices
 		tinygltf::Accessor i_accessor = model_.accessors[prim.indices];
-		tinygltf::BufferView& i_view = model_.bufferViews[i_accessor.bufferView];
-		tinygltf::Buffer& i_buf = model_.buffers[i_view.buffer];
-		size_t i_offset = i_view.byteOffset + i_accessor.byteOffset;
-		size_t i_block_size = i_accessor.count * i_accessor.ByteStride(i_view);
+		accessor_data i_data = calculate_accessor_data(i_accessor);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_block_size, 
-				&i_buf.data.at(i_offset), GL_STATIC_DRAW);
-
-		unsigned short* temp = new unsigned short[i_accessor.count];
-		memcpy(temp, &i_buf.data.at(0) + i_offset, i_block_size);
-		data->indices.resize(i_accessor.count);
-
-		for (size_t i = 0; i < i_accessor.count; i++)
-		{
-			data->indices[i] = static_cast<unsigned>(temp[i]);	
-		}
-
-		delete[] temp;
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_data.block_size, 
+				i_data.data_start + i_data.offset, GL_STATIC_DRAW);
 
 		glBindVertexArray(0);
 
 		auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
 		mesh_ptr->material_index = prim.material;
-		mesh_ptr->set_bounds(pos_min, pos_max);
-		mesh_ptr->set_mesh_data(data);
 
 		return mesh_ptr;	
+	}
+
+	std::shared_ptr<physics_mesh> gltf_model_loader::build_physics_mesh(tinygltf::Primitive& prim)
+	{
+
+		vector3 pos_min;
+		vector3 pos_max;
+
+		auto mesh = std::make_shared<physics_mesh>();
+	
+		size_t block_offset = 0;
+		for (auto &attrib : prim.attributes)
+		{
+			tinygltf::Accessor accessor = model_.accessors[attrib.second];
+			accessor_data data = calculate_accessor_data(accessor);
+			int vaa = get_attribute_type(attrib.first);
+
+			switch (vaa)
+			{
+				case 0:
+				{
+					auto& max = accessor.maxValues;
+					auto& min = accessor.minValues;
+
+					if (max.size() >= 3 && min.size() >= 3)
+					{
+						pos_max = vector3(max[0], max[1], max[2]);
+						pos_min = vector3(min[0], min[1], min[2]);
+					}
+
+					assert(accessor.type == 3);
+
+					mesh->_positions.resize(accessor.count);
+					memcpy(mesh->_positions.data(), data.data_start + data.offset, data.block_size);
+					break;
+				}	
+
+				case 1:
+				{
+					assert(accessor.type == 3);
+
+					mesh->_normals.resize(accessor.count);
+					memcpy(mesh->_normals.data(), data.data_start + data.offset, data.block_size);
+					break;
+				}
+			}
+
+			block_offset += data.block_size;
+		}
+
+		tinygltf::Accessor i_accessor = model_.accessors[prim.indices];
+		accessor_data i_data = calculate_accessor_data(i_accessor);
+
+		unsigned short* temp = new unsigned short[i_accessor.count];
+		memcpy(temp, i_data.data_start + i_data.offset, i_data.block_size);
+		mesh->_indices.resize(i_accessor.count);
+
+		for (size_t i = 0; i < i_accessor.count; i++)
+			mesh->_indices[i] = static_cast<unsigned>(temp[i]);	
+
+		mesh->set_bounds(pos_min, pos_max);
+
+		delete[] temp;
+		return mesh;
 	}
 
 	void gltf_model_loader::link_texture(std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type)
@@ -314,7 +353,6 @@ namespace efiilj
 
 			mat->add_texture(type, std::make_shared<texture_resource>(src.width, src.height, &src.image.at(0), tex_format, tex_type));
 		}
-
 	}
 
 	void gltf_model_loader::parse_node(tinygltf::Node& node, std::shared_ptr<scene> new_scene)

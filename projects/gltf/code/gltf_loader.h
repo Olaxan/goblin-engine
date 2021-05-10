@@ -1,12 +1,11 @@
 #pragma once
 
 #include "tiny_gltf.h"
-#include "mesh_res.h"
+#include "phys_mesh.h"
 #include "program.h"
 #include "node.h"
 #include "material.h"
 #include "camera.h"
-#include "col_data.h"
 #include "scene.h"
 
 #include <string>
@@ -14,6 +13,16 @@
 
 namespace efiilj 
 {
+	struct accessor_data
+	{
+		unsigned char* data_start;
+
+		size_t stride;
+		size_t block_size;
+		size_t offset;
+		size_t size;
+	};
+
 	class gltf_model_loader
 	{
 	private:
@@ -22,6 +31,7 @@ namespace efiilj
 		void parse_node(tinygltf::Node&, std::shared_ptr<scene> scene);
 
 		std::shared_ptr<mesh_resource> build_mesh(tinygltf::Primitive&);
+		std::shared_ptr<physics_mesh> build_physics_mesh(tinygltf::Primitive&);
 
 		unsigned get_meshes(std::shared_ptr<scene> scene);
 		unsigned get_materials(
@@ -30,10 +40,14 @@ namespace efiilj
 		
 		bool load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary);
 
+		size_t calculate_vbo_size(tinygltf::Primitive& prim);
+		accessor_data calculate_accessor_data(tinygltf::Accessor&);
+
 		static size_t type_component_count(const std::string& type);
 		static size_t component_type_size(int type);
 		static unsigned get_format(int components);
 		static unsigned get_type(int bits);
+		static int get_attribute_type(const std::string&);
 
 		tinygltf::Model model_;
 		bool model_ready_;
@@ -54,7 +68,7 @@ namespace efiilj
 				std::string name = "GLTF"
 		);
 
-		std::shared_ptr<mesh_data> get_mesh_data();
+		std::shared_ptr<physics_mesh> get_mesh_data();
 	
 		~gltf_model_loader();
 	};

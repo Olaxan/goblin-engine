@@ -63,7 +63,7 @@ namespace efiilj
 		init_vertex_buffer(vertices, vertex_count_);
 		init_index_buffer(indices, index_count_);
 
-		bounds_ = bounds(vector3(min.x, min.y, min.z), vector3(max.x, max.y, max.z));
+		//bounds_ = bounds(vector3(min.x, min.y, min.z), vector3(max.x, max.y, max.z));
 	} 	
 
 	cube::cube(const vector3& scale)

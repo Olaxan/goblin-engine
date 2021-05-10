@@ -12,6 +12,7 @@
 #include "cam_mgr.h"
 #include "node.h"
 #include "def_rend.h"
+#include "sim.h"
 
 #include <memory>
 
@@ -26,11 +27,12 @@ namespace efiilj
 		float time_;
 		bool is_dragging_mouse_, is_mouse_captured_, is_software_renderer_;
 
-		std::shared_ptr<camera_manager> cam_mgr_ptr;
-		std::shared_ptr<graphics_node> selected_node_;
+		std::shared_ptr<camera_manager> _cam_mgr;
+		std::shared_ptr<graphics_node> _selected_node;
 
-		std::shared_ptr<deferred_renderer> def_renderer_;
-		std::shared_ptr<forward_renderer> fwd_renderer_;
+		std::shared_ptr<deferred_renderer> _def_renderer;
+		std::shared_ptr<forward_renderer> _fwd_renderer;
+		std::shared_ptr<simulator> _simulator;
 		
 	public:
 

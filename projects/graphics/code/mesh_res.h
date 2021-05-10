@@ -1,9 +1,6 @@
 #pragma once
 
 #include "vertex.h"
-#include "bounds.h"
-#include "col_data.h"
-
 #include <memory>
 
 namespace efiilj
@@ -23,9 +20,6 @@ namespace efiilj
 		void init_vertex_buffer(vertex* vertex_list, int count);
 		void init_index_buffer(unsigned int* index_list, int count);
 		void init_array_object();
-
-		bounds bounds_;
-		std::shared_ptr<mesh_data> mesh_;
 
 	public:
 
@@ -50,18 +44,8 @@ namespace efiilj
 
 		virtual void draw_elements() const;
 
-		void set_bounds(const vector3& min, const vector3& max) { bounds_ = bounds(min,  max); }
-		void set_bounds(const bounds& bounds) { bounds_ = bounds; }
-		const bounds& get_bounds() { return bounds_; }
-		bounds get_bounds(const matrix4& mat) { return bounds_.get_transformed_bounds(mat); }
-
-		bool has_mesh_data() const { return has_mesh_data_; }
-		void set_mesh_data(std::shared_ptr<mesh_data> data) { mesh_ = std::move(data); has_mesh_data_ = true; }
-		std::shared_ptr<mesh_data> get_mesh_data() const { return mesh_; }
-
 		void buffer(unsigned target, size_t size, void* data, unsigned usage);
 		void update_vertex_buffer(vertex* vertex_list) const;
-
 
 		~mesh_resource();
 	};
