@@ -187,7 +187,7 @@ namespace efiilj
 
 	std::shared_ptr<scene> gltf_model_loader::get_scene(
 				std::shared_ptr<shader_program> program,
-				std::shared_ptr<transform_model> transform,
+				std::shared_ptr<transform_model> parent,
 				std::string name)
 	{
 		auto new_scene = std::make_shared<scene>();
@@ -215,7 +215,11 @@ namespace efiilj
 			if (mat > -1 && mat < new_scene->materials.size())
 			{	
 				auto mat_ptr = new_scene->materials[mat];
-				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, transform);
+
+				// For now, parent func. is not possible, so copy the parent values
+				auto trf = std::make_shared<transform_model>(*parent);
+
+				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, trf);
 				node_ptr->name = name + "_" + std::to_string(i);
 				new_scene->nodes.push_back(std::move(node_ptr));
 			}

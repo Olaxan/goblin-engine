@@ -39,6 +39,8 @@ namespace efiilj
 				const vector3& rot = vector3(0, 0, 0),
 			    const vector3& scale = vector3(1, 1, 1));
 
+		transform_model(const transform_model& copy);
+
 		/**
 		 * \brief Retrieves a model matrix for the current transform.
 		 * \return A 4-dimensional matrix which represents the point in 3D-space

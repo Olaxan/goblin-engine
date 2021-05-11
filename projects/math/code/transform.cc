@@ -9,6 +9,10 @@ namespace efiilj
 	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), rot_(matrix4()),
 	model_dirty_(true), inverse_dirty_(true) 
 	{ }
+		
+	transform_model::transform_model(const transform_model& copy)
+		: transform_model(copy.get_position(), copy.get_rotation(), copy.get_scale())
+	{ }
 
 	const matrix4& transform_model::get_model() const 
 	{
