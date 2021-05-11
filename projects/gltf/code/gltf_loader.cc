@@ -225,58 +225,6 @@ namespace efiilj
 		return new_scene;
 	}
 
-	//std::shared_ptr<mesh_resource> gltf_model_loader::build_mesh(tinygltf::Primitive& prim)
-	//{
-
-	//	unsigned err;
-	//	unsigned vbo, vao, ibo;
-
-	//	glGenBuffers(1, &vbo);
-	//	glGenBuffers(1, &ibo);
-	//	glGenVertexArrays(1, &vao);
-
-	//	glBindVertexArray(vao);
-	//	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//	
-	//	size_t vbo_size = calculate_vbo_size(prim);
-
-	//	glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STATIC_DRAW);
-	//
-	//	int vertex_count = -1;
-	//	size_t block_offset = 0;
-	//	for (auto &attrib : prim.attributes)
-	//	{
-	//		tinygltf::Accessor accessor = model_.accessors[attrib.second];
-	//		accessor_data data = calculate_accessor_data(accessor);
-
-	//		glBufferSubData(GL_ARRAY_BUFFER, block_offset, data.block_size, data.data_start + data.offset);
-	//		
-	//		int vaa = get_attribute_type(attrib.first);
-
-	//		if (vaa == 0)
-	//			vertex_count = accessor.count;
-
-	//		glEnableVertexAttribArray(vaa);
-	//		glVertexAttribPointer(vaa, data.size, accessor.componentType, accessor.normalized, 0, (void*)block_offset);
-
-	//		block_offset += data.block_size;
-	//	}
-
-	//	tinygltf::Accessor i_accessor = model_.accessors[prim.indices];
-	//	accessor_data i_data = calculate_accessor_data(i_accessor);
-
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_data.block_size, 
-	//			i_data.data_start + i_data.offset, GL_STATIC_DRAW);
-
-	//	glBindVertexArray(0);
-
-	//	auto mesh_ptr = std::make_shared<mesh_resource>(i_accessor.componentType, vao, vbo, ibo, vertex_count, i_accessor.count);
-	//	mesh_ptr->material_index = prim.material;
-
-	//	return mesh_ptr;	
-	//}
-
 	std::shared_ptr<mesh_resource> gltf_model_loader::build_mesh(tinygltf::Primitive& prim)
 	{
 
@@ -359,6 +307,8 @@ namespace efiilj
 			mesh->_indices[i] = static_cast<unsigned>(temp[i]);	
 
 		mesh->set_bounds(pos_min, pos_max);
+		mesh->material_index = prim.material;
+		mesh->finalize();
 
 		delete[] temp;
 		return mesh;
