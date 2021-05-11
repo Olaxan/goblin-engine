@@ -154,6 +154,14 @@ namespace efiilj
 		_def_renderer->add_scene(helmet_scene_ptr);
 		_def_renderer->add_scene(beater_scene_ptr);
 
+		for (auto node : helmet_scene_ptr->nodes)
+		{
+			auto phys_node_ptr = std::make_shared<physics_node>(node);
+			_simulator->add_rigidbody(phys_node_ptr);
+		}
+
+		printf("goodbye");
+
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 

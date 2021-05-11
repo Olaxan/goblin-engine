@@ -1,16 +1,17 @@
 #include "phys_data.h"
+#include <memory>
 
 namespace efiilj
 {
-	physics_node::physics_node(std::shared_ptr<mesh_resource> mesh, std::shared_ptr<transform_model> transform)
-		: _transform(std::move(transform)) 
+
+	physics_node::physics_node(std::shared_ptr<graphics_node> node)
+		: _node(std::move(node)), _mesh(*_node->get_mesh()), _transform(*_node->get_transform())
 	{
-		_mesh = std::move(mesh);
 	}
 
 	bounds physics_node::get_bounds() const
 	{
-		return _mesh->get_bounds(_transform->get_model());
+		return _mesh.get_bounds(_transform.get_model());
 	}
 
 	bool physics_node::point_inside_bounds(const vector3& point) const
@@ -77,19 +78,19 @@ namespace efiilj
 		float nearest = std::numeric_limits<float>::max();
 		vector3 nearest_hit;
 
-		vector3 ra = _transform->get_model_inv() * test.origin;
-		vector3 rb = _transform->get_model_inv() * (test.origin + test.direction * 1000.0f);
+		vector3 ra = _transform.get_model_inv() * test.origin;
+		vector3 rb = _transform.get_model_inv() * (test.origin + test.direction * 1000.0f);
 
 		ray r = ray(ra, (rb - ra).norm());
 
 		const vector3 d = r.direction;
 		const vector3 o = r.origin;
 
-		for (size_t i = 0; i < _mesh->index_count();)
+		for (size_t i = 0; i < _mesh.index_count();)
 		{
-			const vector3& a = _mesh->get_indexed_position(i++);
-			const vector3& b = _mesh->get_indexed_position(i++);
-			const vector3& c = _mesh->get_indexed_position(i++);
+			const vector3& a = _mesh.get_indexed_position(i++);
+			const vector3& b = _mesh.get_indexed_position(i++);
+			const vector3& c = _mesh.get_indexed_position(i++);
 
 			const vector3 e1 = b - a;
 			const vector3 e2 = c - a;
@@ -118,8 +119,8 @@ namespace efiilj
 			}
 		}
 
-		hit = (_transform->get_model() * vector4(nearest_hit, 1.0f)).xyz();
-		norm = (_transform->get_model() * vector4(norm, 1.0f)).xyz();
+		hit = (_transform.get_model() * vector4(nearest_hit, 1.0f)).xyz();
+		norm = (_transform.get_model() * vector4(norm, 1.0f)).xyz();
 
 		return is_hit;
 	}

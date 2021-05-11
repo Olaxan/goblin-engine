@@ -1,7 +1,7 @@
 #include "bounds.h"
 #include "ray.h"
 #include "transform.h"
-#include "mesh_res.h"
+#include "node.h"
 
 #include <memory>
 
@@ -10,12 +10,15 @@ namespace efiilj
 	class physics_node
 	{
 		private:
-			std::shared_ptr<mesh_resource> _mesh;
-			std::shared_ptr<transform_model> _transform;
+
+			std::shared_ptr<graphics_node> _node;
+
+			mesh_resource& _mesh;
+			transform_model& _transform;
 
 		public:
 
-			physics_node(std::shared_ptr<mesh_resource> mesh, std::shared_ptr<transform_model> transform);
+			physics_node(std::shared_ptr<graphics_node> node);
 
 			bounds get_bounds() const;
 			bool point_inside_bounds(const vector3& point) const;
