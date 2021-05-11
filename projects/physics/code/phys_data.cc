@@ -2,18 +2,18 @@
 
 namespace efiilj
 {
-	physics_data::physics_data(std::shared_ptr<physics_mesh> mesh, std::shared_ptr<transform_model> transform)
-		: _mesh(std::move(mesh)), _transform(std::move(transform)) 
+	physics_node::physics_node(std::shared_ptr<mesh_resource> mesh, std::shared_ptr<transform_model> transform)
+		: _transform(std::move(transform)) 
 	{
-
+		_mesh = std::move(mesh);
 	}
 
-	bounds physics_data::get_bounds() const
+	bounds physics_node::get_bounds() const
 	{
 		return _mesh->get_bounds(_transform->get_model());
 	}
 
-	bool physics_data::point_inside_bounds(const vector3& point) const
+	bool physics_node::point_inside_bounds(const vector3& point) const
 	{
 		bounds b = get_bounds();
 
@@ -27,7 +27,7 @@ namespace efiilj
 			&& point.z < (b.max.z + e);
 	}
 
-	bool physics_data::ray_intersect_bounds(const ray& test, vector3& hit) const
+	bool physics_node::ray_intersect_bounds(const ray& test, vector3& hit) const
 	{
 		float tmax = 100000000.0f;
 		float tmin = -tmax;
@@ -67,7 +67,7 @@ namespace efiilj
         return false;
 	}
 
-	bool physics_data::ray_intersect_triangle(const ray& test, vector3& hit, vector3& norm) const
+	bool physics_node::ray_intersect_triangle(const ray& test, vector3& hit, vector3& norm) const
 	{
 
 		if (!ray_intersect_bounds(test, hit))
@@ -85,11 +85,11 @@ namespace efiilj
 		const vector3 d = r.direction;
 		const vector3 o = r.origin;
 
-		for (size_t i = 0; i < _mesh->_indices.size();)
+		for (size_t i = 0; i < _mesh->index_count();)
 		{
-			const vector3& a = _mesh->_positions[_mesh->_indices[i++]];
-			const vector3& b = _mesh->_positions[_mesh->_indices[i++]];
-			const vector3& c = _mesh->_positions[_mesh->_indices[i++]];
+			const vector3& a = _mesh->get_indexed_position(i++);
+			const vector3& b = _mesh->get_indexed_position(i++);
+			const vector3& c = _mesh->get_indexed_position(i++);
 
 			const vector3 e1 = b - a;
 			const vector3 e2 = c - a;

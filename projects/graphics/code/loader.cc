@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <map>
 #include <string.h>
@@ -26,6 +27,8 @@ namespace efiilj
 		std::vector<vector2> uvs;
 
 		std::vector<vertex> packed_vertices;
+
+		printf("OBJ: Loading %s\n", path);
 
 		if (file.is_open())
 		{
@@ -158,13 +161,15 @@ namespace efiilj
 
 	bool object_loader::find_indices(std::vector<vertex>& in_vertices)
 	{
+
+		printf("OBJ: Compiling indices...\n");
+
 		const int count = in_vertices.size();
 
 		if (count < 3)
 			return false;
 
-		index_list_.clear();
-		vertex_list_.clear();
+		_mesh = std::make_shared<mesh_resource>();
 
 		// Map holds vertices and their corresponding indices
 		std::map<vertex, unsigned int> vertices;
@@ -178,28 +183,29 @@ namespace efiilj
 			if (it != vertices.end())
 			{
 				// Add vertex index if an identical vertex exists
-				index_list_.push_back(it->second);
+				_mesh->_indices.emplace_back(it->second);
 			}
 			else
 			{
 				// Add vertex and index if no similar vertex is found
-				vertex_list_.push_back(test);
-				unsigned int index = static_cast<unsigned int>(vertex_list_.size()) - 1;
-				index_list_.push_back(index);
+				unsigned int index = static_cast<unsigned int>(_mesh->vertex_count());
+
+				_mesh->_positions.emplace_back(test.xyzw);
+				_mesh->_uvs.emplace_back(test.uv);
+				_mesh->_normals.emplace_back(test.normal);
+				_mesh->_indices.emplace_back(index);
+
 				vertices[test] = index;
 			}
 		}
 
-		return !index_list_.empty();
+		_mesh->finalize();
+
+		return _mesh->_indices.size() > 0;
 	}
 
 	object_loader::object_loader(const char* path)
 	{
 		is_valid_ = load_from_file(path);
-	}
-
-	std::shared_ptr<mesh_resource> object_loader::get_resource()
-	{
-		return std::make_shared<mesh_resource>(vertex_list_.data(), vertex_count(), index_list_.data(), index_count());
 	}
 }

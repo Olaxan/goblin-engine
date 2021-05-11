@@ -10,9 +10,7 @@ namespace efiilj
 	{
 		private:
 
-		std::vector<std::shared_ptr<physics_data>> _bodies;
-
-	private:
+		std::vector<std::shared_ptr<physics_node>> _bodies;
 
 		typedef std::chrono::duration<float> duration;
 		typedef std::chrono::high_resolution_clock frame_timer; 
@@ -23,18 +21,18 @@ namespace efiilj
 
 	public:
 
-		void add_rigidbody(std::shared_ptr<physics_data> body)
+		void add_rigidbody(std::shared_ptr<physics_node> body)
 		{
 			this->_bodies.push_back(body);
 		}
 
-		void add_rigidbody(const std::vector<std::shared_ptr<physics_data>>& bodies)
+		void add_rigidbody(const std::vector<std::shared_ptr<physics_node>>& bodies)
 		{
 			for (auto& body : bodies)
 				add_rigidbody(body);
 		}
 
-		const std::vector<std::shared_ptr<physics_data>>& get_rigidbodies() const 
+		const std::vector<std::shared_ptr<physics_node>>& get_rigidbodies() const 
 		{ 
 			return _bodies;
 		}

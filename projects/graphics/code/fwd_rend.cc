@@ -6,7 +6,9 @@ namespace efiilj
 	forward_renderer::forward_renderer(std::shared_ptr<camera_manager> camera_manager, const renderer_settings& set)
 		: camera_mgr_(camera_manager), settings_(set), frame_index_(0), debug_(false), delta_time_() 
 	{
+		printf("Forward renderer init...\n");
 		last_frame_ = frame_timer::now();
+		printf("Forward renderer ready\n");
 	}  
 
 	void forward_renderer::reload_shaders() const

@@ -14,8 +14,7 @@ namespace efiilj
 	{
 	private:
 
-		std::vector<vertex> vertex_list_;
-		std::vector<unsigned> index_list_;
+		std::shared_ptr<mesh_resource> _mesh;
 		bool is_valid_;
 
 		bool load_from_file(const char* path);
@@ -35,12 +34,9 @@ namespace efiilj
 		 */
 		bool is_valid() const { return is_valid_; }
 
-		std::vector<vertex> get_vertices() const { return vertex_list_; }
-		std::vector<unsigned> get_indices() const { return index_list_; }
-		
-		size_t vertex_count() const { return vertex_list_.size(); }
-		size_t index_count() const { return index_list_.size(); }
-
-		std::shared_ptr<mesh_resource> get_resource();
+		std::shared_ptr<mesh_resource> get_resource()
+		{
+			return _mesh;
+		}
 	};
 }

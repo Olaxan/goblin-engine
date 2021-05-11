@@ -8,43 +8,103 @@ namespace efiilj
 		: mesh_resource() 
 	{
 
-		vertex vertices[24] = {
+		vector3 positions[24] = 
+		{
+			vector3(min.x, min.y, max.z),
+			vector3(max.x, min.y, max.z),
+			vector3(max.x, max.y, max.z),
+			vector3(min.x, max.y, max.z),
 
-			// Front = S
-			vertex(vector3(min.x, min.y, max.z), vector3(0, 0, 1), vector2(0.25f, 0.33f)),	// 0
-			vertex(vector3(max.x, min.y, max.z), vector3(0, 0, 1), vector2(0.50f, 0.33f)),	// 1
-			vertex(vector3(max.x, max.y, max.z), vector3(0, 0, 1), vector2(0.50f, 0.66f)),	// 2
-			vertex(vector3(min.x, max.y, max.z), vector3(0, 0, 1), vector2(0.25f, 0.66f)),  // 3
+			vector3(max.x, min.y, min.z),
+			vector3(min.x, min.y, min.z),
+			vector3(min.x, max.y, min.z),
+			vector3(max.x, max.y, min.z),
 
-			// Back = N
-			vertex(vector3(max.x, min.y, min.z), vector3(0, 0, -1), vector2(0.75, 0.33f)), // 4
-			vertex(vector3(min.x, min.y, min.z), vector3(0, 0, -1), vector2(1.0f, 0.33f)), // 5
-			vertex(vector3(min.x, max.y, min.z), vector3(0, 0, -1), vector2(1.0f, 0.66f)), // 6
-			vertex(vector3(max.x, max.y, min.z), vector3(0, 0, -1), vector2(0.75, 0.66f)), // 7
+			vector3(min.x, max.y, max.z),
+			vector3(max.x, max.y, max.z),
+			vector3(max.x, max.y, min.z),
+			vector3(min.x, max.y, min.z),
 
-			// Top
-			vertex(vector3(min.x, max.y, max.z), vector3(0, 1, 0), vector2(0.25f, 0.66f)), // 8
-			vertex(vector3(max.x, max.y, max.z), vector3(0, 1, 0), vector2(0.50f, 0.66f)), // 9
-			vertex(vector3(max.x, max.y, min.z), vector3(0, 1, 0), vector2(0.50f, 1.0f)),  // 10
-			vertex(vector3(min.x, max.y, min.z), vector3(0, 1, 0), vector2(0.25f, 1.0f)),  // 11
+			vector3(max.x, min.y, max.z),
+			vector3(min.x, min.y, max.z),
+			vector3(min.x, min.y, min.z),
+			vector3(max.x, min.y, min.z),
 
-			// Bottom
-			vertex(vector3(max.x, min.y, max.z), vector3(0, -1, 0), vector2(0.25f, 0.0f)),  // 12
-			vertex(vector3(min.x, min.y, max.z), vector3(0, -1, 0), vector2(0.50f, 0.0f)),  // 13
-			vertex(vector3(min.x, min.y, min.z), vector3(0, -1, 0), vector2(0.50f, 0.33f)), // 14
-			vertex(vector3(max.x, min.y, min.z), vector3(0, -1, 0), vector2(0.25f, 0.33f)), // 15
+			vector3(min.x, min.y, min.z),
+			vector3(min.x, min.y, max.z),
+			vector3(min.x, max.y, max.z),
+			vector3(min.x, max.y, min.z),
 
-			// Left = W
-			vertex(vector3(min.x, min.y, min.z), vector3(-1, 0, 0), vector2(0.00f, 0.33f)), // 16
-			vertex(vector3(min.x, min.y, max.z), vector3(-1, 0, 0), vector2(0.25f, 0.33f)), // 17
-			vertex(vector3(min.x, max.y, max.z), vector3(-1, 0, 0), vector2(0.25f, 0.66f)), // 18
-			vertex(vector3(min.x, max.y, min.z), vector3(-1, 0, 0), vector2(0.00f, 0.66f)), // 19
+			vector3(max.x, min.y, max.z),
+			vector3(max.x, min.y, min.z),
+			vector3(max.x, max.y, min.z),
+			vector3(max.x, max.y, max.z)
+		};
 
-			// Right = E
-			vertex(vector3(max.x, min.y, max.z), vector3(1, 0, 0), vector2(0.50f, 0.33f)), // 20
-			vertex(vector3(max.x, min.y, min.z), vector3(1, 0, 0), vector2(0.75f, 0.33f)), // 21
-			vertex(vector3(max.x, max.y, min.z), vector3(1, 0, 0), vector2(0.75f, 0.66f)), // 22
-			vertex(vector3(max.x, max.y, max.z), vector3(1, 0, 0), vector2(0.50f, 0.66f)), // 23
+		vector3 normals[24] = 
+		{
+			vector3(0, 0, 1),
+			vector3(0, 0, 1),
+			vector3(0, 0, 1),
+			vector3(0, 0, 1),
+
+			vector3(0, 0, -1),
+			vector3(0, 0, -1),
+			vector3(0, 0, -1),
+			vector3(0, 0, -1),
+			
+			vector3(0, 1, 0),
+			vector3(0, 1, 0),
+			vector3(0, 1, 0),
+			vector3(0, 1, 0),
+
+			vector3(0, -1, 0),
+			vector3(0, -1, 0),
+			vector3(0, -1, 0),
+			vector3(0, -1, 0),
+
+			vector3(-1, 0, 0),
+			vector3(-1, 0, 0),
+			vector3(-1, 0, 0),
+			vector3(-1, 0, 0),
+
+			vector3(1, 0, 0),
+			vector3(1, 0, 0),
+			vector3(1, 0, 0),
+			vector3(1, 0, 0)
+		};
+
+		vector2 uvs[24] = 
+		{
+			vector2(0.25f, 0.33f),
+			vector2(0.50f, 0.33f),
+			vector2(0.50f, 0.66f),
+			vector2(0.25f, 0.66f),
+
+			vector2(0.75, 0.33f),
+			vector2(1.0f, 0.33f),
+			vector2(1.0f, 0.66f),
+			vector2(0.75, 0.66f),
+
+			vector2(0.25f, 0.66f),
+			vector2(0.50f, 0.66f),
+			vector2(0.50f, 1.0f),
+			vector2(0.25f, 1.0f),
+								 
+			vector2(0.25f, 0.0f),
+			vector2(0.50f, 0.0f),
+			vector2(0.50f, 0.33f),
+			vector2(0.25f, 0.33f),
+			  				  
+			vector2(0.00f, 0.33f),
+			vector2(0.25f, 0.33f),
+			vector2(0.25f, 0.66f),
+			vector2(0.00f, 0.66f),
+								  
+			vector2(0.50f, 0.33f),
+			vector2(0.75f, 0.33f),
+			vector2(0.75f, 0.66f),
+			vector2(0.50f, 0.66f)
 		};
 
 		unsigned int indices[36] = {
@@ -56,14 +116,14 @@ namespace efiilj
 			20, 21, 23, 22, 23, 21  // Right
 		};
 
-		this->vertex_count_ = 24;
-		this->index_count_ = 36;
+		clear();
 
-		init_array_object();
-		init_vertex_buffer(vertices, vertex_count_);
-		init_index_buffer(indices, index_count_);
+		this->_positions.insert(_positions.end(), positions, positions + 24);
+		this->_normals.insert(_normals.end(), normals, normals + 24);
+		this->_uvs.insert(_uvs.end(), uvs, uvs + 24);
+		this->_indices.insert(_indices.end(), indices, indices + 24);
 
-		//bounds_ = bounds(vector3(min.x, min.y, min.z), vector3(max.x, max.y, max.z));
+		finalize();
 	} 	
 
 	cube::cube(const vector3& scale)

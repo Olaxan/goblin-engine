@@ -1,7 +1,10 @@
 #pragma once
 
-#include "vertex.h"
 #include <memory>
+#include <vector>
+
+#include "vertex.h"
+#include "bounds.h"
 
 namespace efiilj
 {
@@ -14,20 +17,29 @@ namespace efiilj
 		protected:
 
 		unsigned vbo_, ibo_, vao_, type_;
-		int vertex_count_, index_count_;
-		bool has_mesh_data_;
 
-		void init_vertex_buffer(vertex* vertex_list, int count);
-		void init_index_buffer(unsigned int* index_list, int count);
+		bounds _bounds;
+
+		std::vector<vector3> _positions;
+		std::vector<vector3> _normals;
+		std::vector<vector2> _uvs;
+		std::vector<vector4> _tangents;
+		std::vector<unsigned> _indices;
+
+		void init_vertex_buffer();
+		void init_index_buffer();
 		void init_array_object();
+
+		void set_bounds(const vector3& min, const vector3& max) { _bounds = bounds(min,  max); }
+		void set_bounds(const bounds& bounds) { _bounds = bounds; }
 
 	public:
 
 		/**
 		 * \brief Creates an empty MeshResource object.
 		 */
+
 		mesh_resource();
-		mesh_resource(vertex* vertex_list, int vertex_count, unsigned int* index_list, int index_count);
 		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
 
 		int material_index;
@@ -36,17 +48,38 @@ namespace efiilj
 		unsigned vbo() const { return this->vbo_; }
 		unsigned ibo() const { return this->ibo_; }
 
-		int vertex_count() const { return vertex_count_; }
-		int index_count() const { return index_count_; }
+		size_t vertex_count() const { return _positions.size(); }
+		size_t index_count() const { return _indices.size(); }
+
+		bool has_position_data() const { return _positions.size() > 0; }
+		bool has_normal_data() const { return _normals.size() > 0; }
+		bool has_uv_data() const { return _uvs.size() > 0; }
+		bool has_tangent_data() const { return _tangents.size() > 0; }
+
+		const vector3& get_position(size_t index) const { return _positions[index]; }
+		const vector3& get_indexed_position(size_t index) const { return get_position(_indices[index]); }
+
+		const vector3& get_normal(size_t index) const { return _normals[index]; }
+		const vector2& get_uv(size_t index) const { return _uvs[index]; }
+		const vector4& get_tangent(size_t index) const { return _tangents[index]; }
+
+		void finalize();
 
 		void bind() const;
 		void unbind();
 
+		void clear();
+
 		virtual void draw_elements() const;
 
 		void buffer(unsigned target, size_t size, void* data, unsigned usage);
-		void update_vertex_buffer(vertex* vertex_list) const;
+
+		const bounds& get_bounds() { return _bounds; }
+		bounds get_bounds(const matrix4& mat) { return _bounds.get_transformed_bounds(mat); }
 
 		~mesh_resource();
+
+		friend class gltf_model_loader;
+		friend class object_loader;
 	};
 }

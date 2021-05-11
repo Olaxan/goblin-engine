@@ -22,6 +22,9 @@ namespace efiilj
 		geometry_(std::move(geometry)), 
 		lighting_(std::move(lighting))
 	{
+
+		printf("Deferred renderer init...\n");
+
 		// Setup gbuffer
 		glGenFramebuffers(1, &rbo_);
 		glBindFramebuffer(GL_FRAMEBUFFER, rbo_);
@@ -49,6 +52,8 @@ namespace efiilj
 		setup_quad();
 		setup_uniforms();
 		setup_volumes();
+
+		printf("Deferred renderer ready\n");
 
 	}
 

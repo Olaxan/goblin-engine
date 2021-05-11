@@ -154,18 +154,6 @@ namespace efiilj
 		_def_renderer->add_scene(helmet_scene_ptr);
 		_def_renderer->add_scene(beater_scene_ptr);
 
-		//auto sponza_phys_mesh = gltf_sponza.get_mesh_data();
-		//auto helmet_phys_mesh = gltf_helmet.get_mesh_data();
-		//auto beater_phys_mesh = gltf_beater.get_mesh_data();
-
-		//auto sponza_phys_data = std::make_shared<physics_data>(sponza_phys_mesh, sponza_trans_ptr);
-		//auto helmet_phys_data = std::make_shared<physics_data>(helmet_phys_mesh, helmet_trans_ptr);
-		//auto beater_phys_data = std::make_shared<physics_data>(beater_phys_mesh, beater_trans_ptr);
-
-		//_simulator->add_rigidbody(sponza_phys_data);
-		//_simulator->add_rigidbody(helmet_phys_data);
-		//_simulator->add_rigidbody(beater_phys_data);
-
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 

@@ -7,24 +7,44 @@ namespace efiilj
 	rect::rect() 
 		: mesh_resource() 
 	{
-		vertex quad[] = {
-					vertex(vector3(-1.0f, -1.0f, 0.0f), vector3(0, 0, 1), vector2(0, 0)),
-					vertex(vector3( 1.0f, -1.0f, 0.0f), vector3(0, 0, 1), vector2(1, 0)),
-					vertex(vector3(-1.0f,  1.0f, 0.0f), vector3(0, 0, 1), vector2(1, 1)),
-					vertex(vector3( 1.0f,  1.0f, 0.0f), vector3(0, 0, 1), vector2(0, 1))
-				};
+
+		vector3 positions[4] = 
+		{
+			vector3(-1.0f, -1.0f, 0.0f),
+			vector3( 1.0f, -1.0f, 0.0f),
+			vector3(-1.0f,  1.0f, 0.0f),
+			vector3( 1.0f,  1.0f, 0.0f)
+		};
+
+		vector3 normals[4] = 
+		{
+			vector3(0, 0, 1),
+			vector3(0, 0, 1),
+			vector3(0, 0, 1),
+			vector3(0, 0, 1)
+		};
+
+		vector2 uvs[4] = 
+		{
+			vector2(0, 0),
+			vector2(1, 0),
+			vector2(1, 1),
+			vector2(0, 1)
+		};
 
 		unsigned indices[] = 
 		{
 			0, 1, 2, 2, 1, 3	
 		};
 
-		this->vertex_count_ = 4;
-		this->index_count_ = 6;
+		clear();
 
-		init_array_object();
-		init_vertex_buffer(quad, 4);
-		init_index_buffer(indices, 6);
+		this->_positions.insert(_positions.end(), positions, positions + 24);
+		this->_normals.insert(_normals.end(), normals, normals + 24);
+		this->_uvs.insert(_uvs.end(), uvs, uvs + 24);
+		this->_indices.insert(_indices.end(), indices, indices + 24);
+
+		finalize();
 
 		//bounds_ = bounds(vector3(-1.0f, -1.0f, 0.0f), vector3(1.0f, 1.0f, 0.0f));
 	} 	
