@@ -1,5 +1,6 @@
 #pragma once
 
+#include "quat.h"
 #include "matrix4.h"
 #include <memory>
 
@@ -19,7 +20,7 @@ namespace efiilj
 
 		vector4 position_;
 		vector4 scale_;
-		vector4 rotation_;
+		quaternion _rotation;
 
 		mutable bool model_dirty_;
 		mutable bool inverse_dirty_;
@@ -53,17 +54,19 @@ namespace efiilj
 
 		// once swizzling works, re-make this to be refs
 		vector3 get_position() const { return get_model() * vector3(0, 0, 0); /* position_.xyz();*/ }
-		vector3 get_rotation() const { return rotation_.xyz(); }
+		//vector3 get_rotation() const { return rotation_.xyz(); }
 		vector3 get_scale()	   const { return scale_.xyz(); }
 
 		void set_position(const vector3& position) { position_ = vector4(position, 1.0f); model_dirty_ = true; }
-		void set_rotation(const vector3& rotation) { rotation_ = vector4(rotation, 1.0f); model_dirty_ = true; }
+		//void set_rotation(const vector3& rotation) { rotation_ = vector4(rotation, 1.0f); model_dirty_ = true; }
 		void set_scale(const vector3& scale) { scale_ = vector4(scale, 1.0f); model_dirty_ = true; }
 		void set_scale(const float& scale) { scale_ = vector4(scale, scale, scale, 1.0); model_dirty_ = true; }
 
 		void add_position(const vector3& delta) { position_ += vector4(delta, 0); model_dirty_ = true; }
-		void add_rotation(const vector3& delta) { rotation_ += vector4(delta, 0); model_dirty_ = true; }
+		//void add_rotation(const vector3& delta) { rotation_ += vector4(delta, 0); model_dirty_ = true; }
 		void add_scale(const vector3& delta) { scale_ += vector4(delta, 0); model_dirty_ = true; }
+
+		void add_rotation(const vector3& axis, float angle) { _rotation.add_axis_rotation(axis, angle); model_dirty_ = true; }
 
 		/**
 		 * \brief Returns a forward vector relative to the current transform

@@ -5,6 +5,9 @@
 #include "config.h"
 
 #include "app.h"
+#include "glm/ext/quaternion_geometric.hpp"
+#include "glm/ext/quaternion_trigonometric.hpp"
+#include "glm/fwd.hpp"
 #include "loader.h"
 #include "light.h"
 #include "material.h"
@@ -20,7 +23,12 @@
 #include "math_test.h"
 #include "cube.h"
 
+#include "quat.h"
+
 #include "gui_matedit.h"
+
+#include "glm/gtx/string_cast.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -29,8 +37,8 @@
 #include <set>
 
 #define flase false
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1200
+#define WINDOW_WIDTH 1366
+#define WINDOW_HEIGHT 768
 #define CAMERA_SPEED 0.5f
 #define NUM_LIGHTS 10
 #define PI 3.14159f
@@ -106,6 +114,26 @@ namespace efiilj
 
 		MathTest();
 
+		glm::quat q1;
+		q1 = glm::angleAxis(0.1f, glm::normalize(glm::vec3(1, -1, -1)));
+		glm::rotate(q1, 0.25f, glm::vec3(0, 1, 0));
+		glm::mat4 mat1 = glm::mat4_cast(q1);
+
+		
+		printf("GLM: %f, %f, %f, %f\n", q1.x, q1.y, q1.z, q1.w);
+		printf("%s\n", glm::to_string(mat1).c_str());
+
+		printf("\n\n /////// \n\n");
+
+		quaternion q2;
+		q2 = quaternion(vector3(1, -1, -1).norm(), 0.1f);
+		q2.add_axis_rotation(vector3(0, 1, 0), 0.25f);
+		matrix4 mat2 = q2.get_rotation_matrix();
+		printf("efiilj: %f, %f, %f, %f\n", q2.x, q2.y, q2.z, q2.w);
+		printf("%s\n", mat2.to_mem_string().c_str());
+
+		return;
+
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -138,29 +166,16 @@ namespace efiilj
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
 	
-		gltf_model_loader gltf_sponza("../res/gltf/Sponza/Sponza.gltf");
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		gltf_model_loader gltf_beater("../res/gltf/visp.gltf");
-
-		auto sponza_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(0.05f, 0.05f, 0.05f));
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
-		auto beater_trans_ptr = std::make_shared<transform_model>(vector3(5, 5, 5), vector3(0, PI / 2, PI / 2), vector3(0.5f, 0.5f, 0.5f));
-
-		auto sponza_scene_ptr = gltf_sponza.get_scene(g_prog_ptr, sponza_trans_ptr, "Sponza");
 		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
-		auto beater_scene_ptr = gltf_beater.get_scene(g_prog_ptr, beater_trans_ptr, "Beater");
-
-		_def_renderer->add_scene(sponza_scene_ptr);
 		_def_renderer->add_scene(helmet_scene_ptr);
-		_def_renderer->add_scene(beater_scene_ptr);
 
 		for (auto node : helmet_scene_ptr->nodes)
 		{
 			auto phys_node_ptr = std::make_shared<physics_node>(node);
 			_simulator->add_rigidbody(phys_node_ptr);
 		}
-
-		printf("goodbye");
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
@@ -325,11 +340,6 @@ namespace efiilj
 		{
 			auto camera_ptr = _cam_mgr->get_active_camera();
 			auto camera_trans_ptr = camera_ptr->get_transform(); 
-
-			if (is_mouse_captured_)
-				camera_trans_ptr->set_rotation(vector3(mouse_norm_y_ * 15, -mouse_norm_x_ * 15, 0));
-			else if (is_dragging_mouse_)
-				helmet_trans_ptr->add_rotation(vector3(mouse_norm_y_ - mouse_down_y_, mouse_norm_x_ - mouse_down_x_, 0) * 0.5f);
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -355,16 +365,16 @@ namespace efiilj
 				camera_trans_ptr->add_position(camera_trans_ptr->down() * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_UP) != keys.end())
-				helmet_trans_ptr->add_position(helmet_trans_ptr->forward() * CAMERA_SPEED);
+				camera_trans_ptr->add_rotation(camera_trans_ptr->right(), 0.1f);
 
 			if (keys.find(GLFW_KEY_DOWN) != keys.end())
-				helmet_trans_ptr->add_position(helmet_trans_ptr->backward() * CAMERA_SPEED);
+				camera_trans_ptr->add_rotation(camera_trans_ptr->right(), -0.1f);
 
 			if (keys.find(GLFW_KEY_LEFT) != keys.end())
-				helmet_trans_ptr->add_position(helmet_trans_ptr->left() * CAMERA_SPEED);
+				camera_trans_ptr->add_rotation(camera_trans_ptr->up(), 0.1f);
 
 			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
-				helmet_trans_ptr->add_position(helmet_trans_ptr->right() * CAMERA_SPEED);
+				camera_trans_ptr->add_rotation(camera_trans_ptr->up(), -0.1f);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
@@ -377,12 +387,8 @@ namespace efiilj
 
 			_cam_mgr->update_camera();
 
-			//spotlight_trf_ptr->set_position(camera_trans_ptr->get_position());
-
 			float dt = _def_renderer->get_delta_time();
 			float d = _def_renderer->get_frame_index() / 100.0f;
-			
-			//spotlight_trf_ptr->set_rotation(vector3(0, sinf(d), 0));
 
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{

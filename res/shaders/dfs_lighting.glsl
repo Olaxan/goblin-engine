@@ -1,4 +1,5 @@
-#version 430
+#version 330
+#extension GL_ARB_explicit_uniform_location : require
 
 #define LIGHT_DIRECTIONAL 0
 #define LIGHT_POINT 1

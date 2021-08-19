@@ -7,6 +7,8 @@
 
 #include "vector3.h"
 
+#define EPSILON 0.00001f
+
 namespace efiilj
 {
 
@@ -334,9 +336,9 @@ namespace efiilj
 			return x.cross(y);
 		}
 
-		static bool is_near(const vector4& a, const vector4& b, float treshold = 0.01f)
+		static bool is_near(const vector4& a, const vector4& b, float epsilon = 0.01f)
 		{
-			return dist(a, b) < treshold;
+			return dist(a, b) < epsilon;
 		}
 
 		/// <summary>
@@ -384,16 +386,32 @@ namespace efiilj
 			return sqrt(powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2));
 		}
 
+		float square_magnitude() const
+		{
+			return powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2) + powf(this->w, 2);
+		}
+
+		float magnitude() const
+		{
+			return sqrt(square_magnitude());
+		}
+
 		/// <summary>
 		/// Normalizes the vector, turning it into a unit vector.
 		/// </summary>
-		/// <returns>The resulting unit vector, or returns as-received if the vector length is already zero</returns>
+		/// <returns>The resulting unit vector, or returns as-received if the vector length is already one.</returns>
 		vector4 norm() const
 		{
 			vector4 v = (*this);
-			float len = v.length();
+			float len = v.magnitude();
+			float err = fabs(1.0f - len);
 
-			return len > 0 ? v * (1 / v.length()) : v;
+			return len > EPSILON ? v / len : v;
+		}
+
+		void normalize()
+		{
+			*this = norm();
 		}
 
 		/* === FACTORY FUNCTIONS === */
@@ -404,7 +422,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="normal">The normal to calculate reflection against</param>
 		/// <returns>The resulting reflection vector</returns>
-		vector4 getReflection(const vector4& normal) const
+		vector4 get_reflection(const vector4& normal) const
 		{
 			vector4 unit = normal * (1 / normal.length());
 			return (*this) - unit * 2 * dot(unit);
@@ -438,3 +456,5 @@ namespace efiilj
 		~vector4() { }
 	};
 }
+
+#undef EPSILON

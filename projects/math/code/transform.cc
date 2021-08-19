@@ -6,12 +6,12 @@ namespace efiilj
 {
 	
 	transform_model::transform_model(const vector3& pos, const vector3& rot, const vector3& scale)
-	: model_(true), position_(pos, 1), scale_(scale, 1), rotation_(rot, 1), rot_(matrix4()),
+	: model_(true), position_(pos, 1), scale_(scale, 1), rot_(matrix4()),
 	model_dirty_(true), inverse_dirty_(true) 
 	{ }
 		
 	transform_model::transform_model(const transform_model& copy)
-		: transform_model(copy.get_position(), copy.get_rotation(), copy.get_scale())
+		: transform_model(copy.get_position(), vector3(), copy.get_scale())
 	{ }
 
 	const matrix4& transform_model::get_model() const 
@@ -19,7 +19,7 @@ namespace efiilj
 		if (model_dirty_)
 		{
 			matrix4 t = matrix4::get_translation(position_);
-			rot_ = matrix4::get_rotation_euler(rotation_);
+			rot_ = _rotation.get_rotation_matrix();
 			matrix4 s 	= matrix4::get_scale(scale_);
 
 			model_ = t * rot_ * s;
@@ -27,9 +27,6 @@ namespace efiilj
 			model_dirty_ = false;
 			inverse_dirty_ = true;
 		}
-
-		if (parent_)
-			model_ =  model_ * parent_->get_model();
 
 		return model_;
 	}
@@ -82,7 +79,6 @@ namespace efiilj
 	{
 		ImGui::Text("Transform");
 		if (ImGui::DragFloat3("Position", &position_.x, 0.1f)
-			|| ImGui::DragFloat3("Rotation", &rotation_.x, 0.1f)
 			|| ImGui::DragFloat3("Scale", &scale_.x, 0.1f))
 			model_dirty_ = true;
 	}
