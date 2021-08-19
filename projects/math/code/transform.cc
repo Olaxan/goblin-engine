@@ -16,7 +16,7 @@ namespace efiilj
 
 	const matrix4& transform_model::get_model() const 
 	{
-		if (model_dirty_)
+		if (true || model_dirty_)
 		{
 			matrix4 t = matrix4::get_translation(position_);
 			rot_ = _rotation.get_rotation_matrix();
@@ -26,6 +26,11 @@ namespace efiilj
 
 			model_dirty_ = false;
 			inverse_dirty_ = true;
+		}
+
+		if (parent_ != nullptr)
+		{
+			model_ = parent_->get_model() * model_;
 		}
 
 		return model_;
@@ -42,10 +47,16 @@ namespace efiilj
 		return inverse_;
 	}
 
+	matrix4 transform_model::get_hierarchical_rotation() const
+	{
+		return (parent_ == nullptr) ? rot_ : parent_->get_hierarchical_rotation() * rot_;
+	}
+
 	vector3 transform_model::right() const
 	{
 		get_model();
-		return rot_.col(0).xyz();
+		matrix4 r = get_hierarchical_rotation();
+		return r.col(0).xyz();
 	}
 
 	vector3 transform_model::left() const
@@ -56,7 +67,8 @@ namespace efiilj
 	vector3 transform_model::up() const
 	{
 		get_model();
-		return rot_.col(1).xyz();
+		matrix4 r = get_hierarchical_rotation();
+		return r.col(1).xyz();
 	}
 
 	vector3 transform_model::down() const
@@ -67,7 +79,8 @@ namespace efiilj
 	vector3 transform_model::forward() const
 	{
 		get_model();
-		return rot_.col(2).xyz();
+		matrix4 r = get_hierarchical_rotation();
+		return r.col(2).xyz();
 	}
 
 	vector3 transform_model::backward() const
@@ -82,9 +95,9 @@ namespace efiilj
 			|| ImGui::DragFloat3("Scale", &scale_.x, 0.1f))
 			model_dirty_ = true;
 
-		ImGui::InputFloat4("C1", &rot_(0, 0));
-		ImGui::InputFloat4("C2", &rot_(1, 0));
-		ImGui::InputFloat4("C3", &rot_(2, 0));
-		ImGui::InputFloat4("C4", &rot_(3, 0));
+		ImGui::InputFloat4("X", &rot_(0, 0));
+		ImGui::InputFloat4("Y", &rot_(1, 0));
+		ImGui::InputFloat4("Z", &rot_(2, 0));
+		ImGui::InputFloat4("W", &rot_(3, 0));
 	}
 }

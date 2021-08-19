@@ -217,7 +217,8 @@ namespace efiilj
 				auto mat_ptr = new_scene->materials[mat];
 
 				// For now, parent func. is not possible, so copy the parent values
-				auto trf = std::make_shared<transform_model>(*parent);
+				auto trf = std::make_shared<transform_model>();
+				trf->set_parent(parent);
 
 				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, trf);
 				node_ptr->name = name + "_" + std::to_string(i);

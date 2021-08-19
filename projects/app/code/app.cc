@@ -120,47 +120,6 @@ namespace efiilj
 
 		MathTest();
 
-		glm::quat q1a = glm::angleAxis(0.25f, glm::vec3(1, 0, 0));
-		glm::quat q1b = glm::angleAxis(-0.5f, glm::vec3(0, 1, 0));
-		glm::quat q1c = q1a * q1b;
-
-		quaternion q2a(vector3(1, 0, 0), 0.25f);
-		quaternion q2b(vector3(0, 1, 0), -0.5f);
-		quaternion q2c = q2a * q2b;
-
-		printf("A: %s\nB: %s\n SqrA: %s\n SqrB: %s\n\n",
-				glm::to_string(q1a).c_str(),
-				q2a.xyzw.to_mem_string().c_str(),
-				glm::to_string(q1c).c_str(),
-				q2c.xyzw.to_mem_string().c_str());
-
-		glm::mat4 mat1 = glm::mat4_cast(q1c);
-		matrix4 mat2 = q2c.get_rotation_matrix();
-
-		printf("%s\n%s\n\n",
-				glm::to_string(mat1).c_str(),
-				mat2.to_mem_string().c_str());
-
-		glm::vec3 r1 = mat1[0];
-		vector3 r2 = mat2.col(0).xyz();
-
-		printf("GLM: %s (mag: %f)\nefiilj: %s (mag: %f)\n\n",
-				glm::to_string(r1).c_str(),
-				glm::length(r1),
-				r2.to_mem_string().c_str(),
-				r2.length());
-
-		glm::quat qr1 = glm::angleAxis(0.25f, r1);
-		quaternion qr2 = quaternion(r2, 0.25f);
-
-		printf("GLM: %s (mag: %f)\nefiilj: %s (mag: %f)\n\n",
-				glm::to_string(qr1).c_str(),
-				glm::length(qr1),
-				qr2.xyzw.to_mem_string().c_str(),
-				qr2.magnitude());
-
-		//return;
-
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -194,7 +153,7 @@ namespace efiilj
 		auto rect_mesh_ptr = std::make_shared<rect>();
 	
 		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 10, 0), vector3(0), vector3(5.0f, 5.0f, 5.0f));
+		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(25.0f, 25.0f, 25.0f));
 		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
 		_def_renderer->add_scene(helmet_scene_ptr);
 
@@ -208,12 +167,14 @@ namespace efiilj
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
 
 		auto sun_ptr = std::make_shared<light_source>(std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), light_type::directional);
-		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.01f, 0.01f);
+		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
 		_def_renderer->add_light(sun_ptr);
 
+		auto camera_trans_ptr = _cam_mgr->get_active_camera()->get_transform();
+
 		bool spotlight_on = false;
-		auto spotlight_trf_ptr = std::make_shared<transform_model>(vector3(20.0f, 20.0f, 20.0f), vector3(PI / 2, PI / 2));
-		//spotlight_trf_ptr->set_parent(helmet_trans_ptr);
+		auto spotlight_trf_ptr = std::make_shared<transform_model>(camera_trans_ptr->forward() * 2.0f);
+		spotlight_trf_ptr->set_parent(camera_trans_ptr);
 		auto spotlight_ptr = std::make_shared<light_source>(spotlight_trf_ptr, light_type::spotlight);
 		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 1);
 		spotlight_ptr->set_falloff(0, 0, 0.1f);
@@ -259,11 +220,6 @@ namespace efiilj
 		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
 		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
 		_fwd_renderer->add_node(hit_sphere_node_ptr);
-
-		auto parent_test_trf = std::make_shared<transform_model>(vector3(0, 0, 1.0f));
-		parent_test_trf->set_parent(helmet_trans_ptr);
-		auto parent_test_node = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, parent_test_trf);
-		_fwd_renderer->add_node(parent_test_node);
 
 		std::set<int> keys;
 		
@@ -422,6 +378,8 @@ namespace efiilj
 
 			float dt = _def_renderer->get_delta_time();
 			float d = _def_renderer->get_frame_index() / 100.0f;
+
+			helmet_trans_ptr->add_rotation(vector3(1, 1, 0).norm(), dt * 0.05f);
 
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{

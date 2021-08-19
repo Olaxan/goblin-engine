@@ -49,6 +49,8 @@ namespace efiilj
 		const matrix4& get_model() const;
 		const matrix4& get_model_inv() const;
 
+		matrix4 get_hierarchical_rotation() const;
+
 		void set_parent(std::shared_ptr<transform_model> parent) { parent_ = std::move(parent); }
 		std::shared_ptr<transform_model> get_parent() const { return parent_; }
 
