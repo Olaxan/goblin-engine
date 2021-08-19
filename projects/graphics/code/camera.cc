@@ -20,7 +20,7 @@ namespace efiilj
 		view_ = matrix4::get_lookat(
 					transform_->get_position(),
 					transform_->get_position() + transform_->forward(),
-					up_axis_
+					transform_->up()
 				);
 
 		return view_;

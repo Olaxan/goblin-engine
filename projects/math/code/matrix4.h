@@ -20,7 +20,7 @@ namespace efiilj
 	{
 	private:
 
-		vector4 arr_[4];
+		vector4 _cols[4];
 
 	public:
 
@@ -237,7 +237,7 @@ namespace efiilj
 
 		float& operator [] (const int i)
 		{
-			return arr_[i / 4][i % 4];
+			return _cols[i / 4][i % 4];
 		}
 
 		/// <summary>
@@ -247,7 +247,7 @@ namespace efiilj
 		/// <returns>The value at matrix index n</returns>
 		float& operator () (const int i)
 		{
-			return arr_[i / 4][i % 4];
+			return _cols[i / 4][i % 4];
 		}
 
 		/// <summary>
@@ -258,7 +258,7 @@ namespace efiilj
 		/// <returns>The value at matrix position x, y</returns>
 		float& operator () (const int col, const int row)
 		{
-			return arr_[col][row];
+			return _cols[col][row];
 		}
 
 		/// <summary>
@@ -285,7 +285,7 @@ namespace efiilj
 			if (col >= 4 || row >= 4)
 				throw std::out_of_range("Matrix index out of range");
 
-			return arr_[col].at(row);
+			return _cols[col].at(row);
 		}
 
 		/// <summary>
@@ -293,12 +293,12 @@ namespace efiilj
 		/// </summary>
 		/// <param name="y">The row index to return</param>
 		/// <returns>The row at the specified y-position</returns>
-		vector4 col(const int x) const
+	 	vector4 col(const int x) const
 		{
 			if (x >= 4)
 				throw std::out_of_range("Row index out of range");
 
-			return arr_[x];
+			return _cols[x];
 		}
 
 		/// <summary>
@@ -312,7 +312,7 @@ namespace efiilj
 			if (x >= 4)
 				throw std::out_of_range("Column index out of range");
 
-			arr_[x] = col;
+			_cols[x] = col;
 		}
 
 		/// <summary>
@@ -649,10 +649,10 @@ namespace efiilj
 		std::string to_string() const
 		{
 			std::stringstream ss;
-			ss << at(0, 0) << ", " << at(1, 0) << ", " << at(2, 0) << ", " << at(3, 0) << ";\n";
-			ss << at(0, 1) << ", " << at(1, 1) << ", " << at(2, 1) << ", " << at(3, 1) << ";\n";
-			ss << at(0, 2) << ", " << at(1, 2) << ", " << at(2, 2) << ", " << at(3, 2) << ";\n";
-			ss << at(0, 3) << ", " << at(1, 3) << ", " << at(2, 3) << ", " << at(3, 3) << ";\n";
+			ss << "{" << col(0).to_string() << "}, ";
+			ss << "{" << col(1).to_string() << "}, ";
+			ss << "{" << col(2).to_string() << "}, ";
+			ss << "{" << col(3).to_string() << "}, ";
 			return ss.str();
 		}
 

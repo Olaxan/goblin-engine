@@ -81,5 +81,10 @@ namespace efiilj
 		if (ImGui::DragFloat3("Position", &position_.x, 0.1f)
 			|| ImGui::DragFloat3("Scale", &scale_.x, 0.1f))
 			model_dirty_ = true;
+
+		ImGui::InputFloat4("C1", &rot_(0, 0));
+		ImGui::InputFloat4("C2", &rot_(1, 0));
+		ImGui::InputFloat4("C3", &rot_(2, 0));
+		ImGui::InputFloat4("C4", &rot_(3, 0));
 	}
 }

@@ -1,14 +1,16 @@
 #include "quat.h"
 
+#define EPSILON 0.00001f
+
 namespace efiilj
 {
 
 	quaternion::quaternion()
-		: _axes()
+		: xyzw()
 	{}
 
 	quaternion::quaternion(const vector4& xyzw)
-		: _axes(xyzw)
+		: xyzw(xyzw)
 	{}
 
 	quaternion::quaternion(const vector3& euler)
@@ -35,12 +37,12 @@ namespace efiilj
 
 	float quaternion::square_magnitude() const
 	{
-		return _axes.square_magnitude();
+		return xyzw.square_magnitude();
 	}
 
 	float quaternion::magnitude() const 
 	{
-		return _axes.magnitude();
+		return xyzw.magnitude();
 	}
 
 	quaternion quaternion::norm() const
@@ -50,22 +52,29 @@ namespace efiilj
 
 	void quaternion::normalize()
 	{
-		_axes.normalize();
+		xyzw.normalize();
 	}
 
 	void quaternion::add_axis_rotation(const vector3& axis, const float& angle)
 	{
 
 		quaternion local = get_local_rotation(axis, angle);
+		*this = (local * (*this));
 
-		*this = local * (*this);
+		float err = fabs(1.0f - square_magnitude());
+
+		if (err > EPSILON)
+		{
+			printf("Normalized quaternion from %f\n", err);
+			normalize();
+		}
 
 	}
 	
 	quaternion quaternion::operator * (const quaternion& other) const
 	{
-		const vector4& q1 = _axes;
-		const vector4& q2 = other._axes;
+		const vector4& q1 = xyzw;
+		const vector4& q2 = other.xyzw;
 
 		vector4 q;
 
@@ -124,3 +133,5 @@ namespace efiilj
 		return quaternion(v);
 	}
 }
+
+#undef EPSILON

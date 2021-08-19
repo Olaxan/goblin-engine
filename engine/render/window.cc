@@ -50,7 +50,7 @@ GLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei 
 		printf("Error: %s\n", msg.c_str());
 		break;
 	case GL_DEBUG_TYPE_PERFORMANCE:
-		printf("Performance issue: %s\n", msg.c_str());
+		//printf("Performance issue: %s\n", msg.c_str());
 		break;
 	default:		// Portability, Deprecated, Other
 		break;

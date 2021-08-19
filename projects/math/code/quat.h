@@ -12,7 +12,7 @@ namespace efiilj
 
 			union
 			{
-				vector4 _axes;
+				vector4 xyzw;
 				struct { float x, y, z, w; };
 			};
 

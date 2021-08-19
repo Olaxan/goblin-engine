@@ -5,9 +5,6 @@
 #include "config.h"
 
 #include "app.h"
-#include "glm/ext/quaternion_geometric.hpp"
-#include "glm/ext/quaternion_trigonometric.hpp"
-#include "glm/fwd.hpp"
 #include "loader.h"
 #include "light.h"
 #include "material.h"
@@ -28,7 +25,12 @@
 #include "gui_matedit.h"
 
 #include "glm/gtx/string_cast.hpp"
+#include "glm/gtx/quaternion.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include "glm/common.hpp"
+#include "glm/ext/quaternion_geometric.hpp"
+#include "glm/ext/quaternion_trigonometric.hpp"
+#include "glm/fwd.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -102,6 +104,10 @@ namespace efiilj
 						ImGui::Begin("Light");
 						_def_renderer->draw_renderer_gui();
 						ImGui::End();
+
+						ImGui::Begin("Camera");
+						_cam_mgr->get_active_camera()->get_transform()->draw_transform_gui();
+						ImGui::End();
 					});
 
 			return true;
@@ -114,25 +120,46 @@ namespace efiilj
 
 		MathTest();
 
-		glm::quat q1;
-		q1 = glm::angleAxis(0.1f, glm::normalize(glm::vec3(1, -1, -1)));
-		glm::rotate(q1, 0.25f, glm::vec3(0, 1, 0));
-		glm::mat4 mat1 = glm::mat4_cast(q1);
+		glm::quat q1a = glm::angleAxis(0.25f, glm::vec3(1, 0, 0));
+		glm::quat q1b = glm::angleAxis(-0.5f, glm::vec3(0, 1, 0));
+		glm::quat q1c = q1a * q1b;
 
-		
-		printf("GLM: %f, %f, %f, %f\n", q1.x, q1.y, q1.z, q1.w);
-		printf("%s\n", glm::to_string(mat1).c_str());
+		quaternion q2a(vector3(1, 0, 0), 0.25f);
+		quaternion q2b(vector3(0, 1, 0), -0.5f);
+		quaternion q2c = q2a * q2b;
 
-		printf("\n\n /////// \n\n");
+		printf("A: %s\nB: %s\n SqrA: %s\n SqrB: %s\n\n",
+				glm::to_string(q1a).c_str(),
+				q2a.xyzw.to_mem_string().c_str(),
+				glm::to_string(q1c).c_str(),
+				q2c.xyzw.to_mem_string().c_str());
 
-		quaternion q2;
-		q2 = quaternion(vector3(1, -1, -1).norm(), 0.1f);
-		q2.add_axis_rotation(vector3(0, 1, 0), 0.25f);
-		matrix4 mat2 = q2.get_rotation_matrix();
-		printf("efiilj: %f, %f, %f, %f\n", q2.x, q2.y, q2.z, q2.w);
-		printf("%s\n", mat2.to_mem_string().c_str());
+		glm::mat4 mat1 = glm::mat4_cast(q1c);
+		matrix4 mat2 = q2c.get_rotation_matrix();
 
-		return;
+		printf("%s\n%s\n\n",
+				glm::to_string(mat1).c_str(),
+				mat2.to_mem_string().c_str());
+
+		glm::vec3 r1 = mat1[0];
+		vector3 r2 = mat2.col(0).xyz();
+
+		printf("GLM: %s (mag: %f)\nefiilj: %s (mag: %f)\n\n",
+				glm::to_string(r1).c_str(),
+				glm::length(r1),
+				r2.to_mem_string().c_str(),
+				r2.length());
+
+		glm::quat qr1 = glm::angleAxis(0.25f, r1);
+		quaternion qr2 = quaternion(r2, 0.25f);
+
+		printf("GLM: %s (mag: %f)\nefiilj: %s (mag: %f)\n\n",
+				glm::to_string(qr1).c_str(),
+				glm::length(qr1),
+				qr2.xyzw.to_mem_string().c_str(),
+				qr2.magnitude());
+
+		//return;
 
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
@@ -375,6 +402,12 @@ namespace efiilj
 
 			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
 				camera_trans_ptr->add_rotation(camera_trans_ptr->up(), -0.1f);
+
+			if (keys.find(GLFW_KEY_PAGE_DOWN) != keys.end())
+				camera_trans_ptr->add_rotation(camera_trans_ptr->forward(), 0.1);
+
+			if (keys.find(GLFW_KEY_PAGE_UP) != keys.end())
+				camera_trans_ptr->add_rotation(camera_trans_ptr->forward(), -0.1);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
