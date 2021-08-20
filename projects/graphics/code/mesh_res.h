@@ -35,10 +35,6 @@ namespace efiilj
 
 	public:
 
-		/**
-		 * \brief Creates an empty MeshResource object.
-		 */
-
 		mesh_resource();
 		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
 
@@ -60,8 +56,13 @@ namespace efiilj
 		const vector3& get_indexed_position(size_t index) const { return get_position(_indices[index]); }
 
 		const vector3& get_normal(size_t index) const { return _normals[index]; }
+		const vector3& get_indexed_normal(size_t index) const { return get_normal(_indices[index]); }
+
 		const vector2& get_uv(size_t index) const { return _uvs[index]; }
+		const vector2& get_indexed_uv(size_t index) const { return get_uv(_indices[index]); }
+
 		const vector4& get_tangent(size_t index) const { return _tangents[index]; }
+		const vector4& get_indexed_tangent(size_t index) const { return get_tangent(_indices[index]); }
 
 		void finalize();
 

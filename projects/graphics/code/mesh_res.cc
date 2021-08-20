@@ -8,18 +8,15 @@ namespace efiilj
 		: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), material_index(-1)
 	{ }
 
-	//mesh_resource::
-	//mesh_resource(vertex* vertex_list, const int vertex_count, unsigned int* index_list, const int index_count) 
-	//	: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), 
-	//	vertex_count_(vertex_count), index_count_(index_count), 
-	//	material_index(-1) 
-	//{
-	//	init_array_object();
-	//	init_vertex_buffer(vertex_list, vertex_count);
-	//	init_index_buffer(index_list, index_count);
-	//}
-
-	mesh_resource::mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo, int vertex_count, int index_count)
+	mesh_resource::mesh_resource
+		(
+			unsigned type, 
+			unsigned vao, 
+			unsigned vbo, 
+			unsigned ibo, 
+			int vertex_count, 
+			int index_count
+		)
 		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), material_index(-1)
 	{}
 
@@ -34,7 +31,7 @@ namespace efiilj
 
 		stride += has_position_data() * sizeof(vector3);
 		stride += has_normal_data()  * sizeof(vector3);
-		stride += has_uv_data()  * sizeof(vector2);
+		stride += has_uv_data() * sizeof(vector2);
 		stride += has_tangent_data() * sizeof(vector4);
 
 		glBufferData(GL_ARRAY_BUFFER, vertex_count() * stride, NULL, GL_STATIC_DRAW);
