@@ -65,13 +65,16 @@ namespace efiilj
 		const vector4& get_tangent(size_t index) const { return _tangents[index]; }
 		const vector4& get_indexed_tangent(size_t index) const { return get_tangent(_indices[index]); }
 
-		void finalize();
+		void build();
+		void build(unsigned int usage);
+		void buffer();
 
 		void bind() const;
 		void unbind();
 
 		void clear();
 
+		virtual void update();
 		virtual void draw_elements() const;
 
 		void buffer(unsigned target, size_t size, void* data, unsigned usage);

@@ -199,7 +199,8 @@ namespace efiilj
 			}
 		}
 
-		_mesh->finalize();
+		_mesh->build();
+		_mesh->buffer();
 
 		return _mesh->_indices.size() > 0;
 	}

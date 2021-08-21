@@ -228,12 +228,13 @@ namespace efiilj
 
 				if (key == GLFW_KEY_TAB)
 				{
-					if (is_mouse_captured_)
-						window_->SetCursorMode(GLFW_CURSOR_NORMAL);
-					else
-						window_->SetCursorMode(GLFW_CURSOR_DISABLED);
-
 					is_mouse_captured_ = !is_mouse_captured_;
+
+					if (is_mouse_captured_)
+						window_->SetCursorMode(GLFW_CURSOR_DISABLED);
+					else
+						window_->SetCursorMode(GLFW_CURSOR_NORMAL);
+
 				}
 				else if (key == GLFW_KEY_LEFT_CONTROL)
 				{
@@ -248,10 +249,9 @@ namespace efiilj
 				{
 					auto& bodies = _simulator->get_rigidbodies();
 
-					if (bodies.size() > 0)
+					for (auto& body : bodies)
 					{
-						bounds b = bodies[0]->get_bounds();
-						auto bbox_mesh = std::make_shared<bbox>(b.min, b.max);
+						auto bbox_mesh = std::make_shared<bbox>(body);
 						auto bbox_node = std::make_shared<graphics_node>(bbox_mesh, rect_mat_ptr);
 						_fwd_renderer->add_node(bbox_node);
 					}
@@ -335,10 +335,10 @@ namespace efiilj
 				camera_trans_ptr->add_position(camera_trans_ptr->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->left() * -CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->right() * -CAMERA_SPEED);
+				camera_trans_ptr->add_position(camera_trans_ptr->left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
 				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);

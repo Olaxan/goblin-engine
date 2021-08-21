@@ -312,7 +312,9 @@ namespace efiilj
 
 		mesh->set_bounds(pos_min, pos_max);
 		mesh->material_index = prim.material;
-		mesh->finalize();
+
+		mesh->build();
+		mesh->buffer();
 
 		delete[] temp;
 		return mesh;

@@ -123,7 +123,8 @@ namespace efiilj
 		this->_uvs.insert(_uvs.end(), uvs, uvs + 24);
 		this->_indices.insert(_indices.end(), indices, indices + 36);
 
-		finalize();
+		build(GL_STATIC_DRAW);
+		buffer();
 	} 	
 
 	cube::cube(const vector3& scale)

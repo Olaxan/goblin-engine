@@ -8,8 +8,14 @@ namespace efiilj
 		: _type(GL_UNSIGNED_INT), _usage(GL_STATIC_DRAW), _vbo(0), _ibo(0), _vao(0), material_index(-1)
 	{ }
 
-	void mesh_resource::finalize()
+	void mesh_resource::build()
 	{
+		build(GL_STATIC_DRAW);
+	}
+
+	void mesh_resource::build(unsigned int usage)
+	{
+		_usage = usage;
 
 		init_array_object();
 		init_vertex_buffer();
@@ -23,6 +29,10 @@ namespace efiilj
 		stride += has_tangent_data() * sizeof(vector4);
 
 		glBufferData(GL_ARRAY_BUFFER, get_vertex_count() * stride, NULL, _usage);
+	}
+
+	void mesh_resource::buffer()
+	{
 
 		size_t offset = 0;
 		if (has_position_data())
@@ -62,6 +72,12 @@ namespace efiilj
 		}
 	}
 
+	void mesh_resource::update()
+	{
+		if (_usage == GL_DYNAMIC_DRAW)
+			buffer();
+	}
+
 	void mesh_resource::init_vertex_buffer()
 	{
 		if (_vbo != 0)
@@ -88,13 +104,6 @@ namespace efiilj
 
 		glGenVertexArrays(1, &_vao);
 		glBindVertexArray(_vao);
-	}
-
-	void mesh_resource::buffer(unsigned target, size_t size, void* data, unsigned usage)
-	{
-		bind();
-		glBufferData(target, size, data, usage);
-		unbind();	
 	}
 
 	void mesh_resource::bind() const

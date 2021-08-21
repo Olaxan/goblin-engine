@@ -44,7 +44,8 @@ namespace efiilj
 		this->_uvs.insert(_uvs.end(), uvs, uvs + 24);
 		this->_indices.insert(_indices.end(), indices, indices + 24);
 
-		finalize();
+		build();
+		buffer();
 
 		//bounds_ = bounds(vector3(-1.0f, -1.0f, 0.0f), vector3(1.0f, 1.0f, 0.0f));
 	} 	

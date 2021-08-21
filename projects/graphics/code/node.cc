@@ -41,6 +41,7 @@ namespace efiilj
 	{
 		matrix4 model = is_absolute_ ? matrix4() : transform_->get_model();
 		material_->get_program()->set_uniform("model", model);
+		mesh_->update();
 		mesh_->draw_elements();
 	}
 
