@@ -121,7 +121,7 @@ namespace efiilj
 		this->_positions.insert(_positions.end(), positions, positions + 24);
 		this->_normals.insert(_normals.end(), normals, normals + 24);
 		this->_uvs.insert(_uvs.end(), uvs, uvs + 24);
-		this->_indices.insert(_indices.end(), indices, indices + 24);
+		this->_indices.insert(_indices.end(), indices, indices + 36);
 
 		finalize();
 	} 	

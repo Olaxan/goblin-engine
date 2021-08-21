@@ -16,7 +16,7 @@ namespace efiilj
 	{
 		protected:
 
-		unsigned vbo_, ibo_, vao_, type_;
+		unsigned _vbo, _ibo, _vao, _type, _usage;
 
 		bounds _bounds;
 
@@ -40,9 +40,11 @@ namespace efiilj
 
 		int material_index;
 
-		unsigned vao() const { return this->vao_; }
-		unsigned vbo() const { return this->vbo_; }
-		unsigned ibo() const { return this->ibo_; }
+		unsigned vao() const { return this->_vao; }
+		unsigned vbo() const { return this->_vbo; }
+		unsigned ibo() const { return this->_ibo; }
+
+		unsigned usage() const { return this->_usage; }
 
 		size_t vertex_count() const { return _positions.size(); }
 		size_t index_count() const { return _indices.size(); }

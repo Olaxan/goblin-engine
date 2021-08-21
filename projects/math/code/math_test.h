@@ -8,12 +8,13 @@
 
 using namespace efiilj;
 
-static void MathTest() {
+static void math_test() 
+{
 	bool test_vectors = true;
-	bool test_Matrices = true;
-	bool test_Inverse = true;
-	bool test_Clip = true;
-	bool test_View = true;
+	bool test_matrices = true;
+	bool test_inverse = true;
+	bool test_clip = true;
+	bool test_view = true;
 
 	glm::mat4 mat1_glm; glm::mat4 mat2_glm; glm::mat4 mat3_glm;  glm::mat4 mat4_glm;
 
@@ -24,10 +25,12 @@ static void MathTest() {
 	int failures = 0;
 	int tests = 4;
 
-	for (int i = 0; i < tests; i++) {
+	for (int i = 0; i < tests; i++) 
+	{
 		printf("\n    Test %d:", i + 1);
 		printf("\n----------------------------------------------------------------------------\n");
-		if (test_vectors) {
+		if (test_vectors) 
+		{
 			for (int i = 0; i < 4; i++) { float r = fmodf((float)rand(), 15.0f); vec1[i] = r; vec1_glm[i] = r; }
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f); mat1[i] = r; mat1_glm[i / 4][i % 4] = r; }
 			printf("you: | % 6.2f, % 6.2f, % 6.2f, % 6.2f  |\n", mat1[0], mat1[1], mat1[2], mat1[3]);
@@ -53,7 +56,7 @@ static void MathTest() {
 			printf("----------------------------------------------------------------------------\n");
 			for (int i = 0; i < 4; i++) { if (std::fabs(vec2[i] - vec2_glm[i]) > 0.001f) { failures++; printf("\n   FAILED!\n\n"); break; } }
 		}
-		if (test_Matrices) {
+		if (test_matrices) {
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f); mat1[i] = r; mat1_glm[i / 4][i % 4] = r; }
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f); mat2[i] = r; mat2_glm[i / 4][i % 4] = r; }
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f); mat3[i] = r; mat3_glm[i / 4][i % 4] = r; }
@@ -107,7 +110,7 @@ static void MathTest() {
 			for (int i = 0; i < 16; i++) { if (std::fabs(mat3[i] - mat3_glm[i / 4][i % 4]) > 0.001f) { failures++; printf("\n   FAILED!\n"); break; } }
 			for (int i = 0; i < 16; i++) { if (std::fabs(mat4[i] - mat4_glm[i / 4][i % 4]) > 0.001f) { failures++; printf("\n   FAILED, reverse order!\n\n"); break; } }
 		}
-		if (test_Inverse) {
+		if (test_inverse) {
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f) + 1.0f; mat1[i] = r; mat1_glm[i / 4][i % 4] = r; }
 
 			printf("you: | % 6.2f, % 6.2f, % 6.2f, % 6.2f  |\n", mat1[0], mat1[1], mat1[2], mat1[3]);
@@ -135,7 +138,7 @@ static void MathTest() {
 			printf("----------------------------------------------------------------------------\n");
 			for (int i = 0; i < 16; i++) { if (std::fabs(mat3[i] - mat3_glm[i / 4][i % 4]) > 0.001f) { failures++; printf("\n   FAILED!\n"); break; } }
 		}
-		if (test_Clip) {
+		if (test_clip) {
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f) + 1.0f; mat1[i] = r; mat1_glm[i / 4][i % 4] = r; }
 			printf("\nClip space projection\n\n");
 			mat3 = mat3.get_perspective(1.6f, 4.0f/3.0f, 0.1f, 30.0f);
@@ -153,7 +156,7 @@ static void MathTest() {
 			printf("----------------------------------------------------------------------------\n");
 			for (int i = 0; i < 16; i++) { if (std::fabs(mat3[i] - mat3_glm[i / 4][i % 4]) > 0.001f) { failures++; printf("\n   FAILED!\n"); break; } }
 		}
-		if (test_View) {
+		if (test_view) {
 			for (int i = 0; i < 16; i++) { float r = fmodf((float)rand(), 15.0f) + 1.0f; mat1[i] = r; mat1_glm[i / 4][i % 4] = r; }
 			printf("\nView transform\n\n");
 			mat3 = mat3.get_lookat(vector3(4.0f, 2.0f, 1.0f), vector3(-5.0f, -2.0f, 4.0f), vector3(0.0f, 1.0f, 0.0f));
@@ -173,7 +176,7 @@ static void MathTest() {
 		}
 
 	}
-	int n = ((int)test_vectors + (int)test_Matrices * 2 + (int)test_Inverse) * tests;
+	int n = ((int)test_vectors + (int)test_matrices * 2 + (int)test_inverse) * tests;
 	if (failures > 0) {
 		printf("----------------------------------------------------------------------------\n\n");
 		printf("\n TEST FAILED! With %d out of %d tests passed!\n", n - failures, n);

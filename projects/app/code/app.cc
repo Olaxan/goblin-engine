@@ -19,6 +19,7 @@
 #include "line.h"
 #include "math_test.h"
 #include "cube.h"
+#include "bbox.h"
 
 #include "quat.h"
 
@@ -118,8 +119,6 @@ namespace efiilj
 	void application::run()
 	{
 
-		MathTest();
-
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -214,8 +213,6 @@ namespace efiilj
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
-		rect_mat_ptr->double_sided = true;
-		rect_mat_ptr->wireframe = true;
 
 		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
 		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
@@ -249,10 +246,12 @@ namespace efiilj
 				}
 				else if (key == GLFW_KEY_B)
 				{
-					for (auto& body : _simulator->get_rigidbodies())
+					auto& bodies = _simulator->get_rigidbodies();
+
+					if (bodies.size() > 0)
 					{
-						bounds b = body->get_bounds();
-						auto bbox_mesh = std::make_shared<cube>(b.min, b.max);
+						bounds b = bodies[0]->get_bounds();
+						auto bbox_mesh = std::make_shared<bbox>(b.min, b.max);
 						auto bbox_node = std::make_shared<graphics_node>(bbox_mesh, rect_mat_ptr);
 						_fwd_renderer->add_node(bbox_node);
 					}

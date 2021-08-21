@@ -5,7 +5,7 @@
 namespace efiilj
 {
 	mesh_resource::mesh_resource() 
-		: type_(GL_UNSIGNED_INT), vbo_(0), ibo_(0), vao_(0), material_index(-1)
+		: _type(GL_UNSIGNED_INT), _usage(GL_STATIC_DRAW), _vbo(0), _ibo(0), _vao(0), material_index(-1)
 	{ }
 
 	mesh_resource::mesh_resource
@@ -17,7 +17,7 @@ namespace efiilj
 			int vertex_count, 
 			int index_count
 		)
-		: type_(type), vao_(vao), vbo_(vbo), ibo_(ibo), material_index(-1)
+		: _type(type), _usage(GL_STATIC_DRAW), _vao(vao), _vbo(vbo), _ibo(ibo), material_index(-1)
 	{}
 
 	void mesh_resource::finalize()
@@ -34,7 +34,7 @@ namespace efiilj
 		stride += has_uv_data() * sizeof(vector2);
 		stride += has_tangent_data() * sizeof(vector4);
 
-		glBufferData(GL_ARRAY_BUFFER, vertex_count() * stride, NULL, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertex_count() * stride, NULL, _usage);
 
 		size_t offset = 0;
 		if (has_position_data())
@@ -76,30 +76,30 @@ namespace efiilj
 
 	void mesh_resource::init_vertex_buffer()
 	{
-		if (vbo_ != 0)
+		if (_vbo != 0)
 			return;
 
-		glGenBuffers(1, &vbo_);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+		glGenBuffers(1, &_vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 	}
 
 	void mesh_resource::init_index_buffer()
 	{
-		if (ibo_ != 0)
+		if (_ibo != 0)
 			return;
 
-		glGenBuffers(1, &ibo_);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
+		glGenBuffers(1, &_ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count() * sizeof(unsigned int), _indices.data(), GL_STATIC_DRAW);
 	}
 
 	void mesh_resource::init_array_object()
 	{
-		if (vao_ != 0)
+		if (_vao != 0)
 			return;
 
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
+		glGenVertexArrays(1, &_vao);
+		glBindVertexArray(_vao);
 	}
 
 	void mesh_resource::buffer(unsigned target, size_t size, void* data, unsigned usage)
@@ -111,7 +111,7 @@ namespace efiilj
 
 	void mesh_resource::bind() const
 	{
-		glBindVertexArray(vao_);
+		glBindVertexArray(_vao);
 	}
 
 	void mesh_resource::unbind()
@@ -130,14 +130,14 @@ namespace efiilj
 
 	void mesh_resource::draw_elements() const
 	{
-		glDrawElements(GL_TRIANGLES, index_count(), type_, nullptr);
+		glDrawElements(GL_TRIANGLES, index_count(), _type, nullptr);
 	}
 
 	mesh_resource::~mesh_resource()
 	{
 		unbind();
-		glDeleteBuffers(1, &vao_);
-		glDeleteBuffers(1, &vbo_);
-		glDeleteBuffers(1, &ibo_);
+		glDeleteBuffers(1, &_vao);
+		glDeleteBuffers(1, &_vbo);
+		glDeleteBuffers(1, &_ibo);
 	}
 }
