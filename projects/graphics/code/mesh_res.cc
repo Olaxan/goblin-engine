@@ -8,18 +8,6 @@ namespace efiilj
 		: _type(GL_UNSIGNED_INT), _usage(GL_STATIC_DRAW), _vbo(0), _ibo(0), _vao(0), material_index(-1)
 	{ }
 
-	mesh_resource::mesh_resource
-		(
-			unsigned type, 
-			unsigned vao, 
-			unsigned vbo, 
-			unsigned ibo, 
-			int vertex_count, 
-			int index_count
-		)
-		: _type(type), _usage(GL_STATIC_DRAW), _vao(vao), _vbo(vbo), _ibo(ibo), material_index(-1)
-	{}
-
 	void mesh_resource::finalize()
 	{
 
@@ -34,7 +22,7 @@ namespace efiilj
 		stride += has_uv_data() * sizeof(vector2);
 		stride += has_tangent_data() * sizeof(vector4);
 
-		glBufferData(GL_ARRAY_BUFFER, vertex_count() * stride, NULL, _usage);
+		glBufferData(GL_ARRAY_BUFFER, get_vertex_count() * stride, NULL, _usage);
 
 		size_t offset = 0;
 		if (has_position_data())
@@ -90,7 +78,7 @@ namespace efiilj
 
 		glGenBuffers(1, &_ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count() * sizeof(unsigned int), _indices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, get_index_count() * sizeof(unsigned int), _indices.data(), GL_STATIC_DRAW);
 	}
 
 	void mesh_resource::init_array_object()
@@ -130,7 +118,7 @@ namespace efiilj
 
 	void mesh_resource::draw_elements() const
 	{
-		glDrawElements(GL_TRIANGLES, index_count(), _type, nullptr);
+		glDrawElements(GL_TRIANGLES, get_index_count(), _type, nullptr);
 	}
 
 	mesh_resource::~mesh_resource()

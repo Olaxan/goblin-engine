@@ -36,18 +36,17 @@ namespace efiilj
 	public:
 
 		mesh_resource();
-		mesh_resource(unsigned type, unsigned vao, unsigned vbo, unsigned ibo=0, int vertex_count=-1, int index_count=-1);
 
 		int material_index;
 
-		unsigned vao() const { return this->_vao; }
-		unsigned vbo() const { return this->_vbo; }
-		unsigned ibo() const { return this->_ibo; }
+		unsigned get_vao() const { return this->_vao; }
+		unsigned get_vbo() const { return this->_vbo; }
+		unsigned get_ibo() const { return this->_ibo; }
 
-		unsigned usage() const { return this->_usage; }
+		unsigned get_usage() const { return this->_usage; }
 
-		size_t vertex_count() const { return _positions.size(); }
-		size_t index_count() const { return _indices.size(); }
+		size_t get_vertex_count() const { return _positions.size(); }
+		size_t get_index_count() const { return _indices.size(); }
 
 		bool has_position_data() const { return _positions.size() > 0; }
 		bool has_normal_data() const { return _normals.size() > 0; }

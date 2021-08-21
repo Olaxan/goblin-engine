@@ -43,6 +43,6 @@ namespace efiilj
 
 	void bbox::draw_elements() const 
 	{
-		glDrawElements(GL_LINES, index_count(), _type, nullptr);
+		glDrawElements(GL_LINES, get_index_count(), _type, nullptr);
 	}
 }

@@ -188,7 +188,7 @@ namespace efiilj
 			else
 			{
 				// Add vertex and index if no similar vertex is found
-				unsigned int index = static_cast<unsigned int>(_mesh->vertex_count());
+				unsigned int index = static_cast<unsigned int>(_mesh->get_vertex_count());
 
 				_mesh->_positions.emplace_back(test.xyzw);
 				_mesh->_uvs.emplace_back(test.uv);

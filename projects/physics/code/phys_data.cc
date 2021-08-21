@@ -86,7 +86,7 @@ namespace efiilj
 		const vector3 d = r.direction;
 		const vector3 o = r.origin;
 
-		for (size_t i = 0; i < _mesh.index_count();)
+		for (size_t i = 0; i < _mesh.get_index_count();)
 		{
 			const vector3& a = _mesh.get_indexed_position(i++);
 			const vector3& b = _mesh.get_indexed_position(i++);
