@@ -5,6 +5,8 @@
 #include "transform.h"
 #include "node.h"
 
+#include "trfm_mgr.h"
+
 #include <memory>
 
 namespace efiilj
@@ -14,9 +16,11 @@ namespace efiilj
 		private:
 
 			std::shared_ptr<graphics_node> _node;
+			std::shared_ptr<transform_manager> _transforms;
 
 			mesh_resource& _mesh;
-			transform_model& _transform;
+
+			transform_id _trf_id;
 
 		public:
 

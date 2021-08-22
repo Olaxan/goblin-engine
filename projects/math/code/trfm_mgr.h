@@ -1,9 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-
-#include "entity.h"
+#include "manager.h"
 #include "quat.h"
 
 namespace efiilj
@@ -13,9 +10,6 @@ namespace efiilj
 	class transform_manager : public manager<transform_id>
 	{
 		private:
-
-			std::vector<transform_id> _instances;
-			std::unordered_map<entity_id, transform_id> _instance_mapping;
 
 			struct
 			{

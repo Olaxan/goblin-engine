@@ -125,9 +125,6 @@ namespace efiilj
 		auto entities = std::make_shared<entity_manager>();
 		auto transforms = std::make_shared<transform_manager>();
 
-		entity_id e1 = entities->create_entity();
-		transform_id trf = transforms->register_entity(e1);
-
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -159,86 +156,24 @@ namespace efiilj
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
-	
-		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(25.0f, 25.0f, 25.0f));
-		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
-		_def_renderer->add_scene(helmet_scene_ptr);
 
-		printf("Forward: %s\nRight: %s\nUp: %s\n", 
-				helmet_trans_ptr->forward().norm().to_mem_string().c_str(),
-				helmet_trans_ptr->right().norm().to_mem_string().c_str(),
-				helmet_trans_ptr->up().norm().to_mem_string().c_str());
+		entity_id e1 = entities->create_entity();
+		transform_id trf1 = transforms->register_entity(e1);
+		transforms->set_scale(trf1, 25.0f);
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
-		rect_mat_ptr->wireframe = true;
-		rect_mat_ptr->double_sided = true;
 
-		for (auto node : helmet_scene_ptr->nodes)
-		{
-			auto phys_node_ptr = std::make_shared<physics_node>(node);
-			_simulator->add_rigidbody(phys_node_ptr);
+		auto e1_gfx = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, trf1);
+		_def_renderer->add_node(e1_gfx);	
 
-			auto b = phys_node_ptr->get_bounds();
-			
-			auto b_mesh = std::make_shared<bbox>(phys_node_ptr);
-			auto b_node = std::make_shared<graphics_node>(b_mesh, rect_mat_ptr);
-			_fwd_renderer->add_node(b_node);
-		}
+		auto sun_ptr = std::make_shared<light_source>(
+				std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), 
+				light_type::directional);
 
-		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
-		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
-		_fwd_renderer->add_node(hit_sphere_node_ptr);
-
-		std::vector<std::shared_ptr<light_source>> lights;
-		std::vector<std::shared_ptr<transform_model>> light_transforms;
-
-		auto sun_ptr = std::make_shared<light_source>(std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), light_type::directional);
 		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
+
 		_def_renderer->add_light(sun_ptr);
-
-		auto camera_trans_ptr = _cam_mgr->get_active_camera()->get_transform();
-
-		bool spotlight_on = false;
-		auto spotlight_trf_ptr = std::make_shared<transform_model>(camera_trans_ptr->forward() * 2.0f);
-		spotlight_trf_ptr->set_parent(camera_trans_ptr);
-		auto spotlight_ptr = std::make_shared<light_source>(spotlight_trf_ptr, light_type::spotlight);
-		spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 1);
-		spotlight_ptr->set_falloff(0, 0, 0.1f);
-		spotlight_ptr->set_cutoff(0.91f, 0.82f);
-		_def_renderer->add_light(spotlight_ptr);
-
-		for (size_t i = 0; i < NUM_LIGHTS; i++)
-		{
-			auto light = std::make_shared<light_source>();
-
-			light_base base;
-			base.color = vector3(randf(1.0f), randf(1.0f), randf(1.0f));
-			base.ambient_intensity = randf(0.5f);
-			base.diffuse_intensity = randf(1.0f);
-			light->set_base(base);
-
-			attenuation falloff;
-			falloff.constant = 0;
-			falloff.linear = 0;
-			falloff.exponential = 0.3f;
-			light->set_falloff(falloff);
-
-			lights.push_back(light);
-
-			auto mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-			mat_ptr->color = vector4(base.color, 1.0f);
-
-			float size = 0.5f - falloff.exponential;
-			auto trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(size, size, size));
-			light_transforms.push_back(trf_ptr);
-
-			auto node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, mat_ptr, trf_ptr);
-
-			_def_renderer->add_light(light);
-			_fwd_renderer->add_node(node_ptr);
-		}
 
 		std::set<int> keys;
 		
@@ -277,15 +212,6 @@ namespace efiilj
 						auto bbox_node = std::make_shared<graphics_node>(bbox_mesh, rect_mat_ptr);
 						_fwd_renderer->add_node(bbox_node);
 					}
-				}
-				else if (key == GLFW_KEY_F)
-				{
-					if (spotlight_on)
-						spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f);
-					else
-						spotlight_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
-
-					spotlight_on = !spotlight_on;
 				}
 			}
 			else if (action == 0)
@@ -327,9 +253,7 @@ namespace efiilj
 						float len = (hit - r.origin).length();
 						if (len < nearest)
 						{
-							hit_sphere_trf_ptr->set_position(hit);
 							nearest = len;
-							//_selected_node = node;
 						}
 					}
 				}
@@ -343,11 +267,6 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 			auto camera_ptr = _cam_mgr->get_active_camera();
-
-			std::shared_ptr<transform_model> selected_trans_ptr = is_mouse_captured_ ? 
-				camera_ptr->get_transform()
-			:
-				helmet_trans_ptr;
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -355,40 +274,40 @@ namespace efiilj
 			this->window_->Update();
 	
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				selected_trans_ptr->add_position(selected_trans_ptr->forward() * CAMERA_SPEED);
+				transforms->add_position(transforms->forward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				selected_trans_ptr->add_position(selected_trans_ptr->backward() * CAMERA_SPEED);
+				transforms->add_position(transforms->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				selected_trans_ptr->add_position(selected_trans_ptr->left() * CAMERA_SPEED);
+				transforms->add_position(transforms->left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				selected_trans_ptr->add_position(selected_trans_ptr->right() * CAMERA_SPEED);
+				transforms->add_position(transforms->right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				selected_trans_ptr->add_position(selected_trans_ptr->up() * CAMERA_SPEED);
+				transforms->add_position(transforms->up() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				selected_trans_ptr->add_position(selected_trans_ptr->down() * CAMERA_SPEED);
+				transforms->add_position(transforms->down() * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_UP) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), -0.1f);
+				transforms->add_rotation(transforms->right(), -0.1f);
 
 			if (keys.find(GLFW_KEY_DOWN) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), 0.1f);
+				transforms->add_rotation(transforms->right(), 0.1f);
 
 			if (keys.find(GLFW_KEY_LEFT) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->up(), 0.1f);
+				transforms->add_rotation(transforms->up(), 0.1f);
 
 			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->up(), -0.1f);
+				transforms->add_rotation(transforms->up(), -0.1f);
 
 			if (keys.find(GLFW_KEY_PAGE_DOWN) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->forward(), 0.1);
+				transforms->add_rotation(transforms->forward(), 0.1);
 
 			if (keys.find(GLFW_KEY_PAGE_UP) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->forward(), -0.1);
+				transforms->add_rotation(transforms->forward(), -0.1);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
@@ -403,25 +322,6 @@ namespace efiilj
 
 			float dt = _def_renderer->get_delta_time();
 			float d = _def_renderer->get_frame_index() / 100.0f;
-
-			//helmet_trans_ptr->add_rotation(vector3(1, 1, 0).norm(), dt * 0.05f);
-
-			for (size_t i = 0; i < NUM_LIGHTS; i++)
-			{
-				auto& light = lights[i];
-				auto& trf = light_transforms[i];
-
-				srand(i + 13);
-
-				float x = sinf(randf(PI) + d) * randf(-25, 25);
-				float y = cosf(randf(PI) + d) * randf(-25, 25);
-				float z = sinf(randf(PI) + d) * randf(-25, 25);
-
-				light->get_transform()->set_position(vector3(x, 25 + y, z));
-				trf->set_position(light->get_transform()->get_position());
-			}
-
-			srand(_def_renderer->get_frame_index());
 
 			_def_renderer->begin_frame();
 			_fwd_renderer->begin_frame();

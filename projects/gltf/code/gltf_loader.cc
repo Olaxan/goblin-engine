@@ -25,19 +25,10 @@
 
 namespace efiilj
 {
-	gltf_model_loader::gltf_model_loader(const std::string path, bool is_binary)
-	{
-		model_ready_ = load_from_file(model_, path, is_binary);
 
-		if (model_ready_)
-		{
-			printf("GLTF file successfully loaded\n");
-		}
-		else
-		{
-			printf("Failed to load GLTF\n");
-		}
-	}
+	gltf_model_loader::gltf_model_loader(std::shared_ptr<transform_manager> trf_mgr)
+		: _transforms(std::move(trf_mgr))
+	{}
 
 	size_t gltf_model_loader::type_component_count(const std::string& type)
 	{
@@ -137,8 +128,8 @@ namespace efiilj
 		size_t vbo_size = 0;
 		for (auto &attrib : prim.attributes)
 		{
-			tinygltf::Accessor accessor = model_.accessors[attrib.second];
-			tinygltf::BufferView view = model_.bufferViews[accessor.bufferView];
+			tinygltf::Accessor accessor = _model.accessors[attrib.second];
+			tinygltf::BufferView view = _model.bufferViews[accessor.bufferView];
 			vbo_size += accessor.count * accessor.ByteStride(view); 
 		}
 
@@ -147,8 +138,8 @@ namespace efiilj
 
 	accessor_data gltf_model_loader::calculate_accessor_data(tinygltf::Accessor& accessor)
 	{
-		tinygltf::BufferView& view = model_.bufferViews[accessor.bufferView];
-		tinygltf::Buffer& buf = model_.buffers[view.buffer];
+		tinygltf::BufferView& view = _model.bufferViews[accessor.bufferView];
+		tinygltf::Buffer& buf = _model.buffers[view.buffer];
 
 		unsigned char* data_start = &buf.data.at(0);
 
@@ -160,7 +151,7 @@ namespace efiilj
 		return accessor_data { data_start, stride, block_size, offset, size };
 	}
 
-	bool gltf_model_loader::load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary = false)
+	bool gltf_model_loader::load_from_file(const std::string& path, bool is_binary = false)
 	{
 		tinygltf::TinyGLTF loader;
 		std::string err;
@@ -169,9 +160,9 @@ namespace efiilj
 		bool ret;
 		
 		if (is_binary)
-			ret = loader.LoadBinaryFromFile(&model, &err, &warn, path); // for binary glTF(.glb)
+			ret = loader.LoadBinaryFromFile(&_model, &err, &warn, path); // for binary glTF(.glb)
 		else
-			ret = loader.LoadASCIIFromFile(&model, &err, &warn, path); 
+			ret = loader.LoadASCIIFromFile(&_model, &err, &warn, path); 
 
 		if (!warn.empty()) {
 			printf("Warn: %s\n", warn.c_str());
@@ -181,19 +172,19 @@ namespace efiilj
 			printf("Err: %s\n", err.c_str());
 		}
 
-		return ret;	
+		return (_model_ready = ret);
 	
 	}
 
 	std::shared_ptr<scene> gltf_model_loader::get_scene(
 				std::shared_ptr<shader_program> program,
-				std::shared_ptr<transform_model> parent,
+				transform_id parent,
 				std::string name)
 	{
 		auto new_scene = std::make_shared<scene>();
 		new_scene->name = name;
 
-		if (!model_ready_)
+		if (!_model_ready)
 		{
 			fprintf(stderr, "ERROR: Model not loaded!\n");
 			return new_scene;
@@ -216,10 +207,10 @@ namespace efiilj
 			{	
 				auto mat_ptr = new_scene->materials[mat];
 
-				auto trf = std::make_shared<transform_model>();
-				trf->set_parent(parent);
+//				auto trf = std::make_shared<transform_model>();
+//				trf->set_parent(parent);
 
-				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, trf);
+				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, parent);
 				node_ptr->name = name + "_" + std::to_string(i);
 				new_scene->nodes.push_back(std::move(node_ptr));
 			}
@@ -240,7 +231,7 @@ namespace efiilj
 		size_t block_offset = 0;
 		for (auto &attrib : prim.attributes)
 		{
-			tinygltf::Accessor accessor = model_.accessors[attrib.second];
+			tinygltf::Accessor accessor = _model.accessors[attrib.second];
 			accessor_data data = calculate_accessor_data(accessor);
 			int vaa = get_attribute_type(attrib.first);
 
@@ -300,7 +291,7 @@ namespace efiilj
 			block_offset += data.block_size;
 		}
 
-		tinygltf::Accessor i_accessor = model_.accessors[prim.indices];
+		tinygltf::Accessor i_accessor = _model.accessors[prim.indices];
 		accessor_data i_data = calculate_accessor_data(i_accessor);
 
 		unsigned short* temp = new unsigned short[i_accessor.count];
@@ -324,8 +315,8 @@ namespace efiilj
 	{
 		if (index > -1)
 		{
-			tinygltf::Texture tex_base = model_.textures[index];
-			tinygltf::Image src = model_.images[tex_base.source];
+			tinygltf::Texture tex_base = _model.textures[index];
+			tinygltf::Image src = _model.images[tex_base.source];
 			
 			unsigned tex_format = get_format(src.component);
 			unsigned tex_type = get_type(src.bits);
@@ -336,9 +327,9 @@ namespace efiilj
 
 	void gltf_model_loader::parse_node(tinygltf::Node& node, std::shared_ptr<scene> new_scene)
 	{
-		if (node.mesh >= 0 && node.mesh < model_.meshes.size())
+		if (node.mesh >= 0 && node.mesh < _model.meshes.size())
 		{
-			tinygltf::Mesh mesh = model_.meshes[node.mesh];
+			tinygltf::Mesh mesh = _model.meshes[node.mesh];
 
 			for (auto& prim : mesh.primitives)
 			{
@@ -348,20 +339,20 @@ namespace efiilj
 
 		for (size_t i = 0; i < node.children.size(); i++) 
 		{
-			assert((node.children[i] >= 0) && (node.children[i] < model_.nodes.size()));
-			parse_node(model_.nodes[node.children[i]], new_scene);
+			assert((node.children[i] >= 0) && (node.children[i] < _model.nodes.size()));
+			parse_node(_model.nodes[node.children[i]], new_scene);
 		}
 	}
 
 	unsigned gltf_model_loader::get_meshes(std::shared_ptr<scene> new_scene)
 	{
-		const tinygltf::Scene scene = model_.scenes[model_.defaultScene];
+		const tinygltf::Scene scene = _model.scenes[_model.defaultScene];
 
-		printf("Parsing GLTF file, %lu nodes in default scene %d\n", scene.nodes.size(), model_.defaultScene);
+		printf("Parsing GLTF file, %lu nodes in default scene %d\n", scene.nodes.size(), _model.defaultScene);
 
 		for (int i = 0; i < scene.nodes.size(); i++)
 		{
-			tinygltf::Node& node = model_.nodes[scene.nodes[i]];
+			tinygltf::Node& node = _model.nodes[scene.nodes[i]];
 			parse_node(node, new_scene);
 		}
 
@@ -372,9 +363,9 @@ namespace efiilj
 			std::shared_ptr<shader_program> program,
 			std::shared_ptr<scene> new_scene)
 	{
-		for (int i = 0; i < model_.materials.size(); i++)
+		for (int i = 0; i < _model.materials.size(); i++)
 		{
-			tinygltf::Material mat = model_.materials[i];
+			tinygltf::Material mat = _model.materials[i];
 			auto pbr_mat = std::make_shared<gltf_pbr_base>(program);
 
 			link_texture(pbr_mat, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");

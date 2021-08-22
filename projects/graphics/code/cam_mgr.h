@@ -1,38 +1,50 @@
 #pragma once
 
 #include "camera.h"
+#include "entity.h"
+#include "trfm_mgr.h"
 
 #include <vector>
 #include <memory>
 
 namespace efiilj
 {
-	class camera_manager
+	typedef int camera_id;
+
+	class camera_manager : public manager<camera_id>
 	{
 	private:
 
-		unsigned ubo_, active_camera_;
-		
-		unsigned width_, height_;
+		std::shared_ptr<transform_manager> _transforms;
 
-		vector3 up_;
+		unsigned _ubo;
+		camera_id _current;
 
-		std::vector<std::shared_ptr<camera_model>> cameras_;
+		struct 
+		{
+			std::vector<float> width;
+			std::vector<float> height;
+
+			std::vector<matrix4> perspective;
+			std::vector<matrix4> p_inverse;
+			std::vector<matrix4> view;
+
+			std::vector<transform_id> transform;
+		} _data;
 
 		void setup_ubo();
 
 	public:
-		camera_manager(unsigned width, unsigned height);
+
+		camera_manager(std::shared_ptr<transform_manager> trf_mgr);
 		~camera_manager() = default;
 
-		bool set_camera(unsigned active);
+		camera_id register_entity(entity_id eid);
+		bool unregister_entity(camera_id idx);
 
-		void update_camera();
+		bool set_camera(camera_id active);
 
-		std::shared_ptr<camera_model> get_default_camera() const { return cameras_[0]; }
-		std::shared_ptr<camera_model> get_active_camera() const { return cameras_[active_camera_]; }
-
-		vector3 get_active_position() const { return get_active_camera()->get_transform()->get_position(); };
-		//vector3 get_active_rotation() const { return get_active_camera()->get_transform()->get_rotation(); };
+		void push_perspective();
+		void push_view();
 	};
 }

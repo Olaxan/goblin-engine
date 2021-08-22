@@ -6,6 +6,8 @@
 #include "camera.h"
 #include "ray.h"
 
+#include "trfm_mgr.h"
+
 #include <memory>
 
 namespace efiilj
@@ -19,7 +21,9 @@ namespace efiilj
 
 		std::shared_ptr<mesh_resource> mesh_;
 		std::shared_ptr<material_base> material_;
-		std::shared_ptr<transform_model> transform_;
+
+		std::shared_ptr<transform_manager> _transforms;
+		transform_id _transform;
 
 		bool is_absolute_;
 
@@ -36,12 +40,9 @@ namespace efiilj
 
 		graphics_node(
 			std::shared_ptr<mesh_resource> mesh_ptr,
-			std::shared_ptr<material_base> material_ptr);
-
-		graphics_node(
-			std::shared_ptr<mesh_resource> mesh_ptr,
 			std::shared_ptr<material_base> material_ptr,
-			std::shared_ptr<transform_model> transform_ptr);
+			transform_id transform
+			);
 
 		std::string name;
 
@@ -51,8 +52,8 @@ namespace efiilj
 		std::shared_ptr<material_base> get_material() const { return material_; }
 		void set_material(std::shared_ptr<material_base> material) { this->material_ = std::move(material); }
 
-		std::shared_ptr<transform_model> get_transform() const { return transform_; }
-		void set_transform(std::shared_ptr<transform_model> transform) { this->transform_ = std::move(transform); }
+		transform_id get_transform() const { return _transform; }
+		void set_transform(transform_id idx) { _transform = idx; }
 		
 		void set_absolute(bool a) { is_absolute_ = a; }
 

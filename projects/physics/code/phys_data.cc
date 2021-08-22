@@ -5,13 +5,14 @@ namespace efiilj
 {
 
 	physics_node::physics_node(std::shared_ptr<graphics_node> node)
-		: _node(std::move(node)), _mesh(*_node->get_mesh()), _transform(*_node->get_transform())
+		: _node(std::move(node)), _mesh(*_node->get_mesh()), _trf_id(node->get_transform())
 	{
 	}
 
 	bounds physics_node::get_bounds() const
 	{
-		return _mesh.get_bounds(_transform.get_model());
+		return _mesh.get_bounds();
+		//return _mesh.get_bounds(_transform.get_model());
 	}
 
 	bool physics_node::point_inside_bounds(const vector3& point) const
@@ -71,57 +72,59 @@ namespace efiilj
 	bool physics_node::ray_intersect_triangle(const ray& test, vector3& hit, vector3& norm) const
 	{
 
-		if (!ray_intersect_bounds(test, hit))
-			return false;
+		return false;
 
-		bool is_hit = false;
-		float nearest = std::numeric_limits<float>::max();
-		vector3 nearest_hit;
+		//if (!ray_intersect_bounds(test, hit))
+		//	return false;
 
-		vector3 ra = _transform.get_model_inv() * test.origin;
-		vector3 rb = _transform.get_model_inv() * (test.origin + test.direction * 1000.0f);
+		//bool is_hit = false;
+		//float nearest = std::numeric_limits<float>::max();
+		//vector3 nearest_hit;
 
-		ray r = ray(ra, (rb - ra).norm());
+		//vector3 ra = _transform.get_model_inv() * test.origin;
+		//vector3 rb = _transform.get_model_inv() * (test.origin + test.direction * 1000.0f);
 
-		const vector3 d = r.direction;
-		const vector3 o = r.origin;
+		//ray r = ray(ra, (rb - ra).norm());
 
-		for (size_t i = 0; i < _mesh.get_index_count();)
-		{
-			const vector3& a = _mesh.get_indexed_position(i++);
-			const vector3& b = _mesh.get_indexed_position(i++);
-			const vector3& c = _mesh.get_indexed_position(i++);
+		//const vector3 d = r.direction;
+		//const vector3 o = r.origin;
 
-			const vector3 e1 = b - a;
-			const vector3 e2 = c - a;
-			const vector3 n = vector3::cross(e1, e2);
+		//for (size_t i = 0; i < _mesh.get_index_count();)
+		//{
+		//	const vector3& a = _mesh.get_indexed_position(i++);
+		//	const vector3& b = _mesh.get_indexed_position(i++);
+		//	const vector3& c = _mesh.get_indexed_position(i++);
 
-			const float det = -vector3::dot(d, n);
-			const float invdet = 1.0f / det;
+		//	const vector3 e1 = b - a;
+		//	const vector3 e2 = c - a;
+		//	const vector3 n = vector3::cross(e1, e2);
 
-			const vector3 ao = o - a;
-			const vector3 dao = vector3::cross(ao, d);
+		//	const float det = -vector3::dot(d, n);
+		//	const float invdet = 1.0f / det;
 
-			const float u = vector3::dot(e2, dao) * invdet;
-			const float v = -vector3::dot(e1, dao) * invdet;
-			const float t = vector3::dot(ao, n) * invdet;
+		//	const vector3 ao = o - a;
+		//	const vector3 dao = vector3::cross(ao, d);
 
-			if (det >= 1e-6 && t >= 0.0f && u >= 0.0f && v >= 0.0f && (u + v) <= 1.0f)
-			{
-				is_hit = true;
+		//	const float u = vector3::dot(e2, dao) * invdet;
+		//	const float v = -vector3::dot(e1, dao) * invdet;
+		//	const float t = vector3::dot(ao, n) * invdet;
 
-				if (t < nearest)
-				{
-					nearest_hit = o + d * t;
-					nearest = t;
-					norm = n;
-				}
-			}
-		}
+		//	if (det >= 1e-6 && t >= 0.0f && u >= 0.0f && v >= 0.0f && (u + v) <= 1.0f)
+		//	{
+		//		is_hit = true;
 
-		hit = (_transform.get_model() * vector4(nearest_hit, 1.0f)).xyz();
-		norm = (_transform.get_model() * vector4(norm, 1.0f)).xyz();
+		//		if (t < nearest)
+		//		{
+		//			nearest_hit = o + d * t;
+		//			nearest = t;
+		//			norm = n;
+		//		}
+		//	}
+		//}
 
-		return is_hit;
+		//hit = (_transform.get_model() * vector4(nearest_hit, 1.0f)).xyz();
+		//norm = (_transform.get_model() * vector4(norm, 1.0f)).xyz();
+
+		//return is_hit;
 	}
 }

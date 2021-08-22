@@ -7,6 +7,8 @@
 #include "camera.h"
 #include "scene.h"
 
+#include "trfm_mgr.h"
+
 #include <string>
 #include <memory>
 
@@ -37,7 +39,6 @@ namespace efiilj
 				std::shared_ptr<shader_program> program,
 				std::shared_ptr<scene> scene);
 		
-		bool load_from_file(tinygltf::Model& model, const std::string& path, bool is_binary);
 
 		size_t calculate_vbo_size(tinygltf::Primitive& prim);
 		accessor_data calculate_accessor_data(tinygltf::Accessor&);
@@ -48,12 +49,14 @@ namespace efiilj
 		static unsigned get_type(int bits);
 		static int get_attribute_type(const std::string&);
 
-		tinygltf::Model model_;
-		bool model_ready_;
+		tinygltf::Model _model;
+		bool _model_ready;
+
+		std::shared_ptr<transform_manager> _transforms;
 
 	public:
 
-		gltf_model_loader(const std::string path, bool is_binary = false);
+		gltf_model_loader(std::shared_ptr<transform_manager> trf_mgr);
 
 		gltf_model_loader(gltf_model_loader&)
 			= default;
@@ -61,9 +64,11 @@ namespace efiilj
 		gltf_model_loader(gltf_model_loader&&)
 			= default;
 
+		bool load_from_file(const std::string& path, bool is_binary);
+
 		std::shared_ptr<scene> get_scene(
 				std::shared_ptr<shader_program> shader, 
-				std::shared_ptr<transform_model> transform,
+				transform_id parent,
 				std::string name = "GLTF"
 		);
 	

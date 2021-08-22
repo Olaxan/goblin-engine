@@ -10,7 +10,7 @@ SET(files_gltf ${gltf_headers} ${gltf_sources})
 SOURCE_GROUP("gltf" FILES ${files_gltf})
 
 ADD_LIBRARY(gltf STATIC ${files_gltf})
-TARGET_LINK_LIBRARIES(gltf core render math graphics physics)
-ADD_DEPENDENCIES(gltf core render math graphics physics)
+TARGET_LINK_LIBRARIES(gltf core ecs render math graphics physics)
+ADD_DEPENDENCIES(gltf core ecs render math graphics physics)
 
 TARGET_INCLUDE_DIRECTORIES(gltf INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/code/)

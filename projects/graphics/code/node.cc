@@ -13,15 +13,9 @@ namespace efiilj
 	graphics_node::graphics_node(
 		std::shared_ptr<mesh_resource> mesh_ptr,
 		std::shared_ptr<material_base> material_ptr,
-		std::shared_ptr<transform_model> transform_ptr)
-			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), transform_(std::move(transform_ptr)),
+		transform_id trf)
+			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), _transform(trf),
 			is_absolute_(false), name("Object")
-	{}
-
-	graphics_node::graphics_node(
-			std::shared_ptr<mesh_resource> mesh_ptr,
-			std::shared_ptr<material_base> material_ptr)
-		: graphics_node(mesh_ptr, material_ptr, std::make_shared<transform_model>())
 	{}
 
 	void graphics_node::bind() const
@@ -39,7 +33,7 @@ namespace efiilj
 
 	void graphics_node::draw() const
 	{
-		matrix4 model = is_absolute_ ? matrix4() : transform_->get_model();
+		matrix4 model = is_absolute_ ? matrix4() : _transforms->get_model(_transform);
 		material_->get_program()->set_uniform("model", model);
 		mesh_->update();
 		mesh_->draw_elements();
@@ -48,6 +42,5 @@ namespace efiilj
 	void graphics_node::draw_node_gui()
 	{
 		ImGui::Text("Node");
-		transform_->draw_transform_gui();
 	}
 }
