@@ -33,6 +33,9 @@
 #include "glm/ext/quaternion_trigonometric.hpp"
 #include "glm/fwd.hpp"
 
+#include "entity.h"
+#include "trfm_mgr.h"
+
 #include <chrono>
 #include <iostream>
 #include <limits>
@@ -119,6 +122,12 @@ namespace efiilj
 	void application::run()
 	{
 
+		auto entities = std::make_shared<entity_manager>();
+		auto transforms = std::make_shared<transform_manager>();
+
+		entity_id e1 = entities->create_entity();
+		transform_id trf = transforms->register_entity(e1);
+
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -151,7 +160,7 @@ namespace efiilj
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
 	
-		gltf_model_loader gltf_helmet("../res/gltf/Avocado/Avocado.gltf");
+		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(25.0f, 25.0f, 25.0f));
 		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
 		_def_renderer->add_scene(helmet_scene_ptr);
