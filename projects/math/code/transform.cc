@@ -52,15 +52,15 @@ namespace efiilj
 		return (parent_ == nullptr) ? rot_ : parent_->get_hierarchical_rotation() * rot_;
 	}
 
-	vector3 transform_model::right() const
-	{
-		return left() * -1;
-	}
-
 	vector3 transform_model::left() const
 	{
 		get_model();
 		return model_.col(0).xyz().norm();
+	}
+
+	vector3 transform_model::right() const
+	{
+		return left() * -1;
 	}
 
 	vector3 transform_model::up() const

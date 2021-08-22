@@ -364,10 +364,10 @@ namespace efiilj
 				selected_trans_ptr->add_position(selected_trans_ptr->down() * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_UP) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), 0.1f);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), -0.1f);
 
 			if (keys.find(GLFW_KEY_DOWN) != keys.end())
-				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), -0.1f);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), 0.1f);
 
 			if (keys.find(GLFW_KEY_LEFT) != keys.end())
 				selected_trans_ptr->add_rotation(selected_trans_ptr->up(), 0.1f);
