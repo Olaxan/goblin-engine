@@ -151,16 +151,36 @@ namespace efiilj
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
 	
-		gltf_model_loader gltf_helmet("../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		gltf_model_loader gltf_helmet("../res/gltf/Avocado/Avocado.gltf");
 		auto helmet_trans_ptr = std::make_shared<transform_model>(vector3(0, 0, 0), vector3(0), vector3(25.0f, 25.0f, 25.0f));
 		auto helmet_scene_ptr = gltf_helmet.get_scene(g_prog_ptr, helmet_trans_ptr, "Helmet");
 		_def_renderer->add_scene(helmet_scene_ptr);
+
+		printf("Forward: %s\nRight: %s\nUp: %s\n", 
+				helmet_trans_ptr->forward().norm().to_mem_string().c_str(),
+				helmet_trans_ptr->right().norm().to_mem_string().c_str(),
+				helmet_trans_ptr->up().norm().to_mem_string().c_str());
+
+		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
+		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
+		rect_mat_ptr->wireframe = true;
+		rect_mat_ptr->double_sided = true;
 
 		for (auto node : helmet_scene_ptr->nodes)
 		{
 			auto phys_node_ptr = std::make_shared<physics_node>(node);
 			_simulator->add_rigidbody(phys_node_ptr);
+
+			auto b = phys_node_ptr->get_bounds();
+			
+			auto b_mesh = std::make_shared<bbox>(phys_node_ptr);
+			auto b_node = std::make_shared<graphics_node>(b_mesh, rect_mat_ptr);
+			_fwd_renderer->add_node(b_node);
 		}
+
+		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
+		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
+		_fwd_renderer->add_node(hit_sphere_node_ptr);
 
 		std::vector<std::shared_ptr<light_source>> lights;
 		std::vector<std::shared_ptr<transform_model>> light_transforms;
@@ -211,13 +231,6 @@ namespace efiilj
 			_fwd_renderer->add_node(node_ptr);
 		}
 
-		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
-
-		auto hit_sphere_trf_ptr = std::make_shared<transform_model>(vector3(), vector3(), vector3(0.05f, 0.05f, 0.05f));
-		auto hit_sphere_node_ptr = std::make_shared<graphics_node>(sphere_mesh_ptr, rect_mat_ptr, hit_sphere_trf_ptr);
-		_fwd_renderer->add_node(hit_sphere_node_ptr);
-
 		std::set<int> keys;
 		
 		window_->SetKeyPressFunction([&](const int key, int, const int action, int)
@@ -230,10 +243,10 @@ namespace efiilj
 				{
 					is_mouse_captured_ = !is_mouse_captured_;
 
-					if (is_mouse_captured_)
-						window_->SetCursorMode(GLFW_CURSOR_DISABLED);
-					else
-						window_->SetCursorMode(GLFW_CURSOR_NORMAL);
+					//if (is_mouse_captured_)
+					//	window_->SetCursorMode(GLFW_CURSOR_DISABLED);
+					//else
+					//	window_->SetCursorMode(GLFW_CURSOR_NORMAL);
 
 				}
 				else if (key == GLFW_KEY_LEFT_CONTROL)
@@ -321,7 +334,11 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 			auto camera_ptr = _cam_mgr->get_active_camera();
-			auto camera_trans_ptr = camera_ptr->get_transform(); 
+
+			std::shared_ptr<transform_model> selected_trans_ptr = is_mouse_captured_ ? 
+				camera_ptr->get_transform()
+			:
+				helmet_trans_ptr;
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -329,40 +346,40 @@ namespace efiilj
 			this->window_->Update();
 	
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->forward() * CAMERA_SPEED);
+				selected_trans_ptr->add_position(selected_trans_ptr->forward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->backward() * CAMERA_SPEED);
+				selected_trans_ptr->add_position(selected_trans_ptr->backward() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->right() * CAMERA_SPEED);
+				selected_trans_ptr->add_position(selected_trans_ptr->left() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->left() * CAMERA_SPEED);
+				selected_trans_ptr->add_position(selected_trans_ptr->right() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->up() * CAMERA_SPEED);
+				selected_trans_ptr->add_position(selected_trans_ptr->up() * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				camera_trans_ptr->add_position(camera_trans_ptr->down() * CAMERA_SPEED);
+				selected_trans_ptr->add_position(selected_trans_ptr->down() * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_UP) != keys.end())
-				camera_trans_ptr->add_rotation(camera_trans_ptr->right(), 0.1f);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), 0.1f);
 
 			if (keys.find(GLFW_KEY_DOWN) != keys.end())
-				camera_trans_ptr->add_rotation(camera_trans_ptr->right(), -0.1f);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->right(), -0.1f);
 
 			if (keys.find(GLFW_KEY_LEFT) != keys.end())
-				camera_trans_ptr->add_rotation(camera_trans_ptr->up(), 0.1f);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->up(), 0.1f);
 
 			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
-				camera_trans_ptr->add_rotation(camera_trans_ptr->up(), -0.1f);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->up(), -0.1f);
 
 			if (keys.find(GLFW_KEY_PAGE_DOWN) != keys.end())
-				camera_trans_ptr->add_rotation(camera_trans_ptr->forward(), 0.1);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->forward(), 0.1);
 
 			if (keys.find(GLFW_KEY_PAGE_UP) != keys.end())
-				camera_trans_ptr->add_rotation(camera_trans_ptr->forward(), -0.1);
+				selected_trans_ptr->add_rotation(selected_trans_ptr->forward(), -0.1);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
@@ -378,7 +395,7 @@ namespace efiilj
 			float dt = _def_renderer->get_delta_time();
 			float d = _def_renderer->get_frame_index() / 100.0f;
 
-			helmet_trans_ptr->add_rotation(vector3(1, 1, 0).norm(), dt * 0.05f);
+			//helmet_trans_ptr->add_rotation(vector3(1, 1, 0).norm(), dt * 0.05f);
 
 			for (size_t i = 0; i < NUM_LIGHTS; i++)
 			{

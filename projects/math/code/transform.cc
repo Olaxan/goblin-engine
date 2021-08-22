@@ -54,13 +54,13 @@ namespace efiilj
 
 	vector3 transform_model::right() const
 	{
-		get_model();
-		return model_.col(0).xyz().norm();
+		return left() * -1;
 	}
 
 	vector3 transform_model::left() const
 	{
-		return right() * -1;
+		get_model();
+		return model_.col(0).xyz().norm();
 	}
 
 	vector3 transform_model::up() const
