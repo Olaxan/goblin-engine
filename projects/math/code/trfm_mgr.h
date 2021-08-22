@@ -8,25 +8,30 @@
 
 namespace efiilj
 {
-	typedef unsigned int transform_id;
+	typedef int transform_id;
 
 	class transform_manager : public manager<transform_id>
 	{
 		private:
 
-			std::unordered_map<entity_id, transform_id> _instances;
+			std::vector<transform_id> _instances;
+			std::unordered_map<entity_id, transform_id> _instance_mapping;
 
 			struct
 			{
-				std::vector<matrix4> model;
-				std::vector<matrix4> inverse;
+				mutable std::vector<matrix4> model;
+				mutable std::vector<matrix4> inverse;
 
+				std::vector<vector4> position;
+				std::vector<vector4> scale;
 				std::vector<quaternion> rotation;
 
-				std::vector<bool> model_dirty;
-				std::vector<bool> inverse_dirty;
-
 				std::vector<transform_id> parent;
+
+				mutable std::vector<bool> model_updated;
+				mutable std::vector<bool> inverse_updated;
+
+				std::vector<std::vector<transform_id>> children;
 
 			} _data;
 
@@ -38,17 +43,19 @@ namespace efiilj
 			transform_id register_entity(entity_id eid);
 			bool unregister_entity(transform_id idx);
 
-			const matrix4& get_model() const;
-			const matrix4& get_model_inv() const;
+			void update_models();
 
-			transform_id get_parent() const;
+			const matrix4& get_model(transform_id) const;
+			const matrix4& get_model_inv(transform_id) const;
+
+			transform_id get_parent(transform_id) const;
 			void set_parent(transform_id child_id, transform_id parent_id);
 
 			vector3 get_position(transform_id) const;
 			void set_position(transform_id, const vector3& pos);
 
-			vector3 get_rotation(transform_id) const;
-			void set_rotation(transform_id, const vector3& rot);
+			const quaternion& get_rotation(transform_id) const;
+			void set_rotation(transform_id, const quaternion& rot);
 
 			vector3 get_scale(transform_id)	const;
 			void set_scale(transform_id, const vector3& scale);
@@ -58,12 +65,12 @@ namespace efiilj
 			void add_scale(transform_id, const vector3& delta);
 			void add_rotation(transform_id, const vector3& axis, float angle);
 
-			vector3 get_forward(transform_id) const;
-			vector3 get_backward(transform_id) const;
 			vector3 get_left(transform_id) const;
 			vector3 get_right(transform_id) const;
 			vector3 get_up(transform_id) const;
 			vector3 get_down(transform_id) const;
+			vector3 get_forward(transform_id) const;
+			vector3 get_backward(transform_id) const;
 
 	};
 }
