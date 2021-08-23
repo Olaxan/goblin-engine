@@ -24,7 +24,7 @@ namespace efiilj
 		lighting_(std::move(lighting))
 	{
 
-		printf("Deferred renderer init...\n");
+		printf("Init deferred renderer...\n");
 
 		// Setup gbuffer
 		glGenFramebuffers(1, &rbo_);

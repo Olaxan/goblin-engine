@@ -1,5 +1,7 @@
 #include "trfm_mgr.h"
 
+#include "stdio.h"
+
 namespace efiilj
 {
 	transform_manager::transform_manager()
@@ -8,11 +10,11 @@ namespace efiilj
 	transform_manager::~transform_manager()
 	{}
 
-	transform_id transform_manager::register_entity(entity_id id)
+	transform_id transform_manager::register_entity(entity_id eid)
 	{
-		transform_id trf_id = _instances.size();
-		_instances.emplace_back(trf_id);
-		_instance_mapping.emplace(id, trf_id);
+		transform_id new_id = _instances.size();
+		_instances.emplace_back(new_id);
+		_instance_mapping.emplace(eid, new_id);
 
 		_data.model.emplace_back(matrix4());
 		_data.inverse.emplace_back(matrix4());
@@ -23,7 +25,9 @@ namespace efiilj
 		_data.model_updated.emplace_back(true);
 		_data.inverse_updated.emplace_back(true);
 
-		return trf_id;
+		printf("TRFM: Register entity %d, transform id %d\n", eid, new_id);
+
+		return new_id;
 	}
 
 	bool transform_manager::unregister_entity(transform_id idx)

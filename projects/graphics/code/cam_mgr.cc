@@ -36,6 +36,8 @@ namespace efiilj
 		update_perspective(new_id);
 		update_view(new_id);
 
+		printf("CAMM: Register entity %d, camera id %d\n", eid, new_id);
+
 		return new_id;
 	}
 

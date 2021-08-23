@@ -6,7 +6,7 @@ namespace efiilj
 	forward_renderer::forward_renderer(std::shared_ptr<camera_manager> camera_manager, std::shared_ptr<transform_manager> trf_mgr, const renderer_settings& set)
 		: camera_mgr_(std::move(camera_manager)), _transforms(std::move(trf_mgr)), settings_(set), frame_index_(0), debug_(false), delta_time_() 
 	{
-		printf("Forward renderer init...\n");
+		printf("Init forward renderer...\n");
 		last_frame_ = frame_timer::now();
 		printf("Forward renderer ready\n");
 	}  

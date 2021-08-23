@@ -135,11 +135,6 @@ namespace efiilj
 
 		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
-		auto sphere_mesh_ptr = obj_sphere.get_resource();
-		auto cube_mesh_ptr = std::make_shared<cube>();
-		auto rect_mesh_ptr = std::make_shared<rect>();
-
 		entity_id e1 = entities->create_entity();
 		transform_id e1_trf = transforms->register_entity(e1);
 		transforms->set_scale(e1_trf, 25.0f);
@@ -147,8 +142,15 @@ namespace efiilj
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
 
+		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
+		auto sphere_mesh_ptr = obj_sphere.get_resource();
+		auto cube_mesh_ptr = std::make_shared<cube>();
+		auto rect_mesh_ptr = std::make_shared<rect>();
+
 		auto e1_gfx = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, e1_trf);
 		rdef->add_node(e1_gfx);	
+
+		printf("Objects ready\n");
 
 		auto sun_ptr = std::make_shared<light_source>(
 				std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), 
