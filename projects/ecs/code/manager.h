@@ -26,5 +26,10 @@ namespace efiilj
 
 			virtual void draw_gui() = 0;
 			virtual void draw_gui(T selected) = 0;
+
+			const std::vector<T>& get_instances()
+			{
+				return _instances;
+			}
 	};
 }

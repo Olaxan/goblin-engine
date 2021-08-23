@@ -49,7 +49,9 @@ namespace efiilj
 
 	void camera_manager::draw_gui()
 	{
+		ImGui::Begin("Camera Manager");
 		draw_gui(_current);
+		ImGui::End();
 	}
 
 	void camera_manager::draw_gui(camera_id idx)
@@ -57,8 +59,6 @@ namespace efiilj
 
 		if (idx < 0 || idx > _instances.size() - 1)
 			return;
-
-		ImGui::Begin("Camera Manager");
 
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Camera %d", idx);
 		ImGui::Text("Uniform buffer %d", _ubo);
@@ -102,8 +102,6 @@ namespace efiilj
 
 			ImGui::TreePop();
 		}
-
-		ImGui::End();
 	}
 
 	void camera_manager::update()

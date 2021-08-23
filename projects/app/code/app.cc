@@ -73,6 +73,9 @@ namespace efiilj
 			this->window_->SetUiRender([this]()
 					{
 						cameras->draw_gui();
+						lights->draw_gui();
+						rfwd->draw_gui();
+						rdef->draw_gui();
 					});
 
 			return true;
@@ -86,6 +89,7 @@ namespace efiilj
 		entities = std::make_shared<entity_manager>();
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>(transforms);
+		lights = std::make_shared<light_manager>(transforms);
 
 		//shaders = std::make_shared<shader_manager>();
 
@@ -124,8 +128,8 @@ namespace efiilj
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
 
-		rdef = std::make_shared<deferred_renderer>(cameras, transforms, set, g_prog_ptr, l_prog_ptr);
-		rfwd = std::make_shared<forward_renderer>(cameras, transforms, set);
+		rdef = std::make_shared<deferred_renderer>(cameras, transforms, lights, set, g_prog_ptr, l_prog_ptr);
+		rfwd = std::make_shared<forward_renderer>(cameras, transforms, lights, set);
 		sim = std::make_shared<simulator>();
 
 		// Camera entity
@@ -142,12 +146,10 @@ namespace efiilj
 
 		entity_id e1 = entities->create_entity();
 		transform_id e1_trf = transforms->register_entity(e1);
-		transforms->set_scale(e1_trf, 25.0f);
+		transforms->set_scale(e1_trf, 5.0f);
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
-		rect_mat_ptr->wireframe = true;
-		rect_mat_ptr->double_sided = true;
 
 		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
@@ -159,15 +161,20 @@ namespace efiilj
 		rfwd->set_material(e1_gfx, rect_mat_ptr);
 		rfwd->set_transform(e1_gfx, e1_trf);
 
+		entity_id e2 = entities->create_entity();
+		transform_id e2_trf = transforms->register_entity(e2);
+		transforms->set_scale(e2_trf, 5.0f);
+		render_id e2_gfx = rdef->register_entity(e2);
+
 		// Lights
+		
+		entity_id e_sun = entities->create_entity();
+		light_id sun_light = lights->register_entity(e_sun);
+		lights->set_base(sun_light, vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
 
-		auto sun_ptr = std::make_shared<light_source>(
-				std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), 
-				light_type::directional);
-
-		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
-
-		rdef->add_light(sun_ptr);
+		transform_id sun_trf = transforms->register_entity(e_sun);
+		transforms->add_rotation(sun_trf, vector3(1, 1, 0).norm(), PI / 2.0f);
+		lights->set_transform(sun_light, sun_trf);
 
 		std::set<int> keys;
 		
@@ -292,13 +299,12 @@ namespace efiilj
 
 			cameras->update();
 
-			//rdef->begin_frame();
+			rdef->begin_frame();
+			rdef->render_frame();
+			rdef->end_frame();
+
 			rfwd->begin_frame();
-
-			//rdef->render();
 			rfwd->render_frame();
-
-			//rdef->end_frame();
 			rfwd->end_frame();
 
 			this->window_->SwapBuffers();

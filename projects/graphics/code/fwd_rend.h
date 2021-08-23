@@ -2,10 +2,11 @@
 
 #include "manager.h"
 #include "rend_set.h"
-#include "cam_mgr.h"
-
 #include "mesh_res.h"
 #include "material.h"
+
+#include "lght_mgr.h"
+#include "cam_mgr.h"
 
 #include <memory>
 #include <chrono>
@@ -31,6 +32,7 @@ namespace efiilj
 
 		std::shared_ptr<camera_manager> _cameras;
 		std::shared_ptr<transform_manager> _transforms;
+		std::shared_ptr<light_manager> _lights;
 
 	private:
 
@@ -43,7 +45,11 @@ namespace efiilj
 
 	public:
 
-		forward_renderer(std::shared_ptr<camera_manager> camera_manager, std::shared_ptr<transform_manager> trf_mgr, const renderer_settings& set);
+		forward_renderer(
+				std::shared_ptr<camera_manager> camera_manager, 
+				std::shared_ptr<transform_manager> trf_mgr, 
+				std::shared_ptr<light_manager> light_mgr,
+				const renderer_settings& set);
 		~forward_renderer() = default;
 
 		render_id register_entity(entity_id eid) override;

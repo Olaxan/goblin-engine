@@ -4,8 +4,17 @@
 
 namespace efiilj
 {
-	forward_renderer::forward_renderer(std::shared_ptr<camera_manager> camera_manager, std::shared_ptr<transform_manager> trf_mgr, const renderer_settings& set)
-		: _cameras(std::move(camera_manager)), _transforms(std::move(trf_mgr)), settings_(set), frame_index_(0), delta_time_() 
+	forward_renderer::forward_renderer(
+			std::shared_ptr<camera_manager> camera_manager, 
+			std::shared_ptr<transform_manager> trf_mgr, 
+			std::shared_ptr<light_manager> light_mgr,
+			const renderer_settings& set)
+		: 
+			_cameras(std::move(camera_manager)), 
+			_transforms(std::move(trf_mgr)), 
+			_lights(std::move(light_mgr)),
+			settings_(set), 
+			frame_index_(0), delta_time_() 
 	{
 		printf("Init forward renderer...\n");
 		last_frame_ = frame_timer::now();
@@ -32,7 +41,9 @@ namespace efiilj
 
 	void forward_renderer::draw_gui()
 	{
+		ImGui::Begin("Forward renderer");
 		ImGui::Text("No render selected");	
+		ImGui::End();
 	}
 
 	void forward_renderer::draw_gui(render_id idx)

@@ -23,14 +23,14 @@ namespace efiilj
 		float diffuse_intensity;
 	};
 
-	struct attenuation
+	struct attenuation_data
 	{
 		float constant;
 		float linear;
 		float exponential;
 	};
 
-	struct cutoff
+	struct cutoff_data
 	{
 		float inner_angle;
 		float outer_angle;
@@ -44,8 +44,8 @@ namespace efiilj
 
 			light_type type_;
 			light_base base_;
-			attenuation falloff_;
-			cutoff cutoff_;
+			attenuation_data falloff_;
+			cutoff_data cutoff_;
 
 			void update_falloff();
 
@@ -59,34 +59,34 @@ namespace efiilj
 				cutoff_({0, 0}),
 				type_(type) 
 			{
-				update_falloff();
+				//update_falloff();
 			}
 
-			light_source(light_type type = light_type::pointlight)
-				: light_source(std::make_shared<transform_model>(), type) 
-			{}
+			//light_source(light_type type = light_type::pointlight)
+			//	: light_source(std::make_shared<transform_model>(), type) 
+			//{}
 
-			light_type get_type() const { return type_; }
+			//light_type get_type() const { return type_; }
 
-			void set_base(const light_base& base) { base_ = base; update_falloff(); }
-			void set_base(const vector3& color, float ambient, float diffuse) { set_base( {color, ambient, diffuse} ); }
+			//void set_base(const light_base& base) { base_ = base; update_falloff(); }
+			//void set_base(const vector3& color, float ambient, float diffuse) { set_base( {color, ambient, diffuse} ); }
 
-			light_base get_base() const { return base_; }
+			//light_base get_base() const { return base_; }
 
-			void set_falloff(const attenuation& falloff) { falloff_ = falloff; update_falloff(); }
-			void set_falloff(float constant, float linear, float exponential) { set_falloff( {constant, linear, exponential} ); }
+			//void set_falloff(const attenuation& falloff) { falloff_ = falloff; update_falloff(); }
+			//void set_falloff(float constant, float linear, float exponential) { set_falloff( {constant, linear, exponential} ); }
 
-			attenuation get_falloff() const { return falloff_; }
+			//attenuation get_falloff() const { return falloff_; }
 
-			void set_cutoff(const cutoff& cutoff) { cutoff_ = cutoff; update_falloff(); }
-			void set_cutoff(float inner, float outer) { set_cutoff( { inner, outer }); }
+			//void set_cutoff(const cutoff& cutoff) { cutoff_ = cutoff; update_falloff(); }
+			//void set_cutoff(float inner, float outer) { set_cutoff( { inner, outer }); }
 
-			cutoff get_cutoff() const { return cutoff_; }
+			//cutoff get_cutoff() const { return cutoff_; }
 
-			void set_uniforms(std::shared_ptr<shader_program> program) const;
+			//void set_uniforms(std::shared_ptr<shader_program> program) const;
 
-			std::shared_ptr<transform_model> get_transform() const { return transform_; }
+			//std::shared_ptr<transform_model> get_transform() const { return transform_; }
 
-			void draw_light_gui();
+			//void draw_light_gui();
 	};
 }

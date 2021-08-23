@@ -14,11 +14,12 @@ namespace efiilj
 	(
 		std::shared_ptr<camera_manager> camera_manager,
 		std::shared_ptr<transform_manager> transform_manager,
+		std::shared_ptr<light_manager> light_mgr,
 		const renderer_settings& settings,
 		std::shared_ptr<shader_program> geometry, 
 		std::shared_ptr<shader_program> lighting
 	) : 
-		forward_renderer(camera_manager, transform_manager, settings),
+		forward_renderer(camera_manager, transform_manager, light_mgr, settings),
 		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
 		geometry_(std::move(geometry)), 
 		lighting_(std::move(lighting))
@@ -56,6 +57,18 @@ namespace efiilj
 
 		printf("Deferred renderer ready\n");
 
+	}
+
+	void deferred_renderer::draw_gui()
+	{
+		ImGui::Begin("Deferred renderer");
+		ImGui::Text("Not implemented");
+		ImGui::End();
+	}
+
+	void deferred_renderer::draw_gui(render_id idx)
+	{
+		ImGui::Text("Not implemented");
 	}
 
 	unsigned deferred_renderer::gen_texture(unsigned attach, unsigned internal, unsigned format, unsigned type)
@@ -151,7 +164,28 @@ namespace efiilj
 			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
 	}	
 
-	void deferred_renderer::draw_directional(const light_source& light) const
+	void deferred_renderer::set_light_uniforms(light_id idx) const
+	{
+		const light_type& type = _lights->get_type(idx);
+		const light_base& base = _lights->get_base(idx);
+		const attenuation_data& att = _lights->get_attenuation(idx);
+		const cutoff_data& cutoff = _lights->get_cutoff(idx);
+		const transform_id& trf = _lights->get_transform(idx);
+
+		lighting_->set_uniform("source.type", static_cast<int>(type));
+		lighting_->set_uniform("source.base.color", base.color);
+		lighting_->set_uniform("source.base.ambient_intensity", base.ambient_intensity);
+		lighting_->set_uniform("source.base.diffuse_intensity", base.diffuse_intensity);
+		lighting_->set_uniform("source.position", _transforms->get_position(trf));
+		lighting_->set_uniform("source.direction", _transforms->get_forward(trf));
+		lighting_->set_uniform("source.falloff.constant", att.constant);
+		lighting_->set_uniform("source.falloff.linear", att.linear);
+		lighting_->set_uniform("source.falloff.exponential", att.exponential);
+		lighting_->set_uniform("source.cutoff.inner", cutoff.inner_angle);
+		lighting_->set_uniform("source.cutoff.outer", cutoff.outer_angle);
+	}
+
+	void deferred_renderer::draw_directional() const
 	{
 		lighting_->set_uniform("light_mvp", matrix4());
 
@@ -161,7 +195,7 @@ namespace efiilj
 		glBindVertexArray(0);
 	}
 
-	void deferred_renderer::draw_pointlight(const light_source& light, float radius) const
+	void deferred_renderer::draw_pointlight(const matrix4& model) const
 	{
 
 		camera_id cid = _cameras->get_camera();
@@ -169,7 +203,7 @@ namespace efiilj
 		const matrix4& v = _cameras->get_view(cid);
 		const matrix4& p = _cameras->get_perspective(cid);
 
-		matrix4 mvp = p * v * light.get_transform()->get_model();
+		matrix4 mvp = p * v * model;
 
 		lighting_->set_uniform("light_mvp", mvp);
 
@@ -219,7 +253,6 @@ namespace efiilj
 		attach_textures(tex_type::target);	
 		attach_textures(tex_type::component_read);
 
-
 		lighting_->set_uniform(settings_.u_camera, cam_pos); 
 		lighting_->set_uniform(settings_.u_dt_seconds, get_delta_time());
 
@@ -228,39 +261,33 @@ namespace efiilj
 		glBlendFunc(GL_ONE, GL_ONE);
 		glEnable(GL_CULL_FACE);
 
-		for (size_t i = 0; i < light_sources_.size(); i++)
+		for (auto& idx : _lights->get_instances())
 		{
-			light_source& light = *light_sources_[i];
+			set_light_uniforms(idx);
 
-			light.set_uniforms(lighting_);
-
-			switch (light.get_type())
+			switch(_lights->get_type(idx))
 			{
 				case light_type::directional:
 				{
-					draw_directional(light);	
+					draw_directional();	
 					break;
 				}
 
 				case light_type::spotlight:
-				{
-					draw_directional(light);
-					break;
-				}
-
 				case light_type::pointlight:
 				{
 					
-					auto light_trf = light.get_transform();
+					transform_id trf = _lights->get_transform(idx);
+					const matrix4& model = _transforms->get_model(trf);
 
-					vector3 cam_dir = cam_pos - light_trf->get_position();
+					vector3 cam_dir = cam_pos - _transforms->get_position(trf);
 
-					float radius = light_trf->get_scale().length();
+					float radius = _transforms->get_scale(trf).length();
 
 					if (cam_dir.length() < radius)
-						draw_directional(light);
+						draw_directional();
 					else
-						draw_pointlight(light, radius);
+						draw_pointlight(model);
 
 					break;
 				}
@@ -269,6 +296,7 @@ namespace efiilj
 					fprintf(stderr, "ERROR: Light type not implemented!\n");
 			}	
 		}
+
 
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
@@ -284,19 +312,5 @@ namespace efiilj
 
 		glBlitFramebuffer(0, 0, settings_.width, settings_.height,
 						  0, 0, settings_.width, settings_.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	}
-
-	void deferred_renderer::draw_renderer_gui()
-	{
-		static int selected_light = 0;
-		
-		if (light_sources_.size() > 0)
-		{
-			ImGui::Text("Lighting");
-			ImGui::SliderInt("Light", &selected_light, 0, light_sources_.size() - 1);
-
-			auto light = light_sources_[selected_light];
-			light->draw_light_gui();
-		}
 	}
 }

@@ -44,7 +44,10 @@ namespace efiilj
 	void transform_manager::draw_gui(transform_id idx)
 	{
 		if (idx < 0 || idx > _instances.size() - 1)
+		{
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid transform ID!");
 			return;
+		}
 
 		if (ImGui::TreeNode("Transform"))
 		{
