@@ -11,7 +11,7 @@ namespace efiilj
 	{
 		private:
 
-			struct
+			struct TransformData
 			{
 				mutable std::vector<matrix4> model;
 				mutable std::vector<matrix4> inverse;
@@ -34,8 +34,11 @@ namespace efiilj
 			transform_manager();
 			~transform_manager();
 
-			transform_id register_entity(entity_id eid);
-			bool unregister_entity(transform_id idx);
+			transform_id register_entity(entity_id eid) override;
+			bool unregister_entity(transform_id idx) override;
+
+			void draw_gui() override;
+			void draw_gui(transform_id idx) override;
 
 			void update_models();
 

@@ -4,6 +4,14 @@
 //------------------------------------------------------------------------------
 #include "config.h"
 
+#include <chrono>
+#include <iostream>
+#include <limits>
+#include <memory>
+#include <set>
+
+#include "imgui.h"
+
 #include "app.h"
 #include "loader.h"
 #include "light.h"
@@ -11,38 +19,12 @@
 #include "node.h"
 #include "gltf_loader.h"
 #include "program.h"
-#include "def_rend.h"
-#include "fwd_rend.h"
-#include "cam_mgr.h"
-#include "imgui.h"
 #include "rect.h"
 #include "line.h"
-#include "math_test.h"
 #include "cube.h"
 #include "bbox.h"
-
 #include "quat.h"
 
-#include "gui_matedit.h"
-
-#include "glm/gtx/string_cast.hpp"
-#include "glm/gtx/quaternion.hpp"
-#include "glm/gtc/quaternion.hpp"
-#include "glm/common.hpp"
-#include "glm/ext/quaternion_geometric.hpp"
-#include "glm/ext/quaternion_trigonometric.hpp"
-#include "glm/fwd.hpp"
-
-#include "entity.h"
-#include "trfm_mgr.h"
-
-#include <chrono>
-#include <iostream>
-#include <limits>
-#include <memory>
-#include <set>
-
-#define flase false
 #define WINDOW_WIDTH 1366
 #define WINDOW_HEIGHT 768
 #define CAMERA_SPEED 0.5f
@@ -64,8 +46,8 @@ namespace efiilj
 
 	application::application()
 	: window_(nullptr), time_(0), 
-		mouse_x_(0), mouse_y_(0), mouse_down_x_(0), mouse_down_y_(0), mouse_norm_x_(0), mouse_norm_y_(0), 
-		is_dragging_mouse_(false), is_mouse_captured_(true), is_software_renderer_(flase) { }
+		mouse_x(0), mouse_y(0), mouse_down_x(0), mouse_down_y(0), mouse_norm_x(0), mouse_norm_y(0), 
+		is_dragging_mouse(false), is_mouse_captured(true) { }
 
 	application::~application() = default;
 
@@ -90,6 +72,7 @@ namespace efiilj
 
 			this->window_->SetUiRender([this]()
 					{
+						cameras->draw_gui();
 					});
 
 			return true;
@@ -100,9 +83,9 @@ namespace efiilj
 	void application::run()
 	{
 
-		auto entities = std::make_shared<entity_manager>();
-		auto transforms = std::make_shared<transform_manager>();
-		auto cameras = std::make_shared<camera_manager>(transforms);
+		entities = std::make_shared<entity_manager>();
+		transforms = std::make_shared<transform_manager>();
+		cameras = std::make_shared<camera_manager>(transforms);
 
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
@@ -125,14 +108,15 @@ namespace efiilj
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
 
-		auto rdef = std::make_shared<deferred_renderer>(cameras, transforms, set, g_prog_ptr, l_prog_ptr);
-		auto rfwd = std::make_shared<forward_renderer>(cameras, transforms, set);
-		auto sim = std::make_shared<simulator>();
+		rdef = std::make_shared<deferred_renderer>(cameras, transforms, set, g_prog_ptr, l_prog_ptr);
+		rfwd = std::make_shared<forward_renderer>(cameras, transforms, set);
+		sim = std::make_shared<simulator>();
 
 		entity_id cam_ent = entities->create_entity();
 		transform_id cam_trf = transforms->register_entity(cam_ent);
 		camera_id cam_id = cameras->register_entity(cam_ent);
 
+		cameras->set_transform(cam_id, cam_trf);
 		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		entity_id e1 = entities->create_entity();
@@ -141,16 +125,17 @@ namespace efiilj
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
+		rect_mat_ptr->wireframe = true;
+		rect_mat_ptr->double_sided = true;
 
 		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
 
-		auto e1_gfx = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, e1_trf);
+		auto e1_gfx = std::make_shared<graphics_node>(transforms, cube_mesh_ptr, rect_mat_ptr, e1_trf);
 		rdef->add_node(e1_gfx);	
-
-		printf("Objects ready\n");
+		rfwd->add_node(e1_gfx);
 
 		auto sun_ptr = std::make_shared<light_source>(
 				std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), 
@@ -170,17 +155,13 @@ namespace efiilj
 
 				if (key == GLFW_KEY_TAB)
 				{
-					is_mouse_captured_ = !is_mouse_captured_;
+					is_mouse_captured = !is_mouse_captured;
 
 					//if (is_mouse_captured_)
 					//	window_->SetCursorMode(GLFW_CURSOR_DISABLED);
 					//else
 					//	window_->SetCursorMode(GLFW_CURSOR_NORMAL);
 
-				}
-				else if (key == GLFW_KEY_LEFT_CONTROL)
-				{
-					is_software_renderer_ = !is_software_renderer_;
 				}
 				else if (key == GLFW_KEY_R)
 				{
@@ -198,11 +179,11 @@ namespace efiilj
 
 			window_->SetMouseMoveFunction([&](const double x, const double y)
 		{
-			mouse_x_ = x;
-			mouse_y_ = y;
+			mouse_x = x;
+			mouse_y = y;
 
-			mouse_norm_x_ = x / WINDOW_WIDTH - 0.5f;
-			mouse_norm_y_ = y / WINDOW_HEIGHT - 0.5f;
+			mouse_norm_x = x / WINDOW_WIDTH - 0.5f;
+			mouse_norm_y = y / WINDOW_HEIGHT - 0.5f;
 
 		});
 
@@ -210,10 +191,10 @@ namespace efiilj
 		{
 			if (action == 1)
 			{
-				mouse_down_x_ = mouse_norm_x_;
-				mouse_down_y_ = mouse_norm_y_;
+				mouse_down_x = mouse_norm_x;
+				mouse_down_y = mouse_norm_y;
 
-				is_dragging_mouse_ = true;
+				is_dragging_mouse = true;
 
 				//auto camera_ptr = _cam_mgr->get_active_camera();
 				//ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
@@ -234,14 +215,14 @@ namespace efiilj
 			}
 			else
 			{
-				is_dragging_mouse_ = false;
+				is_dragging_mouse = false;
 			}
 		});
 
 		while (this->window_->IsOpen())
 		{
 
-			transform_id selected_trf = is_mouse_captured_ ? cam_trf : e1_trf;
+			transform_id selected_trf = is_mouse_captured ? cam_trf : e1_trf;
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -290,13 +271,15 @@ namespace efiilj
 			float dt = rdef->get_delta_time();
 			float d = rdef->get_frame_index() / 100.0f;
 
-			rdef->begin_frame();
+			cameras->update();
+
+			//rdef->begin_frame();
 			rfwd->begin_frame();
 
-			rdef->render();
+			//rdef->render();
 			rfwd->render();
 
-			rdef->end_frame();
+			//rdef->end_frame();
 			rfwd->end_frame();
 
 			this->window_->SwapBuffers();

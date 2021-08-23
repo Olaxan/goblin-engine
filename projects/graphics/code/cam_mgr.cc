@@ -1,4 +1,5 @@
 #include "cam_mgr.h"
+#include "imgui.h"
 
 #include <GL/glew.h>
 
@@ -28,13 +29,13 @@ namespace efiilj
 		_data.fov.emplace_back(DEFAULT_FOV);
 		_data.near.emplace_back(DEFAULT_NEAR);
 		_data.far.emplace_back(DEFAULT_FAR);
-		_data.perspective.emplace_back(matrix4());
-		_data.p_inverse.emplace_back(matrix4());
-		_data.view.emplace_back(matrix4());
+		_data.perspective.emplace_back();
+		_data.p_inverse.emplace_back();
+		_data.view.emplace_back();
 		_data.transform.emplace_back(-1);
 
 		update_perspective(new_id);
-		update_view(new_id);
+		push_perspective();
 
 		printf("CAMM: Register entity %d, camera id %d\n", eid, new_id);
 
@@ -44,6 +45,71 @@ namespace efiilj
 	bool camera_manager::unregister_entity(camera_id idx)
 	{
 		return false;
+	}
+
+	void camera_manager::draw_gui()
+	{
+		draw_gui(_current);
+	}
+
+	void camera_manager::draw_gui(camera_id idx)
+	{
+
+		if (idx < 0 || idx > _instances.size() - 1)
+			return;
+
+		ImGui::Begin("Camera Manager");
+
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Camera %d", idx);
+		ImGui::Text("Uniform buffer %d", _ubo);
+
+		_transforms->draw_gui(_data.transform[idx]);
+
+		if (ImGui::TreeNode("Settings"))
+		{
+			if (ImGui::InputFloat("Width", &_data.width[idx])
+					|| ImGui::InputFloat("Height", &_data.height[idx])
+					|| ImGui::InputFloat("FOV", &_data.fov[idx])
+					|| ImGui::InputFloat("Near", &_data.near[idx])
+					|| ImGui::InputFloat("Far", &_data.far[idx]))
+			{
+				update_perspective(idx);
+				push_perspective();
+
+				update_view(idx);
+				push_view();
+			}
+
+			if (ImGui::TreeNode("Perspective matrix"))
+			{
+				ImGui::InputFloat4("X", &_data.perspective[idx](0, 0));
+				ImGui::InputFloat4("Y", &_data.perspective[idx](1, 0));
+				ImGui::InputFloat4("Z", &_data.perspective[idx](2, 0));
+				ImGui::InputFloat4("W", &_data.perspective[idx](3, 0));
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("View matrix"))
+			{
+				ImGui::InputFloat4("X", &_data.view[idx](0, 0));
+				ImGui::InputFloat4("Y", &_data.view[idx](1, 0));
+				ImGui::InputFloat4("Z", &_data.view[idx](2, 0));
+				ImGui::InputFloat4("W", &_data.view[idx](3, 0));
+				
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
+
+		ImGui::End();
+	}
+
+	void camera_manager::update()
+	{
+		update_view(_current);
+		push_view();
 	}
 
 	void camera_manager::setup_ubo()
@@ -72,7 +138,7 @@ namespace efiilj
 	void camera_manager::update_view(camera_id idx)
 	{
 		vector3 pos = _transforms->get_position(_data.transform[idx]);
-		vector3 fwd = _transforms->get_forward(_data.transform[idx]);
+		vector3 fwd = pos + _transforms->get_forward(_data.transform[idx]);
 		vector3 up = _transforms->get_up(_data.transform[idx]);
 		_data.view[idx] = matrix4::get_lookat(pos, fwd, up);
 	}
@@ -161,6 +227,7 @@ namespace efiilj
 	
 	void camera_manager::set_size(camera_id idx, float width, float height)
 	{
+		printf("Setsize %d, %fx%f\n",idx,width,height);
 		_data.width[idx] = width;
 		_data.height[idx] = height;
 		update_view(idx);

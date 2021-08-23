@@ -39,9 +39,10 @@ namespace efiilj
 		 */
 
 		graphics_node(
-			std::shared_ptr<mesh_resource> mesh_ptr,
-			std::shared_ptr<material_base> material_ptr,
-			transform_id transform
+				std::shared_ptr<transform_manager> trf_mgr,
+				std::shared_ptr<mesh_resource> mesh_ptr,
+				std::shared_ptr<material_base> material_ptr,
+				transform_id transform
 			);
 
 		std::string name;

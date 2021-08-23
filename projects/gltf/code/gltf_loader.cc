@@ -210,7 +210,7 @@ namespace efiilj
 //				auto trf = std::make_shared<transform_model>();
 //				trf->set_parent(parent);
 
-				auto node_ptr = std::make_shared<graphics_node>(mesh_ptr, mat_ptr, parent);
+				auto node_ptr = std::make_shared<graphics_node>(_transforms, mesh_ptr, mat_ptr, parent);
 				node_ptr->name = name + "_" + std::to_string(i);
 				new_scene->nodes.push_back(std::move(node_ptr));
 			}

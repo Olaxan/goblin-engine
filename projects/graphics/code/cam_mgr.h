@@ -20,7 +20,7 @@ namespace efiilj
 		unsigned _ubo;
 		camera_id _current;
 
-		struct 
+		struct CameraData
 		{
 			std::vector<float> width;
 			std::vector<float> height;
@@ -38,9 +38,9 @@ namespace efiilj
 		void setup_ubo();
 
 		void update_perspective(camera_id idx);
-		void push_perspective();
-
 		void update_view(camera_id idx);
+
+		void push_perspective();
 		void push_view();
 
 	public:
@@ -50,6 +50,10 @@ namespace efiilj
 
 		camera_id register_entity(entity_id eid) override;
 		bool unregister_entity(camera_id idx) override;
+		void draw_gui() override;
+		void draw_gui(camera_id idx) override;
+
+		void update();
 
 		camera_id get_camera() const;
 		bool set_camera(camera_id active);

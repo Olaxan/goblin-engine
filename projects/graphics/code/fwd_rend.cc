@@ -27,28 +27,11 @@ namespace efiilj
 
 	void forward_renderer::render() const
 	{
-		if (debug_)
+		for (auto& node : nodes_)
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-			for (auto& node : nodes_)
-			{
-				node->bind();
-				node->draw();
-				node->unbind();
-			}
-
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-		else
-		{
-			// boo
-			for (auto& node : nodes_)
-			{
-				node->bind();
-				node->draw();
-				node->unbind();
-			}
+			node->bind();
+			node->draw();
+			node->unbind();
 		}
 	}
 

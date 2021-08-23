@@ -1,5 +1,6 @@
 #include "trfm_mgr.h"
 
+#include "imgui.h"
 #include "stdio.h"
 
 namespace efiilj
@@ -19,7 +20,7 @@ namespace efiilj
 		_data.model.emplace_back(matrix4());
 		_data.inverse.emplace_back(matrix4());
 		_data.position.emplace_back(vector4());
-		_data.scale.emplace_back(vector4());
+		_data.scale.emplace_back(vector4(1.0f, 1.0f, 1.0f, 1.0f));
 		_data.rotation.emplace_back(quaternion());
 		_data.parent.emplace_back(-1);
 		_data.model_updated.emplace_back(true);
@@ -33,6 +34,38 @@ namespace efiilj
 	bool transform_manager::unregister_entity(transform_id idx)
 	{
 		return false;
+	}
+
+	void transform_manager::draw_gui()
+	{
+		ImGui::Text("No transform selected.");
+	}
+
+	void transform_manager::draw_gui(transform_id idx)
+	{
+		if (idx < 0 || idx > _instances.size() - 1)
+			return;
+
+		if (ImGui::TreeNode("Transform"))
+		{
+			if (ImGui::DragFloat3("Position", &_data.position[idx].x, 0.1f) 
+					|| ImGui::DragFloat4("Rotation", &_data.rotation[idx].x)
+					|| ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.1f))
+			{
+				_data.model_updated[idx] = false;
+				get_model(idx);
+			}
+
+			if (ImGui::CollapsingHeader("Model matrix"))
+			{
+				ImGui::InputFloat4("X", &_data.model[idx](0, 0));
+				ImGui::InputFloat4("Y", &_data.model[idx](1, 0));
+				ImGui::InputFloat4("Z", &_data.model[idx](2, 0));
+				ImGui::InputFloat4("W", &_data.model[idx](3, 0));
+			}
+
+			ImGui::TreePop();
+		}
 	}
 
 	void transform_manager::update_models()

@@ -9,8 +9,9 @@
 #include "core/app.h"
 #include "render/window.h"
 
+#include "entity.h"
 #include "cam_mgr.h"
-#include "node.h"
+#include "trfm_mgr.h"
 #include "def_rend.h"
 #include "sim.h"
 
@@ -23,9 +24,21 @@ namespace efiilj
 	private:
 
 		Display::Window* window_;
-		double mouse_x_, mouse_y_, mouse_norm_x_, mouse_norm_y_, mouse_down_x_, mouse_down_y_;
+
+		double mouse_x, mouse_y;
+		double mouse_norm_x, mouse_norm_y;
+		double mouse_down_x, mouse_down_y;
+
 		float time_;
-		bool is_dragging_mouse_, is_mouse_captured_, is_software_renderer_;
+		bool is_dragging_mouse;
+		bool is_mouse_captured;
+
+		std::shared_ptr<entity_manager> entities;
+		std::shared_ptr<transform_manager> transforms;
+		std::shared_ptr<camera_manager> cameras;
+		std::shared_ptr<forward_renderer> rfwd;
+		std::shared_ptr<deferred_renderer> rdef;
+		std::shared_ptr<simulator> sim;
 		
 	public:
 

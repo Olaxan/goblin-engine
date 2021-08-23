@@ -11,11 +11,17 @@ namespace efiilj
 {
 
 	graphics_node::graphics_node(
-		std::shared_ptr<mesh_resource> mesh_ptr,
-		std::shared_ptr<material_base> material_ptr,
-		transform_id trf)
-			: mesh_(std::move(mesh_ptr)), material_(std::move(material_ptr)), _transform(trf),
-			is_absolute_(false), name("Object")
+
+			std::shared_ptr<transform_manager> trf_mgr,
+			std::shared_ptr<mesh_resource> mesh_ptr,
+			std::shared_ptr<material_base> material_ptr,
+			transform_id trf)
+		: _transforms(std::move(trf_mgr)),
+		mesh_(std::move(mesh_ptr)), 
+		material_(std::move(material_ptr)), 
+		_transform(trf),
+		is_absolute_(false), 
+		name("Object")
 	{}
 
 	void graphics_node::bind() const
