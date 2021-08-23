@@ -118,6 +118,7 @@ namespace efiilj
 
 		cameras->set_transform(cam_id, cam_trf);
 		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
+		cameras->set_fov(cam_id, 1.2f);
 
 		entity_id e1 = entities->create_entity();
 		transform_id e1_trf = transforms->register_entity(e1);

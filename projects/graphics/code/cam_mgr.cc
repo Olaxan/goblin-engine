@@ -200,7 +200,7 @@ namespace efiilj
 	{
 		_data.fov[idx] = fov;
 		update_perspective(idx);
-		push_view();
+		push_perspective();
 	}
 
 	const matrix4& camera_manager::get_perspective(camera_id idx) const
