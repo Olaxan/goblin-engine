@@ -77,8 +77,7 @@ namespace efiilj
 				add_light(light);
 		}
 
-		void reload_shaders() const override;
-		void render() const override;
+		void render_frame() const override;
 
 		void on_begin_frame() override;
 		void on_end_frame() override;

@@ -87,6 +87,22 @@ namespace efiilj
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>(transforms);
 
+		//shaders = std::make_shared<shader_manager>();
+
+		//entity_id default_entity = entities->create_entity();
+
+		//shader_id s1 = shaders->register_entity(default_entity);
+		//shaders->set_uri(s1, "res/shaders/dvs_default_geometry.glsl");
+		//shaders->set_type(s1, GL_VERTEX_SHADER);
+		//shaders->set_program(s1, p1);
+
+		//shaders_id s2 = shaders->register_entity(default_entity);
+		//shaders->set_uri(s2, "res/shaders/dfs_default_geometry.glsl");
+		//shaders->set_type(s2, GL_FRAGMENT_SHADER);
+		//shaders->set_program(s2, p1);
+
+		//shaders->compile(p1);
+
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
 		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
@@ -112,6 +128,8 @@ namespace efiilj
 		rfwd = std::make_shared<forward_renderer>(cameras, transforms, set);
 		sim = std::make_shared<simulator>();
 
+		// Camera entity
+
 		entity_id cam_ent = entities->create_entity();
 		transform_id cam_trf = transforms->register_entity(cam_ent);
 		camera_id cam_id = cameras->register_entity(cam_ent);
@@ -119,6 +137,8 @@ namespace efiilj
 		cameras->set_transform(cam_id, cam_trf);
 		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
 		cameras->set_fov(cam_id, 1.2f);
+
+		// Test entity 1
 
 		entity_id e1 = entities->create_entity();
 		transform_id e1_trf = transforms->register_entity(e1);
@@ -134,9 +154,12 @@ namespace efiilj
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
 
-		auto e1_gfx = std::make_shared<graphics_node>(transforms, cube_mesh_ptr, rect_mat_ptr, e1_trf);
-		rdef->add_node(e1_gfx);	
-		rfwd->add_node(e1_gfx);
+		render_id e1_gfx = rfwd->register_entity(e1);
+		rfwd->set_mesh(e1_gfx, cube_mesh_ptr);
+		rfwd->set_material(e1_gfx, rect_mat_ptr);
+		rfwd->set_transform(e1_gfx, e1_trf);
+
+		// Lights
 
 		auto sun_ptr = std::make_shared<light_source>(
 				std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), 
@@ -163,11 +186,6 @@ namespace efiilj
 					//else
 					//	window_->SetCursorMode(GLFW_CURSOR_NORMAL);
 
-				}
-				else if (key == GLFW_KEY_R)
-				{
-					rdef->reload_shaders();
-					rfwd->reload_shaders();
 				}
 			}
 			else if (action == 0)
@@ -278,7 +296,7 @@ namespace efiilj
 			rfwd->begin_frame();
 
 			//rdef->render();
-			rfwd->render();
+			rfwd->render_frame();
 
 			//rdef->end_frame();
 			rfwd->end_frame();
@@ -288,5 +306,3 @@ namespace efiilj
 		}
 	}
 }
-
-#undef flase

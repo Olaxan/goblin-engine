@@ -69,9 +69,9 @@ namespace efiilj
 		{
 			if (ImGui::InputFloat("Width", &_data.width[idx])
 					|| ImGui::InputFloat("Height", &_data.height[idx])
-					|| ImGui::InputFloat("FOV", &_data.fov[idx])
-					|| ImGui::InputFloat("Near", &_data.near[idx])
-					|| ImGui::InputFloat("Far", &_data.far[idx]))
+					|| ImGui::DragFloat("FOV", &_data.fov[idx], 0.01f)
+					|| ImGui::DragFloat("Near", &_data.near[idx], 0.1f)
+					|| ImGui::DragFloat("Far", &_data.far[idx], 0.1f))
 			{
 				update_perspective(idx);
 				push_perspective();

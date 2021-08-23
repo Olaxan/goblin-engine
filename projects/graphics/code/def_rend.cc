@@ -164,10 +164,10 @@ namespace efiilj
 	void deferred_renderer::draw_pointlight(const light_source& light, float radius) const
 	{
 
-		camera_id cid = camera_mgr_->get_camera();
+		camera_id cid = _cameras->get_camera();
 
-		const matrix4& v = camera_mgr_->get_view(cid);
-		const matrix4& p = camera_mgr_->get_perspective(cid);
+		const matrix4& v = _cameras->get_view(cid);
+		const matrix4& p = _cameras->get_perspective(cid);
 
 		matrix4 mvp = p * v * light.get_transform()->get_model();
 
@@ -186,14 +186,14 @@ namespace efiilj
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void deferred_renderer::render() const
+	void deferred_renderer::render_frame() const
 	{
 
 		if (!geometry_->use())
 			return;
 
-		camera_id cam = camera_mgr_->get_camera();
-		const vector3& cam_pos = _transforms->get_position(camera_mgr_->get_transform(cam));
+		camera_id cam = _cameras->get_camera();
+		const vector3& cam_pos = _transforms->get_position(_cameras->get_transform(cam));
 
 		/* ---------- Geometry Pass ---------- */
 		
@@ -204,11 +204,9 @@ namespace efiilj
 		attach_textures(tex_type::component_draw);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		for (auto& node : nodes_)
+		for (auto& idx : _instances)
 		{
-			node->bind();
-			node->draw();
-			node->unbind();
+			render(idx);
 		}
 
 		glDepthMask(GL_FALSE);
@@ -286,12 +284,6 @@ namespace efiilj
 
 		glBlitFramebuffer(0, 0, settings_.width, settings_.height,
 						  0, 0, settings_.width, settings_.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	}
-	
-	void deferred_renderer::reload_shaders() const
-	{
-		geometry_->reload();
-		lighting_->reload();
 	}
 
 	void deferred_renderer::draw_renderer_gui()

@@ -1,27 +1,36 @@
 #pragma once
 
+#include "manager.h"
 #include "rend_set.h"
 #include "cam_mgr.h"
-#include "node.h"
-#include "scene.h"
+
+#include "mesh_res.h"
+#include "material.h"
 
 #include <memory>
 #include <chrono>
 
 namespace efiilj
 {
-	class forward_renderer
+	typedef int render_id;
+
+	class forward_renderer : public manager<render_id>
 	{
 	protected:
 
-		std::vector<std::shared_ptr<graphics_node>> nodes_;
-		std::shared_ptr<camera_manager> camera_mgr_;
-		std::shared_ptr<transform_manager> _transforms;
 		const renderer_settings& settings_;
 
-		bool debug_;
-
 		unsigned frame_index_;
+
+		struct RenderData
+		{
+			std::vector<std::shared_ptr<mesh_resource>> mesh;
+			std::vector<std::shared_ptr<material_base>> material;
+			std::vector<transform_id> transform;
+		} _data;
+
+		std::shared_ptr<camera_manager> _cameras;
+		std::shared_ptr<transform_manager> _transforms;
 
 	private:
 
@@ -37,31 +46,20 @@ namespace efiilj
 		forward_renderer(std::shared_ptr<camera_manager> camera_manager, std::shared_ptr<transform_manager> trf_mgr, const renderer_settings& set);
 		~forward_renderer() = default;
 
-		virtual void add_node(std::shared_ptr<graphics_node> node)
-		{
-			this->nodes_.push_back(node);
-		}
+		render_id register_entity(entity_id eid) override;
+		bool  unregister_entity(render_id idx) override;
 
-		virtual void add_nodes(const std::vector<std::shared_ptr<graphics_node>>& nodes)
-		{
-			for (auto& node : nodes)
-				add_node(node);
-		}
+		void draw_gui() override;
+		void draw_gui(render_id idx) override;
 
-		virtual void add_scene(const std::shared_ptr<scene> scene)
-		{
-			for (auto& node : scene->nodes)
-				add_node(node);
-		}
+		void set_mesh(render_id idx, std::shared_ptr<mesh_resource> mesh);
 
-		const std::vector<std::shared_ptr<graphics_node>>& get_nodes() const 
-		{ 
-			return nodes_; 
-		}
+		void set_material(render_id idx, std::shared_ptr<material_base> mat);
 
-		virtual void reload_shaders() const;
-
-		virtual void render() const;
+		void set_transform(render_id idx, transform_id transform);
+		
+		void render(render_id idx) const;
+		virtual void render_frame() const;
 
 		void begin_frame();
 		void end_frame();
@@ -71,8 +69,5 @@ namespace efiilj
 
 		unsigned get_frame_index() const { return frame_index_; }
 		float get_delta_time() const { return delta_time_.count(); }
-
-		void set_debug(bool enabled) { debug_ = enabled; printf("Debug mode %i\n", debug_); }
-		void toggle_debug() { set_debug(!debug_); }
 	};
 }
