@@ -154,17 +154,16 @@ namespace efiilj
 		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 		auto cube_mesh_ptr = std::make_shared<cube>();
-		auto rect_mesh_ptr = std::make_shared<rect>();
 
 		render_id e1_gfx = rfwd->register_entity(e1);
-		rfwd->set_mesh(e1_gfx, cube_mesh_ptr);
+		rfwd->set_mesh(e1_gfx, sphere_mesh_ptr);
 		rfwd->set_material(e1_gfx, rect_mat_ptr);
 		rfwd->set_transform(e1_gfx, e1_trf);
 
 		entity_id e2 = entities->create_entity();
 		transform_id e2_trf = transforms->register_entity(e2);
 		transforms->set_scale(e2_trf, 5.0f);
-		render_id e2_gfx = rdef->register_entity(e2);
+		//render_id e2_gfx = rdef->register_entity(e2);
 
 		// Lights
 		
