@@ -39,6 +39,11 @@ namespace efiilj
 		return new_id;
 	}
 
+	bool camera_manager::unregister_entity(camera_id idx)
+	{
+		return false;
+	}
+
 	void camera_manager::setup_ubo()
 	{
 		glGenBuffers(1, &_ubo);
@@ -127,6 +132,36 @@ namespace efiilj
 	{
 		_data.fov[idx] = fov;
 		update_perspective(idx);
+		push_view();
+	}
+
+	const matrix4& camera_manager::get_perspective(camera_id idx) const
+	{
+		return _data.view[idx];
+	}
+
+	const matrix4& camera_manager::get_view(camera_id idx) const
+	{
+		return _data.perspective[idx];
+	}
+	
+	transform_id camera_manager::get_transform(camera_id idx) const
+	{
+		return _data.transform[idx];
+	}
+
+	void camera_manager::set_transform(camera_id idx, transform_id trf)
+	{
+		_data.transform[idx] = trf;
+		update_view(idx);
+		push_view();
+	}
+	
+	void camera_manager::set_size(camera_id idx, float width, float height)
+	{
+		_data.width[idx] = width;
+		_data.height[idx] = height;
+		update_view(idx);
 		push_view();
 	}
 }

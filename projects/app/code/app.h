@@ -26,13 +26,6 @@ namespace efiilj
 		double mouse_x_, mouse_y_, mouse_norm_x_, mouse_norm_y_, mouse_down_x_, mouse_down_y_;
 		float time_;
 		bool is_dragging_mouse_, is_mouse_captured_, is_software_renderer_;
-
-		std::shared_ptr<camera_manager> _cam_mgr;
-		std::shared_ptr<graphics_node> _selected_node;
-
-		std::shared_ptr<deferred_renderer> _def_renderer;
-		std::shared_ptr<forward_renderer> _fwd_renderer;
-		std::shared_ptr<simulator> _simulator;
 		
 	public:
 

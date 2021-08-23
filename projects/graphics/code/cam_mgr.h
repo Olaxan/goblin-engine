@@ -48,8 +48,8 @@ namespace efiilj
 		camera_manager(std::shared_ptr<transform_manager> trf_mgr);
 		~camera_manager() = default;
 
-		camera_id register_entity(entity_id eid);
-		bool unregister_entity(camera_id idx);
+		camera_id register_entity(entity_id eid) override;
+		bool unregister_entity(camera_id idx) override;
 
 		camera_id get_camera() const;
 		bool set_camera(camera_id active);
@@ -62,5 +62,13 @@ namespace efiilj
 
 		float get_fov(camera_id idx) const;
 		void set_fov(camera_id idx, float fov);
+
+		void set_size(camera_id idx, float width, float height);
+
+		const matrix4& get_perspective(camera_id idx) const;
+
+		const matrix4& get_view(camera_id idx) const;
+		transform_id get_transform(camera_id idx) const;
+		void set_transform(camera_id idx, transform_id trf);
 	};
 }

@@ -90,28 +90,6 @@ namespace efiilj
 
 			this->window_->SetUiRender([this]()
 					{
-						if (_selected_node != nullptr)
-						{
-							auto mat = _selected_node->get_material();
-							if (mat != nullptr)
-							{
-								ImGui::Begin("Node");
-								_selected_node->draw_node_gui();
-								ImGui::End();
-
-								ImGui::Begin("Material");
-								mat->draw_material_gui();
-								ImGui::End();
-							}
-						}
-
-						ImGui::Begin("Light");
-						_def_renderer->draw_renderer_gui();
-						ImGui::End();
-
-						ImGui::Begin("Camera");
-						_cam_mgr->get_active_camera()->get_transform()->draw_transform_gui();
-						ImGui::End();
 					});
 
 			return true;
@@ -124,6 +102,7 @@ namespace efiilj
 
 		auto entities = std::make_shared<entity_manager>();
 		auto transforms = std::make_shared<transform_manager>();
+		auto cameras = std::make_shared<camera_manager>(transforms);
 
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
@@ -141,31 +120,35 @@ namespace efiilj
 		auto color_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
 		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
 
-		_cam_mgr = std::make_shared<camera_manager>(WINDOW_WIDTH, WINDOW_HEIGHT);
-		
 		renderer_settings set;
 
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
 
-		_def_renderer = std::make_shared<deferred_renderer>(_cam_mgr, set, g_prog_ptr, l_prog_ptr);
-		_fwd_renderer = std::make_shared<forward_renderer>(_cam_mgr, set);
-		_simulator = std::make_shared<simulator>();
-		
+		auto rdef = std::make_shared<deferred_renderer>(cameras, transforms, set, g_prog_ptr, l_prog_ptr);
+		auto rfwd = std::make_shared<forward_renderer>(cameras, transforms, set);
+		auto sim = std::make_shared<simulator>();
+
+		entity_id cam_ent = entities->create_entity();
+		transform_id cam_trf = transforms->register_entity(cam_ent);
+		camera_id cam_id = cameras->register_entity(cam_ent);
+
+		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
+
 		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 		auto cube_mesh_ptr = std::make_shared<cube>();
 		auto rect_mesh_ptr = std::make_shared<rect>();
 
 		entity_id e1 = entities->create_entity();
-		transform_id trf1 = transforms->register_entity(e1);
-		transforms->set_scale(trf1, 25.0f);
+		transform_id e1_trf = transforms->register_entity(e1);
+		transforms->set_scale(e1_trf, 25.0f);
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
 
-		auto e1_gfx = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, trf1);
-		_def_renderer->add_node(e1_gfx);	
+		auto e1_gfx = std::make_shared<graphics_node>(cube_mesh_ptr, rect_mat_ptr, e1_trf);
+		rdef->add_node(e1_gfx);	
 
 		auto sun_ptr = std::make_shared<light_source>(
 				std::make_shared<transform_model>(vector3(0), vector3(PI / 2, PI / 2, 0)), 
@@ -173,7 +156,7 @@ namespace efiilj
 
 		sun_ptr->set_base(vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
 
-		_def_renderer->add_light(sun_ptr);
+		rdef->add_light(sun_ptr);
 
 		std::set<int> keys;
 		
@@ -199,19 +182,8 @@ namespace efiilj
 				}
 				else if (key == GLFW_KEY_R)
 				{
-					_def_renderer->reload_shaders();
-					_fwd_renderer->reload_shaders();
-				}
-				else if (key == GLFW_KEY_B)
-				{
-					auto& bodies = _simulator->get_rigidbodies();
-
-					for (auto& body : bodies)
-					{
-						auto bbox_mesh = std::make_shared<bbox>(body);
-						auto bbox_node = std::make_shared<graphics_node>(bbox_mesh, rect_mat_ptr);
-						_fwd_renderer->add_node(bbox_node);
-					}
+					rdef->reload_shaders();
+					rfwd->reload_shaders();
 				}
 			}
 			else if (action == 0)
@@ -241,22 +213,22 @@ namespace efiilj
 
 				is_dragging_mouse_ = true;
 
-				auto camera_ptr = _cam_mgr->get_active_camera();
-				ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
-				float nearest = std::numeric_limits<float>::max();
-				vector3 hit, norm;
+				//auto camera_ptr = _cam_mgr->get_active_camera();
+				//ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
+				//float nearest = std::numeric_limits<float>::max();
+				//vector3 hit, norm;
 
-				for (auto body : _simulator->get_rigidbodies())
-				{
-					if (body->ray_intersect_triangle(r, hit, norm))
-					{
-						float len = (hit - r.origin).length();
-						if (len < nearest)
-						{
-							nearest = len;
-						}
-					}
-				}
+				//for (auto body : _simulator->get_rigidbodies())
+				//{
+				//	if (body->ray_intersect_triangle(r, hit, norm))
+				//	{
+				//		float len = (hit - r.origin).length();
+				//		if (len < nearest)
+				//		{
+				//			nearest = len;
+				//		}
+				//	}
+				//}
 			}
 			else
 			{
@@ -266,71 +238,64 @@ namespace efiilj
 
 		while (this->window_->IsOpen())
 		{
-			auto camera_ptr = _cam_mgr->get_active_camera();
-			
+
+			transform_id selected_trf = is_mouse_captured_ ? cam_trf : e1_trf;
+
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			this->window_->Update();
 	
 			if (keys.find(GLFW_KEY_W) != keys.end())
-				transforms->add_position(transforms->forward() * CAMERA_SPEED);
+				transforms->add_position(selected_trf, transforms->get_forward(selected_trf) * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_S) != keys.end())
-				transforms->add_position(transforms->backward() * CAMERA_SPEED);
+				transforms->add_position(selected_trf, transforms->get_backward(selected_trf) * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_A) != keys.end())
-				transforms->add_position(transforms->left() * CAMERA_SPEED);
+				transforms->add_position(selected_trf, transforms->get_left(selected_trf) * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_D) != keys.end())
-				transforms->add_position(transforms->right() * CAMERA_SPEED);
+				transforms->add_position(selected_trf, transforms->get_right(selected_trf) * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_SPACE) != keys.end())
-				transforms->add_position(transforms->up() * CAMERA_SPEED);
+				transforms->add_position(selected_trf, transforms->get_up(selected_trf) * CAMERA_SPEED);
 			
 			if (keys.find(GLFW_KEY_LEFT_SHIFT) != keys.end())
-				transforms->add_position(transforms->down() * CAMERA_SPEED);
+				transforms->add_position(selected_trf, transforms->get_down(selected_trf) * CAMERA_SPEED);
 
 			if (keys.find(GLFW_KEY_UP) != keys.end())
-				transforms->add_rotation(transforms->right(), -0.1f);
+				transforms->add_rotation(selected_trf, transforms->get_right(selected_trf), -0.1f);
 
 			if (keys.find(GLFW_KEY_DOWN) != keys.end())
-				transforms->add_rotation(transforms->right(), 0.1f);
-
-			if (keys.find(GLFW_KEY_LEFT) != keys.end())
-				transforms->add_rotation(transforms->up(), 0.1f);
+				transforms->add_rotation(selected_trf, transforms->get_right(selected_trf), 0.1f);
 
 			if (keys.find(GLFW_KEY_RIGHT) != keys.end())
-				transforms->add_rotation(transforms->up(), -0.1f);
+				transforms->add_rotation(selected_trf, transforms->get_up(selected_trf), -0.1f);
 
-			if (keys.find(GLFW_KEY_PAGE_DOWN) != keys.end())
-				transforms->add_rotation(transforms->forward(), 0.1);
+			if (keys.find(GLFW_KEY_LEFT) != keys.end())
+				transforms->add_rotation(selected_trf, transforms->get_up(selected_trf), 0.1f);
 
 			if (keys.find(GLFW_KEY_PAGE_UP) != keys.end())
-				transforms->add_rotation(transforms->forward(), -0.1);
+				transforms->add_rotation(selected_trf, transforms->get_forward(selected_trf), -0.1f);
+
+			if (keys.find(GLFW_KEY_PAGE_DOWN) != keys.end())
+				transforms->add_rotation(selected_trf, transforms->get_forward(selected_trf), 0.1f);
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 
-			if (keys.find(GLFW_KEY_LEFT_CONTROL) != keys.end())
-			{
-				_def_renderer->toggle_debug();
-				_fwd_renderer->toggle_debug();
-			}
+			float dt = rdef->get_delta_time();
+			float d = rdef->get_frame_index() / 100.0f;
 
-			_cam_mgr->update_camera();
+			rdef->begin_frame();
+			rfwd->begin_frame();
 
-			float dt = _def_renderer->get_delta_time();
-			float d = _def_renderer->get_frame_index() / 100.0f;
+			rdef->render();
+			rfwd->render();
 
-			_def_renderer->begin_frame();
-			_fwd_renderer->begin_frame();
-
-			_def_renderer->render();
-			_fwd_renderer->render();
-
-			_def_renderer->end_frame();
-			_fwd_renderer->end_frame();
+			rdef->end_frame();
+			rfwd->end_frame();
 
 			this->window_->SwapBuffers();
 			

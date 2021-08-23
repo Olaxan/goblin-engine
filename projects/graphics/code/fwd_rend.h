@@ -16,6 +16,7 @@ namespace efiilj
 
 		std::vector<std::shared_ptr<graphics_node>> nodes_;
 		std::shared_ptr<camera_manager> camera_mgr_;
+		std::shared_ptr<transform_manager> _transforms;
 		const renderer_settings& settings_;
 
 		bool debug_;
@@ -33,7 +34,7 @@ namespace efiilj
 
 	public:
 
-		forward_renderer(std::shared_ptr<camera_manager> camera_manager, const renderer_settings& set);
+		forward_renderer(std::shared_ptr<camera_manager> camera_manager, std::shared_ptr<transform_manager> trf_mgr, const renderer_settings& set);
 		~forward_renderer() = default;
 
 		virtual void add_node(std::shared_ptr<graphics_node> node)

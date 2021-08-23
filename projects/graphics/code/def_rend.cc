@@ -13,11 +13,12 @@ namespace efiilj
 	deferred_renderer::deferred_renderer
 	(
 		std::shared_ptr<camera_manager> camera_manager,
+		std::shared_ptr<transform_manager> transform_manager,
 		const renderer_settings& settings,
 		std::shared_ptr<shader_program> geometry, 
 		std::shared_ptr<shader_program> lighting
 	) : 
-		forward_renderer(camera_manager, settings),
+		forward_renderer(camera_manager, transform_manager, settings),
 		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
 		geometry_(std::move(geometry)), 
 		lighting_(std::move(lighting))
@@ -162,8 +163,11 @@ namespace efiilj
 
 	void deferred_renderer::draw_pointlight(const light_source& light, float radius) const
 	{
-		const matrix4& v = camera_mgr_->get_active_camera()->get_view();
-		const matrix4& p = camera_mgr_->get_active_camera()->get_perspective();
+
+		camera_id cid = camera_mgr_->get_camera();
+
+		const matrix4& v = camera_mgr_->get_view(cid);
+		const matrix4& p = camera_mgr_->get_perspective(cid);
 
 		matrix4 mvp = p * v * light.get_transform()->get_model();
 
@@ -187,6 +191,9 @@ namespace efiilj
 
 		if (!geometry_->use())
 			return;
+
+		camera_id cam = camera_mgr_->get_camera();
+		const vector3& cam_pos = _transforms->get_position(camera_mgr_->get_transform(cam));
 
 		/* ---------- Geometry Pass ---------- */
 		
@@ -214,7 +221,8 @@ namespace efiilj
 		attach_textures(tex_type::target);	
 		attach_textures(tex_type::component_read);
 
-		lighting_->set_uniform(settings_.u_camera, camera_mgr_->get_active_position()) ; 
+
+		lighting_->set_uniform(settings_.u_camera, cam_pos); 
 		lighting_->set_uniform(settings_.u_dt_seconds, get_delta_time());
 
 		glEnable(GL_BLEND);
@@ -247,7 +255,6 @@ namespace efiilj
 					
 					auto light_trf = light.get_transform();
 
-					vector3 cam_pos = camera_mgr_->get_active_position();
 					vector3 cam_dir = cam_pos - light_trf->get_position();
 
 					float radius = light_trf->get_scale().length();
