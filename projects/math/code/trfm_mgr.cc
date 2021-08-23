@@ -12,7 +12,7 @@ namespace efiilj
 	{
 		transform_id trf_id = _instances.size();
 		_instances.emplace_back(trf_id);
-		_instance_mapping[id] = trf_id;
+		_instance_mapping.emplace(id, trf_id);
 
 		_data.model.emplace_back(matrix4());
 		_data.inverse.emplace_back(matrix4());
