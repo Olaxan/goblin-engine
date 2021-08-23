@@ -102,6 +102,31 @@ namespace efiilj
 	void camera_manager::set_width(camera_id idx, float width)
 	{
 		_data.width[idx] = width;
+		update_view(idx);
+		push_view();
+	}
+
+	float camera_manager::get_height(camera_id idx) const
+	{
+		return _data.height[idx];
+	}
+
+	void camera_manager::set_height(camera_id idx, float height)
+	{
+		_data.height[idx] = height;
+		update_view(idx);
+		push_view();
+	}
+
+	float camera_manager::get_fov(camera_id idx) const
+	{
+		return _data.fov[idx];
+	}
+
+	void camera_manager::set_fov(camera_id idx, float fov)
+	{
+		_data.fov[idx] = fov;
+		update_perspective(idx);
 		push_view();
 	}
 }
