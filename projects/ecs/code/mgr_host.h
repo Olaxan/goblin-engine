@@ -1,7 +1,7 @@
 #pragma once
 
-#include "manager.h"
 #include "ifmgr.h"
+#include "manager.h"
 
 #include <memory>
 #include <unordered_map>

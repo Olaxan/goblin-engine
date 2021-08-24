@@ -16,6 +16,7 @@
 #include "def_rend.h"
 #include "lght_mgr.h"
 #include "grph_mgr.h"
+#include "shdr_mgr.h"
 #include "sim.h"
 
 #include <memory>
@@ -39,6 +40,10 @@ namespace efiilj
 		std::shared_ptr<entity_manager> entities;
 		std::shared_ptr<manager_host> managers;
 
+		// Servers hold resources not connected to any particular entity
+		std::shared_ptr<shader_server> shaders;
+
+		// Managers hold components that can be attached to entities
 		std::shared_ptr<transform_manager> transforms;
 		std::shared_ptr<camera_manager> cameras;
 		std::shared_ptr<graphics_manager> graphics;

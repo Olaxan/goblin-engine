@@ -1,7 +1,7 @@
 Begin(VERTEX_SHADER)
-	Include(dvs_geometry.glsl)
+	Import(vs_color.glsl)
 End()
 
 Begin(FRAGMENT_SHADER)
-	Include(dfs_geometry.glsl)
+	Import(fs_color.glsl)
 End()

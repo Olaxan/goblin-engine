@@ -19,7 +19,6 @@
 #include "material.h"
 #include "node.h"
 #include "gltf_loader.h"
-#include "sdr_loader.h"
 #include "program.h"
 #include "rect.h"
 #include "line.h"
@@ -99,6 +98,8 @@ namespace efiilj
 		entities = std::make_shared<entity_manager>();
 		managers = std::make_shared<manager_host>();
 
+		shaders = std::make_shared<shader_server>();
+
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>();
 		lights = std::make_shared<light_manager>();
@@ -111,13 +112,11 @@ namespace efiilj
 		managers->register_manager(transforms, 'TRFM');
 		managers->register_manager(cameras, 'CAMS');
 		managers->register_manager(lights, 'LGHT');
+		managers->register_manager(shaders, 'SHDR');
 		managers->register_manager(graphics, 'GRFX');
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(sim, 'PHYS');
-
-		fs::path sdr_path("../res/shaders/default_primary.sdr");
-		unsigned int ret = shader_processor::compile(sdr_path);
 
 		//shader_id sdr_primary = shaders->add_shader("res://shaders/default_primary.glsl");
 		//shader_id sdr_secondary = shaders->add_shader("res://shaders/default_secondary.glsl");

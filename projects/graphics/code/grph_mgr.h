@@ -1,7 +1,6 @@
 #pragma once
 
 #include "manager.h"
-
 #include "trfm_mgr.h"
 
 #include <vector>
