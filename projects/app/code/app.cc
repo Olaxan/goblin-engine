@@ -117,9 +117,7 @@ namespace efiilj
 		managers->register_manager(sim, 'PHYS');
 
 		fs::path sdr_path("../res/shaders/default_primary.sdr");
-		std::string sdr = shader_processor::load(sdr_path);
-		shader_processor::parse_include(sdr_path, sdr);
-		std::cout << sdr;
+		unsigned int ret = shader_processor::compile(sdr_path);
 
 		//shader_id sdr_primary = shaders->add_shader("res://shaders/default_primary.glsl");
 		//shader_id sdr_secondary = shaders->add_shader("res://shaders/default_secondary.glsl");
