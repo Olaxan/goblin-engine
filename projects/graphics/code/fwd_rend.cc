@@ -41,9 +41,11 @@ namespace efiilj
 
 	void forward_renderer::draw_gui()
 	{
-		ImGui::Begin("Forward renderer");
-		ImGui::Text("No render selected");	
-		ImGui::End();
+		if (ImGui::TreeNode("Forward renderer"))
+		{
+			ImGui::Text("No render selected");	
+			ImGui::TreePop();
+		}
 	}
 
 	void forward_renderer::draw_gui(render_id idx)

@@ -72,10 +72,12 @@ namespace efiilj
 
 			this->window_->SetUiRender([this]()
 					{
+						ImGui::Begin("Managers");
 						cameras->draw_gui();
 						lights->draw_gui();
 						rfwd->draw_gui();
 						rdef->draw_gui();
+						ImGui::End();
 					});
 
 			return true;
@@ -86,26 +88,27 @@ namespace efiilj
 	void application::run()
 	{
 
+		renderer_settings set;
+		set.width = WINDOW_WIDTH;
+		set.height = WINDOW_HEIGHT;
+
 		entities = std::make_shared<entity_manager>();
+		managers = std::make_shared<manager_host>();
+
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>(transforms);
 		lights = std::make_shared<light_manager>(transforms);
 
-		//shaders = std::make_shared<shader_manager>();
+		rdef = std::make_shared<deferred_renderer>(cameras, transforms, lights, set);
+		rfwd = std::make_shared<forward_renderer>(cameras, transforms, lights, set);
+		sim = std::make_shared<simulator>();
 
-		//entity_id default_entity = entities->create_entity();
-
-		//shader_id s1 = shaders->register_entity(default_entity);
-		//shaders->set_uri(s1, "res/shaders/dvs_default_geometry.glsl");
-		//shaders->set_type(s1, GL_VERTEX_SHADER);
-		//shaders->set_program(s1, p1);
-
-		//shaders_id s2 = shaders->register_entity(default_entity);
-		//shaders->set_uri(s2, "res/shaders/dfs_default_geometry.glsl");
-		//shaders->set_type(s2, GL_FRAGMENT_SHADER);
-		//shaders->set_program(s2, p1);
-
-		//shaders->compile(p1);
+		managers->register_manager(transforms, 'TRFM');
+		managers->register_manager(cameras, 'CAMS');
+		managers->register_manager(lights, 'LHGT');
+		managers->register_manager(rdef, 'RDEF');
+		managers->register_manager(rfwd, 'RFWD');
+		managers->register_manager(sim, 'PHYS');
 
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
@@ -122,16 +125,7 @@ namespace efiilj
 		auto color_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/vs_color.glsl");
 		auto color_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
 		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
-
-		renderer_settings set;
-
-		set.width = WINDOW_WIDTH;
-		set.height = WINDOW_HEIGHT;
-
-		rdef = std::make_shared<deferred_renderer>(cameras, transforms, lights, set, g_prog_ptr, l_prog_ptr);
-		rfwd = std::make_shared<forward_renderer>(cameras, transforms, lights, set);
-		sim = std::make_shared<simulator>();
-
+		//
 		// Camera entity
 
 		entity_id cam_ent = entities->create_entity();
@@ -147,6 +141,14 @@ namespace efiilj
 		entity_id e1 = entities->create_entity();
 		transform_id e1_trf = transforms->register_entity(e1);
 		transforms->set_scale(e1_trf, 5.0f);
+
+		//graphics_id e1_gfx = graphics_manager->register_entity(e1);
+		//graphics->set_uri(e1_gfx, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		//graphics->set_transform(e1_gfx, e1_trf);
+		//graphics->load(e1_gfx);
+
+		//render_id e1_rdr = rdef->register_entity(e1_gfx);
+		//rdef->set_graphics(e1_gfx);
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
@@ -298,9 +300,9 @@ namespace efiilj
 
 			cameras->update();
 
-			rdef->begin_frame();
-			rdef->render_frame();
-			rdef->end_frame();
+			//rdef->begin_frame();
+			//rdef->render_frame();
+			//rdef->end_frame();
 
 			rfwd->begin_frame();
 			rfwd->render_frame();

@@ -61,9 +61,7 @@ namespace efiilj
 				std::shared_ptr<camera_manager> camera_manager,	
 				std::shared_ptr<transform_manager> trf_mgr,	
 				std::shared_ptr<light_manager> light_mgr,
-				const renderer_settings& settings,
-				std::shared_ptr<shader_program> geometry, 
-				std::shared_ptr<shader_program> lighting
+				const renderer_settings& settings
 			);
 
 		~deferred_renderer() = default;

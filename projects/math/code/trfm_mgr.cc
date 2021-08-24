@@ -26,8 +26,6 @@ namespace efiilj
 		_data.model_updated.emplace_back(true);
 		_data.inverse_updated.emplace_back(true);
 
-		printf("TRFM: Register entity %d, transform id %d\n", eid, new_id);
-
 		return new_id;
 	}
 
@@ -38,7 +36,11 @@ namespace efiilj
 
 	void transform_manager::draw_gui()
 	{
-		ImGui::Text("No transform selected.");
+		if (ImGui::TreeNode("Transform"))
+		{
+			ImGui::Text("No transform selected.");
+			ImGui::TreePop();
+		}
 	}
 
 	void transform_manager::draw_gui(transform_id idx)
@@ -49,25 +51,20 @@ namespace efiilj
 			return;
 		}
 
-		if (ImGui::TreeNode("Transform"))
+		if (ImGui::DragFloat3("Position", &_data.position[idx].x, 0.1f) 
+				|| ImGui::DragFloat4("Rotation", &_data.rotation[idx].x)
+				|| ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.1f))
 		{
-			if (ImGui::DragFloat3("Position", &_data.position[idx].x, 0.1f) 
-					|| ImGui::DragFloat4("Rotation", &_data.rotation[idx].x)
-					|| ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.1f))
-			{
-				_data.model_updated[idx] = false;
-				get_model(idx);
-			}
+			_data.model_updated[idx] = false;
+			get_model(idx);
+		}
 
-			if (ImGui::CollapsingHeader("Model matrix"))
-			{
-				ImGui::InputFloat4("X", &_data.model[idx](0, 0));
-				ImGui::InputFloat4("Y", &_data.model[idx](1, 0));
-				ImGui::InputFloat4("Z", &_data.model[idx](2, 0));
-				ImGui::InputFloat4("W", &_data.model[idx](3, 0));
-			}
-
-			ImGui::TreePop();
+		if (ImGui::CollapsingHeader("Model matrix"))
+		{
+			ImGui::InputFloat4("X", &_data.model[idx](0, 0));
+			ImGui::InputFloat4("Y", &_data.model[idx](1, 0));
+			ImGui::InputFloat4("Z", &_data.model[idx](2, 0));
+			ImGui::InputFloat4("W", &_data.model[idx](3, 0));
 		}
 	}
 

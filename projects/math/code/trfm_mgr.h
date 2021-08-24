@@ -1,13 +1,14 @@
 #pragma once
 
 #include "manager.h"
+#include "ifmgr.h"
 #include "quat.h"
 
 namespace efiilj
 {
 	typedef int transform_id;
 
-	class transform_manager : public manager<transform_id>
+	class transform_manager : public manager<transform_id>, public registrable
 	{
 		private:
 

@@ -37,21 +37,22 @@ namespace efiilj
 
 		static int selected_light = -1;
 
-		ImGui::Begin("Light Manager");
-
-		ImGui::BeginChild("Lights", ImVec2(0, 100), true);
-		for (int i = 0; i < _instances.size(); i++)
+		if (ImGui::TreeNode("Lights"))
 		{
-			char label[128];
-			sprintf(label, "Light %d", i);
-			if (ImGui::Selectable(label, selected_light == i))
-				selected_light = i;
+			ImGui::BeginChild("Lights", ImVec2(0, 100), true);
+			for (int i = 0; i < _instances.size(); i++)
+			{
+				char label[128];
+				sprintf(label, "Light %d", i);
+				if (ImGui::Selectable(label, selected_light == i))
+					selected_light = i;
+			}
+			ImGui::EndChild();
+
+			draw_gui(selected_light);
+
+			ImGui::TreePop();
 		}
-		ImGui::EndChild();
-
-		draw_gui(selected_light);
-
-		ImGui::End();
 	}
 
 	void light_manager::draw_gui(light_id idx)
@@ -66,7 +67,7 @@ namespace efiilj
 
 		_transforms->draw_gui(_data.transform[idx]);
 
-		if (ImGui::TreeNode("Settings"))
+		if (ImGui::TreeNode("Light data"))
 		{
 
 			ImGui::Text("Type");

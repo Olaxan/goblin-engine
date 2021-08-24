@@ -1,6 +1,8 @@
 #pragma once
 
 #include "manager.h"
+#include "ifmgr.h"
+
 #include "rend_set.h"
 #include "mesh_res.h"
 #include "material.h"
@@ -15,7 +17,7 @@ namespace efiilj
 {
 	typedef int render_id;
 
-	class forward_renderer : public manager<render_id>
+	class forward_renderer : public manager<render_id>, public registrable
 	{
 	protected:
 

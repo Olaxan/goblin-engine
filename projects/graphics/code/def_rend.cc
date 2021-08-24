@@ -15,14 +15,10 @@ namespace efiilj
 		std::shared_ptr<camera_manager> camera_manager,
 		std::shared_ptr<transform_manager> transform_manager,
 		std::shared_ptr<light_manager> light_mgr,
-		const renderer_settings& settings,
-		std::shared_ptr<shader_program> geometry, 
-		std::shared_ptr<shader_program> lighting
+		const renderer_settings& settings
 	) : 
 		forward_renderer(camera_manager, transform_manager, light_mgr, settings),
-		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0), 
-		geometry_(std::move(geometry)), 
-		lighting_(std::move(lighting))
+		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0)
 	{
 
 		printf("Init deferred renderer...\n");
@@ -52,7 +48,7 @@ namespace efiilj
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		setup_quad();
-		setup_uniforms();
+		//setup_uniforms();
 		setup_volumes();
 
 		printf("Deferred renderer ready\n");
@@ -61,9 +57,11 @@ namespace efiilj
 
 	void deferred_renderer::draw_gui()
 	{
-		ImGui::Begin("Deferred renderer");
-		ImGui::Text("Not implemented");
-		ImGui::End();
+		if (ImGui::TreeNode("Deferred renderer"))
+		{
+			ImGui::Text("Not implemented");
+			ImGui::TreePop();
+		}
 	}
 
 	void deferred_renderer::draw_gui(render_id idx)

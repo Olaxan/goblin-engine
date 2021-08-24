@@ -10,6 +10,7 @@
 #include "render/window.h"
 
 #include "entity.h"
+#include "mgr_host.h"
 #include "cam_mgr.h"
 #include "trfm_mgr.h"
 #include "def_rend.h"
@@ -35,6 +36,8 @@ namespace efiilj
 		bool is_mouse_captured;
 
 		std::shared_ptr<entity_manager> entities;
+		std::shared_ptr<manager_host> managers;
+
 		std::shared_ptr<transform_manager> transforms;
 		std::shared_ptr<camera_manager> cameras;
 		std::shared_ptr<forward_renderer> rfwd;

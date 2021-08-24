@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "entity.h"
 #include "trfm_mgr.h"
+#include "ifmgr.h"
 
 #include <vector>
 #include <memory>
@@ -11,7 +12,7 @@ namespace efiilj
 {
 	typedef int camera_id;
 
-	class camera_manager : public manager<camera_id>
+	class camera_manager : public manager<camera_id>, public registrable
 	{
 	private:
 

@@ -37,8 +37,6 @@ namespace efiilj
 		update_perspective(new_id);
 		push_perspective();
 
-		printf("CAMM: Register entity %d, camera id %d\n", eid, new_id);
-
 		return new_id;
 	}
 
@@ -49,23 +47,32 @@ namespace efiilj
 
 	void camera_manager::draw_gui()
 	{
-		ImGui::Begin("Camera Manager");
-		draw_gui(_current);
-		ImGui::End();
+		if (ImGui::TreeNode("Camera"))
+		{
+			draw_gui(_current);
+			ImGui::TreePop();
+		}
 	}
 
 	void camera_manager::draw_gui(camera_id idx)
 	{
 
 		if (idx < 0 || idx > _instances.size() - 1)
+		{
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), "No camera selected");
 			return;
+		}
 
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Camera %d", idx);
 		ImGui::Text("Uniform buffer %d", _ubo);
 
-		_transforms->draw_gui(_data.transform[idx]);
+		if (ImGui::TreeNode("Transform"))
+		{
+			_transforms->draw_gui(_data.transform[idx]);
+			ImGui::TreePop();
+		}
 
-		if (ImGui::TreeNode("Settings"))
+		if (ImGui::TreeNode("Properties"))
 		{
 			if (ImGui::InputFloat("Width", &_data.width[idx])
 					|| ImGui::InputFloat("Height", &_data.height[idx])
@@ -101,6 +108,7 @@ namespace efiilj
 			}
 
 			ImGui::TreePop();
+
 		}
 	}
 
@@ -225,7 +233,6 @@ namespace efiilj
 	
 	void camera_manager::set_size(camera_id idx, float width, float height)
 	{
-		printf("Setsize %d, %fx%f\n",idx,width,height);
 		_data.width[idx] = width;
 		_data.height[idx] = height;
 		update_view(idx);

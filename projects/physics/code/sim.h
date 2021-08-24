@@ -1,3 +1,6 @@
+#include "manager.h"
+#include "ifmgr.h"
+
 #include <chrono>
 #include <vector>
 #include <memory>
@@ -6,7 +9,9 @@
 
 namespace efiilj
 {
-	class simulator
+	typedef int physics_id;
+
+	class simulator : public manager<physics_id>, public registrable
 	{
 		private:
 
@@ -20,6 +25,12 @@ namespace efiilj
 		duration delta_time_;
 
 	public:
+
+		physics_id register_entity(entity_id eid) override;
+		bool unregister_entity(physics_id idx) override;
+
+		void draw_gui() override;
+		void draw_gui(physics_id) override;
 
 		void add_rigidbody(std::shared_ptr<physics_node> body)
 		{

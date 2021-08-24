@@ -1,6 +1,7 @@
 #pragma once
 
 #include "manager.h"
+#include "ifmgr.h"
 
 #include "trfm_mgr.h"
 #include "light.h"
@@ -12,7 +13,7 @@ namespace efiilj
 {
 	typedef int light_id;
 
-	class light_manager : public manager<light_id>
+	class light_manager : public manager<light_id>, public registrable
 	{
 		private:
 
