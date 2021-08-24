@@ -105,7 +105,7 @@ namespace efiilj
 
 		managers->register_manager(transforms, 'TRFM');
 		managers->register_manager(cameras, 'CAMS');
-		managers->register_manager(lights, 'LHGT');
+		managers->register_manager(lights, 'LGHT');
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(sim, 'PHYS');
@@ -125,7 +125,7 @@ namespace efiilj
 		auto color_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/vs_color.glsl");
 		auto color_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
 		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
-		//
+		
 		// Camera entity
 
 		entity_id cam_ent = entities->create_entity();

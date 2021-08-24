@@ -34,12 +34,8 @@ namespace efiilj
 			template<class T>
 			std::shared_ptr<T> get_manager_from_fcc(int fcc)
 			{
-				if (_reg.find(fcc) != _reg.end())
-				{
-					return std::dynamic_pointer_cast<T>(_reg[fcc]);
-				}
-
-				return nullptr;			
+				assert(("Manager FourCC invalid!", _reg.find(fcc) != _reg.end()));
+				return std::dynamic_pointer_cast<T>(_reg[fcc]);
 			}
 	};
 }
