@@ -3,7 +3,6 @@
 #include "mesh_res.h"
 #include "transform.h"
 #include "material.h"
-#include "camera.h"
 #include "ray.h"
 
 #include "trfm_mgr.h"

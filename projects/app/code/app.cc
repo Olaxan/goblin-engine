@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <set>
+#include <filesystem>
 
 #include "imgui.h"
 
@@ -18,6 +19,7 @@
 #include "material.h"
 #include "node.h"
 #include "gltf_loader.h"
+#include "sdr_loader.h"
 #include "program.h"
 #include "rect.h"
 #include "line.h"
@@ -30,6 +32,8 @@
 #define CAMERA_SPEED 0.5f
 #define NUM_LIGHTS 10
 #define PI 3.14159f
+
+namespace fs = std::filesystem;
 
 float randf(float max = 1.0f)
 {
@@ -98,6 +102,7 @@ namespace efiilj
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>();
 		lights = std::make_shared<light_manager>();
+		graphics = std::make_shared<graphics_manager>();
 
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
@@ -106,9 +111,18 @@ namespace efiilj
 		managers->register_manager(transforms, 'TRFM');
 		managers->register_manager(cameras, 'CAMS');
 		managers->register_manager(lights, 'LGHT');
+		managers->register_manager(graphics, 'GRFX');
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(sim, 'PHYS');
+
+		fs::path sdr_path("../res/shaders/default_primary.sdr");
+		std::string sdr = shader_processor::load(sdr_path);
+		shader_processor::parse_include(sdr_path, sdr);
+		std::cout << sdr;
+
+		//shader_id sdr_primary = shaders->add_shader("res://shaders/default_primary.glsl");
+		//shader_id sdr_secondary = shaders->add_shader("res://shaders/default_secondary.glsl");
 
 		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
 		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
@@ -142,9 +156,9 @@ namespace efiilj
 		transform_id e1_trf = transforms->register_entity(e1);
 		transforms->set_scale(e1_trf, 5.0f);
 
-		//graphics_id e1_gfx = graphics_manager->register_entity(e1);
-		//graphics->set_uri(e1_gfx, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		//graphics->set_transform(e1_gfx, e1_trf);
+		graphics_id e1_gfx = graphics->register_entity(e1);
+		graphics->set_model_uri(e1_gfx, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		graphics->set_transform(e1_gfx, e1_trf);
 		//graphics->load(e1_gfx);
 
 		//render_id e1_rdr = rdef->register_entity(e1_gfx);
@@ -152,15 +166,16 @@ namespace efiilj
 
 		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
+		rect_mat_ptr->wireframe = true;
 
 		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
 		auto sphere_mesh_ptr = obj_sphere.get_resource();
 		auto cube_mesh_ptr = std::make_shared<cube>();
 
-		render_id e1_gfx = rfwd->register_entity(e1);
-		rfwd->set_mesh(e1_gfx, sphere_mesh_ptr);
-		rfwd->set_material(e1_gfx, rect_mat_ptr);
-		rfwd->set_transform(e1_gfx, e1_trf);
+		render_id e1_fwd = rfwd->register_entity(e1);
+		rfwd->set_mesh(e1_fwd, sphere_mesh_ptr);
+		rfwd->set_material(e1_fwd, rect_mat_ptr);
+		rfwd->set_transform(e1_fwd, e1_trf);
 
 		entity_id e2 = entities->create_entity();
 		transform_id e2_trf = transforms->register_entity(e2);

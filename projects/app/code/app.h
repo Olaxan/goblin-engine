@@ -15,6 +15,7 @@
 #include "trfm_mgr.h"
 #include "def_rend.h"
 #include "lght_mgr.h"
+#include "grph_mgr.h"
 #include "sim.h"
 
 #include <memory>
@@ -40,6 +41,7 @@ namespace efiilj
 
 		std::shared_ptr<transform_manager> transforms;
 		std::shared_ptr<camera_manager> cameras;
+		std::shared_ptr<graphics_manager> graphics;
 		std::shared_ptr<forward_renderer> rfwd;
 		std::shared_ptr<deferred_renderer> rdef;
 		std::shared_ptr<light_manager> lights;

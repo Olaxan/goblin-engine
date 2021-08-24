@@ -1,0 +1,7 @@
+Begin(GL_VERTEX_SHADER)
+	Include(dvs_geometry.glsl)
+End()
+
+Begin(GL_FRAGMENT_SHADER)
+	Include(dfs_geometry.glsl)
+End()

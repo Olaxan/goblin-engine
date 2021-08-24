@@ -1,6 +1,5 @@
 #pragma once
 
-#include "camera.h"
 #include "entity.h"
 #include "trfm_mgr.h"
 #include "ifmgr.h"

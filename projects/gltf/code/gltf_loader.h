@@ -4,7 +4,6 @@
 #include "program.h"
 #include "node.h"
 #include "material.h"
-#include "camera.h"
 #include "scene.h"
 
 #include "trfm_mgr.h"

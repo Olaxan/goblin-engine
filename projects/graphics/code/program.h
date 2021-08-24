@@ -1,10 +1,10 @@
 #pragma once
 
 #include "shader_res.h"
-#include "camera.h"
 #include "matrix4.h"
 
 #include <unordered_map>
+#include <memory>
 #include <vector>
 #include <string>
 

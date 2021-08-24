@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 
-#include "vertex.h"
 #include "bounds.h"
 
 namespace efiilj

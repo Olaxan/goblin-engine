@@ -1,10 +1,12 @@
 #include "grph_mgr.h"
+#include "mgr_host.h"
 
 namespace efiilj 
 {
-	graphics_manager::graphics_manager(std::shared_ptr<transform_manager> trf_mgr)
-		: _transforms(std::move(trf_mgr))
-	{}
+	graphics_manager::graphics_manager()
+	{
+		printf("Init graphics...\n");
+	}
 
 	graphics_manager::~graphics_manager()
 	{
@@ -31,6 +33,16 @@ namespace efiilj
 		return false;
 	}
 
+	void graphics_manager::draw_gui()
+	{}
+
+	void graphics_manager::draw_gui(graphics_id idx)
+	{}
+
+	void graphics_manager::on_register(std::shared_ptr<manager_host> host)
+	{
+	}
+
 	const fs::path& graphics_manager::get_model_uri(graphics_id idx)
 	{
 		return _data.model_uri[idx];
@@ -39,6 +51,26 @@ namespace efiilj
 	void graphics_manager::set_model_uri(graphics_id idx, const fs::path& uri)
 	{
 		_data.model_uri[idx] = uri;
+	}
+
+	const fs::path& graphics_manager::get_geometry_shader_uri(graphics_id idx)
+	{
+		return _data.geometry_shader_uri[idx];
+	}
+
+	void graphics_manager::set_geometry_shader_uri(graphics_id idx, const fs::path& uri)
+	{
+		_data.geometry_shader_uri[idx] = uri;
+	}
+
+	const fs::path& graphics_manager::get_lighting_shader_uri(graphics_id idx)
+	{
+		return _data.lighting_shader_uri[idx];
+	}
+
+	void graphics_manager::set_lighting_shader_uri(graphics_id idx, const fs::path& uri)
+	{
+		_data.lighting_shader_uri[idx] = uri;
 	}
 
 	const transform_id& graphics_manager::get_transform(graphics_id idx)
