@@ -68,6 +68,10 @@ namespace efiilj
 		}
 	}
 
+	void transform_manager::on_register(std::shared_ptr<manager_host> host)
+	{
+	}
+
 	void transform_manager::update_models()
 	{
 		for (const transform_id& idx : _instances)

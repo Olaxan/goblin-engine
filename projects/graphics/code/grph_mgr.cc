@@ -17,7 +17,9 @@ namespace efiilj
 		_instances.emplace_back(new_id);
 		_instance_mapping.emplace(eid, new_id);
 
-		_data.uri.emplace_back();
+		_data.model_uri.emplace_back();
+		_data.geometry_shader_uri.emplace_back();
+		_data.lighting_shader_uri.emplace_back();
 		_data.transform.emplace_back(-1);
 		_data.loaded.emplace_back(false);
 
@@ -29,14 +31,14 @@ namespace efiilj
 		return false;
 	}
 
-	const fs::path& graphics_manager::get_uri(graphics_id idx)
+	const fs::path& graphics_manager::get_model_uri(graphics_id idx)
 	{
-		return _data.uri[idx];
+		return _data.model_uri[idx];
 	}
 
-	void graphics_manager::set_uri(graphics_id idx, const fs::path& uri)
+	void graphics_manager::set_model_uri(graphics_id idx, const fs::path& uri)
 	{
-		_data.uri[idx] = uri;
+		_data.model_uri[idx] = uri;
 	}
 
 	const transform_id& graphics_manager::get_transform(graphics_id idx)

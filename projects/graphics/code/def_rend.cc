@@ -10,14 +10,9 @@
 
 namespace efiilj
 {
-	deferred_renderer::deferred_renderer
-	(
-		std::shared_ptr<camera_manager> camera_manager,
-		std::shared_ptr<transform_manager> transform_manager,
-		std::shared_ptr<light_manager> light_mgr,
-		const renderer_settings& settings
-	) : 
-		forward_renderer(camera_manager, transform_manager, light_mgr, settings),
+	deferred_renderer::deferred_renderer(const renderer_settings& settings) 
+		: 
+		forward_renderer(settings),
 		rbo_(0), depth_texture_(0), target_texture_(0), ubo_(0), quad_vao_(0), quad_vbo_(0)
 	{
 

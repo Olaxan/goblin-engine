@@ -30,13 +30,16 @@ namespace efiilj
 
 		public:
 
-			light_manager(std::shared_ptr<transform_manager> trf_mgr);
+			light_manager();
 			~light_manager();
 
 			light_id register_entity(entity_id eid) override;
 			bool unregister_entity(light_id idx) override;
+
 			void draw_gui() override;
 			void draw_gui(light_id idx) override;
+
+			void on_register(std::shared_ptr<manager_host> host) override;
 
 			void update_falloff(light_id idx);
 

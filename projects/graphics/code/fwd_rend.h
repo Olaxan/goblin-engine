@@ -47,11 +47,7 @@ namespace efiilj
 
 	public:
 
-		forward_renderer(
-				std::shared_ptr<camera_manager> camera_manager, 
-				std::shared_ptr<transform_manager> trf_mgr, 
-				std::shared_ptr<light_manager> light_mgr,
-				const renderer_settings& set);
+		forward_renderer(const renderer_settings& set);
 		~forward_renderer() = default;
 
 		render_id register_entity(entity_id eid) override;
@@ -59,6 +55,8 @@ namespace efiilj
 
 		void draw_gui() override;
 		void draw_gui(render_id idx) override;
+		
+		void on_register(std::shared_ptr<manager_host> host) override;
 
 		void set_mesh(render_id idx, std::shared_ptr<mesh_resource> mesh);
 

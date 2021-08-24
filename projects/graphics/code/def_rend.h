@@ -56,13 +56,7 @@ namespace efiilj
 
 	public:
 
-		deferred_renderer
-			(
-				std::shared_ptr<camera_manager> camera_manager,	
-				std::shared_ptr<transform_manager> trf_mgr,	
-				std::shared_ptr<light_manager> light_mgr,
-				const renderer_settings& settings
-			);
+		deferred_renderer(const renderer_settings& settings);
 
 		~deferred_renderer() = default;
 

@@ -1,11 +1,13 @@
 #include "lght_mgr.h"
+#include "mgr_host.h"
 #include "imgui.h"
 
 namespace efiilj
 {
-	light_manager::light_manager(std::shared_ptr<transform_manager> trf_mgr)
-		: _transforms(std::move(trf_mgr))
-	{}
+	light_manager::light_manager()
+	{
+		printf("Init light manager...\n");
+	}
 
 	light_manager::~light_manager()
 	{
@@ -109,6 +111,11 @@ namespace efiilj
 
 			ImGui::TreePop();
 		}
+	}
+	
+	void light_manager::on_register(std::shared_ptr<manager_host> host)
+	{
+		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 	}
 
 	void light_manager::update_falloff(light_id idx)

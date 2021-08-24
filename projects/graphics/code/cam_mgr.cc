@@ -1,5 +1,6 @@
 #include "cam_mgr.h"
 #include "imgui.h"
+#include "mgr_host.h"
 
 #include <GL/glew.h>
 
@@ -12,8 +13,8 @@
 
 namespace efiilj
 {
-	camera_manager::camera_manager(std::shared_ptr<transform_manager> trf_mgr)
-	: _transforms(std::move(trf_mgr)), _ubo(0), _current(0) 
+	camera_manager::camera_manager()
+	: _ubo(0), _current(0) 
 	{
 		setup_ubo();
 	}
@@ -110,6 +111,11 @@ namespace efiilj
 			ImGui::TreePop();
 
 		}
+	}
+	
+	void camera_manager::on_register(std::shared_ptr<manager_host> host)
+	{
+		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 	}
 
 	void camera_manager::update()

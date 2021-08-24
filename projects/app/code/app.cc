@@ -96,11 +96,11 @@ namespace efiilj
 		managers = std::make_shared<manager_host>();
 
 		transforms = std::make_shared<transform_manager>();
-		cameras = std::make_shared<camera_manager>(transforms);
-		lights = std::make_shared<light_manager>(transforms);
+		cameras = std::make_shared<camera_manager>();
+		lights = std::make_shared<light_manager>();
 
-		rdef = std::make_shared<deferred_renderer>(cameras, transforms, lights, set);
-		rfwd = std::make_shared<forward_renderer>(cameras, transforms, lights, set);
+		rdef = std::make_shared<deferred_renderer>(set);
+		rfwd = std::make_shared<forward_renderer>(set);
 		sim = std::make_shared<simulator>();
 
 		managers->register_manager(transforms, 'TRFM');

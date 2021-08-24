@@ -16,8 +16,6 @@ namespace efiilj
 	{
 	private:
 
-		std::shared_ptr<transform_manager> _transforms;
-
 		unsigned _ubo;
 		camera_id _current;
 
@@ -36,6 +34,8 @@ namespace efiilj
 			std::vector<transform_id> transform;
 		} _data;
 
+		std::shared_ptr<transform_manager> _transforms;
+
 		void setup_ubo();
 
 		void update_perspective(camera_id idx);
@@ -46,13 +46,15 @@ namespace efiilj
 
 	public:
 
-		camera_manager(std::shared_ptr<transform_manager> trf_mgr);
+		camera_manager();
 		~camera_manager() = default;
 
 		camera_id register_entity(entity_id eid) override;
 		bool unregister_entity(camera_id idx) override;
 		void draw_gui() override;
 		void draw_gui(camera_id idx) override;
+		
+		void on_register(std::shared_ptr<manager_host> host) override;
 
 		void update();
 

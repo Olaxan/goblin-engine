@@ -1,20 +1,13 @@
 #include "fwd_rend.h"
+#include "mgr_host.h"
 
 #include <GL/glew.h>
 
 namespace efiilj
 {
-	forward_renderer::forward_renderer(
-			std::shared_ptr<camera_manager> camera_manager, 
-			std::shared_ptr<transform_manager> trf_mgr, 
-			std::shared_ptr<light_manager> light_mgr,
-			const renderer_settings& set)
+	forward_renderer::forward_renderer(const renderer_settings& set)
 		: 
-			_cameras(std::move(camera_manager)), 
-			_transforms(std::move(trf_mgr)), 
-			_lights(std::move(light_mgr)),
-			settings_(set), 
-			frame_index_(0), delta_time_() 
+			settings_(set), frame_index_(0), delta_time_() 
 	{
 		printf("Init forward renderer...\n");
 		last_frame_ = frame_timer::now();
@@ -51,6 +44,13 @@ namespace efiilj
 	void forward_renderer::draw_gui(render_id idx)
 	{
 		ImGui::Text("Not implemented!");
+	}
+	
+	void forward_renderer::on_register(std::shared_ptr<manager_host> host)
+	{
+		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+		_lights = host->get_manager_from_fcc<light_manager>('LGHT');
+		_cameras = host->get_manager_from_fcc<camera_manager>('CAMS');
 	}
 
 	void forward_renderer::set_mesh(render_id idx, std::shared_ptr<mesh_resource> mesh)

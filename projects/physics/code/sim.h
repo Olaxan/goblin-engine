@@ -26,11 +26,16 @@ namespace efiilj
 
 	public:
 
+		simulator();
+		~simulator();
+
 		physics_id register_entity(entity_id eid) override;
 		bool unregister_entity(physics_id idx) override;
 
 		void draw_gui() override;
 		void draw_gui(physics_id) override;
+
+		void on_register(std::shared_ptr<manager_host> host) override;
 
 		void add_rigidbody(std::shared_ptr<physics_node> body)
 		{

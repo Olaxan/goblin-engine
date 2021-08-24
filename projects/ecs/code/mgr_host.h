@@ -6,6 +6,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "stdio.h"
+
 namespace efiilj
 {
 
@@ -13,9 +15,10 @@ namespace efiilj
 	{
 		int code;
 		char name[4];
+		struct { char a, b, c, d; };
 	};
 
-	class manager_host
+	class manager_host : public std::enable_shared_from_this<manager_host>
 	{
 		private:
 
@@ -27,5 +30,16 @@ namespace efiilj
 			~manager_host();
 
 			void register_manager(std::shared_ptr<registrable> mgr, int fcc);
+			
+			template<class T>
+			std::shared_ptr<T> get_manager_from_fcc(int fcc)
+			{
+				if (_reg.find(fcc) != _reg.end())
+				{
+					return std::dynamic_pointer_cast<T>(_reg[fcc]);
+				}
+
+				return nullptr;			
+			}
 	};
 }
