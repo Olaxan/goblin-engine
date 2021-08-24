@@ -94,6 +94,8 @@ namespace efiilj
 		renderer_settings set;
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
+		set.default_primary_path = "res://shaders/default_primary.sdr";
+		set.default_secondary_path = "res://shaders/default_secondary.sdr";
 
 		entities = std::make_shared<entity_manager>();
 		managers = std::make_shared<manager_host>();
@@ -117,29 +119,10 @@ namespace efiilj
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(sim, 'PHYS');
-
-		//shader_id sdr_primary = shaders->add_shader("res://shaders/default_primary.glsl");
-		//shader_id sdr_secondary = shaders->add_shader("res://shaders/default_secondary.glsl");
-
-		auto g_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_geometry.glsl");
-		auto g_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_geometry.glsl");
-		auto g_prog_ptr = std::make_shared<shader_program>(g_vs, g_fs);
-
-		auto l_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/dvs_lighting.glsl");
-		auto l_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/dfs_lighting.glsl");
-		auto l_prog_ptr = std::make_shared<shader_program>(l_vs, l_fs);
-
-		auto gltf_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/vs_gltf.glsl");
-		auto gltf_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_gltf.glsl");
-		auto gltf_prog_ptr = std::make_shared<shader_program>(gltf_vs, gltf_fs);
-
-		auto color_vs = std::make_shared<shader_resource>(GL_VERTEX_SHADER, "../res/shaders/vs_color.glsl");
-		auto color_fs = std::make_shared<shader_resource>(GL_FRAGMENT_SHADER, "../res/shaders/fs_color.glsl");
-		auto color_prog_ptr = std::make_shared<shader_program>(color_vs, color_fs);
 		
 		// Camera entity
 
-		entity_id cam_ent = entities->create_entity();
+		entity_id cam_ent = entities->create();
 		transform_id cam_trf = transforms->register_entity(cam_ent);
 		camera_id cam_id = cameras->register_entity(cam_ent);
 
@@ -149,39 +132,35 @@ namespace efiilj
 
 		// Test entity 1
 
-		entity_id e1 = entities->create_entity();
+		entity_id e1 = entities->create();
 		transform_id e1_trf = transforms->register_entity(e1);
 		transforms->set_scale(e1_trf, 5.0f);
 
-		graphics_id e1_gfx = graphics->register_entity(e1);
-		graphics->set_model_uri(e1_gfx, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		graphics->set_transform(e1_gfx, e1_trf);
-		//graphics->load(e1_gfx);
+		shader_id e1_sdr = shaders->create();
+		shaders->set_uri(e1_sdr, "../res/shaders/default_color.sdr");
+		shaders->compile(e1_sdr);
 
-		//render_id e1_rdr = rdef->register_entity(e1_gfx);
-		//rdef->set_graphics(e1_gfx);
+		//auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
+		//rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
+		//rect_mat_ptr->wireframe = true;
 
-		auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-		rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
-		rect_mat_ptr->wireframe = true;
+		//object_loader obj_sphere("../res/volumes/v_pointlight.obj");
+		//auto sphere_mesh_ptr = obj_sphere.get_resource();
+		//auto cube_mesh_ptr = std::make_shared<cube>();
 
-		object_loader obj_sphere("../res/volumes/v_pointlight.obj");
-		auto sphere_mesh_ptr = obj_sphere.get_resource();
-		auto cube_mesh_ptr = std::make_shared<cube>();
+		//render_id e1_fwd = rfwd->register_entity(e1);
+		//rfwd->set_mesh(e1_fwd, sphere_mesh_ptr);
+		//rfwd->set_material(e1_fwd, rect_mat_ptr);
+		//rfwd->set_transform(e1_fwd, e1_trf);
 
-		render_id e1_fwd = rfwd->register_entity(e1);
-		rfwd->set_mesh(e1_fwd, sphere_mesh_ptr);
-		rfwd->set_material(e1_fwd, rect_mat_ptr);
-		rfwd->set_transform(e1_fwd, e1_trf);
-
-		entity_id e2 = entities->create_entity();
-		transform_id e2_trf = transforms->register_entity(e2);
-		transforms->set_scale(e2_trf, 5.0f);
-		//render_id e2_gfx = rdef->register_entity(e2);
+		//entity_id e2 = entities->create();
+		//transform_id e2_trf = transforms->register_entity(e2);
+		//transforms->set_scale(e2_trf, 5.0f);
+		////render_id e2_gfx = rdef->register_entity(e2);
 
 		// Lights
 		
-		entity_id e_sun = entities->create_entity();
+		entity_id e_sun = entities->create();
 		light_id sun_light = lights->register_entity(e_sun);
 		lights->set_base(sun_light, vector3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f);
 
@@ -226,7 +205,7 @@ namespace efiilj
 
 		});
 
-		window_->SetMousePressFunction([&](const int button, const int action, int mods) 
+		window_->SetMousePressFunction([&](const int button, const int action, int mods)  //NOLINT
 		{
 			if (action == 1)
 			{
@@ -306,9 +285,6 @@ namespace efiilj
 			
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
-
-			float dt = rdef->get_delta_time();
-			float d = rdef->get_frame_index() / 100.0f;
 
 			cameras->update();
 

@@ -118,7 +118,7 @@ namespace efiilj
 			std::string type_str = match[1].str();
 			std::string src_str = match[2].str();
 
-			char* msg;
+			char* msg = nullptr;
 			unsigned int type = parse_shader_type(type_str);
 
 			if (type == 0)
@@ -154,7 +154,7 @@ namespace efiilj
 
 		glLinkProgram(pid);
 
-		char* msg;
+		char* msg = nullptr;
 
 		if (debug_shader(pid, GL_LINK_STATUS, GL_PROGRAM, msg))
 		{

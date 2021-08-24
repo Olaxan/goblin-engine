@@ -1,6 +1,8 @@
 #include "grph_mgr.h"
 #include "mgr_host.h"
 
+namespace fs = std::filesystem;
+
 namespace efiilj 
 {
 	graphics_manager::graphics_manager()

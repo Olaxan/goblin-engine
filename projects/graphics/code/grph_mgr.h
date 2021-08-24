@@ -8,8 +8,6 @@
 #include <filesystem>
 #include <string>
 
-namespace fs = std::filesystem;
-
 namespace efiilj
 {
 	typedef int graphics_id;
@@ -20,9 +18,9 @@ namespace efiilj
 
 			struct GraphicsData
 			{
-				std::vector<fs::path> model_uri;
-				std::vector<fs::path> geometry_shader_uri;
-				std::vector<fs::path> lighting_shader_uri;
+				std::vector<std::filesystem::path> model_uri;
+				std::vector<std::filesystem::path> geometry_shader_uri;
+				std::vector<std::filesystem::path> lighting_shader_uri;
 				std::vector<transform_id> transform;
 				std::vector<bool> loaded;
 			} _data;
@@ -44,14 +42,14 @@ namespace efiilj
 
 			void load(graphics_id idx);
 
-			const fs::path& get_model_uri(graphics_id idx);
-			void set_model_uri(graphics_id idx, const fs::path& uri);
+			const std::filesystem::path& get_model_uri(graphics_id idx);
+			void set_model_uri(graphics_id idx, const std::filesystem::path& uri);
 
-			const fs::path& get_geometry_shader_uri(graphics_id idx);
-			void set_geometry_shader_uri(graphics_id idx, const fs::path& uri);
+			const std::filesystem::path& get_geometry_shader_uri(graphics_id idx);
+			void set_geometry_shader_uri(graphics_id idx, const std::filesystem::path& uri);
 
-			const fs::path& get_lighting_shader_uri(graphics_id idx);
-			void set_lighting_shader_uri(graphics_id idx, const fs::path& uri);
+			const std::filesystem::path& get_lighting_shader_uri(graphics_id idx);
+			void set_lighting_shader_uri(graphics_id idx, const std::filesystem::path& uri);
 
 			const transform_id& get_transform(graphics_id idx);
 			void set_transform(graphics_id idx, transform_id trf);

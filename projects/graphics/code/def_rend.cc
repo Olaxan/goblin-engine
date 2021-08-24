@@ -43,7 +43,6 @@ namespace efiilj
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		setup_quad();
-		//setup_uniforms();
 		setup_volumes();
 
 		printf("Deferred renderer ready\n");
@@ -62,6 +61,22 @@ namespace efiilj
 	void deferred_renderer::draw_gui(render_id idx)
 	{
 		ImGui::Text("Not implemented");
+	}
+
+	void deferred_renderer::on_register(std::shared_ptr<manager_host> host)
+	{
+		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
+
+		_primary = _shaders->create();
+		_secondary = _shaders->create();
+
+		_shaders->set_uri(_primary, settings_.default_primary_path);
+		_shaders->set_uri(_secondary, settings_.default_secondary_path);
+
+		_shaders->compile(_primary);
+		_shaders->compile(_secondary);
+
+		setup_uniforms();
 	}
 
 	unsigned deferred_renderer::gen_texture(unsigned attach, unsigned internal, unsigned format, unsigned type)
@@ -143,13 +158,15 @@ namespace efiilj
 	
 	void deferred_renderer::setup_uniforms()
 	{
-		if (geometry_->use())
-			geometry_->bind_block(settings_.ubo_camera, 0);
+		if (_shaders->use(_primary))
+		{
+			_shaders->bind_block(_primary, settings_.ubo_camera, 0);
+		}
 	}
 
 	void deferred_renderer::setup_volumes()
 	{
-		object_loader pl_loader(settings_.p_v_pointlight.c_str());
+		object_loader pl_loader(settings_.pointlight_volume_path.c_str());
 
 		if (pl_loader.is_valid())
 			v_pointlight_ = std::move(pl_loader.get_resource());
@@ -165,22 +182,22 @@ namespace efiilj
 		const cutoff_data& cutoff = _lights->get_cutoff(idx);
 		const transform_id& trf = _lights->get_transform(idx);
 
-		lighting_->set_uniform("source.type", static_cast<int>(type));
-		lighting_->set_uniform("source.base.color", base.color);
-		lighting_->set_uniform("source.base.ambient_intensity", base.ambient_intensity);
-		lighting_->set_uniform("source.base.diffuse_intensity", base.diffuse_intensity);
-		lighting_->set_uniform("source.position", _transforms->get_position(trf));
-		lighting_->set_uniform("source.direction", _transforms->get_forward(trf));
-		lighting_->set_uniform("source.falloff.constant", att.constant);
-		lighting_->set_uniform("source.falloff.linear", att.linear);
-		lighting_->set_uniform("source.falloff.exponential", att.exponential);
-		lighting_->set_uniform("source.cutoff.inner", cutoff.inner_angle);
-		lighting_->set_uniform("source.cutoff.outer", cutoff.outer_angle);
+		_shaders->set_uniform(_secondary, "source.type", static_cast<int>(type));
+		_shaders->set_uniform(_secondary, "source.base.color", base.color);
+		_shaders->set_uniform(_secondary, "source.base.ambient_intensity", base.ambient_intensity);
+		_shaders->set_uniform(_secondary, "source.base.diffuse_intensity", base.diffuse_intensity);
+		_shaders->set_uniform(_secondary, "source.position", _transforms->get_position(trf));
+		_shaders->set_uniform(_secondary, "source.direction", _transforms->get_forward(trf));
+		_shaders->set_uniform(_secondary, "source.falloff.constant", att.constant);
+		_shaders->set_uniform(_secondary, "source.falloff.linear", att.linear);
+		_shaders->set_uniform(_secondary, "source.falloff.exponential", att.exponential);
+		_shaders->set_uniform(_secondary, "source.cutoff.inner", cutoff.inner_angle);
+		_shaders->set_uniform(_secondary, "source.cutoff.outer", cutoff.outer_angle);
 	}
 
 	void deferred_renderer::draw_directional() const
 	{
-		lighting_->set_uniform("light_mvp", matrix4());
+		_shaders->set_uniform(_secondary, "light_mvp", matrix4());
 
 		// Draw screenspace quad
 		glBindVertexArray(quad_vao_);
@@ -198,7 +215,7 @@ namespace efiilj
 
 		matrix4 mvp = p * v * model;
 
-		lighting_->set_uniform("light_mvp", mvp);
+		_shaders->set_uniform(_secondary, "light_mvp", mvp);
 
 		// Draw pointlight volume
 		v_pointlight_->bind();
@@ -216,7 +233,7 @@ namespace efiilj
 	void deferred_renderer::render_frame() const
 	{
 
-		if (!geometry_->use())
+		if (!_shaders->use(_primary))
 			return;
 
 		camera_id cam = _cameras->get_camera();
@@ -240,14 +257,14 @@ namespace efiilj
 
 		/* ---------- Lighting Passes ---------- */
 		
-		if (!lighting_->use())
+		if (!_shaders->use(_secondary))
 			return;
 
 		attach_textures(tex_type::target);	
 		attach_textures(tex_type::component_read);
 
-		lighting_->set_uniform(settings_.u_camera, cam_pos); 
-		lighting_->set_uniform(settings_.u_dt_seconds, get_delta_time());
+		_shaders->set_uniform(_secondary, settings_.u_camera, cam_pos); 
+		_shaders->set_uniform(_secondary, settings_.u_dt_seconds, get_delta_time());
 
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);

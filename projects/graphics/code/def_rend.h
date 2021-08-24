@@ -1,14 +1,13 @@
 #pragma once
 
 #include "fwd_rend.h"
-#include "program.h"
 #include "rend_set.h"
 
 #include "lght_mgr.h"
 #include "cam_mgr.h"
+#include "shdr_mgr.h"
 
 #include <vector>
-#include <chrono>
 #include <string>
 
 namespace efiilj
@@ -45,14 +44,15 @@ namespace efiilj
 
 		unsigned rbo_, depth_texture_, target_texture_, ubo_, quad_vao_, quad_vbo_, frame_index_;
 
-		std::shared_ptr<shader_program> geometry_;
-		std::shared_ptr<shader_program> lighting_;
+		shader_id _primary;
+		shader_id _secondary;
 
 		std::shared_ptr<mesh_resource> v_pointlight_;
 		std::shared_ptr<mesh_resource> v_spotlight_;
 
-		//std::vector<std::shared_ptr<light_source>> light_sources_;
 		std::vector<unsigned> textures_;
+
+		std::shared_ptr<shader_server> _shaders;
 
 	public:
 
@@ -62,6 +62,8 @@ namespace efiilj
 
 		void draw_gui() override;
 		void draw_gui(render_id idx) override;
+
+		void on_register(std::shared_ptr<manager_host> host) override;
 
 		void render_frame() const override;
 

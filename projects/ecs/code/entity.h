@@ -1,12 +1,14 @@
 #pragma once
 
+#include "server.h"
+
 #include <vector>
 
 namespace efiilj
 {
 	typedef unsigned int entity_id;
 
-	class entity_manager
+	class entity_manager : server<entity_id>
 	{
 		private:
 
@@ -17,7 +19,7 @@ namespace efiilj
 			entity_manager();
 			~entity_manager();
 
-			entity_id create_entity();
-			bool destroy_entity(entity_id eid);
+			entity_id create() override;
+			bool destroy(entity_id eid) override;
 	};
 }

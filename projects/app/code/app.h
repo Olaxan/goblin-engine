@@ -29,11 +29,12 @@ namespace efiilj
 
 		Display::Window* window_;
 
-		double mouse_x, mouse_y;
-		double mouse_norm_x, mouse_norm_y;
-		double mouse_down_x, mouse_down_y;
-
 		float time_;
+
+		double mouse_x, mouse_y;
+		double mouse_down_x, mouse_down_y;
+		double mouse_norm_x, mouse_norm_y;
+
 		bool is_dragging_mouse;
 		bool is_mouse_captured;
 

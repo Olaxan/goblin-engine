@@ -18,7 +18,9 @@ namespace efiilj
 		std::string u_dt_seconds = "dt";
 
 		// Volumes
-		std::string p_v_pointlight = "../res/volumes/v_pointlight.obj";
-		std::string p_v_spotlight = "../res/volumes/v_spotlight.obj";
+		std::string pointlight_volume_path = "../res/volumes/v_pointlight.obj";
+		std::string spotlight_volume_path = "../res/volumes/v_spotlight.obj";
+		std::string default_primary_path = "../res/shaders/default_primary.sdr";
+		std::string default_secondary_path = "../res/shaders/default_secondary.sdr";
 	};
 }

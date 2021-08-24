@@ -14,7 +14,7 @@ namespace efiilj
 		printf("Entity manager exit\n");
 	}
 
-	entity_id entity_manager::create_entity()
+	entity_id entity_manager::create()
 	{
 		entity_id e = _entities.size();
 		_entities.emplace_back(e);
@@ -24,7 +24,7 @@ namespace efiilj
 		return e;
 	}
 
-	bool entity_manager::destroy_entity(entity_id eid)
+	bool entity_manager::destroy(entity_id eid)
 	{
 		printf("Destroying entity %d...\n", eid);
 
