@@ -7,8 +7,9 @@
 
 #include "entity.h"
 #include "trfm_mgr.h"
-#include "mtrl_mgr.h"
 #include "cam_mgr.h"
+#include "mtrl_mgr.h"
+#include "mesh_mgr.h"
 
 #include "tex_srv.h"
 #include "mtrl_srv.h"
@@ -51,6 +52,7 @@ namespace efiilj
 		std::shared_ptr<material_server> _materials;
 		
 		std::shared_ptr<material_manager> _material_instances;
+		std::shared_ptr<mesh_manager> _mesh_instances;
 		std::shared_ptr<transform_manager> _transforms;
 		std::shared_ptr<camera_manager> _cameras;
 
@@ -72,6 +74,8 @@ namespace efiilj
 
 		model_id create() override;
 		bool destroy(model_id idx) override;
+
+		void on_register(std::shared_ptr<manager_host> host) override;
 
 		bool load(model_id idx);
 		bool unload(model_id idx);

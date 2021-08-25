@@ -34,7 +34,7 @@ namespace efiilj
 
 	void material_manager::on_register(std::shared_ptr<manager_host> host)
 	{
-		
+
 	}
 
 	material_id material_manager::get_material(material_instance_id idx)

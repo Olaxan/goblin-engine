@@ -97,29 +97,44 @@ namespace efiilj
 		set.default_primary_path = "../res/shaders/default_primary.sdr";
 		set.default_secondary_path = "../res/shaders/default_secondary.sdr";
 
-		entities = std::make_shared<entity_manager>();
 		managers = std::make_shared<manager_host>();
 
+		entities = std::make_shared<entity_manager>();
+
 		shaders = std::make_shared<shader_server>();
+		textures = std::make_shared<texture_server>();
+		meshes = std::make_shared<mesh_server>();
+		materials = std::make_shared<material_server>();
 
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>();
 		lights = std::make_shared<light_manager>();
 		graphics = std::make_shared<graphics_manager>();
+		material_instances = std::make_shared<material_manager>();
+		mesh_instances = std::make_shared<mesh_manager>();
 
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
 		sim = std::make_shared<simulator>();
 
+		managers->register_manager(entities, 'ENTS');
 		managers->register_manager(transforms, 'TRFM');
+
+		managers->register_manager(shaders, 'SHDR');
+		managers->register_manager(textures, 'TXSR');
+		managers->register_manager(meshes, 'MESR');
+		managers->register_manager(materials, 'MASR');
+
 		managers->register_manager(cameras, 'CAMS');
 		managers->register_manager(lights, 'LGHT');
-		managers->register_manager(shaders, 'SHDR');
 		managers->register_manager(graphics, 'GRFX');
+		managers->register_manager(mesh_instances, 'MEMR');
+		managers->register_manager(material_instances, 'MAMR');
+
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(sim, 'PHYS');
-		
+
 		// Camera entity
 
 		entity_id cam_ent = entities->create();

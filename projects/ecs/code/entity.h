@@ -1,6 +1,7 @@
 #pragma once
 
 #include "server.h"
+#include "mgr_host.h"
 
 #include <vector>
 
@@ -8,7 +9,7 @@ namespace efiilj
 {
 	typedef unsigned int entity_id;
 
-	class entity_manager : server<entity_id>
+	class entity_manager : public server<entity_id>, public registrable
 	{
 		private:
 

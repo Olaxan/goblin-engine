@@ -54,6 +54,20 @@ namespace efiilj
 	{
 		return false;
 	}
+	
+	void gltf_model_server::on_register(std::shared_ptr<manager_host> host)
+	{
+		_entities = host->get_manager_from_fcc<entity_manager>('ENTS');
+
+		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
+		_materials = host->get_manager_from_fcc<material_server>('MASR');
+		_textures = host->get_manager_from_fcc<texture_server>('TXSR');
+
+		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+		_cameras = host->get_manager_from_fcc<camera_manager>('CAMS');
+		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
+		_material_instances = host->get_manager_from_fcc<material_manager>('MAMR');
+	}
 
 	bool gltf_model_server::load(model_id idx)
 	{

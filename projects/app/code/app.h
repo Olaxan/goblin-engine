@@ -11,12 +11,19 @@
 
 #include "entity.h"
 #include "mgr_host.h"
+
+#include "mtrl_srv.h"
+#include "mesh_srv.h"
+#include "tex_srv.h"
+
 #include "cam_mgr.h"
+#include "mesh_mgr.h"
 #include "trfm_mgr.h"
-#include "def_rend.h"
 #include "lght_mgr.h"
 #include "grph_mgr.h"
 #include "shdr_mgr.h"
+#include "mtrl_mgr.h"
+#include "def_rend.h"
 #include "sim.h"
 
 #include <memory>
@@ -43,6 +50,9 @@ namespace efiilj
 
 		// Servers hold resources not connected to any particular entity
 		std::shared_ptr<shader_server> shaders;
+		std::shared_ptr<texture_server> textures;
+		std::shared_ptr<material_server> materials;
+		std::shared_ptr<mesh_server> meshes;
 
 		// Managers hold components that can be attached to entities
 		std::shared_ptr<transform_manager> transforms;
@@ -51,6 +61,8 @@ namespace efiilj
 		std::shared_ptr<forward_renderer> rfwd;
 		std::shared_ptr<deferred_renderer> rdef;
 		std::shared_ptr<light_manager> lights;
+		std::shared_ptr<material_manager> material_instances;
+		std::shared_ptr<mesh_manager> mesh_instances;
 		std::shared_ptr<simulator> sim;
 		
 	public:

@@ -30,11 +30,11 @@ namespace efiilj
 
 			shader_id create() override;
 			bool destroy(shader_id idx) override;
+			bool is_valid(shader_id idx) const override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 
 			bool compile(shader_id idx);
-			bool is_valid(shader_id idx) const;
 			bool use(shader_id idx) const;
 
 			int find_uniform_location(shader_id idx, const std::string& name, bool is_block = false);

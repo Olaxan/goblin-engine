@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ifmgr.h"
-#include "manager.h"
 
 #include <memory>
+#include <cassert>
 #include <unordered_map>
 
 #include "stdio.h"
@@ -34,7 +34,7 @@ namespace efiilj
 			template<class T>
 			std::shared_ptr<T> get_manager_from_fcc(int fcc)
 			{
-				assert(("Manager FourCC invalid!", _reg.find(fcc) != _reg.end()));
+				assert(("Manager FourCC invalid!", _reg.find(fcc) != _reg.end())); //NOLINT
 				return std::dynamic_pointer_cast<T>(_reg[fcc]);
 			}
 	};
