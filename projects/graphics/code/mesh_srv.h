@@ -27,6 +27,11 @@ namespace efiilj
 				std::vector<vector3> min;
 				std::vector<vector3> max;
 				std::vector<material_id> material;
+				std::vector<unsigned> usage;
+				std::vector<unsigned> vao;
+				std::vector<unsigned> vbo;
+				std::vector<unsigned> ibo;
+				std::vector<bool> state;
 			} _data;
 			
 			bool buffer(mesh_id idx);
@@ -39,8 +44,9 @@ namespace efiilj
 			mesh_id create() override;
 			bool destroy(mesh_id idx) override;
 
-			bool load(mesh_id idx);
-			bool bind(mesh_id idx, unsigned int slot) const;
+			bool build(mesh_id idx, unsigned usage);
+			bool buffer(mesh_id idx);
+			bool update(mesh_id idx);
 
 			size_t get_vertex_count(mesh_id idx) const { return _data.positions[idx].size(); }
 			size_t get_index_count(mesh_id idx) const { return _data.indices[idx].size(); }

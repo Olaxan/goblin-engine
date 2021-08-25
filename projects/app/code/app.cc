@@ -116,6 +116,7 @@ namespace efiilj
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
 		sim = std::make_shared<simulator>();
+		gltf = std::make_shared<gltf_model_server>();
 
 		managers->register_manager(entities, 'ENTS');
 		managers->register_manager(transforms, 'TRFM');
@@ -134,6 +135,7 @@ namespace efiilj
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(sim, 'PHYS');
+		managers->register_manager(gltf, 'GLTF');
 
 		// Camera entity
 
@@ -155,6 +157,12 @@ namespace efiilj
 		shader_id e1_sdr = shaders->create();
 		shaders->set_uri(e1_sdr, "../res/shaders/default_color.sdr");
 		shaders->compile(e1_sdr);
+
+		model_id test_mdl = gltf->create();
+		gltf->set_uri(test_mdl, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		gltf->load(test_mdl);
+		gltf->get_nodes(test_mdl);
+		gltf->unload(test_mdl);
 
 		//model_id e1_gltf = gltf->create();
 		//graphics_id e1_grph = graphics->create();

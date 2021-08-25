@@ -1,5 +1,7 @@
 #include "mesh_srv.h"
 
+#include <GL/glew.h>
+
 namespace efiilj
 {
 	
@@ -23,17 +25,38 @@ namespace efiilj
 		_data.colors.emplace_back();
 		_data.uvs.emplace_back();
 		_data.tangents.emplace_back();
+		_data.indices.emplace_back();
 		_data.min.emplace_back(vector3(0));
 		_data.max.emplace_back(vector3(0));
 		_data.material.emplace_back(-1);
+		_data.usage.emplace_back(0);
+		_data.vao.emplace_back(0);
+		_data.vbo.emplace_back(0);
+		_data.ibo.emplace_back(0);
+		_data.state.emplace_back(false);
 
 		return new_id;
 	}
 
-	bool mesh_server::destroy(mesh_id idx)
+	bool mesh_server::destroy(mesh_id idx) //NOLINT
 	{
 		return false;
 	}
+	
+	bool mesh_server::build(mesh_id idx, unsigned usage)
+	{
+		if (_data.vao[idx] != 0)
+			return false;
+
+		glGenVertexArrays(1, &_data.vao[idx]);
+		glBindVertexArray(_data.vao[idx]);
+	}
+
+	bool mesh_server::buffer(mesh_id idx)
+	{}
+
+	bool mesh_server::update(mesh_id idx)
+	{}
 
 	void mesh_server::set_positions(mesh_id idx, std::vector<vector3>& positions)
 	{

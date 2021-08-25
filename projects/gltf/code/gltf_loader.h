@@ -84,7 +84,14 @@ namespace efiilj
 		bool get_cameras(model_id idx, entity_id eid);
 		bool get_lights(model_id idx, entity_id eid);
 
-		const std::filesystem::path& get_uri(model_id idx) const;
-		void set_uri(model_id idx, const std::filesystem::path& uri);
+		const std::filesystem::path& get_uri(model_id idx) const
+		{
+			return _data.uri[idx];
+		}
+
+		void set_uri(model_id idx, const std::filesystem::path& uri)
+		{
+			_data.uri[idx] = uri;
+		}
 	};
 }

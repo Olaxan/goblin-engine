@@ -45,6 +45,7 @@ namespace efiilj
 
 		_data.uri.emplace_back();
 		_data.model.emplace_back();
+		_data.open.emplace_back(false);
 		_data.binary.emplace_back(false);
 
 		return new_id;
@@ -268,7 +269,8 @@ namespace efiilj
 	{
 		for (const auto& prim : mesh.primitives)
 		{
-			add_primitive(eid, idx, prim);
+			mesh_id mid = add_primitive(eid, idx, prim);
+			_meshes->build(mid);
 		}
 	}
 
@@ -293,15 +295,24 @@ namespace efiilj
 		entity_id eid = _entities->create();
 
 		transform_id trf_id = _transforms->register_entity(eid);
-		_transforms->set_position(trf_id, vector3(
-					static_cast<float>(node.translation[0]),
-					static_cast<float>(node.translation[1]),
-					static_cast<float>(node.translation[2])));
 
-		_transforms->set_scale(trf_id, vector3(
-					static_cast<float>(node.scale[0]),
-					static_cast<float>(node.scale[1]),
-					static_cast<float>(node.scale[2])));
+		printf("TRID %d\n", trf_id);
+
+		if (node.translation.size() == 3)
+		{
+			_transforms->set_position(trf_id, vector3(
+						static_cast<float>(node.translation[0]),
+						static_cast<float>(node.translation[1]),
+						static_cast<float>(node.translation[2])));
+		}
+
+		if (node.rotation.size() == 3)
+		{
+			_transforms->set_scale(trf_id, vector3(
+						static_cast<float>(node.scale[0]),
+						static_cast<float>(node.scale[1]),
+						static_cast<float>(node.scale[2])));
+		}
 
 		// TODO: rotation
 		
@@ -323,6 +334,10 @@ namespace efiilj
 
 	bool gltf_model_server::get_nodes(model_id idx)
 	{
+
+		if (!is_valid(idx) || !_data.open[idx])
+			return false;
+
 		const tinygltf::Model& model = _data.model[idx];
 		const tinygltf::Scene& scene = _data.model[idx].scenes[model.defaultScene];
 

@@ -24,6 +24,7 @@
 #include "shdr_mgr.h"
 #include "mtrl_mgr.h"
 #include "def_rend.h"
+#include "gltf_loader.h"
 #include "sim.h"
 
 #include <memory>
@@ -64,6 +65,8 @@ namespace efiilj
 		std::shared_ptr<material_manager> material_instances;
 		std::shared_ptr<mesh_manager> mesh_instances;
 		std::shared_ptr<simulator> sim;
+
+		std::shared_ptr<gltf_model_server> gltf;
 		
 	public:
 
