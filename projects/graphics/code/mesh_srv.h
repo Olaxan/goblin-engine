@@ -34,8 +34,6 @@ namespace efiilj
 				std::vector<bool> state;
 			} _data;
 			
-			bool buffer(mesh_id idx);
-
 		public:
 
 			mesh_server();
@@ -44,6 +42,7 @@ namespace efiilj
 			mesh_id create() override;
 			bool destroy(mesh_id idx) override;
 
+			bool bind(mesh_id idx);
 			bool build(mesh_id idx, unsigned usage);
 			bool buffer(mesh_id idx);
 			bool update(mesh_id idx);

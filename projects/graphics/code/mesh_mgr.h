@@ -19,6 +19,8 @@ namespace efiilj
 				std::vector<mesh_id> id;
 			} _data;
 
+			std::shared_ptr<mesh_server> _meshes;
+
 		public:
 
 			mesh_manager();

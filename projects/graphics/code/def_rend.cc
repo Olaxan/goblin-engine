@@ -58,7 +58,7 @@ namespace efiilj
 		}
 	}
 
-	void deferred_renderer::draw_gui(render_id idx)
+	void deferred_renderer::draw_gui(render_id idx) // NOLINT
 	{
 		ImGui::Text("Not implemented");
 	}
@@ -172,7 +172,7 @@ namespace efiilj
 		object_loader pl_loader(settings_.pointlight_volume_path.c_str());
 
 		if (pl_loader.is_valid())
-			v_pointlight_ = std::move(pl_loader.get_resource());
+			v_pointlight_ = pl_loader.get_resource();
 		else 
 			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
 	}	
@@ -228,6 +228,7 @@ namespace efiilj
 
 	void deferred_renderer::on_begin_frame()
 	{
+		return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, rbo_);
 		attach_textures(tex_type::target);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -235,6 +236,7 @@ namespace efiilj
 
 	void deferred_renderer::render_frame() const
 	{
+		return;
 
 		if (!_shaders->use(_primary))
 			return;
@@ -317,6 +319,7 @@ namespace efiilj
 
 	void deferred_renderer::on_end_frame()
 	{
+		return;
 		// Reset GL state for forward pass
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	

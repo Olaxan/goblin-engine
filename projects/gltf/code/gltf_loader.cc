@@ -261,6 +261,9 @@ namespace efiilj
 			_material_instances->set_material(mat_iid, mat_id);
 		}
 
+		mesh_instance_id miid = _mesh_instances->register_entity(eid);
+		_mesh_instances->set_mesh(miid, mid);
+
 		return mid;
 	}
 
@@ -270,7 +273,7 @@ namespace efiilj
 		for (const auto& prim : mesh.primitives)
 		{
 			mesh_id mid = add_primitive(eid, idx, prim);
-			_meshes->build(mid);
+			_meshes->build(mid, GL_STATIC_DRAW);
 		}
 	}
 
@@ -295,8 +298,6 @@ namespace efiilj
 		entity_id eid = _entities->create();
 
 		transform_id trf_id = _transforms->register_entity(eid);
-
-		printf("TRID %d\n", trf_id);
 
 		if (node.translation.size() == 3)
 		{
