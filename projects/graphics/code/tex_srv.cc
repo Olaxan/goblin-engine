@@ -23,6 +23,7 @@ namespace efiilj
 		_pool.emplace_back(new_id);
 
 		_data.uri.emplace_back();
+		_data.name.emplace_back();
 		_data.tex_id.emplace_back(0);
 		_data.state.emplace_back(false);
 		_data.tex_wrap_s.emplace_back(GL_REPEAT);
@@ -48,41 +49,51 @@ namespace efiilj
 		if (_data.state[idx])
 			return true;
 
-		glGenTextures(1, &_data.tex_id[idx]);
-		glBindTexture(GL_TEXTURE_2D, _data.tex_id[idx]);
-
+		generate(idx);
 		set_params(idx);
-		buffer(idx);
+
+		unsigned char* buf = stbi_load(
+				_data.uri[idx].c_str(), &_data.width[idx], &_data.height[idx], &_data.bits[idx], 4);
+
+		if (buf == nullptr)
+			return false;
+
+		buffer(idx, _data.width[idx], _data.height[idx], buf);
+
+		stbi_image_free(buf);
 
 		return true;	
 	}
 
-	bool texture_server::bind(texture_id idx, unsigned int slot) const
+	void texture_server::bind(texture_id idx) const
 	{
-		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, _data.tex_id[idx]);
 	}
 
-	bool texture_server::buffer(texture_id idx)
+	void texture_server::set_active(texture_id idx, unsigned int slot) const
 	{
-		unsigned char* buffer = stbi_load(
-				_data.uri[idx].c_str(), &_data.width[idx], &_data.height[idx], &_data.bits[idx], 4);
-
-		if (buffer == nullptr)
-			return false;
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 
-				_data.width[idx], _data.height[idx], 0, _data.tex_format[idx], _data.tex_type[idx], buffer);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		stbi_image_free(buffer);
-
-		_data.state[idx] = true;
-
-		return true;
+		glActiveTexture(GL_TEXTURE0 + slot);
+		bind(idx);
 	}
 
-	bool texture_server::set_params(texture_id idx)
+	void texture_server::generate(texture_id idx)
+	{
+		glGenTextures(1, &_data.tex_id[idx]);
+	}
+
+	void texture_server::buffer(texture_id idx, const unsigned int& width, const unsigned int& height, void* data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 
+				width, height, 0, _data.tex_format[idx], _data.tex_type[idx], data);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		_data.width[idx] = width;
+		_data.height[idx] = height;
+		_data.state[idx] = true;
+	}
+
+	void texture_server::set_params(texture_id idx)
 	{
 		glBindTexture(GL_TEXTURE_2D, _data.tex_id[idx]);
 
@@ -90,17 +101,30 @@ namespace efiilj
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _data.tex_wrap_t[idx]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _data.tex_min_filter[idx]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _data.tex_mag_filter[idx]);
-
-		return true;
 	}
 
-	const std::filesystem::path& texture_server::get_uri(shader_id idx) const
+	const std::filesystem::path& texture_server::get_uri(texture_id idx) const
 	{
 		return _data.uri[idx];
 	}
 
-	void texture_server::set_uri(shader_id idx, const std::filesystem::path& uri)
+	void texture_server::set_uri(texture_id idx, const std::filesystem::path& uri)
 	{
 		_data.uri[idx] = uri;
+	}
+
+	void texture_server::set_format(texture_id idx, unsigned int format)
+	{
+		_data.tex_format[idx] = format;
+	}
+
+	void texture_server::set_type(texture_id idx, unsigned int type)
+	{
+		_data.tex_type[idx] = type;
+	}
+
+	void texture_server::set_name(texture_id idx, const std::string& name)
+	{
+		_data.name[idx] = name;
 	}
 }

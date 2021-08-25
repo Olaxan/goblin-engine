@@ -9,6 +9,6 @@ namespace efiilj
 	{
 		public:
 
-			virtual void on_register(std::shared_ptr<manager_host> host) = 0;
+			virtual void on_register(std::shared_ptr<manager_host>) { };
 	};
 }

@@ -3,8 +3,6 @@
 #include "server.h"
 #include "mgr_host.h"
 
-#include "shdr_mgr.h"
-
 #include <filesystem>
 
 namespace efiilj
@@ -19,6 +17,7 @@ namespace efiilj
 			{
 				std::vector<unsigned int> tex_id;
 				std::vector<std::filesystem::path> uri;
+				std::vector<std::string> name;
 				std::vector<bool> state;
 				std::vector<unsigned int> tex_wrap_s;
 				std::vector<unsigned int> tex_wrap_t;
@@ -30,9 +29,6 @@ namespace efiilj
 				std::vector<int> height;
 				std::vector<int> bits;
 			} _data;
-			
-			bool buffer(texture_id idx);
-			bool set_params(texture_id idx);
 
 		public:
 
@@ -43,10 +39,18 @@ namespace efiilj
 			bool destroy(texture_id idx) override;
 
 			bool load(texture_id idx);
-			bool bind(texture_id idx, unsigned int slot) const;
 
-			const std::filesystem::path& get_uri(shader_id idx) const;
-			void set_uri(shader_id idx, const std::filesystem::path& uri);
+			void bind(texture_id idx) const;
+			void set_active(texture_id idx, unsigned int slot) const;
+			void generate(texture_id idx);
+			void buffer(texture_id idx, const unsigned int& width, const unsigned int& height, void* data);
+			void set_params(texture_id idx);
 
+			const std::filesystem::path& get_uri(texture_id idx) const;
+			void set_uri(texture_id idx, const std::filesystem::path& uri);
+
+			void set_format(texture_id idx, unsigned int format);
+			void set_type(texture_id idx, unsigned int type);
+			void set_name(texture_id idx, const std::string& name);
 	};
 }

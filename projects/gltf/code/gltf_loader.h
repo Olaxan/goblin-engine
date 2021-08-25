@@ -1,12 +1,15 @@
 #pragma once
 
 #include "tiny_gltf.h"
-#include "program.h"
-#include "node.h"
-#include "material.h"
-#include "scene.h"
+
+#include "server.h"
+#include "mgr_host.h"
 
 #include "trfm_mgr.h"
+#include "tex_srv.h"
+#include "mtrl_srv.h"
+#include "mesh_srv.h"
+#include "cam_mgr.h"
 
 #include <string>
 #include <memory>
@@ -23,7 +26,9 @@ namespace efiilj
 		size_t size;
 	};
 
-	class gltf_model_loader
+	typedef int model_id;
+
+	class gltf_model_server : public server<model_id>, public registrable
 	{
 	private:
 
@@ -51,26 +56,37 @@ namespace efiilj
 		tinygltf::Model _model;
 		bool _model_ready;
 
+		struct ModelData
+		{
+			std::vector<std::filesystem::path> uri;	
+			std::vector<tinygltf::Model> model;
+			std::vector<bool> binary;
+			std::vector<bool> open;
+		} _data;
+
 		std::shared_ptr<transform_manager> _transforms;
+		std::shared_ptr<camera_manager> _cameras;
+		std::shared_ptr<mesh_server> _meshes;
+		std::shared_ptr<texture_server> _textures;
+		std::shared_ptr<material_server> _materials;
 
 	public:
 
-		gltf_model_loader(std::shared_ptr<transform_manager> trf_mgr);
+		gltf_model_server();
+		~gltf_model_server();
 
-		gltf_model_loader(gltf_model_loader&)
-			= default;
+		model_id create() override;
+		bool destroy(model_id idx) override;
 
-		gltf_model_loader(gltf_model_loader&&)
-			= default;
+		bool load(model_id idx);
+		bool unload(model_id idx);
 
-		bool load_from_file(const std::string& path, bool is_binary);
+		bool get_materials(model_id idx);
+		bool get_cameras(model_id idx);
+		bool get_lights(model_id idx);
+		bool get_meshes(model_id idx);
 
-		std::shared_ptr<scene> get_scene(
-				std::shared_ptr<shader_program> shader, 
-				transform_id parent,
-				std::string name = "GLTF"
-		);
-	
-		~gltf_model_loader();
+		const std::filesystem::path& get_uri(model_id idx) const;
+		void set_uri(model_id idx, const std::filesystem::path& uri);
 	};
 }
