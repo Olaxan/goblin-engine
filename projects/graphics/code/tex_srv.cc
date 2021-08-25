@@ -24,6 +24,7 @@ namespace efiilj
 
 		_data.uri.emplace_back();
 		_data.name.emplace_back();
+		_data.usage.emplace_back(texture_type::tex_default);
 		_data.tex_id.emplace_back(0);
 		_data.state.emplace_back(false);
 		_data.tex_wrap_s.emplace_back(GL_REPEAT);
@@ -126,5 +127,10 @@ namespace efiilj
 	void texture_server::set_name(texture_id idx, const std::string& name)
 	{
 		_data.name[idx] = name;
+	}
+
+	void texture_server::set_usage(texture_id idx, const texture_type& usage)
+	{
+		_data.usage[idx] = usage;
 	}
 }

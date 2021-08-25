@@ -365,7 +365,7 @@ namespace efiilj
 
 		printf("Parsing GLTF file, %lu nodes in default scene %d\n", scene.nodes.size(), _model.defaultScene);
 
-		for (int i = 0; i < scene.nodes.size(); i++)
+		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
 			tinygltf::Node& node = _model.nodes[scene.nodes[i]];
 			parse_node(node, new_scene);
@@ -374,7 +374,7 @@ namespace efiilj
 		return 0;
 	}
 
-	void gltf_model_server::link_texture(material_id mat_id, int index, const std::string& type)
+	void gltf_model_server::link_texture(material_id mat_id, int index, const texture_type& type)
 	{
 		if (index > -1 && _materials->is_valid(mat_id))
 		{
@@ -390,7 +390,7 @@ namespace efiilj
 			_textures->set_format(tex_id, tex_format);
 			_textures->set_type(tex_id, tex_type);
 			_textures->buffer(tex_id, src.width, src.height, &src.image.at(0));
-			_textures->set_name(tex_id, type);
+			_textures->set_usage(tex_id, type);
 
 			_materials->add_texture(mat_id, tex_id);
 		}
@@ -408,15 +408,15 @@ namespace efiilj
 
 			material_id mat_id = _materials->create();
 
-			link_texture(mat_id, mat.pbrMetallicRoughness.baseColorTexture.index, "BASE");
-			link_texture(mat_id, mat.pbrMetallicRoughness.metallicRoughnessTexture.index, "METAL_ROUGHNESS");
-			link_texture(mat_id, mat.normalTexture.index, "NORMAL");
-			link_texture(mat_id, mat.emissiveTexture.index, "EMISSIVE");
+			link_texture(mat_id, mat.pbrMetallicRoughness.baseColorTexture.index, texture_type::tex_base);
+			link_texture(mat_id, mat.pbrMetallicRoughness.metallicRoughnessTexture.index, texture_type::tex_orm);
+			link_texture(mat_id, mat.normalTexture.index, texture_type::tex_normal);
+			link_texture(mat_id, mat.emissiveTexture.index, texture_type::tex_emissive);
 
 			auto& emit = mat.emissiveFactor;
 			auto& base = mat.pbrMetallicRoughness.baseColorFactor;
 
-			_materials->set_base(mat_id, vector4(
+			_materials->set_base_color(mat_id, vector4(
 						static_cast<float>(base[0]), 
 						static_cast<float>(base[1]), 
 						static_cast<float>(base[2]), 
@@ -425,16 +425,17 @@ namespace efiilj
 			_materials->set_emissive_factor(mat_id, vector3(
 						static_cast<float>(emit[0]), 
 						static_cast<float>(emit[1]), 
-						static_cast<float>(emit[2]));
+						static_cast<float>(emit[2])));
 
 			_materials->set_metallic_factor(mat_id, 
-				static_cast<float>( mat.pbrMetallicRoughness.metallicFactor);
+				static_cast<float>( mat.pbrMetallicRoughness.metallicFactor));
 
 			_materials->set_roughness_factor(mat_id, 
-				static_cast<float>( mat.pbrMetallicRoughness.roughnessFactor);
+				static_cast<float>( mat.pbrMetallicRoughness.roughnessFactor));
 
-			_materials->set_double_sided(mat_id, mat.doubleSided;
-			_materials->set_alpha_cutoff(mat_id, static_cast<float>(mat.alphaCutoff);
+			_materials->set_double_sided(mat_id, mat.doubleSided);
+
+			_materials->set_alpha_cutoff(mat_id, static_cast<float>(mat.alphaCutoff));
 		}
 
 		return 0;

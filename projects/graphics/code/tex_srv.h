@@ -9,6 +9,16 @@ namespace efiilj
 {
 	typedef int texture_id;
 
+	enum class texture_type
+	{
+		tex_default,
+		tex_base,
+		tex_orm,
+		tex_normal,
+		tex_emissive,
+		tex_framebuffer,
+	};
+
 	class texture_server : public server<texture_id>, public registrable
 	{
 		private:
@@ -18,7 +28,7 @@ namespace efiilj
 				std::vector<unsigned int> tex_id;
 				std::vector<std::filesystem::path> uri;
 				std::vector<std::string> name;
-				std::vector<bool> state;
+				std::vector<texture_type> usage;
 				std::vector<unsigned int> tex_wrap_s;
 				std::vector<unsigned int> tex_wrap_t;
 				std::vector<unsigned int> tex_min_filter;
@@ -28,6 +38,7 @@ namespace efiilj
 				std::vector<int> width;
 				std::vector<int> height;
 				std::vector<int> bits;
+				std::vector<bool> state;
 			} _data;
 
 		public:
@@ -52,5 +63,6 @@ namespace efiilj
 			void set_format(texture_id idx, unsigned int format);
 			void set_type(texture_id idx, unsigned int type);
 			void set_name(texture_id idx, const std::string& name);
+			void set_usage(texture_id idx, const texture_type& usage);
 	};
 }
