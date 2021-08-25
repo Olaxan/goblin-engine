@@ -41,7 +41,7 @@ namespace efiilj
 		return new_id;
 	}
 
-	bool camera_manager::unregister_entity(camera_id idx)
+	bool camera_manager::unregister_entity(camera_id idx) //NOLINT
 	{
 		return false;
 	}
@@ -58,7 +58,7 @@ namespace efiilj
 	void camera_manager::draw_gui(camera_id idx)
 	{
 
-		if (idx < 0 || idx > _instances.size() - 1)
+		if (!is_valid(idx))
 		{
 			ImGui::TextColored(ImVec4(1, 1, 0, 1), "No camera selected");
 			return;
@@ -169,7 +169,7 @@ namespace efiilj
 	
 	bool camera_manager::set_camera(camera_id active)
 	{
-		if (active < _instances.size())
+		if (is_valid(active))
 		{
 			_current = active;
 			push_view();

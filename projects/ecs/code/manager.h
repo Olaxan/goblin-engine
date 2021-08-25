@@ -24,6 +24,11 @@ namespace efiilj
 			virtual T register_entity(entity_id eid) = 0;
 			virtual bool unregister_entity(T idx) = 0;
 
+			virtual bool is_valid(T idx) const
+			{
+				return (idx >= 0 && idx < static_cast<int>(_instances.size()));
+			}
+
 			virtual void draw_gui() = 0;
 			virtual void draw_gui(T selected) = 0;
 

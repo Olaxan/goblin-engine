@@ -94,8 +94,8 @@ namespace efiilj
 		renderer_settings set;
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
-		set.default_primary_path = "res://shaders/default_primary.sdr";
-		set.default_secondary_path = "res://shaders/default_secondary.sdr";
+		set.default_primary_path = "../res/shaders/default_primary.sdr";
+		set.default_secondary_path = "../res/shaders/default_secondary.sdr";
 
 		entities = std::make_shared<entity_manager>();
 		managers = std::make_shared<manager_host>();
@@ -129,6 +129,7 @@ namespace efiilj
 		cameras->set_transform(cam_id, cam_trf);
 		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
 		cameras->set_fov(cam_id, 1.2f);
+		cameras->set_camera(cam_id);
 
 		// Test entity 1
 
@@ -288,9 +289,9 @@ namespace efiilj
 
 			cameras->update();
 
-			//rdef->begin_frame();
-			//rdef->render_frame();
-			//rdef->end_frame();
+			rdef->begin_frame();
+			rdef->render_frame();
+			rdef->end_frame();
 
 			rfwd->begin_frame();
 			rfwd->render_frame();

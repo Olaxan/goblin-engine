@@ -1,7 +1,7 @@
 Begin(VERTEX_SHADER)
-	Import(dvs_lighting.glsl)
+	Include(dvs_lighting.glsl)
 End()
 
 Begin(FRAGMENT_SHADER)
-	Import(dfs_lighting.glsl)
+	Include(dfs_lighting.glsl)
 End()

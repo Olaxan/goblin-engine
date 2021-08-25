@@ -65,7 +65,10 @@ namespace efiilj
 
 	void deferred_renderer::on_register(std::shared_ptr<manager_host> host)
 	{
+		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+		_lights = host->get_manager_from_fcc<light_manager>('LGHT');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
+		_cameras = host->get_manager_from_fcc<camera_manager>('CAMS');
 
 		_primary = _shaders->create();
 		_secondary = _shaders->create();
