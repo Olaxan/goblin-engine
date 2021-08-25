@@ -141,6 +141,14 @@ namespace efiilj
 		shaders->set_uri(e1_sdr, "../res/shaders/default_color.sdr");
 		shaders->compile(e1_sdr);
 
+		//model_id e1_gltf = gltf->create();
+		//graphics_id e1_grph = graphics->create();
+
+		//gltf->set_path(e1_gltf, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		//gltf->open(e1_gltf);
+		//gltf->get_nodes(e1_gltf);
+		//gltf->close(e1_gltf);
+
 		//auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
 		//rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
 		//rect_mat_ptr->wireframe = true;

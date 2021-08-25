@@ -66,10 +66,16 @@ namespace efiilj
 		float get_height(camera_id idx) const;
 		void set_height(camera_id idx, float height);
 
+		void set_size(camera_id idx, float width, float height);
+
 		float get_fov(camera_id idx) const;
 		void set_fov(camera_id idx, float fov);
 
-		void set_size(camera_id idx, float width, float height);
+		float get_near(camera_id idx) const;
+		void set_near(camera_id idx, float near);
+
+		float get_far(camera_id idx) const;
+		void set_far(camera_id idx, float fov);
 
 		const matrix4& get_perspective(camera_id idx) const;
 

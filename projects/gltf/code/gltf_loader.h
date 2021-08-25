@@ -5,20 +5,26 @@
 #include "server.h"
 #include "mgr_host.h"
 
+#include "entity.h"
 #include "trfm_mgr.h"
+#include "mtrl_mgr.h"
+#include "cam_mgr.h"
+
 #include "tex_srv.h"
 #include "mtrl_srv.h"
 #include "mesh_srv.h"
-#include "cam_mgr.h"
 
 #include <string>
 #include <memory>
 
 namespace efiilj 
 {
+
+	typedef int model_id;
+
 	struct accessor_data
 	{
-		unsigned char* data_start;
+		const unsigned char* data_start;
 
 		size_t stride;
 		size_t block_size;
@@ -26,36 +32,10 @@ namespace efiilj
 		size_t size;
 	};
 
-	typedef int model_id;
-
 	class gltf_model_server : public server<model_id>, public registrable
 	{
 	private:
-
-		void link_texture(std::shared_ptr<gltf_pbr_base> mat, int index, const std::string& type);
-		void parse_node(tinygltf::Node&, std::shared_ptr<scene> scene);
-
-		std::shared_ptr<mesh_resource> build_mesh(tinygltf::Primitive&);
-
-		unsigned get_meshes(std::shared_ptr<scene> scene);
-
-		unsigned get_materials(
-				std::shared_ptr<shader_program> program,
-				std::shared_ptr<scene> scene);
 		
-
-		size_t calculate_vbo_size(tinygltf::Primitive& prim);
-		accessor_data calculate_accessor_data(tinygltf::Accessor&);
-
-		static size_t type_component_count(const std::string& type);
-		static size_t component_type_size(int type);
-		static unsigned get_format(int components);
-		static unsigned get_type(int bits);
-		static int get_attribute_type(const std::string&);
-
-		tinygltf::Model _model;
-		bool _model_ready;
-
 		struct ModelData
 		{
 			std::vector<std::filesystem::path> uri;	
@@ -64,11 +44,26 @@ namespace efiilj
 			std::vector<bool> open;
 		} _data;
 
-		std::shared_ptr<transform_manager> _transforms;
-		std::shared_ptr<camera_manager> _cameras;
+		std::shared_ptr<entity_manager> _entities;
+
 		std::shared_ptr<mesh_server> _meshes;
 		std::shared_ptr<texture_server> _textures;
 		std::shared_ptr<material_server> _materials;
+		
+		std::shared_ptr<material_manager> _material_instances;
+		std::shared_ptr<transform_manager> _transforms;
+		std::shared_ptr<camera_manager> _cameras;
+
+		size_t calculate_vbo_size(const tinygltf::Model& model, const tinygltf::Primitive& prim);
+		accessor_data calculate_accessor_data(const tinygltf::Model& model, const tinygltf::Accessor& acc);
+		matrix4 convert_matrix(const std::vector<double>& m);
+
+		mesh_id add_primitive(entity_id eid, model_id idx, const tinygltf::Primitive& prim);
+		camera_id add_camera(entity_id eid, const tinygltf::Camera& cam);
+		void get_mesh(entity_id eid, model_id idx, const tinygltf::Mesh& mesh);
+		void get_node(model_id idx, const tinygltf::Node&);
+		void link_texture(model_id idx, material_id mat_id, int tex_index, const texture_type& usage);
+		material_id get_material(model_id idx, const tinygltf::Material& mat);
 
 	public:
 
@@ -81,10 +76,9 @@ namespace efiilj
 		bool load(model_id idx);
 		bool unload(model_id idx);
 
-		bool get_materials(model_id idx);
-		bool get_cameras(model_id idx);
-		bool get_lights(model_id idx);
-		bool get_meshes(model_id idx);
+		bool get_nodes(model_id idx);
+		bool get_cameras(model_id idx, entity_id eid);
+		bool get_lights(model_id idx, entity_id eid);
 
 		const std::filesystem::path& get_uri(model_id idx) const;
 		void set_uri(model_id idx, const std::filesystem::path& uri);

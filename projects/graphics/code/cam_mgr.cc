@@ -203,6 +203,14 @@ namespace efiilj
 		push_view();
 	}
 
+	void camera_manager::set_size(camera_id idx, float width, float height)
+	{
+		_data.width[idx] = width;
+		_data.height[idx] = height;
+		update_view(idx);
+		push_view();
+	}
+
 	float camera_manager::get_fov(camera_id idx) const
 	{
 		return _data.fov[idx];
@@ -211,6 +219,30 @@ namespace efiilj
 	void camera_manager::set_fov(camera_id idx, float fov)
 	{
 		_data.fov[idx] = fov;
+		update_perspective(idx);
+		push_perspective();
+	}
+
+	float camera_manager::get_near(camera_id idx) const
+	{
+		return _data.near[idx];
+	}
+
+	void camera_manager::set_near(camera_id idx, float near)
+	{
+		_data.near[idx] = near;
+		update_perspective(idx);
+		push_perspective();
+	}
+
+	float camera_manager::get_far(camera_id idx) const
+	{
+		return _data.far[idx];
+	}
+
+	void camera_manager::set_far(camera_id idx, float far)
+	{
+		_data.far[idx] = far;
 		update_perspective(idx);
 		push_perspective();
 	}
@@ -237,11 +269,4 @@ namespace efiilj
 		push_view();
 	}
 	
-	void camera_manager::set_size(camera_id idx, float width, float height)
-	{
-		_data.width[idx] = width;
-		_data.height[idx] = height;
-		update_view(idx);
-		push_view();
-	}
 }
