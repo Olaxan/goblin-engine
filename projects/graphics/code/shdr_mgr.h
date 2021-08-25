@@ -47,7 +47,7 @@ namespace efiilj
 			bool set_uniform(shader_id idx, const std::string& name, const vector3& vec);
 			bool set_uniform(shader_id idx, const std::string& name, const matrix3& mat);
 
-			const std::filesystem::path& get_path(shader_id idx) const;
+			const std::filesystem::path& get_uri(shader_id idx) const;
 			void set_uri(shader_id idx, const std::filesystem::path& uri);
 
 	};

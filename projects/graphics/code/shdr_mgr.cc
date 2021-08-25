@@ -156,7 +156,7 @@ namespace efiilj
 		return true;
 	}
 
-	const std::filesystem::path& shader_server::get_path(shader_id idx) const
+	const std::filesystem::path& shader_server::get_uri(shader_id idx) const
 	{
 		return _data.uri[idx];
 	}
