@@ -16,10 +16,12 @@ namespace efiilj
 
 			struct MeshInstanceData
 			{
-				std::vector<mesh_id> id;
+				std::vector<mesh_id> mesh;
+				std::vector<material_id> material;
 			} _data;
 
 			std::shared_ptr<mesh_server> _meshes;
+			std::shared_ptr<material_server> _materials;
 
 		public:
 
@@ -32,7 +34,24 @@ namespace efiilj
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 
-			mesh_id get_mesh(mesh_instance_id idx);
-			void set_mesh(mesh_instance_id idx, mesh_id mat_id);
+			mesh_id get_mesh(mesh_instance_id idx)
+			{
+				return _data.mesh[idx];
+			}
+
+			void set_mesh(mesh_instance_id idx, mesh_id mesh)
+			{
+				_data.mesh[idx] = mesh;
+			}
+
+			material_id get_material(mesh_instance_id idx)
+			{
+				return _data.material[idx];
+			}
+
+			void set_material(mesh_instance_id idx, material_id material)
+			{
+				_data.material[idx] = material;
+			}
 	};
 }

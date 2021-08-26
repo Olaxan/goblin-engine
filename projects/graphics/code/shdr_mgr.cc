@@ -91,6 +91,17 @@ namespace efiilj
 		return true;
 	}
 
+	bool shader_server::set_uniform(shader_id idx, const std::string& name, unsigned val)
+	{
+		const int uniform = find_uniform_location(idx, name);
+
+		if (uniform == -1)
+			return false;
+
+		glUniform1ui(uniform, val);
+		return true;
+	}
+
 	bool shader_server::set_uniform(shader_id idx, const std::string& name, float val)
 	{
 		const int uniform = find_uniform_location(idx, name);

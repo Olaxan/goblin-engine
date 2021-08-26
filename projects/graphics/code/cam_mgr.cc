@@ -17,6 +17,8 @@ namespace efiilj
 	: _ubo(0), _current(0) 
 	{
 		setup_ubo();
+		printf("Init camera...\n");
+		_name = "Camera";
 	}
 
 	void camera_manager::extend_defaults(camera_id new_id)
@@ -55,12 +57,6 @@ namespace efiilj
 
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Camera %d", idx);
 		ImGui::Text("Uniform buffer %d", _ubo);
-
-		if (ImGui::TreeNode("Transform"))
-		{
-			_transforms->draw_gui(_data.transform[idx]);
-			ImGui::TreePop();
-		}
 
 		if (ImGui::TreeNode("Properties"))
 		{

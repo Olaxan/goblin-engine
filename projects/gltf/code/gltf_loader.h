@@ -10,6 +10,7 @@
 #include "cam_mgr.h"
 #include "mtrl_mgr.h"
 #include "mesh_mgr.h"
+#include "meta_mgr.h"
 
 #include "tex_srv.h"
 #include "mtrl_srv.h"
@@ -55,6 +56,7 @@ namespace efiilj
 		std::shared_ptr<mesh_manager> _mesh_instances;
 		std::shared_ptr<transform_manager> _transforms;
 		std::shared_ptr<camera_manager> _cameras;
+		std::shared_ptr<meta_manager> _metadata;
 
 		size_t calculate_vbo_size(const tinygltf::Model& model, const tinygltf::Primitive& prim);
 		accessor_data calculate_accessor_data(const tinygltf::Model& model, const tinygltf::Accessor& acc);

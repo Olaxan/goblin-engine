@@ -7,6 +7,7 @@ namespace efiilj
 	light_manager::light_manager()
 	{
 		printf("Init light manager...\n");
+		_name = "Light";
 	}
 
 	light_manager::~light_manager()

@@ -25,9 +25,6 @@ namespace efiilj
 
 		struct RenderData
 		{
-			std::vector<mesh_instance_id> mesh;
-			std::vector<material_instance_id> material;
-			std::vector<transform_id> transform;
 		} _data;
 
 		std::shared_ptr<camera_manager> _cameras;
@@ -35,9 +32,9 @@ namespace efiilj
 		std::shared_ptr<light_manager> _lights;
 		std::shared_ptr<mesh_manager> _mesh_instances;
 		std::shared_ptr<material_manager> _material_instances;
-
 		std::shared_ptr<mesh_server> _meshes;
 		std::shared_ptr<material_server> _materials;
+		std::shared_ptr<shader_server> _shaders;
 
 	public:
 
@@ -59,19 +56,5 @@ namespace efiilj
 		virtual void on_begin_frame() {}
 		virtual void on_end_frame() {}
 
-		void set_mesh(render_id idx, mesh_instance_id  mesh)
-		{
-			_data.mesh[idx] = mesh;
-		}
-
-		void set_material(render_id idx, material_instance_id mat)
-		{
-			_data.material[idx] = mat;
-		}
-
-		void set_transform(render_id idx, transform_id transform)
-		{
-			_data.transform[idx] = transform;
-		}
 	};
 }

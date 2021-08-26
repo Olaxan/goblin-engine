@@ -8,6 +8,9 @@
 
 #include "imgui.h"
 
+#include <string>
+#include <sstream>
+
 namespace efiilj
 {
 	template<class T>
@@ -20,6 +23,8 @@ namespace efiilj
 			std::vector<T> _instances;
 			std::vector<entity_id> _entities;
 			std::vector<bool> _alive;
+
+			std::string _name;
 
 			virtual void extend_defaults(T new_id) = 0;
 
@@ -34,7 +39,7 @@ namespace efiilj
 				_alive.emplace_back(true);
 				_instance_mapping.emplace(eid, new_id);
 
-				extend_defaults(eid);
+				extend_defaults(new_id);
 
 				return new_id;
 			}
@@ -49,13 +54,33 @@ namespace efiilj
 
 			virtual void draw_entity_gui(entity_id eid) override
 			{
-				for (auto it = get_components_begin(eid); it != get_components_end(); it++)
+				auto range = get_components(eid);
+
+				for (auto it = range.first; it != range.second; it++)
 				{
-					draw_gui(it->second);
+					T idx = it->second;
+
+					if (ImGui::TreeNode(get_name(idx).c_str()))
+					{
+						draw_gui(idx);
+						ImGui::TreePop();
+					}
 				}
 			}
 
 			virtual void draw_gui(T) {};
+
+			const std::string& get_name() const
+			{
+				return _name;
+			}
+
+			const std::string get_name(T idx) const
+			{
+				std::stringstream ss;
+				ss << _name << " " << idx;
+				return ss.str();
+			}
 
 			virtual bool is_valid(T idx) const
 			{
@@ -67,14 +92,18 @@ namespace efiilj
 				return _instances;
 			}
 
-			typename std::multimap<entity_id, T>::iterator get_components_begin(entity_id eid)
+			typename std::pair< 
+				typename std::multimap<entity_id, T>::iterator, 
+				typename std::multimap<entity_id, T>::iterator >
+			get_components(entity_id eid)
 			{
-				return _instance_mapping.find(eid);
+				return _instance_mapping.equal_range(eid);
 			}
 
-			typename std::multimap<entity_id, T>::iterator get_components_end()
+			T get_component(entity_id eid)
 			{
-				return _instance_mapping.end();
+				auto it = _instance_mapping.find(eid);
+				return it == _instance_mapping.end() ? -1 : it->second;
 			}
 	};
 }

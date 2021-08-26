@@ -4,6 +4,7 @@
 #include "mgr_host.h"
 
 #include "mtrl_srv.h"
+#include <memory>
 
 namespace efiilj
 {
@@ -18,6 +19,8 @@ namespace efiilj
 			{
 				std::vector<material_id> id;
 			} _data;
+
+			std::shared_ptr<material_server> _materials;
 
 		public:
 

@@ -13,25 +13,17 @@ namespace efiilj
 		printf("Forward renderer ready\n");
 	}  
 
-	void forward_renderer::extend_defaults(render_id new_id)
+	void forward_renderer::extend_defaults(render_id)
 	{
-		_data.mesh.emplace_back(-1);
-		_data.material.emplace_back(-1);
-		_data.transform.emplace_back(-1);
 	}
 
 	void forward_renderer::draw_gui()
 	{
-		if (ImGui::TreeNode("Forward renderer"))
-		{
-			ImGui::Text("No render selected");	
-			ImGui::TreePop();
-		}
 	}
 
 	void forward_renderer::draw_gui(render_id idx)
 	{
-		ImGui::Text("Not implemented!");
+		ImGui::Text("Render id %d", idx);
 	}
 	
 	void forward_renderer::on_register(std::shared_ptr<manager_host> host)
@@ -44,6 +36,7 @@ namespace efiilj
 
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
+		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 	}
 
 	void forward_renderer::begin_frame()
@@ -53,6 +46,35 @@ namespace efiilj
 
 	void forward_renderer::render(render_id idx) const
 	{
+		entity_id eid = _entities[idx];
+
+		const auto& meshes = _mesh_instances->get_components(eid);
+
+		transform_id trf_id = _transforms->get_component(eid);
+
+		if (!_transforms->is_valid(trf_id))
+			return;
+
+		const matrix4& model = _transforms->get_model(trf_id);
+		
+		for (auto it = meshes.first; it != meshes.second; it++)
+		{
+			mesh_instance_id miid = it->second;
+			mesh_id mid = _mesh_instances->get_mesh(miid);
+			_meshes->bind(mid);
+
+			material_id mat_id = _mesh_instances->get_material(miid);
+
+			if (_materials->is_valid(mat_id))
+			{
+				_materials->apply(mat_id);
+				
+				shader_id sid = _materials->get_program(mat_id);
+				_shaders->set_uniform(sid, "model", model);
+
+				_meshes->draw_elements(mid);
+			}
+		}
 		//_data.mesh[idx]->bind();
 		//_data.material[idx]->apply();
 		//

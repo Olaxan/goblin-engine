@@ -6,7 +6,10 @@
 namespace efiilj
 {
 	transform_manager::transform_manager()
-	{}
+	{
+		printf("Init transform...\n");
+		_name = "Transform";
+	}
 
 	transform_manager::~transform_manager()
 	{}
@@ -34,26 +37,34 @@ namespace efiilj
 
 	void transform_manager::draw_gui(transform_id idx)
 	{
-		if (idx < 0 || idx > static_cast<int>(_instances.size()) - 1)
+		if (!is_valid(idx))
 		{
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid transform ID!");
 			return;
 		}
 
-		if (ImGui::DragFloat3("Position", &_data.position[idx].x, 0.1f) 
+		ImGui::TextColored(ImVec4(0,1,0,1), "Transform %d", idx);
+
+		if (ImGui::TreeNode("Properties"))
+		{
+			if (ImGui::DragFloat3("Position", &_data.position[idx].x, 0.1f) 
 				|| ImGui::DragFloat4("Rotation", &_data.rotation[idx].x)
 				|| ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.1f))
-		{
-			_data.model_updated[idx] = false;
-			get_model(idx);
+			{
+				_data.model_updated[idx] = false;
+				get_model(idx);
+			}
+
+			ImGui::TreePop();
 		}
 
-		if (ImGui::CollapsingHeader("Model matrix"))
+		if (ImGui::TreeNode("Model matrix"))
 		{
 			ImGui::InputFloat4("X", &_data.model[idx](0, 0));
 			ImGui::InputFloat4("Y", &_data.model[idx](1, 0));
 			ImGui::InputFloat4("Z", &_data.model[idx](2, 0));
 			ImGui::InputFloat4("W", &_data.model[idx](3, 0));
+			ImGui::TreePop();
 		}
 	}
 

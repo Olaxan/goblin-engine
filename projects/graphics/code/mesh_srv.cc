@@ -125,6 +125,11 @@ namespace efiilj
 			buffer(idx);
 	}
 
+	void mesh_server::draw_elements(mesh_id idx)
+	{
+		glDrawElements(GL_TRIANGLES, get_index_count(idx), _data.usage[idx], nullptr);
+	}
+
 	void mesh_server::set_positions(mesh_id idx, std::vector<vector3>& positions)
 	{
 		_data.positions[idx] = std::move(positions);

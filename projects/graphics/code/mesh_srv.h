@@ -46,6 +46,7 @@ namespace efiilj
 			bool buffer(mesh_id idx);
 
 			void update(mesh_id idx);
+			void draw_elements(mesh_id idx);
 
 			size_t get_vertex_count(mesh_id idx) const { return _data.positions[idx].size(); }
 			size_t get_index_count(mesh_id idx) const { return _data.indices[idx].size(); }
@@ -113,6 +114,26 @@ namespace efiilj
 			void set_material(mesh_id idx, material_id mat_id)
 			{
 				_data.material[idx] = mat_id;
+			}
+
+			bool get_state(mesh_id idx) const
+			{
+				return _data.state[idx];
+			}
+
+			unsigned int get_vao(mesh_id idx) const
+			{
+				return _data.vao[idx];
+			}
+
+			unsigned int get_vbo(mesh_id idx) const
+			{
+				return _data.vbo[idx];
+			}
+
+			unsigned int get_ibo(mesh_id idx) const
+			{
+				return _data.ibo[idx];
 			}
 	};
 }

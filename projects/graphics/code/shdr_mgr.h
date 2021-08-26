@@ -40,6 +40,7 @@ namespace efiilj
 			bool bind_block(shader_id idx, const std::string& name, unsigned block); 
 		
 			bool set_uniform(shader_id idx, const std::string& name, int val);
+			bool set_uniform(shader_id idx, const std::string& name, unsigned val);
 			bool set_uniform(shader_id idx, const std::string& name, float val);
 			bool set_uniform(shader_id idx, const std::string& name, const vector4& vec);
 			bool set_uniform(shader_id idx, const std::string& name, const matrix4& mat);

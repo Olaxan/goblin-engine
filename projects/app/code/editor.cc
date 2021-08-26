@@ -4,18 +4,18 @@
 
 namespace efiilj
 {
-	editor::editor(std::shared_ptr<entity_manager> ents, std::shared_ptr<manager_host> mgr_host)
+	entity_editor::entity_editor(std::shared_ptr<entity_manager> ents, std::shared_ptr<manager_host> mgr_host)
 		: _selected_entity(-1), _mgr_host(std::move(mgr_host)), _entities(std::move(ents))
 	{
-		
+		get_managers();	
 	}
 
-	editor::~editor()
+	entity_editor::~entity_editor()
 	{
 		printf("Editor exit\n");
 	}
 
-	void editor::show_entity_gui()
+	void entity_editor::show_entity_gui()
 	{
 		const auto& ids = _entities->get_ids();
 
@@ -42,7 +42,7 @@ namespace efiilj
         }
 	}
 
-	void editor::get_managers()
+	void entity_editor::get_managers()
 	{
 		_managers = _mgr_host->get_components();
 	}

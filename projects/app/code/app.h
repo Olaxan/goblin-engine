@@ -16,6 +16,7 @@
 #include "mesh_srv.h"
 #include "tex_srv.h"
 
+#include "meta_mgr.h"
 #include "cam_mgr.h"
 #include "mesh_mgr.h"
 #include "trfm_mgr.h"
@@ -26,6 +27,7 @@
 #include "def_rend.h"
 #include "gltf_loader.h"
 #include "sim.h"
+#include "editor.h"
 
 #include <memory>
 
@@ -48,6 +50,7 @@ namespace efiilj
 
 		std::shared_ptr<entity_manager> entities;
 		std::shared_ptr<manager_host> managers;
+		std::shared_ptr<entity_editor> editor;
 
 		// Servers hold resources not connected to any particular entity
 		std::shared_ptr<shader_server> shaders;
@@ -56,6 +59,7 @@ namespace efiilj
 		std::shared_ptr<mesh_server> meshes;
 
 		// Managers hold components that can be attached to entities
+		std::shared_ptr<meta_manager> metadata;
 		std::shared_ptr<transform_manager> transforms;
 		std::shared_ptr<camera_manager> cameras;
 		std::shared_ptr<graphics_manager> graphics;

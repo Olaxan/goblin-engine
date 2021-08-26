@@ -11,12 +11,12 @@ namespace efiilj
 
 	enum class texture_type
 	{
-		tex_default,
-		tex_base,
-		tex_orm,
-		tex_normal,
-		tex_emissive,
-		tex_framebuffer,
+		tex_base = 0,
+		tex_normal = 1,
+		tex_orm = 2,
+		tex_emissive = 3,
+		tex_framebuffer = 4,
+		tex_default = 5,
 	};
 
 	class texture_server : public server<texture_id>
@@ -60,6 +60,12 @@ namespace efiilj
 			void set_uri(texture_id idx, const std::filesystem::path& uri);
 
 			void set_format(texture_id idx, unsigned int format);
+
+			const texture_type& get_type(texture_id idx) const
+			{
+				return _data.usage[idx];
+			}
+
 			void set_type(texture_id idx, unsigned int type);
 			void set_name(texture_id idx, const std::string& name);
 			void set_usage(texture_id idx, const texture_type& usage);

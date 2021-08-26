@@ -67,11 +67,7 @@ namespace efiilj
 			this->window_->SetUiRender([this]()
 					{
 						ImGui::Begin("Managers");
-						cameras->draw_gui();
-						lights->draw_gui();
-						rfwd->draw_gui();
-						rdef->draw_gui();
-						mesh_instances->draw_gui();
+						editor->show_entity_gui();
 						ImGui::End();
 					});
 
@@ -98,6 +94,7 @@ namespace efiilj
 		meshes = std::make_shared<mesh_server>();
 		materials = std::make_shared<material_server>();
 
+		metadata = std::make_shared<meta_manager>();
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>();
 		lights = std::make_shared<light_manager>();
@@ -112,6 +109,7 @@ namespace efiilj
 
 		managers->register_manager(entities, 'ENTS');
 		managers->register_manager(transforms, 'TRFM');
+		managers->register_manager(metadata, 'META');
 
 		managers->register_manager(shaders, 'SHDR');
 		managers->register_manager(textures, 'TXSR');
@@ -129,16 +127,22 @@ namespace efiilj
 		managers->register_manager(sim, 'PHYS');
 		managers->register_manager(gltf, 'GLTF');
 
+		editor = std::make_shared<entity_editor>(entities, managers);
+
 		// Camera entity
 
 		entity_id cam_ent = entities->create();
-		transform_id cam_trf = transforms->register_entity(cam_ent);
-		camera_id cam_id = cameras->register_entity(cam_ent);
+		transform_id cam_trf_id = transforms->register_entity(cam_ent);
+		camera_id cam_cam_id = cameras->register_entity(cam_ent);
+		meta_id cam_meta_id = metadata->register_entity(cam_ent);
 
-		cameras->set_transform(cam_id, cam_trf);
-		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
-		cameras->set_fov(cam_id, 1.2f);
-		cameras->set_camera(cam_id);
+		cameras->set_transform(cam_cam_id, cam_trf_id);
+		cameras->set_size(cam_cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
+		cameras->set_fov(cam_cam_id, 1.2f);
+		cameras->set_camera(cam_cam_id);
+
+		metadata->set_name(cam_meta_id, "Main camera");
+		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
 
 		// Test entity 1
 
@@ -238,7 +242,7 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 
-			transform_id selected_trf = is_mouse_captured ? cam_trf : e1_trf;
+			transform_id selected_trf = is_mouse_captured ? cam_trf_id : e1_trf;
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -286,13 +290,13 @@ namespace efiilj
 
 			cameras->update();
 
-			rdef->begin_frame();
+		//	rdef->begin_frame();
 			rfwd->begin_frame();
 
-			rdef->render_frame();
+		//	rdef->render_frame();
 			rfwd->render_frame();
 
-			rdef->end_frame();
+		//	rdef->end_frame();
 			rfwd->end_frame();
 
 			this->window_->SwapBuffers();

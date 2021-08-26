@@ -58,6 +58,7 @@ namespace efiilj
 		_cameras = host->get_manager_from_fcc<camera_manager>('CAMS');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 		_material_instances = host->get_manager_from_fcc<material_manager>('MAMR');
+		_metadata = host->get_manager_from_fcc<meta_manager>('META');
 	}
 
 	bool gltf_model_server::load(model_id idx)
@@ -242,6 +243,9 @@ namespace efiilj
 
 		_meshes->set_bounds(mid, pos_min, pos_max);
 
+		mesh_instance_id miid = _mesh_instances->register_entity(eid);
+		_mesh_instances->set_mesh(miid, mid);
+
 		if (prim.material > -1)
 		{
 			const tinygltf::Material& mat = model.materials[prim.material];
@@ -249,10 +253,9 @@ namespace efiilj
 			
 			material_instance_id mat_iid = _material_instances->register_entity(eid);
 			_material_instances->set_material(mat_iid, mat_id);
+			_mesh_instances->set_material(miid, mat_id);
 		}
 
-		mesh_instance_id miid = _mesh_instances->register_entity(eid);
-		_mesh_instances->set_mesh(miid, mid);
 
 		return mid;
 	}
@@ -285,9 +288,13 @@ namespace efiilj
 
 		const tinygltf::Model& model = _data.model[idx];
 
-		entity_id eid = _entities->create();
+		entity_id new_eid = _entities->create();
 
-		transform_id trf_id = _transforms->register_entity(eid);
+		transform_id trf_id = _transforms->register_entity(new_eid);
+		meta_id met_id = _metadata->register_entity(new_eid);
+
+		_metadata->set_name(met_id, node.name);
+		_metadata->set_description(met_id, "Imported from GLTF.");
 
 		if (node.translation.size() == 3)
 		{
@@ -309,12 +316,12 @@ namespace efiilj
 		
 		if (node.camera > -1)
 		{
-			add_camera(eid, model.cameras[node.camera]);
+			add_camera(new_eid, model.cameras[node.camera]);
 		}
 
 		if (node.mesh > -1)
 		{
-			get_mesh(eid, idx, model.meshes[node.mesh]);
+			get_mesh(new_eid, idx, model.meshes[node.mesh]);
 		}
 
 		for (size_t i = 0; i < node.children.size(); i++) 

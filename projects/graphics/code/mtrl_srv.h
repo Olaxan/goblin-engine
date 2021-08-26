@@ -3,8 +3,9 @@
 #include "server.h"
 #include "mgr_host.h"
 #include "tex_srv.h"
-
 #include "shdr_mgr.h"
+
+#include <memory>
 
 namespace efiilj
 {
@@ -27,6 +28,9 @@ namespace efiilj
 
 				std::vector<bool> double_sided;
 			} _data;
+
+			std::shared_ptr<shader_server> _shaders;
+			std::shared_ptr<texture_server> _textures;
 			
 		public:
 
@@ -35,7 +39,15 @@ namespace efiilj
 
 			void append_defaults(material_id) override;
 
+			void on_register(std::shared_ptr<manager_host> host) override;
+
+			bool apply(material_id idx);
 			void add_texture(material_id idx, texture_id tex_id);
+
+			shader_id get_program(material_id idx) const
+			{
+				return _data.shader[idx];
+			}
 
 			void set_base_color(material_id idx, const vector4& base);
 			void set_emissive_factor(material_id idx, const vector3& emit);
