@@ -49,6 +49,11 @@ namespace efiilj
 				return _data.shader[idx];
 			}
 
+			void set_program(material_id idx, shader_id prog)
+			{
+				_data.shader[idx] = prog;
+			}
+
 			void set_base_color(material_id idx, const vector4& base);
 			void set_emissive_factor(material_id idx, const vector3& emit);
 			void set_metallic_factor(material_id idx, const float& factor);

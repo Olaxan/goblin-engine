@@ -26,7 +26,7 @@ namespace efiilj
 		_data.min.emplace_back(vector3(0));
 		_data.max.emplace_back(vector3(0));
 		_data.material.emplace_back(-1);
-		_data.usage.emplace_back(0);
+		_data.usage.emplace_back(GL_STATIC_DRAW);
 		_data.vao.emplace_back(0);
 		_data.vbo.emplace_back(0);
 		_data.ibo.emplace_back(0);
@@ -127,7 +127,7 @@ namespace efiilj
 
 	void mesh_server::draw_elements(mesh_id idx)
 	{
-		glDrawElements(GL_TRIANGLES, get_index_count(idx), _data.usage[idx], nullptr);
+		glDrawElements(GL_TRIANGLES, get_index_count(idx), GL_UNSIGNED_INT, nullptr);
 	}
 
 	void mesh_server::set_positions(mesh_id idx, std::vector<vector3>& positions)

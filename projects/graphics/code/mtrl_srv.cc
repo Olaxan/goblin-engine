@@ -61,7 +61,7 @@ namespace efiilj
 		if (!_shaders->use(sid))
 			return false;
 
-		_shaders->set_uniform(sid, "base_color", _data.base_color[idx]);
+		//_shaders->set_uniform(sid, "base_color_factor", _data.base_color[idx]);
 
 		for (const auto& tex : _data.textures[idx])
 		{

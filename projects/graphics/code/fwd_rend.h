@@ -58,7 +58,12 @@ namespace efiilj
 		virtual void on_begin_frame() {}
 		virtual void on_end_frame() {}
 
-		void set_fallback(shader_id sid)
+		shader_id get_fallback_shader()
+		{
+			return _default_fallback;
+		}
+
+		void set_fallback_shader(shader_id sid)
 		{
 			_default_fallback = sid;
 		}

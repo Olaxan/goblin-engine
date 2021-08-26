@@ -164,6 +164,9 @@ namespace efiilj
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
 			rfwd->register_entity(node);
 
+		for (const auto& mat : gltf->get_scene(test_mdl).materials)
+			materials->set_program(mat, rfwd->get_fallback_shader());
+
 		// Lights
 		
 		entity_id e_sun = entities->create();
