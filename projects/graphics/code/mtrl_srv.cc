@@ -57,6 +57,10 @@ namespace efiilj
 			return false;
 
 		_shaders->set_uniform("base_color_factor", _data.base_color[idx]);
+		_shaders->set_uniform("emissive_factor", _data.emissive_factor[idx].xyz());
+		_shaders->set_uniform("metallic_factor", _data.metallic_factor[idx]);
+		_shaders->set_uniform("roughness_factor", _data.roughness_factor[idx]);
+		_shaders->set_uniform("alpha_cutoff", _data.alpha_cutoff[idx]);
 
 		for (const auto& tex : _data.textures[idx])
 		{

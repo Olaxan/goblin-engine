@@ -9,7 +9,6 @@ namespace efiilj
 	texture_server::texture_server()
 	{
 		printf("Init textures...\n");
-		stbi_set_flip_vertically_on_load(true);
 	}
 
 	texture_server::~texture_server()
@@ -43,8 +42,12 @@ namespace efiilj
 		generate(idx);
 		set_params(idx);
 
+		stbi_set_flip_vertically_on_load(true);
+
 		unsigned char* buf = stbi_load(
 				_data.uri[idx].c_str(), &_data.width[idx], &_data.height[idx], &_data.bits[idx], 4);
+
+		stbi_set_flip_vertically_on_load(false);
 
 		if (buf == nullptr)
 			return false;
