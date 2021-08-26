@@ -44,8 +44,7 @@ namespace efiilj
 
 		unsigned rbo_, depth_texture_, target_texture_, ubo_, quad_vao_, quad_vbo_, frame_index_;
 
-		shader_id _primary;
-		shader_id _secondary;
+		shader_id _fallback_secondary;
 
 		//std::shared_ptr<mesh_resource> v_pointlight_;
 		//std::shared_ptr<mesh_resource> v_spotlight_;
@@ -63,19 +62,14 @@ namespace efiilj
 
 		void on_register(std::shared_ptr<manager_host> host) override;
 
-		void render_frame() const override;
+		void render_frame() override;
 
 		void on_begin_frame() override;
 		void on_end_frame() override;
 
-		shader_id get_primary() const
+		shader_id get_secondary_fallback() const
 		{
-			return _primary;
-		}
-
-		shader_id get_secondary() const
-		{
-			return _secondary;
+			return _fallback_secondary;
 		}
 
 	};

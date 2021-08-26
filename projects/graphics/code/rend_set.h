@@ -21,8 +21,7 @@ namespace efiilj
 		// Paths
 		std::string pointlight_volume_path = "../res/volumes/v_pointlight.obj";
 		std::string spotlight_volume_path = "../res/volumes/v_spotlight.obj";
-		std::string default_fallback_path = "../res/shaders/default_color.sdr";
-		std::string default_primary_path = "../res/shaders/default_primary.sdr";
-		std::string default_secondary_path = "../res/shaders/default_secondary.sdr";
+		std::string default_fallback_path_primary = "../res/shaders/default_primary.sdr";
+		std::string default_fallback_path_secondary = "../res/shaders/default_secondary.sdr";
 	};
 }

@@ -23,10 +23,12 @@ namespace efiilj
 
 		const renderer_settings& settings_;
 
-		shader_id _default_fallback;
+		shader_id _fallback_primary;
 
 		struct RenderData
 		{
+			std::vector<bool> visible;
+			std::vector<bool> error;
 		} _data;
 
 		std::shared_ptr<camera_manager> _cameras;
@@ -49,10 +51,10 @@ namespace efiilj
 		
 		void on_register(std::shared_ptr<manager_host> host) override;
 	
-		void render(render_id idx) const;
+		void render(render_id idx);
 
 		void begin_frame();
-		virtual void render_frame() const;
+		virtual void render_frame();
 		void end_frame();
 
 		virtual void on_begin_frame() {}
@@ -60,13 +62,32 @@ namespace efiilj
 
 		shader_id get_fallback_shader()
 		{
-			return _default_fallback;
+			return _fallback_primary;
 		}
 
 		void set_fallback_shader(shader_id sid)
 		{
-			_default_fallback = sid;
+			_fallback_primary = sid;
 		}
 
+		bool get_error(render_id idx) const
+		{
+			return _data.error[idx];
+		}
+
+		void set_error(render_id idx, bool state)
+		{
+			_data.error[idx] = state;
+		}
+
+		bool get_visible(render_id idx)
+		{
+			return _data.visible[idx];
+		}
+
+		void set_visible(render_id idx, bool state)
+		{
+			_data.visible[idx] = state;
+		}
 	};
 }

@@ -7,7 +7,7 @@ namespace efiilj
 {
 	forward_renderer::forward_renderer(const renderer_settings& set)
 		: 
-			settings_(set), _default_fallback(-1)
+			settings_(set), _fallback_primary(-1)
 	{
 		printf("Init forward renderer...\n");
 		_name = "Forward renderer";
@@ -15,6 +15,8 @@ namespace efiilj
 
 	void forward_renderer::extend_defaults(render_id)
 	{
+		_data.visible.emplace_back(true);
+		_data.error.emplace_back(false);
 	}
 
 	void forward_renderer::draw_gui()
@@ -38,9 +40,9 @@ namespace efiilj
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		
-		_default_fallback = _shaders->create();
-		_shaders->set_uri(_default_fallback, settings_.default_fallback_path);
-		_shaders->compile(_default_fallback);
+		_fallback_primary = _shaders->create();
+		_shaders->set_uri(_fallback_primary, settings_.default_fallback_path_primary);
+		_shaders->compile(_fallback_primary);
 	}
 
 	void forward_renderer::begin_frame()
@@ -48,8 +50,9 @@ namespace efiilj
 		on_begin_frame();
 	}
 
-	void forward_renderer::render(render_id idx) const
+	void forward_renderer::render(render_id idx)
 	{
+
 		entity_id eid = _entities[idx];
 
 		const auto& meshes = _mesh_instances->get_components(eid);
@@ -57,7 +60,10 @@ namespace efiilj
 		transform_id trf_id = _transforms->get_component(eid);
 
 		if (!_transforms->is_valid(trf_id))
+		{
+			set_error(idx, true);
 			return;
+		}
 
 		const matrix4& model = _transforms->get_model(trf_id);
 		
@@ -69,24 +75,26 @@ namespace efiilj
 
 			material_id mat_id = _mesh_instances->get_material(miid);
 
-			if (_materials->is_valid(mat_id))
+			if (_materials->apply(mat_id, _fallback_primary))
 			{
-				if (_materials->apply(mat_id, _default_fallback))
-				{
-					_shaders->set_uniform(settings_.u_model, model);
-					_meshes->draw_elements(mid);
-				}
+				_shaders->set_uniform(settings_.u_model, model);
+				_meshes->draw_elements(mid);
 			}
+			else set_error(idx, true);
 		}
 
 		_meshes->unbind();
+
 	}
 
-	void forward_renderer::render_frame() const
+	void forward_renderer::render_frame()
 	{
 		for (auto& idx : _instances)
 		{
-			render(idx);
+			if (is_valid(idx) && _data.visible[idx] && !_data.error[idx])
+			{
+				render(idx);
+			}
 		}
 	}
 

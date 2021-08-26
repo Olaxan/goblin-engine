@@ -54,14 +54,23 @@ namespace efiilj
 
 	void deferred_renderer::draw_gui(render_id idx) // NOLINT
 	{
-		unsigned int s1 = _shaders->get_program_id(_primary);
-		unsigned int s2 = _shaders->get_program_id(_secondary);
+		unsigned int s1 = _shaders->get_program_id(_fallback_primary);
+		unsigned int s2 = _shaders->get_program_id(_fallback_secondary);
 
 		ImGui::BulletText("FBO: %d, UBO: %d", rbo_, ubo_);
-		ImGui::BulletText("Default primary: %d / %u", _primary, s1);
-		ImGui::BulletText("Default secondary: %d / %u", _secondary, s2);
+		ImGui::BulletText("Default primary: %d / %u", _fallback_primary, s1);
+		ImGui::BulletText("Default secondary: %d / %u", _fallback_secondary, s2);
 		ImGui::BulletText("Nodes: %lu", _instances.size());
 		ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
+
+		ImGui::Separator();
+
+		bool err = _data.error[idx];
+		bool vis = _data.visible[idx];
+
+		ImGui::TextColored(err ? ImVec4(1, 0, 0, 1) : ImVec4(0, 1, 0, 1), err ? "Model error state!" : "No error detected!");
+		ImGui::Text("Visible: %s", vis ? "true" : "false");
+
 	}
 
 	void deferred_renderer::on_register(std::shared_ptr<manager_host> host)
@@ -76,14 +85,14 @@ namespace efiilj
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 
-		_primary = _shaders->create();
-		_secondary = _shaders->create();
+		_fallback_primary = _shaders->create();
+		_fallback_secondary = _shaders->create();
 
-		_shaders->set_uri(_primary, settings_.default_primary_path);
-		_shaders->set_uri(_secondary, settings_.default_secondary_path);
+		_shaders->set_uri(_fallback_primary, settings_.default_fallback_path_primary);
+		_shaders->set_uri(_fallback_secondary, settings_.default_fallback_path_secondary);
 
-		_shaders->compile(_primary);
-		_shaders->compile(_secondary);
+		_shaders->compile(_fallback_primary);
+		_shaders->compile(_fallback_secondary);
 
 		setup_uniforms();
 	}
@@ -170,7 +179,7 @@ namespace efiilj
 	
 	void deferred_renderer::setup_uniforms()
 	{
-		if (_shaders->use(_primary) && _shaders->bind_block(_primary, settings_.ubo_camera, 0))
+		if (_shaders->use(_fallback_primary) && _shaders->bind_block(_fallback_primary, settings_.ubo_camera, 0))
 			printf("Uniform block at location 0\n");
 		else
 			fprintf(stderr, "Failed to bind primary deferred uniform block!\n");
@@ -194,22 +203,22 @@ namespace efiilj
 		const cutoff_data& cutoff = _lights->get_cutoff(idx);
 		const transform_id& trf = _lights->get_transform(idx);
 
-		_shaders->set_uniform(_secondary, "source.type", static_cast<int>(type));
-		_shaders->set_uniform(_secondary, "source.base.color", base.color);
-		_shaders->set_uniform(_secondary, "source.base.ambient_intensity", base.ambient_intensity);
-		_shaders->set_uniform(_secondary, "source.base.diffuse_intensity", base.diffuse_intensity);
-		_shaders->set_uniform(_secondary, "source.position", _transforms->get_position(trf));
-		_shaders->set_uniform(_secondary, "source.direction", _transforms->get_forward(trf));
-		_shaders->set_uniform(_secondary, "source.falloff.constant", att.constant);
-		_shaders->set_uniform(_secondary, "source.falloff.linear", att.linear);
-		_shaders->set_uniform(_secondary, "source.falloff.exponential", att.exponential);
-		_shaders->set_uniform(_secondary, "source.cutoff.inner", cutoff.inner_angle);
-		_shaders->set_uniform(_secondary, "source.cutoff.outer", cutoff.outer_angle);
+		_shaders->set_uniform("source.type", static_cast<int>(type));
+		_shaders->set_uniform("source.base.color", base.color);
+		_shaders->set_uniform("source.base.ambient_intensity", base.ambient_intensity);
+		_shaders->set_uniform("source.base.diffuse_intensity", base.diffuse_intensity);
+		_shaders->set_uniform("source.position", _transforms->get_position(trf));
+		_shaders->set_uniform("source.direction", _transforms->get_forward(trf));
+		_shaders->set_uniform("source.falloff.constant", att.constant);
+		_shaders->set_uniform("source.falloff.linear", att.linear);
+		_shaders->set_uniform("source.falloff.exponential", att.exponential);
+		_shaders->set_uniform("source.cutoff.inner", cutoff.inner_angle);
+		_shaders->set_uniform("source.cutoff.outer", cutoff.outer_angle);
 	}
 
 	void deferred_renderer::draw_directional() const
 	{
-		_shaders->set_uniform(_secondary, "light_mvp", matrix4());
+		_shaders->set_uniform("light_mvp", matrix4());
 
 		// Draw screenspace quad
 		glBindVertexArray(quad_vao_);
@@ -227,7 +236,7 @@ namespace efiilj
 
 		matrix4 mvp = p * v * model;
 
-		_shaders->set_uniform(_secondary, "light_mvp", mvp);
+		_shaders->set_uniform("light_mvp", mvp);
 
 		// Draw pointlight volume
 		//v_pointlight_->bind();
@@ -242,11 +251,8 @@ namespace efiilj
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void deferred_renderer::render_frame() const
+	void deferred_renderer::render_frame()
 	{
-
-		if (!_shaders->use(_primary))
-			return;
 
 		camera_id cam = _cameras->get_camera();
 		const vector3& cam_pos = _transforms->get_position(_cameras->get_transform(cam));
@@ -260,26 +266,22 @@ namespace efiilj
 		attach_textures(tex_type::component_draw);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		printf("Begin geometry pass\n");
-
 		for (auto& idx : _instances)
 		{
 			render(idx);
 		}
 
-		printf("Passed geometry pass\n");
-
 		glDepthMask(GL_FALSE);
 
 		/* ---------- Lighting Passes ---------- */
 		
-		if (_shaders->use(_secondary))
+		if (_shaders->use(_fallback_secondary))
 		{
 
 			attach_textures(tex_type::target);	
 			attach_textures(tex_type::component_read);
 
-			_shaders->set_uniform(_secondary, settings_.u_camera, cam_pos); 
+			_shaders->set_uniform(_fallback_secondary, settings_.u_camera, cam_pos); 
 
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);

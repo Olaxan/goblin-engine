@@ -38,12 +38,9 @@ namespace efiilj
 	void transform_manager::draw_gui(transform_id idx)
 	{
 		if (!is_valid(idx))
-		{
-			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid transform ID!");
 			return;
-		}
 
-		ImGui::TextColored(ImVec4(0,1,0,1), "Transform %d", idx);
+		ImGui::Text("Parent id: %d", _data.parent[idx]);
 
 		if (ImGui::TreeNode("Properties"))
 		{

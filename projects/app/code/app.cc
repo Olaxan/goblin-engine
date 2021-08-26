@@ -19,7 +19,7 @@
 
 #define WINDOW_WIDTH 1366
 #define WINDOW_HEIGHT 768
-#define CAMERA_SPEED 0.5f
+#define CAMERA_SPEED 0.1f
 #define NUM_LIGHTS 10
 #define PI 3.14159f
 
@@ -83,9 +83,8 @@ namespace efiilj
 		renderer_settings set;
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
-		set.default_fallback_path = "../res/shaders/default_color.sdr";
-		set.default_primary_path = "../res/shaders/default_primary.sdr";
-		set.default_secondary_path = "../res/shaders/default_secondary.sdr";
+		set.default_fallback_path_primary = "../res/shaders/default_primary.sdr";
+		set.default_fallback_path_secondary = "../res/shaders/default_secondary.sdr";
 
 		managers = std::make_shared<manager_host>();
 
@@ -146,27 +145,15 @@ namespace efiilj
 		metadata->set_name(cam_meta_id, "Main camera");
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
 
-		// Test entity 1
-
-		entity_id e1 = entities->create();
-		transform_id e1_trf = transforms->register_entity(e1);
-		transforms->set_scale(e1_trf, 5.0f);
-
-		shader_id e1_sdr = shaders->create();
-		shaders->set_uri(e1_sdr, "../res/shaders/default_color.sdr");
-		shaders->compile(e1_sdr);
-
 		model_id test_mdl = gltf->create();
 		gltf->set_uri(test_mdl, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
 		gltf->load(test_mdl);
 		gltf->get_nodes(test_mdl);
-		gltf->unload(test_mdl);
 
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
 			rdef->register_entity(node);
 
-		for (const auto& mat : gltf->get_scene(test_mdl).materials)
-			materials->set_program(mat, rdef->get_primary());
+		gltf->unload(test_mdl);
 
 		// Lights
 		
