@@ -23,6 +23,8 @@ namespace efiilj
 
 		const renderer_settings& settings_;
 
+		shader_id _default_fallback;
+
 		struct RenderData
 		{
 		} _data;
@@ -55,6 +57,11 @@ namespace efiilj
 
 		virtual void on_begin_frame() {}
 		virtual void on_end_frame() {}
+
+		void set_fallback(shader_id sid)
+		{
+			_default_fallback = sid;
+		}
 
 	};
 }

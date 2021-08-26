@@ -17,6 +17,7 @@ namespace efiilj
 	{
 
 		printf("Init deferred renderer...\n");
+		_name = "Deferred renderer";
 
 		// Setup gbuffer
 		glGenFramebuffers(1, &rbo_);
@@ -44,8 +45,6 @@ namespace efiilj
 
 		setup_quad();
 		setup_volumes();
-
-		printf("Deferred renderer ready\n");
 
 	}
 

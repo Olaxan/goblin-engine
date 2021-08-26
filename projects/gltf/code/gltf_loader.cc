@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
 #include <GL/glew.h>
 
 #include <memory>
@@ -42,6 +43,7 @@ namespace efiilj
 	{
 		_data.uri.emplace_back();
 		_data.model.emplace_back();
+		_data.scene.emplace_back();
 		_data.open.emplace_back(false);
 		_data.binary.emplace_back(false);
 	}
@@ -136,7 +138,7 @@ namespace efiilj
 		return mat;
 	}
 
-	mesh_id gltf_model_server::add_primitive(entity_id eid, model_id idx, const tinygltf::Primitive& prim)
+	void gltf_model_server::get_primitive(entity_id eid, model_id idx, const tinygltf::Primitive& prim)
 	{
 
 		vector3 pos_min;
@@ -256,8 +258,9 @@ namespace efiilj
 			_mesh_instances->set_material(miid, mat_id);
 		}
 
+		_meshes->build(mid, GL_STATIC_DRAW);
+		_data.scene[idx].meshes.emplace_back(mid);
 
-		return mid;
 	}
 
 
@@ -265,12 +268,11 @@ namespace efiilj
 	{
 		for (const auto& prim : mesh.primitives)
 		{
-			mesh_id mid = add_primitive(eid, idx, prim);
-			_meshes->build(mid, GL_STATIC_DRAW);
+			get_primitive(eid, idx, prim);
 		}
 	}
 
-	camera_id gltf_model_server::add_camera(entity_id eid, const tinygltf::Camera& cam)
+	void gltf_model_server::get_camera(entity_id eid, model_id idx, const tinygltf::Camera& cam)
 	{
 		camera_id cam_id = _cameras->register_entity(eid);
 
@@ -280,21 +282,29 @@ namespace efiilj
 		_cameras->set_near(cam_id, static_cast<float>(cam.perspective.znear));
 		_cameras->set_far(cam_id, static_cast<float>(cam.perspective.zfar));
 
-		return cam_id;
+		_data.scene[idx].cameras.emplace_back(cam_id);
 	}
 
-	void gltf_model_server::get_node(model_id idx, const tinygltf::Node& node)
+	void gltf_model_server::get_node(model_id idx, transform_id parent, const tinygltf::Node& node)
 	{
 
 		const tinygltf::Model& model = _data.model[idx];
 
 		entity_id new_eid = _entities->create();
 
-		transform_id trf_id = _transforms->register_entity(new_eid);
-		meta_id met_id = _metadata->register_entity(new_eid);
+		_data.scene[idx].nodes.emplace_back(new_eid);
 
+		meta_id met_id = _metadata->register_entity(new_eid);
 		_metadata->set_name(met_id, node.name);
-		_metadata->set_description(met_id, "Imported from GLTF.");
+
+		std::stringstream ss;
+		ss << "Imported from " << _data.uri[idx] << ".";
+		_metadata->set_description(met_id, ss.str());
+
+		transform_id trf_id = _transforms->register_entity(new_eid);
+
+		if (parent != -1)
+			_transforms->set_parent(trf_id, parent);
 
 		if (node.translation.size() == 3)
 		{
@@ -316,7 +326,7 @@ namespace efiilj
 		
 		if (node.camera > -1)
 		{
-			add_camera(new_eid, model.cameras[node.camera]);
+			get_camera(new_eid, idx, model.cameras[node.camera]);
 		}
 
 		if (node.mesh > -1)
@@ -326,7 +336,7 @@ namespace efiilj
 
 		for (size_t i = 0; i < node.children.size(); i++) 
 		{
-			get_node(idx, model.nodes[node.children[i]]);
+			get_node(idx, trf_id, model.nodes[node.children[i]]);
 		}
 	}
 
@@ -344,7 +354,7 @@ namespace efiilj
 		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
 			const tinygltf::Node& node = model.nodes[scene.nodes[i]];
-			get_node(idx, node);
+			get_node(idx, -1, node);
 		}
 
 		return 0;
@@ -406,6 +416,8 @@ namespace efiilj
 		_materials->set_double_sided(mat_id, mat.doubleSided);
 
 		_materials->set_alpha_cutoff(mat_id, static_cast<float>(mat.alphaCutoff));
+
+		_data.scene[idx].materials.emplace_back(mat_id);
 
 		return mat_id;
 	}

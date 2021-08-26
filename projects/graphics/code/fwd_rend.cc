@@ -7,10 +7,10 @@ namespace efiilj
 {
 	forward_renderer::forward_renderer(const renderer_settings& set)
 		: 
-			settings_(set)
+			settings_(set), _default_fallback(-1)
 	{
 		printf("Init forward renderer...\n");
-		printf("Forward renderer ready\n");
+		_name = "Forward renderer";
 	}  
 
 	void forward_renderer::extend_defaults(render_id)
@@ -37,6 +37,10 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
+		
+		_default_fallback = _shaders->create();
+		_shaders->set_uri(_default_fallback, settings_.default_fallback_path);
+		_shaders->compile(_default_fallback);
 	}
 
 	void forward_renderer::begin_frame()
@@ -75,6 +79,7 @@ namespace efiilj
 				_meshes->draw_elements(mid);
 			}
 		}
+
 		//_data.mesh[idx]->bind();
 		//_data.material[idx]->apply();
 		//

@@ -82,6 +82,7 @@ namespace efiilj
 		renderer_settings set;
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
+		set.default_fallback_path = "../res/shaders/default_color.sdr";
 		set.default_primary_path = "../res/shaders/default_primary.sdr";
 		set.default_secondary_path = "../res/shaders/default_secondary.sdr";
 
@@ -159,6 +160,9 @@ namespace efiilj
 		gltf->load(test_mdl);
 		gltf->get_nodes(test_mdl);
 		gltf->unload(test_mdl);
+
+		for (const auto& node : gltf->get_scene(test_mdl).nodes)
+			rfwd->register_entity(node);
 
 		// Lights
 		

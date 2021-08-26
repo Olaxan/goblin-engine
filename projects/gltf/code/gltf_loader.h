@@ -34,6 +34,14 @@ namespace efiilj
 		size_t size;
 	};
 
+	struct gltf_scene
+	{
+		std::vector<entity_id> nodes;
+		std::vector<mesh_id> meshes;
+		std::vector<material_id> materials;
+		std::vector<camera_id> cameras;
+	};
+
 	class gltf_model_server : public server<model_id>
 	{
 	private:
@@ -42,6 +50,7 @@ namespace efiilj
 		{
 			std::vector<std::filesystem::path> uri;	
 			std::vector<tinygltf::Model> model;
+			std::vector<gltf_scene> scene;
 			std::vector<bool> binary;
 			std::vector<bool> open;
 		} _data;
@@ -62,10 +71,10 @@ namespace efiilj
 		accessor_data calculate_accessor_data(const tinygltf::Model& model, const tinygltf::Accessor& acc);
 		matrix4 convert_matrix(const std::vector<double>& m);
 
-		mesh_id add_primitive(entity_id eid, model_id idx, const tinygltf::Primitive& prim);
-		camera_id add_camera(entity_id eid, const tinygltf::Camera& cam);
+		void get_primitive(entity_id eid, model_id idx, const tinygltf::Primitive& prim);
+		void get_camera(entity_id eid, model_id idx, const tinygltf::Camera& cam);
 		void get_mesh(entity_id eid, model_id idx, const tinygltf::Mesh& mesh);
-		void get_node(model_id idx, const tinygltf::Node&);
+		void get_node(model_id idx, transform_id parent, const tinygltf::Node&);
 		void link_texture(model_id idx, material_id mat_id, int tex_index, const texture_type& usage);
 		material_id get_material(model_id idx, const tinygltf::Material& mat);
 
@@ -83,6 +92,11 @@ namespace efiilj
 		bool get_nodes(model_id idx);
 		bool get_cameras(model_id idx, entity_id eid);
 		bool get_lights(model_id idx, entity_id eid);
+
+		const gltf_scene& get_scene(model_id idx) const
+		{
+			return _data.scene[idx];
+		}
 
 		const std::filesystem::path& get_uri(model_id idx) const
 		{
