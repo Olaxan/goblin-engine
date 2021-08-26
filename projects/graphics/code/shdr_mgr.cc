@@ -6,6 +6,7 @@
 namespace efiilj
 {
 	shader_server::shader_server()
+		: _current(0)
 	{
 		printf("Init shaders...\n");
 	}
@@ -30,7 +31,7 @@ namespace efiilj
 
 	bool shader_server::is_valid(shader_id idx) const
 	{
-		return _data.state[idx];
+		return (idx > -1 && idx < static_cast<int>(_pool.size()) && _data.state[idx]);
 	}
 
 	bool shader_server::use(shader_id idx) const
@@ -38,7 +39,13 @@ namespace efiilj
 		if (!is_valid(idx))
 			return false;
 
-		glUseProgram(_data.program_id[idx]);
+		unsigned prog = _data.program_id[idx];
+
+		if (_current == idx)
+			return true;
+
+		glUseProgram(prog);
+		_current = idx;
 		return true;
 	}
 
@@ -50,6 +57,7 @@ namespace efiilj
 		{
 			_data.program_id[idx] = pid;
 			_data.state[idx] = true;
+			printf("Shader %d compiled successfully\n", pid);
 			return true;
 		}
 
@@ -155,6 +163,35 @@ namespace efiilj
 
 		glUniformMatrix3fv(uniform, 1, GL_FALSE, &mat.at(0));
 		return true;
+	}
+
+	bool shader_server::set_uniform(const std::string& name, int val)
+	{
+		return set_uniform(_current, name, val);
+	}
+	bool shader_server::set_uniform(const std::string& name, unsigned val)
+	{
+		return set_uniform(_current, name, val);
+	}
+	bool shader_server::set_uniform(const std::string& name, float val)
+	{
+		return set_uniform(_current, name, val);
+	}
+	bool shader_server::set_uniform(const std::string& name, const vector4& vec)
+	{
+		return set_uniform(_current, name, vec);
+	}
+	bool shader_server::set_uniform(const std::string& name, const matrix4& mat)
+	{
+		return set_uniform(_current, name, mat);
+	}
+	bool shader_server::set_uniform(const std::string& name, const vector3& vec)
+	{
+		return set_uniform(_current, name, vec);
+	}
+	bool shader_server::set_uniform(const std::string& name, const matrix3& mat)
+	{
+		return set_uniform(_current, name, mat);
 	}
 
 	const std::filesystem::path& shader_server::get_uri(shader_id idx) const

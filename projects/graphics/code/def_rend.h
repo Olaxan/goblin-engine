@@ -52,8 +52,6 @@ namespace efiilj
 
 		std::vector<unsigned> textures_;
 
-		std::shared_ptr<shader_server> _shaders;
-
 	public:
 
 		deferred_renderer(const renderer_settings& settings);

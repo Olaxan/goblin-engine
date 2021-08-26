@@ -71,12 +71,11 @@ namespace efiilj
 
 			if (_materials->is_valid(mat_id))
 			{
-				_materials->apply(mat_id);
-				
-				shader_id sid = _materials->get_program(mat_id);
-				_shaders->set_uniform(sid, "model", model);
-
-				_meshes->draw_elements(mid);
+				if (_materials->apply(mat_id, _default_fallback))
+				{
+					_shaders->set_uniform(settings_.u_model, model);
+					_meshes->draw_elements(mid);
+				}
 			}
 		}
 

@@ -41,7 +41,7 @@ namespace efiilj
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 
-			bool apply(material_id idx);
+			bool apply(material_id idx, shader_id fallback = -1);
 			void add_texture(material_id idx, texture_id tex_id);
 
 			shader_id get_program(material_id idx) const

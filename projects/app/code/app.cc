@@ -124,8 +124,8 @@ namespace efiilj
 		managers->register_manager(mesh_instances, 'MEMR');
 		managers->register_manager(material_instances, 'MAMR');
 
-		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
+		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(sim, 'PHYS');
 		managers->register_manager(gltf, 'GLTF');
 

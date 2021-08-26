@@ -51,24 +51,24 @@ namespace efiilj
 		_textures = host->get_manager_from_fcc<texture_server>('TXSR');
 	}
 
-	bool material_server::apply(material_id idx)
+	bool material_server::apply(material_id idx, shader_id fallback)
 	{
 		if (!is_valid(idx))
 			return false;
 
 		shader_id sid = _data.shader[idx];
 
-		if (!_shaders->use(sid))
+		if (!_shaders->use(sid) && !_shaders->use(fallback))
 			return false;
 
-		_shaders->set_uniform(sid, "base_color_factor", _data.base_color[idx]);
+		_shaders->set_uniform("base_color_factor", _data.base_color[idx]);
 
 		for (const auto& tex : _data.textures[idx])
 		{
 			texture_type type = _textures->get_type(tex);
 			unsigned slot = static_cast<unsigned>(type);
 			_textures->set_active(tex, slot);
-			_shaders->set_uniform(sid, get_texture_type_name(type), static_cast<int>(slot));
+			_shaders->set_uniform(get_texture_type_name(type), static_cast<int>(slot));
 		}
 
 		if (_data.double_sided[idx])

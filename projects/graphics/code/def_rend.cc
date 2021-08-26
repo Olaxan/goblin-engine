@@ -68,8 +68,13 @@ namespace efiilj
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 		_lights = host->get_manager_from_fcc<light_manager>('LGHT');
-		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		_cameras = host->get_manager_from_fcc<camera_manager>('CAMS');
+		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
+		_material_instances = host->get_manager_from_fcc<material_manager>('MAMR');
+
+		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
+		_materials = host->get_manager_from_fcc<material_server>('MASR');
+		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 
 		_primary = _shaders->create();
 		_secondary = _shaders->create();
@@ -255,10 +260,14 @@ namespace efiilj
 		attach_textures(tex_type::component_draw);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		printf("Begin geometry pass\n");
+
 		for (auto& idx : _instances)
 		{
 			render(idx);
 		}
+
+		printf("Passed geometry pass\n");
 
 		glDepthMask(GL_FALSE);
 
