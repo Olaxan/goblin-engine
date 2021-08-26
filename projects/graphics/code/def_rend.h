@@ -70,5 +70,15 @@ namespace efiilj
 		void on_begin_frame() override;
 		void on_end_frame() override;
 
+		shader_id get_primary() const
+		{
+			return _primary;
+		}
+
+		shader_id get_secondary() const
+		{
+			return _secondary;
+		}
+
 	};
 }

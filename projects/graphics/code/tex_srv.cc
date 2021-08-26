@@ -53,12 +53,19 @@ namespace efiilj
 
 		stbi_image_free(buf);
 
+		unbind();
+		
 		return true;	
 	}
 
 	void texture_server::bind(texture_id idx) const
 	{
 		glBindTexture(GL_TEXTURE_2D, _data.tex_id[idx]);
+	}
+	
+	void texture_server::unbind() const
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void texture_server::set_active(texture_id idx, unsigned int slot) const

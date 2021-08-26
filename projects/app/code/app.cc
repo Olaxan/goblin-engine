@@ -57,6 +57,7 @@ namespace efiilj
 			//enable face culling
 			glEnable(GL_CULL_FACE);
 			glEnable(GL_DEPTH_TEST);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 			//lock mouse to window
 			glfwSetInputMode(window_->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -162,10 +163,10 @@ namespace efiilj
 		gltf->unload(test_mdl);
 
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
-			rfwd->register_entity(node);
+			rdef->register_entity(node);
 
 		for (const auto& mat : gltf->get_scene(test_mdl).materials)
-			materials->set_program(mat, rfwd->get_fallback_shader());
+			materials->set_program(mat, rdef->get_primary());
 
 		// Lights
 		
@@ -249,7 +250,8 @@ namespace efiilj
 		while (this->window_->IsOpen())
 		{
 
-			transform_id selected_trf = is_mouse_captured ? cam_trf_id : e1_trf;
+			//transform_id selected_trf = is_mouse_captured ? cam_trf_id : e1_trf;
+			transform_id selected_trf = cam_trf_id;
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -297,13 +299,13 @@ namespace efiilj
 
 			cameras->update();
 
-			//rdef->begin_frame();
+			rdef->begin_frame();
 		    rfwd->begin_frame();
 
-			//rdef->render_frame();
+			rdef->render_frame();
 		    rfwd->render_frame();
 
-			//rdef->end_frame();
+			rdef->end_frame();
 			rfwd->end_frame();
 
 			this->window_->SwapBuffers();

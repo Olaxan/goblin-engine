@@ -50,22 +50,18 @@ namespace efiilj
 
 	void deferred_renderer::draw_gui()
 	{
-		if (ImGui::TreeNode("Deferred renderer"))
-		{
-			unsigned int s1 = _shaders->get_program_id(_primary);
-			unsigned int s2 = _shaders->get_program_id(_secondary);
-
-			ImGui::BulletText("Default primary: %d / %u", _primary, s1);
-			ImGui::BulletText("Default secondary: %d / %u", _secondary, s2);
-			ImGui::BulletText("Nodes: %lu", _instances.size());
-			ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
-			ImGui::TreePop();
-		}
 	}
 
 	void deferred_renderer::draw_gui(render_id idx) // NOLINT
 	{
-		ImGui::Text("Not implemented");
+		unsigned int s1 = _shaders->get_program_id(_primary);
+		unsigned int s2 = _shaders->get_program_id(_secondary);
+
+		ImGui::BulletText("FBO: %d, UBO: %d", rbo_, ubo_);
+		ImGui::BulletText("Default primary: %d / %u", _primary, s1);
+		ImGui::BulletText("Default secondary: %d / %u", _secondary, s2);
+		ImGui::BulletText("Nodes: %lu", _instances.size());
+		ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
 	}
 
 	void deferred_renderer::on_register(std::shared_ptr<manager_host> host)
@@ -141,6 +137,9 @@ namespace efiilj
 				glDrawBuffer(GL_COLOR_ATTACHMENT0 + textures_.size());
 				break;
 			}
+
+			default:
+				fprintf(stderr, "Invalid texture mode!\n");
 		}
 	}	
 
@@ -258,7 +257,6 @@ namespace efiilj
 
 		for (auto& idx : _instances)
 		{
-			break;
 			render(idx);
 		}
 
@@ -281,7 +279,6 @@ namespace efiilj
 
 			for (auto& idx : _lights->get_instances())
 			{
-				break;
 				set_light_uniforms(idx);
 
 				switch(_lights->get_type(idx))

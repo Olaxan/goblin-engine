@@ -119,6 +119,11 @@ namespace efiilj
 		return true;
 	}
 
+	void mesh_server::unbind()
+	{
+		glBindVertexArray(0);
+	}
+
 	void mesh_server::update(mesh_id idx)
 	{
 		if (_data.usage[idx] == GL_DYNAMIC_DRAW)

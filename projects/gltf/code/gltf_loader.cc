@@ -377,8 +377,10 @@ namespace efiilj
 			_textures->generate(tex_id);
 			_textures->set_format(tex_id, tex_format);
 			_textures->set_type(tex_id, tex_type);
-			_textures->buffer(tex_id, src.width, src.height, &src.image.at(0));
+			_textures->bind(tex_id);
 			_textures->set_usage(tex_id, type);
+			_textures->buffer(tex_id, src.width, src.height, &src.image.at(0));
+			_textures->unbind();
 
 			_materials->add_texture(mat_id, tex_id);
 		}

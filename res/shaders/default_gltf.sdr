@@ -1,0 +1,7 @@
+Begin(VERTEX_SHADER)
+	Include(vs_gltf.glsl)
+End()
+
+Begin(FRAGMENT_SHADER)
+	Include(fs_gltf.glsl)
+End()

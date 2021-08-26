@@ -50,9 +50,9 @@ namespace efiilj
 		void on_register(std::shared_ptr<manager_host> host) override;
 	
 		void render(render_id idx) const;
-		virtual void render_frame() const;
 
 		void begin_frame();
+		virtual void render_frame() const;
 		void end_frame();
 
 		virtual void on_begin_frame() {}

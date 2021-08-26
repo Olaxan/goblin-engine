@@ -80,14 +80,7 @@ namespace efiilj
 			}
 		}
 
-		//_data.mesh[idx]->bind();
-		//_data.material[idx]->apply();
-		//
-		//matrix4 model = _transforms->get_model(_data.transform[idx]);
-		//_data.material[idx]->get_program()->set_uniform("model", model);
-
-		//_data.mesh[idx]->update();
-		//_data.mesh[idx]->draw_elements();
+		_meshes->unbind();
 	}
 
 	void forward_renderer::render_frame() const

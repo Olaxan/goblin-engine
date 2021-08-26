@@ -51,6 +51,7 @@ namespace efiilj
 			bool load(texture_id idx);
 
 			void bind(texture_id idx) const;
+			void unbind() const;
 			void set_active(texture_id idx, unsigned int slot) const;
 			void generate(texture_id idx);
 			void buffer(texture_id idx, const unsigned int& width, const unsigned int& height, void* data);

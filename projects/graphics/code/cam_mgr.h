@@ -81,5 +81,10 @@ namespace efiilj
 		const matrix4& get_view(camera_id idx) const;
 		transform_id get_transform(camera_id idx) const;
 		void set_transform(camera_id idx, transform_id trf);
+
+		vector3 get_position(camera_id idx = -1)
+		{
+			return _transforms->get_position(_data.transform[idx == -1 ? _current : idx]);
+		}
 	};
 }

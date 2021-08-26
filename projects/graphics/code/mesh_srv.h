@@ -45,6 +45,7 @@ namespace efiilj
 			bool build(mesh_id idx, unsigned usage);
 			bool buffer(mesh_id idx);
 
+			void unbind();
 			void update(mesh_id idx);
 			void draw_elements(mesh_id idx);
 

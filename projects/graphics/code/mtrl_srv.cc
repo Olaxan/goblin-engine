@@ -68,7 +68,7 @@ namespace efiilj
 			texture_type type = _textures->get_type(tex);
 			unsigned slot = static_cast<unsigned>(type);
 			_textures->set_active(tex, slot);
-			_shaders->set_uniform(sid, get_texture_type_name(type), slot);
+			_shaders->set_uniform(sid, get_texture_type_name(type), static_cast<int>(slot));
 		}
 
 		if (_data.double_sided[idx])

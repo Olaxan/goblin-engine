@@ -7,7 +7,7 @@ in VS_OUT
 	mat3 TBN;
 } fs_in;
 
-uniform vec4 camera_position;
+uniform vec3 cam_pos;
 
 uniform sampler2D tex_base;
 uniform sampler2D tex_normal;
