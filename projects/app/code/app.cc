@@ -14,15 +14,7 @@
 
 #include "app.h"
 #include "loader.h"
-#include "light.h"
-#include "material.h"
-#include "node.h"
 #include "gltf_loader.h"
-#include "program.h"
-#include "rect.h"
-#include "line.h"
-#include "cube.h"
-#include "bbox.h"
 #include "quat.h"
 
 #define WINDOW_WIDTH 1366
@@ -164,32 +156,6 @@ namespace efiilj
 		gltf->get_nodes(test_mdl);
 		gltf->unload(test_mdl);
 
-		//model_id e1_gltf = gltf->create();
-		//graphics_id e1_grph = graphics->create();
-
-		//gltf->set_path(e1_gltf, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		//gltf->open(e1_gltf);
-		//gltf->get_nodes(e1_gltf);
-		//gltf->close(e1_gltf);
-
-		//auto rect_mat_ptr = std::make_shared<material_base>(color_prog_ptr);
-		//rect_mat_ptr->color = vector4(randf(), randf(), randf(), 1.0f);
-		//rect_mat_ptr->wireframe = true;
-
-		//object_loader obj_sphere("../res/volumes/v_pointlight.obj");
-		//auto sphere_mesh_ptr = obj_sphere.get_resource();
-		//auto cube_mesh_ptr = std::make_shared<cube>();
-
-		//render_id e1_fwd = rfwd->register_entity(e1);
-		//rfwd->set_mesh(e1_fwd, sphere_mesh_ptr);
-		//rfwd->set_material(e1_fwd, rect_mat_ptr);
-		//rfwd->set_transform(e1_fwd, e1_trf);
-
-		//entity_id e2 = entities->create();
-		//transform_id e2_trf = transforms->register_entity(e2);
-		//transforms->set_scale(e2_trf, 5.0f);
-		////render_id e2_gfx = rdef->register_entity(e2);
-
 		// Lights
 		
 		entity_id e_sun = entities->create();
@@ -321,11 +287,12 @@ namespace efiilj
 			cameras->update();
 
 			rdef->begin_frame();
-			rdef->render_frame();
-			rdef->end_frame();
-
 			rfwd->begin_frame();
+
+			rdef->render_frame();
 			rfwd->render_frame();
+
+			rdef->end_frame();
 			rfwd->end_frame();
 
 			this->window_->SwapBuffers();

@@ -12,7 +12,7 @@ namespace efiilj
 {
 	typedef int mesh_id;
 
-	class mesh_server : public server<mesh_id>, public registrable
+	class mesh_server : public server<mesh_id>
 	{
 		private:
 
@@ -39,13 +39,13 @@ namespace efiilj
 			mesh_server();
 			~mesh_server();
 
-			mesh_id create() override;
-			bool destroy(mesh_id idx) override;
+			void append_defaults(mesh_id idx) override;
 
 			bool bind(mesh_id idx);
 			bool build(mesh_id idx, unsigned usage);
 			bool buffer(mesh_id idx);
-			bool update(mesh_id idx);
+
+			void update(mesh_id idx);
 
 			size_t get_vertex_count(mesh_id idx) const { return _data.positions[idx].size(); }
 			size_t get_index_count(mesh_id idx) const { return _data.indices[idx].size(); }

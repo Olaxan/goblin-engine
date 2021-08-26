@@ -14,24 +14,13 @@ namespace efiilj
 		printf("Light manager exit\n");
 	}
 
-	light_id light_manager::register_entity(entity_id eid)
+	void light_manager::extend_defaults(light_id new_id)
 	{
-		light_id new_id = _instances.size();
-		_instances.emplace_back(new_id);
-		_instance_mapping.emplace(eid, new_id);
-
 		_data.type.emplace_back(light_type::directional);
 		_data.base.emplace_back(light_base{vector3(1.0f, 1.0f, 1.0f), 0.1f, 0.1f});
 		_data.attenuation.emplace_back(attenuation_data{0, 0, 0.1f});
 		_data.cutoff.emplace_back(cutoff_data{0.1f, 0.2f});
 		_data.transform.emplace_back(-1);
-
-		return new_id;
-	}
-
-	bool light_manager::unregister_entity(light_id idx)
-	{
-		return false;
 	}
 
 	void light_manager::draw_gui()

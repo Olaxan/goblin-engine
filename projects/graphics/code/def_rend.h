@@ -47,8 +47,8 @@ namespace efiilj
 		shader_id _primary;
 		shader_id _secondary;
 
-		std::shared_ptr<mesh_resource> v_pointlight_;
-		std::shared_ptr<mesh_resource> v_spotlight_;
+		//std::shared_ptr<mesh_resource> v_pointlight_;
+		//std::shared_ptr<mesh_resource> v_spotlight_;
 
 		std::vector<unsigned> textures_;
 

@@ -14,20 +14,9 @@ namespace efiilj
 		printf("Mesh instance manager exit\n");
 	}
 
-	mesh_instance_id mesh_manager::register_entity(entity_id eid)
+	void mesh_manager::extend_defaults(mesh_instance_id)
 	{
-		mesh_instance_id new_id = _instances.size();
-		_instances.emplace_back(new_id);
-		_instance_mapping.emplace(eid, new_id);
-
 		_data.id.emplace_back(-1);
-
-		return new_id;
-	}
-
-	bool mesh_manager::unregister_entity(mesh_instance_id idx)
-	{
-		return false;
 	}
 
 	void mesh_manager::draw_gui()

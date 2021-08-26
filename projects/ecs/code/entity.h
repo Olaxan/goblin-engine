@@ -1,5 +1,6 @@
 #pragma once
 
+#include "eid.h"
 #include "server.h"
 #include "mgr_host.h"
 
@@ -7,20 +8,16 @@
 
 namespace efiilj
 {
-	typedef unsigned int entity_id;
-
-	class entity_manager : public server<entity_id>, public registrable
+	class entity_manager : public server<entity_id>
 	{
 		private:
-
-			std::vector<entity_id> _entities;
 
 		public:
 
 			entity_manager();
 			~entity_manager();
 
-			entity_id create() override;
-			bool destroy(entity_id eid) override;
+			void append_defaults(entity_id) override;
+			
 	};
 }

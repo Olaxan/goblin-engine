@@ -11,7 +11,7 @@ namespace efiilj
 {
 	typedef int shader_id;
 
-	class shader_server : public server<shader_id>, public registrable
+	class shader_server : public server<shader_id>
 	{
 		private:
 
@@ -28,8 +28,7 @@ namespace efiilj
 			shader_server();
 			~shader_server();
 
-			shader_id create() override;
-			bool destroy(shader_id idx) override;
+			void append_defaults(shader_id idx) override;
 			bool is_valid(shader_id idx) const override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
@@ -50,5 +49,9 @@ namespace efiilj
 			const std::filesystem::path& get_uri(shader_id idx) const;
 			void set_uri(shader_id idx, const std::filesystem::path& uri);
 
+			const unsigned int& get_program_id(shader_id idx) const
+			{
+				return _data.program_id[idx];
+			}
 	};
 }

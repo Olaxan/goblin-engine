@@ -11,15 +11,8 @@ namespace efiilj
 	simulator::~simulator()
 	{}
 
-	physics_id simulator::register_entity(entity_id eid)
-	{
-		return 0;
-	}
-
-	bool simulator::unregister_entity(physics_id idx)
-	{
-		return false;
-	}
+	void simulator::extend_defaults(physics_id)
+	{}
 
 	void simulator::draw_gui()
 	{}

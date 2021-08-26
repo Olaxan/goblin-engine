@@ -38,22 +38,12 @@ namespace efiilj
 	}
 
 
-	model_id gltf_model_server::create()
+	void gltf_model_server::append_defaults(model_id)
 	{
-		model_id new_id = _pool.size();
-		_pool.emplace_back(new_id);
-
 		_data.uri.emplace_back();
 		_data.model.emplace_back();
 		_data.open.emplace_back(false);
 		_data.binary.emplace_back(false);
-
-		return new_id;
-	}
-
-	bool gltf_model_server::destroy(model_id idx) //NOLINT
-	{
-		return false;
 	}
 	
 	void gltf_model_server::on_register(std::shared_ptr<manager_host> host)

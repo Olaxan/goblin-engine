@@ -8,7 +8,7 @@ namespace efiilj
 {
 	typedef int transform_id;
 
-	class transform_manager : public manager<transform_id>, public registrable
+	class transform_manager : public manager<transform_id>
 	{
 		private:
 
@@ -35,8 +35,7 @@ namespace efiilj
 			transform_manager();
 			~transform_manager();
 
-			transform_id register_entity(entity_id eid) override;
-			bool unregister_entity(transform_id idx) override;
+			void extend_defaults(transform_id new_id) override;
 
 			void draw_gui() override;
 			void draw_gui(transform_id idx) override;

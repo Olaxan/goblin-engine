@@ -11,12 +11,8 @@ namespace efiilj
 	transform_manager::~transform_manager()
 	{}
 
-	transform_id transform_manager::register_entity(entity_id eid)
+	void transform_manager::extend_defaults(transform_id)
 	{
-		transform_id new_id = _instances.size();
-		_instances.emplace_back(new_id);
-		_instance_mapping.emplace(eid, new_id);
-
 		_data.model.emplace_back(matrix4());
 		_data.inverse.emplace_back(matrix4());
 		_data.position.emplace_back(vector4());
@@ -25,13 +21,6 @@ namespace efiilj
 		_data.parent.emplace_back(-1);
 		_data.model_updated.emplace_back(true);
 		_data.inverse_updated.emplace_back(true);
-
-		return new_id;
-	}
-
-	bool transform_manager::unregister_entity(transform_id idx)
-	{
-		return false;
 	}
 
 	void transform_manager::draw_gui()
@@ -45,7 +34,7 @@ namespace efiilj
 
 	void transform_manager::draw_gui(transform_id idx)
 	{
-		if (idx < 0 || idx > _instances.size() - 1)
+		if (idx < 0 || idx > static_cast<int>(_instances.size()) - 1)
 		{
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid transform ID!");
 			return;
@@ -68,7 +57,7 @@ namespace efiilj
 		}
 	}
 
-	void transform_manager::on_register(std::shared_ptr<manager_host> host)
+	void transform_manager::on_register(std::shared_ptr<manager_host> host) //NOLINT
 	{
 	}
 

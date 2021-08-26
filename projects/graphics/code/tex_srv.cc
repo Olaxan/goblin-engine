@@ -17,11 +17,8 @@ namespace efiilj
 		printf("Texture server exit\n");
 	}
 
-	texture_id texture_server::create()
+	void texture_server::append_defaults(texture_id)
 	{
-		texture_id new_id = _pool.size();
-		_pool.emplace_back(new_id);
-
 		_data.uri.emplace_back();
 		_data.name.emplace_back();
 		_data.usage.emplace_back(texture_type::tex_default);
@@ -36,13 +33,6 @@ namespace efiilj
 		_data.width.emplace_back(0);
 		_data.height.emplace_back(0);
 		_data.bits.emplace_back(0);
-
-		return new_id;
-	}
-
-	bool texture_server::destroy(texture_id idx)
-	{
-		return false;
 	}
 
 	bool texture_server::load(texture_id idx)

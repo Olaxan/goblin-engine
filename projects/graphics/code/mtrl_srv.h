@@ -10,7 +10,7 @@ namespace efiilj
 {
 	typedef int material_id;
 
-	class material_server : public server<material_id>, public registrable
+	class material_server : public server<material_id>
 	{
 		private:
 
@@ -33,8 +33,7 @@ namespace efiilj
 			material_server();
 			~material_server();
 
-			material_id create() override;
-			bool destroy(material_id idx) override;
+			void append_defaults(material_id) override;
 
 			void add_texture(material_id idx, texture_id tex_id);
 

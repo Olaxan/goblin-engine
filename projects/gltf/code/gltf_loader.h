@@ -33,7 +33,7 @@ namespace efiilj
 		size_t size;
 	};
 
-	class gltf_model_server : public server<model_id>, public registrable
+	class gltf_model_server : public server<model_id>
 	{
 	private:
 		
@@ -72,9 +72,7 @@ namespace efiilj
 		gltf_model_server();
 		~gltf_model_server();
 
-		model_id create() override;
-		bool destroy(model_id idx) override;
-
+		void append_defaults(model_id) override;
 		void on_register(std::shared_ptr<manager_host> host) override;
 
 		bool load(model_id idx);

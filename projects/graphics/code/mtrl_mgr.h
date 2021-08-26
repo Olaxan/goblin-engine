@@ -10,7 +10,7 @@ namespace efiilj
 
 	typedef int material_instance_id;
 
-	class material_manager : public manager<material_instance_id>, public registrable
+	class material_manager : public manager<material_instance_id>
 	{
 		private:
 
@@ -24,9 +24,7 @@ namespace efiilj
 			material_manager();
 			~material_manager();
 
-			material_instance_id register_entity(entity_id eid) override;
-			bool unregister_entity(material_instance_id idx) override;
-
+			void extend_defaults(material_instance_id new_id) override;
 			void draw_gui() override;
 			void draw_gui(material_instance_id idx) override;
 

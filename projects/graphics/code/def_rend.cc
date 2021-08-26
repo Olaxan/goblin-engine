@@ -53,7 +53,13 @@ namespace efiilj
 	{
 		if (ImGui::TreeNode("Deferred renderer"))
 		{
-			ImGui::Text("Not implemented");
+			unsigned int s1 = _shaders->get_program_id(_primary);
+			unsigned int s2 = _shaders->get_program_id(_secondary);
+
+			ImGui::BulletText("Default primary: %d / %u", _primary, s1);
+			ImGui::BulletText("Default secondary: %d / %u", _secondary, s2);
+			ImGui::BulletText("Nodes: %lu", _instances.size());
+			ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
 			ImGui::TreePop();
 		}
 	}
@@ -161,20 +167,20 @@ namespace efiilj
 	
 	void deferred_renderer::setup_uniforms()
 	{
-		if (_shaders->use(_primary))
-		{
-			_shaders->bind_block(_primary, settings_.ubo_camera, 0);
-		}
+		if (_shaders->use(_primary) && _shaders->bind_block(_primary, settings_.ubo_camera, 0))
+			printf("Uniform block at location 0\n");
+		else
+			fprintf(stderr, "Failed to bind primary deferred uniform block!\n");
 	}
 
 	void deferred_renderer::setup_volumes()
 	{
-		object_loader pl_loader(settings_.pointlight_volume_path.c_str());
+		//object_loader pl_loader(settings_.pointlight_volume_path.c_str());
 
-		if (pl_loader.is_valid())
-			v_pointlight_ = pl_loader.get_resource();
-		else 
-			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
+		//if (pl_loader.is_valid())
+		//	v_pointlight_ = pl_loader.get_resource();
+		//else 
+		//	fprintf(stderr, "FATAL: Failed to load point light volume!\n");
 	}	
 
 	void deferred_renderer::set_light_uniforms(light_id idx) const
@@ -221,14 +227,13 @@ namespace efiilj
 		_shaders->set_uniform(_secondary, "light_mvp", mvp);
 
 		// Draw pointlight volume
-		v_pointlight_->bind();
-		v_pointlight_->draw_elements();
-		v_pointlight_->unbind();
+		//v_pointlight_->bind();
+		//v_pointlight_->draw_elements();
+		//v_pointlight_->unbind();
 	}
 
 	void deferred_renderer::on_begin_frame()
 	{
-		return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, rbo_);
 		attach_textures(tex_type::target);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -236,7 +241,6 @@ namespace efiilj
 
 	void deferred_renderer::render_frame() const
 	{
-		return;
 
 		if (!_shaders->use(_primary))
 			return;
@@ -255,6 +259,7 @@ namespace efiilj
 
 		for (auto& idx : _instances)
 		{
+			break;
 			render(idx);
 		}
 
@@ -262,64 +267,64 @@ namespace efiilj
 
 		/* ---------- Lighting Passes ---------- */
 		
-		if (!_shaders->use(_secondary))
-			return;
-
-		attach_textures(tex_type::target);	
-		attach_textures(tex_type::component_read);
-
-		_shaders->set_uniform(_secondary, settings_.u_camera, cam_pos); 
-		_shaders->set_uniform(_secondary, settings_.u_dt_seconds, get_delta_time());
-
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
-		glEnable(GL_CULL_FACE);
-
-		for (auto& idx : _lights->get_instances())
+		if (_shaders->use(_secondary))
 		{
-			set_light_uniforms(idx);
 
-			switch(_lights->get_type(idx))
+			attach_textures(tex_type::target);	
+			attach_textures(tex_type::component_read);
+
+			_shaders->set_uniform(_secondary, settings_.u_camera, cam_pos); 
+
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_ONE, GL_ONE);
+			glEnable(GL_CULL_FACE);
+
+			for (auto& idx : _lights->get_instances())
 			{
-				case light_type::directional:
+				break;
+				set_light_uniforms(idx);
+
+				switch(_lights->get_type(idx))
 				{
-					draw_directional();	
-					break;
-				}
+					case light_type::directional:
+					{
+						draw_directional();	
+						break;
+					}
 
-				case light_type::spotlight:
-				case light_type::pointlight:
-				{
-					
-					transform_id trf = _lights->get_transform(idx);
-					const matrix4& model = _transforms->get_model(trf);
+					case light_type::spotlight:
+					case light_type::pointlight:
+					{
+						
+						transform_id trf = _lights->get_transform(idx);
+						const matrix4& model = _transforms->get_model(trf);
 
-					vector3 cam_dir = cam_pos - _transforms->get_position(trf);
+						vector3 cam_dir = cam_pos - _transforms->get_position(trf);
 
-					float radius = _transforms->get_scale(trf).length();
+						float radius = _transforms->get_scale(trf).length();
 
-					if (cam_dir.length() < radius)
-						draw_directional();
-					else
-						draw_pointlight(model);
+						if (true || cam_dir.length() < radius)
+							draw_directional();
+						else
+							draw_pointlight(model);
 
-					break;
-				}
+						break;
+					}
 
-				default:
-					fprintf(stderr, "ERROR: Light type not implemented!\n");
-			}	
+					default:
+						fprintf(stderr, "ERROR: Light type not implemented!\n");
+				}	
+			}
 		}
-
 
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
+
 	}	
 
 	void deferred_renderer::on_end_frame()
 	{
-		return;
 		// Reset GL state for forward pass
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	

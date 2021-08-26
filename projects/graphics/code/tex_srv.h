@@ -19,7 +19,7 @@ namespace efiilj
 		tex_framebuffer,
 	};
 
-	class texture_server : public server<texture_id>, public registrable
+	class texture_server : public server<texture_id>
 	{
 		private:
 
@@ -46,8 +46,7 @@ namespace efiilj
 			texture_server();
 			~texture_server();
 
-			texture_id create() override;
-			bool destroy(texture_id idx) override;
+			void append_defaults(texture_id) override;
 
 			bool load(texture_id idx);
 

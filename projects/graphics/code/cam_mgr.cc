@@ -19,12 +19,8 @@ namespace efiilj
 		setup_ubo();
 	}
 
-	camera_id camera_manager::register_entity(entity_id eid)
+	void camera_manager::extend_defaults(camera_id new_id)
 	{
-		camera_id new_id = _instances.size();
-		_instances.emplace_back(new_id);
-		_instance_mapping.emplace(eid, new_id);
-
 		_data.width.emplace_back(DEFAULT_WIDTH);
 		_data.height.emplace_back(DEFAULT_HEIGHT);
 		_data.fov.emplace_back(DEFAULT_FOV);
@@ -37,13 +33,6 @@ namespace efiilj
 
 		update_perspective(new_id);
 		push_perspective();
-
-		return new_id;
-	}
-
-	bool camera_manager::unregister_entity(camera_id idx) //NOLINT
-	{
-		return false;
 	}
 
 	void camera_manager::draw_gui()

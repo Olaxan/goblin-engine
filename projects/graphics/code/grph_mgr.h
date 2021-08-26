@@ -12,7 +12,7 @@ namespace efiilj
 {
 	typedef int graphics_id;
 
-	class graphics_manager : public manager<graphics_id>, public registrable
+	class graphics_manager : public manager<graphics_id>
 	{
 		private:
 
@@ -32,9 +32,7 @@ namespace efiilj
 			graphics_manager();
 			~graphics_manager();
 
-			graphics_id register_entity(entity_id eid) override;
-			bool unregister_entity(graphics_id idx) override;
-
+			void extend_defaults(graphics_id) override;
 			void draw_gui() override;
 			void draw_gui(graphics_id idx) override;
 

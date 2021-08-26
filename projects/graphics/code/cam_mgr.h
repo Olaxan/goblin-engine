@@ -11,7 +11,7 @@ namespace efiilj
 {
 	typedef int camera_id;
 
-	class camera_manager : public manager<camera_id>, public registrable
+	class camera_manager : public manager<camera_id>
 	{
 	private:
 
@@ -48,8 +48,7 @@ namespace efiilj
 		camera_manager();
 		~camera_manager() = default;
 
-		camera_id register_entity(entity_id eid) override;
-		bool unregister_entity(camera_id idx) override;
+		void extend_defaults(camera_id eid) override;
 		void draw_gui() override;
 		void draw_gui(camera_id idx) override;
 		

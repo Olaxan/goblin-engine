@@ -13,7 +13,7 @@ namespace efiilj
 {
 	typedef int light_id;
 
-	class light_manager : public manager<light_id>, public registrable
+	class light_manager : public manager<light_id>
 	{
 		private:
 
@@ -33,9 +33,7 @@ namespace efiilj
 			light_manager();
 			~light_manager();
 
-			light_id register_entity(entity_id eid) override;
-			bool unregister_entity(light_id idx) override;
-
+			void extend_defaults(light_id) override;
 			void draw_gui() override;
 			void draw_gui(light_id idx) override;
 

@@ -12,11 +12,8 @@ namespace efiilj
 		printf("Material server exit\n");
 	}
 
-	material_id material_server::create()
+	void material_server::append_defaults(material_id)
 	{
-		material_id new_id = _pool.size();
-		_pool.emplace_back(new_id);
-
 		_data.shader.emplace_back(-1);
 		_data.textures.emplace_back();
 		_data.base_color.emplace_back(vector4(1,1,1,1));
@@ -25,13 +22,6 @@ namespace efiilj
 		_data.roughness_factor.emplace_back(0.5f);
 		_data.alpha_cutoff.emplace_back(0.1f);
 		_data.double_sided.emplace_back(false);
-
-		return new_id;
-	}
-
-	bool material_server::destroy(material_id idx) //NOLINT
-	{
-		return false;
 	}
 
 	void material_server::add_texture(material_id idx, texture_id tex_id)

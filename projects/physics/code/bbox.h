@@ -6,19 +6,19 @@
 
 namespace efiilj
 {
-	class bbox : public mesh_resource
-	{
-		private:
+	//class bbox : public mesh_resource
+	//{
+	//	private:
 
-			std::shared_ptr<physics_node> _node;			
+	//		std::shared_ptr<physics_node> _node;			
 
-		public:
+	//	public:
 
-			bbox(std::shared_ptr<physics_node> node);
+	//		bbox(std::shared_ptr<physics_node> node);
 
-			void update_positions();
+	//		void update_positions();
 
-			void update() override;
-			void draw_elements() const override;
-	};
+	//		void update() override;
+	//		void draw_elements() const override;
+	//};
 }

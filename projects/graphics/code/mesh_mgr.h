@@ -10,7 +10,7 @@ namespace efiilj
 
 	typedef int mesh_instance_id;
 
-	class mesh_manager : public manager<mesh_instance_id>, public registrable
+	class mesh_manager : public manager<mesh_instance_id>
 	{
 		private:
 
@@ -26,9 +26,7 @@ namespace efiilj
 			mesh_manager();
 			~mesh_manager();
 
-			mesh_instance_id register_entity(entity_id eid) override;
-			bool unregister_entity(mesh_instance_id idx) override;
-
+			void extend_defaults(mesh_instance_id) override;
 			void draw_gui() override;
 			void draw_gui(mesh_instance_id idx) override;
 

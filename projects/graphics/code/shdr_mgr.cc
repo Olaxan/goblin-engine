@@ -15,22 +15,12 @@ namespace efiilj
 		printf("Shader server exit\n");
 	}
 
-	shader_id shader_server::create() 
+	void shader_server::append_defaults(shader_id) 
 	{
-		shader_id new_id = _pool.size();
-		_pool.emplace_back(new_id);
-
 		_data.program_id.emplace_back(0);
 		_data.state.emplace_back(false);
 		_data.type.emplace_back(0);
 		_data.uri.emplace_back();
-		
-		return new_id;
-	}
-
-	bool shader_server::destroy(shader_id idx)
-	{
-		return false;
 	}
 
 	void shader_server::on_register(std::shared_ptr<manager_host> host)

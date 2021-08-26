@@ -15,24 +15,13 @@ namespace efiilj
 		printf("Graphics manager exit\n");
 	}
 
-	graphics_id graphics_manager::register_entity(entity_id eid)
+	void graphics_manager::extend_defaults(graphics_id new_id)
 	{
-		graphics_id new_id = _instances.size();
-		_instances.emplace_back(new_id);
-		_instance_mapping.emplace(eid, new_id);
-
 		_data.model_uri.emplace_back();
 		_data.geometry_shader_uri.emplace_back();
 		_data.lighting_shader_uri.emplace_back();
 		_data.transform.emplace_back(-1);
 		_data.loaded.emplace_back(false);
-
-		return new_id;
-	}
-
-	bool graphics_manager::unregister_entity(graphics_id idx)
-	{
-		return false;
 	}
 
 	void graphics_manager::draw_gui()
@@ -42,8 +31,7 @@ namespace efiilj
 	{}
 
 	void graphics_manager::on_register(std::shared_ptr<manager_host> host)
-	{
-	}
+	{}
 
 	const fs::path& graphics_manager::get_model_uri(graphics_id idx)
 	{

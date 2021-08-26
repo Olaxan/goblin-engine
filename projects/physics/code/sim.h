@@ -11,7 +11,7 @@ namespace efiilj
 {
 	typedef int physics_id;
 
-	class simulator : public manager<physics_id>, public registrable
+	class simulator : public manager<physics_id>
 	{
 		private:
 
@@ -29,9 +29,7 @@ namespace efiilj
 		simulator();
 		~simulator();
 
-		physics_id register_entity(entity_id eid) override;
-		bool unregister_entity(physics_id idx) override;
-
+		void extend_defaults(physics_id) override;
 		void draw_gui() override;
 		void draw_gui(physics_id) override;
 

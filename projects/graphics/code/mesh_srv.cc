@@ -15,11 +15,8 @@ namespace efiilj
 		printf("Mesh server exited\n");
 	}
 
-	mesh_id mesh_server::create()
+	void mesh_server::append_defaults(mesh_id)
 	{
-		mesh_id new_id = _pool.size();
-		_pool.emplace_back(new_id);
-
 		_data.positions.emplace_back();
 		_data.normals.emplace_back();
 		_data.colors.emplace_back();
@@ -34,13 +31,6 @@ namespace efiilj
 		_data.vbo.emplace_back(0);
 		_data.ibo.emplace_back(0);
 		_data.state.emplace_back(false);
-
-		return new_id;
-	}
-
-	bool mesh_server::destroy(mesh_id idx) //NOLINT
-	{
-		return false;
 	}
 
 	bool mesh_server::bind(mesh_id idx)
@@ -49,6 +39,7 @@ namespace efiilj
 			return false;
 
 		glBindVertexArray(_data.vao[idx]);
+		return true;
 	}
 	
 	bool mesh_server::build(mesh_id idx, unsigned usage)
@@ -128,7 +119,7 @@ namespace efiilj
 		return true;
 	}
 
-	bool mesh_server::update(mesh_id idx)
+	void mesh_server::update(mesh_id idx)
 	{
 		if (_data.usage[idx] == GL_DYNAMIC_DRAW)
 			buffer(idx);
