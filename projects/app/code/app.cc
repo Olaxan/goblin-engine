@@ -297,13 +297,13 @@ namespace efiilj
 
 			cameras->update();
 
-		//	rdef->begin_frame();
-			rfwd->begin_frame();
+			//rdef->begin_frame();
+		    rfwd->begin_frame();
 
-		//	rdef->render_frame();
-			rfwd->render_frame();
+			//rdef->render_frame();
+		    rfwd->render_frame();
 
-		//	rdef->end_frame();
+			//rdef->end_frame();
 			rfwd->end_frame();
 
 			this->window_->SwapBuffers();
