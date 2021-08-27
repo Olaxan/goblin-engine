@@ -109,6 +109,24 @@ namespace efiilj
 		push_view();
 	}
 
+	ray camera_manager::get_ray_from_camera(camera_id idx, int mouse_x, int mouse_y) const
+	{
+		float x = (2.0f * mouse_x) / _data.width[idx] - 1.0f;
+		float y = 1.0f - (2.0f * mouse_y) / _data.height[idx];
+
+		vector4 ray_clip(x, y, -1.0f, 1.0f);
+		vector4 ray_eye = _data.p_inverse[idx] * ray_clip;
+		ray_eye = vector4(ray_eye.x, ray_eye.y, -1.0f, 0.0f);
+
+		vector4 ray_world = _data.view[idx].inverse() * ray_eye;
+		vector3 ray_dir = ray_world.xyz();
+		ray_dir = ray_dir.norm();
+
+		vector3 pos = _transforms->get_position(_data.transform[idx]);
+
+		return ray(pos, ray_dir);
+	}
+
 	void camera_manager::setup_ubo()
 	{
 		glGenBuffers(1, &_ubo);
@@ -123,6 +141,7 @@ namespace efiilj
 	{
 		float aspect = _data.width[idx] / _data.height[idx];
 		_data.perspective[idx] = matrix4::get_perspective(_data.fov[idx], aspect, _data.near[idx], _data.far[idx]);
+		_data.p_inverse[idx] = _data.perspective[idx].inverse();
 	}
 
 	void camera_manager::push_perspective()

@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "trfm_mgr.h"
 #include "ifmgr.h"
+#include "ray.h"
 
 #include <vector>
 #include <memory>
@@ -55,6 +56,8 @@ namespace efiilj
 		void on_register(std::shared_ptr<manager_host> host) override;
 
 		void update();
+
+		ray get_ray_from_camera(camera_id idx, int mouse_x, int mouse_y) const;
 
 		camera_id get_camera() const;
 		bool set_camera(camera_id active);

@@ -27,6 +27,7 @@
 #include "def_rend.h"
 #include "gltf_loader.h"
 #include "sim.h"
+#include "phys_data.h"
 #include "editor.h"
 
 #include <memory>
@@ -68,6 +69,8 @@ namespace efiilj
 		std::shared_ptr<light_manager> lights;
 		std::shared_ptr<material_manager> material_instances;
 		std::shared_ptr<mesh_manager> mesh_instances;
+		
+		std::shared_ptr<collider_manager> colliders;
 		std::shared_ptr<simulator> sim;
 
 		std::shared_ptr<gltf_model_server> gltf;

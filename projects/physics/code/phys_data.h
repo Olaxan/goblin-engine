@@ -3,31 +3,60 @@
 #include "bounds.h"
 #include "ray.h"
 
+#include "entity.h"
+#include "manager.h"
 #include "trfm_mgr.h"
+#include "mesh_srv.h"
+#include "mesh_mgr.h"
 
 #include <memory>
 
 namespace efiilj
 {
-	class physics_node
+
+	typedef int collider_id;
+
+	class collider_manager : public manager<collider_id> 
 	{
 		private:
 
-			//std::shared_ptr<graphics_node> _node;
-			//std::shared_ptr<transform_manager> _transforms;
+			struct PhysicsData
+			{
+				std::vector<bounds> mesh_bounds;
+				std::vector<bool> bounds_updated;
+			} _data;
 
-			//mesh_resource& _mesh;
+			std::shared_ptr<mesh_server> _meshes;
+			std::shared_ptr<mesh_manager> _mesh_instances;
+			std::shared_ptr<transform_manager> _transforms;
 
-			//transform_id _trf_id;
+			bool point_inside_bounds(collider_id idx, const vector3& point) const;
+			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
 		public:
 
-			//physics_node(std::shared_ptr<graphics_node> node);
+			collider_manager();
+			~collider_manager();
 
-			//bounds get_bounds() const;
-			//bool point_inside_bounds(const vector3& point) const;
-			//bool ray_intersect_bounds(const ray& ray, vector3& hit) const;
-			//bool ray_intersect_triangle(const ray& ray, vector3& hit, vector3& norm) const;
+			void extend_defaults(collider_id) override;
+			void on_register(std::shared_ptr<manager_host> host) override;
+
+			bool update_bounds(collider_id idx);
+
+			bool test_hit(const ray& ray, vector3& hit, vector3& norm) const;
+			bool test_hit(collider_id idx, const ray& ray, vector3& hit, vector3& norm) const;
+
+			void update()
+			{
+				for (auto& idx : _instances)
+					update_bounds(idx);
+			}
+
+			const bounds& get_bounds(collider_id idx) const
+			{
+				return _data.mesh_bounds[idx];
+			}
+
 
 	};
 }

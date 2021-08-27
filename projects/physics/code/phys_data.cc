@@ -1,130 +1,226 @@
 #include "phys_data.h"
+
 #include <memory>
+#include <limits>
 
 namespace efiilj
 {
 
-	//physics_node::physics_node(std::shared_ptr<graphics_node> node)
-	//	: _node(std::move(node)), _mesh(*_node->get_mesh()), _trf_id(node->get_transform())
-	//{
-	//}
+	collider_manager::collider_manager()
+	{
+		printf("Init collider...\n");
+		_name = "Mesh collider";
+	}
 
-	//bounds physics_node::get_bounds() const
-	//{
-	//	return _mesh.get_bounds();
-	//	//return _mesh.get_bounds(_transform.get_model());
-	//}
+	collider_manager::~collider_manager()
+	{
+		printf("Collider manager exit\n");
+	}
 
-	//bool physics_node::point_inside_bounds(const vector3& point) const
-	//{
-	//	bounds b = get_bounds();
+	void collider_manager::extend_defaults(collider_id)
+	{
+		_data.mesh_bounds.emplace_back();
+		_data.bounds_updated.emplace_back(false);
+	}
 
-	//	const float e = 0.0001f;
+	void collider_manager::on_register(std::shared_ptr<manager_host> host)
+	{
+		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
+		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
+		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+	}
 
-	//	return point.x > (b.min.x - e)
-	//		&& point.x < (b.max.x + e)
-	//		&& point.y > (b.min.y - e)
-	//		&& point.y < (b.max.y + e)
-	//		&& point.z > (b.min.z - e)
-	//		&& point.z < (b.max.z + e);
-	//}
+	bool collider_manager::update_bounds(collider_id idx)
+	{
 
-	//bool physics_node::ray_intersect_bounds(const ray& test, vector3& hit) const
-	//{
-	//	float tmax = 100000000.0f;
-	//	float tmin = -tmax;
+		entity_id eid = _entities[idx];
 
-	//	bounds bounds = get_bounds();
+		transform_id trf_id = _transforms->get_component(eid);
 
-	//	const vector3 dir = vector3(
-    //        1.0f / ((std::fabs(test.direction.x) < 1e-6) ? 0.0001f : test.direction.x),
-    //        1.0f / ((std::fabs(test.direction.y) < 1e-6) ? 0.0001f : test.direction.y),
-    //        1.0f / ((std::fabs(test.direction.z) < 1e-6) ? 0.0001f : test.direction.z)
-    //    );
+		if (!_transforms->is_valid(trf_id))
+			return false;
 
-    //    const float tx1 = (bounds.min.x - test.origin.x) * dir.x;
-    //    const float tx2 = (bounds.max.x - test.origin.x) * dir.x;
+		vector3 min(
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max()
+				);
 
-    //    tmin = std::max(tmin, std::min(tx1, tx2));
-    //    tmax = std::min(tmax, std::max(tx1, tx2));
-    //    
-    //    const float ty1 = (bounds.min.y - test.origin.y) * dir.y;
-    //    const float ty2 = (bounds.max.y - test.origin.y) * dir.y;
+		vector3 max(
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min()
+			 );
 
-    //    tmin = std::max(tmin, std::min(ty1, ty2));
-    //    tmax = std::min(tmax, std::max(ty1, ty2));
-    //   
-    //    const float tz1 = (bounds.min.z - test.origin.z) * dir.z;
-    //    const float tz2 = (bounds.max.z - test.origin.z) * dir.z;
+		auto range = _mesh_instances->get_components(eid);
 
-    //    tmin = std::max(tmin, std::min(tz1, tz2));
-    //    tmax = std::min(tmax, std::max(tz1, tz2));
-    //    
-    //    if (tmin > 0.0f && tmax >= tmin) 
-	//	{
-	//		hit = test.origin + test.direction * tmin;
-    //        return true;
-    //    }
+		for (auto it = range.first; it != range.second; it++)
+		{
+			mesh_id mid = _mesh_instances->get_mesh(it->second);
 
-    //    return false;
-	//}
+			if (!_meshes->is_valid(mid))
+				continue;
 
-	//bool physics_node::ray_intersect_triangle(const ray& test, vector3& hit, vector3& norm) const
-	//{
+			min = vector3::min(min, _meshes->get_min(mid));
+			max = vector3::max(max, _meshes->get_max(mid));
+		}
 
-	//	return false;
+		_data.mesh_bounds[idx] = bounds(min, max);
+		_data.bounds_updated[idx] = true;
 
-	//	//if (!ray_intersect_bounds(test, hit))
-	//	//	return false;
+		return true;
 
-	//	//bool is_hit = false;
-	//	//float nearest = std::numeric_limits<float>::max();
-	//	//vector3 nearest_hit;
+	}
 
-	//	//vector3 ra = _transform.get_model_inv() * test.origin;
-	//	//vector3 rb = _transform.get_model_inv() * (test.origin + test.direction * 1000.0f);
+	bool collider_manager::test_hit(const ray& ray, vector3& hit, vector3& norm) const
+	{
 
-	//	//ray r = ray(ra, (rb - ra).norm());
+		float nearest = std::numeric_limits<float>::max();
 
-	//	//const vector3 d = r.direction;
-	//	//const vector3 o = r.origin;
+		bool ret = false;
+		vector3 near_hit;
+		vector3 near_norm;
 
-	//	//for (size_t i = 0; i < _mesh.get_index_count();)
-	//	//{
-	//	//	const vector3& a = _mesh.get_indexed_position(i++);
-	//	//	const vector3& b = _mesh.get_indexed_position(i++);
-	//	//	const vector3& c = _mesh.get_indexed_position(i++);
+		for (const auto& idx : _instances)
+		{
+			if (test_hit(idx, ray, near_hit, near_norm))
+			{
+				ret = true;
+				float len = (hit - ray.origin).length();
+				if (len < nearest)
+				{
+					nearest = len;
+					hit = near_hit;
+					norm = near_norm;
+				}
+			}
+		}
 
-	//	//	const vector3 e1 = b - a;
-	//	//	const vector3 e2 = c - a;
-	//	//	const vector3 n = vector3::cross(e1, e2);
+		return ret;
+	}
 
-	//	//	const float det = -vector3::dot(d, n);
-	//	//	const float invdet = 1.0f / det;
+	bool collider_manager::test_hit(collider_id idx, const ray& ray, vector3& hit, vector3& norm) const
+	{
 
-	//	//	const vector3 ao = o - a;
-	//	//	const vector3 dao = vector3::cross(ao, d);
+		entity_id eid = _entities[idx];
 
-	//	//	const float u = vector3::dot(e2, dao) * invdet;
-	//	//	const float v = -vector3::dot(e1, dao) * invdet;
-	//	//	const float t = vector3::dot(ao, n) * invdet;
+		//if (_data.bounds_updated[idx])
+		//{
+		//	if (!_data.mesh_bounds[idx].ray_intersection(ray, hit))
+		//		return false;
+		//}
 
-	//	//	if (det >= 1e-6 && t >= 0.0f && u >= 0.0f && v >= 0.0f && (u + v) <= 1.0f)
-	//	//	{
-	//	//		is_hit = true;
+		transform_id trf_id = _transforms->get_component(eid);
 
-	//	//		if (t < nearest)
-	//	//		{
-	//	//			nearest_hit = o + d * t;
-	//	//			nearest = t;
-	//	//			norm = n;
-	//	//		}
-	//	//	}
-	//	//}
+		if (!_transforms->is_valid(trf_id))
+			return false;
 
-	//	//hit = (_transform.get_model() * vector4(nearest_hit, 1.0f)).xyz();
-	//	//norm = (_transform.get_model() * vector4(norm, 1.0f)).xyz();
+		bool ret = false;
+		float nearest = std::numeric_limits<float>::max();
+		vector3 near_hit;
+		vector3 near_norm;
+		const matrix4& model = _transforms->get_model(trf_id);
 
-	//	//return is_hit;
-	//}
+		auto range = _mesh_instances->get_components(eid);
+		for (auto it = range.first; it != range.second; it++)
+		{
+			mesh_id mid = _mesh_instances->get_mesh(it->second);
+
+			bounds b = _meshes->get_bounds(mid);
+			bounds bt = b.get_transformed_bounds(model);
+
+			if (!bt.ray_intersection(ray, near_hit))
+				continue;
+
+			if (ray_intersect_triangle(idx, mid, ray, near_hit, near_norm))
+			{
+				ret = true;
+				float len = (hit - ray.origin).length();
+				if (len < nearest)
+				{
+					nearest = len;
+					hit = near_hit;
+					norm = near_norm;
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	bool collider_manager::point_inside_bounds(collider_id idx, const vector3& point) const
+	{
+		return _data.mesh_bounds[idx].point_inside(point);
+	}
+
+	bool collider_manager::ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& test, vector3& hit, vector3& norm) const
+	{
+
+		transform_id trf_id = _transforms->get_component(_entities[idx]);
+		
+		if (!_transforms->is_valid(trf_id))
+		{
+			fprintf(stderr, "Invalid transform id %d\n", trf_id);
+			return false;
+		}
+
+		if (!_meshes->is_valid(mid))
+		{
+			fprintf(stderr, "Invalid mesh id %d\n", mid);
+			return false;
+		}
+
+		const matrix4& model = _transforms->get_model(trf_id);
+		const matrix4& inv = _transforms->get_model_inv(trf_id);
+
+		bool is_hit = false;
+		float nearest = std::numeric_limits<float>::max();
+		vector3 nearest_hit;
+
+		vector3 ra = inv * test.origin;
+		vector3 rb = inv * (test.origin + test.direction * 1000.0f);
+
+		ray r = ray(ra, (rb - ra).norm());
+
+		const vector3 d = r.direction;
+		const vector3 o = r.origin;
+
+		for (size_t i = 0; i < _meshes->get_index_count(mid);)
+		{
+			const vector3& a = _meshes->get_indexed_position(mid, i++);
+			const vector3& b = _meshes->get_indexed_position(mid, i++);
+			const vector3& c = _meshes->get_indexed_position(mid, i++);
+
+			const vector3 e1 = b - a;
+			const vector3 e2 = c - a;
+			const vector3 n = vector3::cross(e1, e2);
+
+			const float det = -vector3::dot(d, n);
+			const float invdet = 1.0f / det;
+
+			const vector3 ao = o - a;
+			const vector3 dao = vector3::cross(ao, d);
+
+			const float u = vector3::dot(e2, dao) * invdet;
+			const float v = -vector3::dot(e1, dao) * invdet;
+			const float t = vector3::dot(ao, n) * invdet;
+
+			if (det >= 1e-6 && t >= 0.0f && u >= 0.0f && v >= 0.0f && (u + v) <= 1.0f)
+			{
+				is_hit = true;
+
+				if (t < nearest)
+				{
+					nearest_hit = o + d * t;
+					nearest = t;
+					norm = n;
+				}
+			}
+		}
+
+		hit = (model * vector4(nearest_hit, 1.0f)).xyz();
+		norm = (model * vector4(norm, 1.0f)).xyz();
+
+		return is_hit;
+	}
 }

@@ -19,8 +19,7 @@
 
 #define WINDOW_WIDTH 1366
 #define WINDOW_HEIGHT 768
-#define CAMERA_SPEED 0.1f
-#define NUM_LIGHTS 10
+#define CAMERA_SPEED 0.05f
 #define PI 3.14159f
 
 namespace fs = std::filesystem;
@@ -106,6 +105,7 @@ namespace efiilj
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
 		sim = std::make_shared<simulator>();
+		colliders = std::make_shared<collider_manager>();
 		gltf = std::make_shared<gltf_model_server>();
 
 		managers->register_manager(entities, 'ENTS');
@@ -126,6 +126,7 @@ namespace efiilj
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(sim, 'PHYS');
+		managers->register_manager(colliders, 'RAYS');
 		managers->register_manager(gltf, 'GLTF');
 
 		editor = std::make_shared<entity_editor>(entities, managers);
@@ -151,7 +152,10 @@ namespace efiilj
 		gltf->get_nodes(test_mdl);
 
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
+		{
 			rdef->register_entity(node);
+			colliders->register_entity(node);
+		}
 
 		gltf->unload(test_mdl);
 
@@ -211,22 +215,14 @@ namespace efiilj
 
 				is_dragging_mouse = true;
 
-				//auto camera_ptr = _cam_mgr->get_active_camera();
-				//ray r = camera_ptr->get_ray_from_camera(mouse_x_, mouse_y_);
-				//float nearest = std::numeric_limits<float>::max();
-				//vector3 hit, norm;
+				camera_id active = cameras->get_camera();
+				ray r = cameras->get_ray_from_camera(active, mouse_x, mouse_y);
 
-				//for (auto body : _simulator->get_rigidbodies())
-				//{
-				//	if (body->ray_intersect_triangle(r, hit, norm))
-				//	{
-				//		float len = (hit - r.origin).length();
-				//		if (len < nearest)
-				//		{
-				//			nearest = len;
-				//		}
-				//	}
-				//}
+				vector3 hit, norm;
+				if (colliders->test_hit(r, hit, norm))
+				{
+					printf("Hit! At %s\n", hit.to_mem_string().c_str());
+				}
 			}
 			else
 			{
@@ -285,6 +281,7 @@ namespace efiilj
 				window_->Close();
 
 			cameras->update();
+			colliders->update();
 
 			rdef->begin_frame();
 		    rfwd->begin_frame();

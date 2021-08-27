@@ -5,6 +5,7 @@
 
 #include "mtrl_srv.h"
 #include "vector4.h"
+#include "bounds.h"
 
 #include <filesystem>
 
@@ -106,9 +107,40 @@ namespace efiilj
 			void set_indices(mesh_id idx, std::vector<unsigned>& indices);
 			void set_indices(mesh_id idx, const std::vector<unsigned>& indices);
 
+			bounds get_bounds(mesh_id idx)
+			{
+				return bounds(_data.min[idx], _data.max[idx]);
+			}
+
+			void set_bounds(mesh_id idx, const bounds& bounds)
+			{
+				_data.min[idx] = bounds.min;
+				_data.max[idx] = bounds.max;
+			}
+
 			void set_bounds(mesh_id idx, const vector3& min, const vector3& max)
 			{
 				_data.min[idx] = min;
+				_data.max[idx] = max;
+			}
+
+			const vector3& get_min(mesh_id idx) const
+			{
+				return _data.min[idx];
+			}
+
+			void set_min(mesh_id idx, const vector3& min)
+			{
+				_data.min[idx] = min;
+			}
+
+			const vector3& get_max(mesh_id idx) const
+			{
+				return _data.max[idx];
+			}
+
+			void set_max(mesh_id idx, const vector3& max)
+			{
 				_data.max[idx] = max;
 			}
 
