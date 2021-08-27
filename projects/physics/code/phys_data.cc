@@ -86,7 +86,7 @@ namespace efiilj
 			if (test_hit(idx, ray, near_hit, near_norm))
 			{
 				ret = true;
-				float len = (hit - ray.origin).length();
+				float len = (near_hit - ray.origin).length();
 				if (len < nearest)
 				{
 					nearest = len;
@@ -115,11 +115,12 @@ namespace efiilj
 		if (!_transforms->is_valid(trf_id))
 			return false;
 
+		const matrix4& model = _transforms->get_model(trf_id);
+
 		bool ret = false;
 		float nearest = std::numeric_limits<float>::max();
 		vector3 near_hit;
 		vector3 near_norm;
-		const matrix4& model = _transforms->get_model(trf_id);
 
 		auto range = _mesh_instances->get_components(eid);
 		for (auto it = range.first; it != range.second; it++)
@@ -135,7 +136,7 @@ namespace efiilj
 			if (ray_intersect_triangle(idx, mid, ray, near_hit, near_norm))
 			{
 				ret = true;
-				float len = (hit - ray.origin).length();
+				float len = (near_hit - ray.origin).length();
 				if (len < nearest)
 				{
 					nearest = len;

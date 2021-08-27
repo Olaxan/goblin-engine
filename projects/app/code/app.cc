@@ -248,7 +248,6 @@ namespace efiilj
 				vector3 hit, norm;
 				if (colliders->test_hit(r, hit, norm))
 				{
-					printf("Hit! At %s\n", hit.to_mem_string().c_str());
 					transforms->set_position(trf_hitmarker, hit);
 				}
 			}

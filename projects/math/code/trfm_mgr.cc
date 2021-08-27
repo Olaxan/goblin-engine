@@ -134,7 +134,7 @@ namespace efiilj
 
 	void transform_manager::set_position(transform_id idx, const vector3& pos)
 	{
-		_data.model[idx].col(3, vector4(pos, 1.0f));
+		_data.position[idx] = vector4(pos, 1.0f);
 	}
 
 	const quaternion& transform_manager::get_rotation(transform_id idx) const
