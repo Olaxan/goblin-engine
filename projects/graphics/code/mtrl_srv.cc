@@ -53,7 +53,10 @@ namespace efiilj
 
 	bool material_server::apply(material_id idx, shader_id fallback)
 	{
-		if (!(is_valid(idx) && _shaders->use(_data.shader[idx])) && !_shaders->use(fallback))
+		if (!is_valid(idx))
+			return false;
+
+		if (!_shaders->use(_data.shader[idx]) && !_shaders->use(fallback))
 			return false;
 
 		_shaders->set_uniform("base_color_factor", _data.base_color[idx]);

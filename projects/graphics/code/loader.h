@@ -1,9 +1,10 @@
 #pragma once
 
 #include "vertex.h"
-#include "mesh_res.h"
+#include "mesh_srv.h"
 
 #include <vector>
+#include <filesystem>
 
 namespace efiilj
 {
@@ -14,29 +15,21 @@ namespace efiilj
 	{
 	private:
 
-		std::shared_ptr<mesh_resource> _mesh;
-		bool is_valid_;
+		mesh_id _mesh;
+		bool _is_valid;
 
-		bool load_from_file(const char* path);
+		bool load_from_file(const std::filesystem::path& uri);
 		bool find_indices(std::vector<vertex>& in_vertices);
+
+		std::shared_ptr<mesh_server> _meshes;
 
 	public:
 
-		/**
-		 * \brief Creates a new Object Loader instance.
-		 * \param path The path to the specific OBJ file that should be loaded
-		 */
-		explicit object_loader(const char* path);
+		object_loader(const std::filesystem::path& uri, std::shared_ptr<mesh_server> meshes);
+		~object_loader();
 
-		/**
-		 * \brief Returns whether or not the loader contains valid data.
-		 * \return True if object loaded successfully, false otherwise
-		 */
-		bool is_valid() const { return is_valid_; }
+		bool is_valid() const { return _is_valid; }
+		mesh_id get_mesh() const { return _mesh; }
 
-		std::shared_ptr<mesh_resource> get_resource()
-		{
-			return _mesh;
-		}
 	};
 }

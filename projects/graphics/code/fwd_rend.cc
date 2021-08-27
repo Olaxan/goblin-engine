@@ -25,7 +25,19 @@ namespace efiilj
 
 	void forward_renderer::draw_gui(render_id idx)
 	{
-		ImGui::Text("Render id %d", idx);
+		unsigned int s1 = _shaders->get_program_id(_fallback_primary);
+
+		ImGui::BulletText("Default primary: %d / %u", _fallback_primary, s1);
+		ImGui::BulletText("Nodes: %lu", _instances.size());
+		ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
+
+		ImGui::Separator();
+
+		bool err = _data.error[idx];
+		bool vis = _data.visible[idx];
+
+		ImGui::TextColored(err ? ImVec4(1, 0, 0, 1) : ImVec4(0, 1, 0, 1), err ? "Model error state!" : "No error detected!");
+		ImGui::Text("Visible: %s", vis ? "true" : "false");
 	}
 	
 	void forward_renderer::on_register(std::shared_ptr<manager_host> host)
@@ -41,7 +53,7 @@ namespace efiilj
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		
 		_fallback_primary = _shaders->create();
-		_shaders->set_uri(_fallback_primary, settings_.default_fallback_path_primary);
+		_shaders->set_uri(_fallback_primary, settings_.default_fallback_path);
 		_shaders->compile(_fallback_primary);
 	}
 

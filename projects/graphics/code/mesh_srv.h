@@ -43,6 +43,7 @@ namespace efiilj
 			void append_defaults(mesh_id idx) override;
 
 			bool bind(mesh_id idx);
+			bool build(mesh_id idx);
 			bool build(mesh_id idx, unsigned usage);
 			bool buffer(mesh_id idx);
 

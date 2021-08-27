@@ -42,6 +42,11 @@ namespace efiilj
 		return true;
 	}
 	
+	bool mesh_server::build(mesh_id idx)
+	{
+		return build(idx, GL_STATIC_DRAW);
+	}
+
 	bool mesh_server::build(mesh_id idx, unsigned usage)
 	{
 		if (_data.vao[idx] != 0)

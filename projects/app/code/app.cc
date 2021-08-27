@@ -82,6 +82,7 @@ namespace efiilj
 		renderer_settings set;
 		set.width = WINDOW_WIDTH;
 		set.height = WINDOW_HEIGHT;
+		set.default_fallback_path = "../res/shaders/default_color.sdr";
 		set.default_fallback_path_primary = "../res/shaders/default_primary.sdr";
 		set.default_fallback_path_secondary = "../res/shaders/default_secondary.sdr";
 
@@ -146,6 +147,8 @@ namespace efiilj
 		metadata->set_name(cam_meta_id, "Main camera");
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
 
+		// GLTF
+		
 		model_id test_mdl = gltf->create();
 		gltf->set_uri(test_mdl, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
 		gltf->load(test_mdl);
@@ -158,6 +161,30 @@ namespace efiilj
 		}
 
 		gltf->unload(test_mdl);
+
+		// Hitmarker
+		
+		object_loader obj("../res/volumes/v_pointlight2.obj", meshes);
+
+		entity_id e_hitmarker = entities->create();
+
+		transform_id trf_hitmarker = transforms->register_entity(e_hitmarker);
+		transforms->set_scale(trf_hitmarker, 0.01f);
+
+		if (obj.is_valid())
+		{
+
+			mesh_id mesh_hitmarker = obj.get_mesh();
+			mesh_instance_id miid_hitmarker = mesh_instances->register_entity(e_hitmarker);
+			mesh_instances->set_mesh(miid_hitmarker, mesh_hitmarker);
+
+			material_id mtrl_hitmarker = materials->create();
+			materials->set_base_color(mtrl_hitmarker, vector4(1, 0, 0, 1));
+			meshes->set_material(mesh_hitmarker, mtrl_hitmarker);
+			mesh_instances->set_material(miid_hitmarker, mtrl_hitmarker);
+
+			rfwd->register_entity(e_hitmarker);
+		}
 
 		// Lights
 		
@@ -222,6 +249,7 @@ namespace efiilj
 				if (colliders->test_hit(r, hit, norm))
 				{
 					printf("Hit! At %s\n", hit.to_mem_string().c_str());
+					transforms->set_position(trf_hitmarker, hit);
 				}
 			}
 			else

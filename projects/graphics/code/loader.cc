@@ -16,10 +16,19 @@
 
 namespace efiilj
 {
-	bool object_loader::load_from_file(const char* path)
+	object_loader::object_loader(const std::filesystem::path& path, std::shared_ptr<mesh_server> meshes)
+		: _is_valid(false), _meshes(std::move(meshes))
+	{
+		_is_valid = load_from_file(path);
+	}
+
+	object_loader::~object_loader()
+	{}
+
+	bool object_loader::load_from_file(const std::filesystem::path& uri)
 	{
 		std::string s;
-		std::ifstream file(path);
+		std::ifstream file(uri);
 
 		std::vector<unsigned> vertex_indices, uv_indices, normal_indices;
 		std::vector<vector3> vertices;
@@ -28,7 +37,7 @@ namespace efiilj
 
 		std::vector<vertex> packed_vertices;
 
-		printf("OBJ: Loading %s\n", path);
+		printf("OBJ: Loading %s\n", uri.c_str());
 
 		if (file.is_open())
 		{
@@ -149,7 +158,7 @@ namespace efiilj
 		}
 		else
 		{
-			std::cout << "\nError when loading OBJ file - could not open file (" << path << ")" << std::endl;
+			std::cout << "\nError when loading OBJ file - could not open file (" << uri << ")" << std::endl;
 			return false;
 		}
 
@@ -162,14 +171,17 @@ namespace efiilj
 	bool object_loader::find_indices(std::vector<vertex>& in_vertices)
 	{
 
-		printf("OBJ: Compiling indices...\n");
-
 		const int count = in_vertices.size();
 
 		if (count < 3)
 			return false;
 
-		_mesh = std::make_shared<mesh_resource>();
+		_mesh = _meshes->create();
+
+		std::vector<unsigned int> indices;
+		std::vector<vector3> positions;
+		std::vector<vector3> normals;
+		std::vector<vector2> uvs;
 
 		// Map holds vertices and their corresponding indices
 		std::map<vertex, unsigned int> vertices;
@@ -183,30 +195,27 @@ namespace efiilj
 			if (it != vertices.end())
 			{
 				// Add vertex index if an identical vertex exists
-				_mesh->_indices.emplace_back(it->second);
+				indices.emplace_back(it->second);
 			}
 			else
 			{
 				// Add vertex and index if no similar vertex is found
-				unsigned int index = static_cast<unsigned int>(_mesh->get_vertex_count());
+				unsigned int index = static_cast<unsigned int>(positions.size());
 
-				_mesh->_positions.emplace_back(test.xyzw);
-				_mesh->_uvs.emplace_back(test.uv);
-				_mesh->_normals.emplace_back(test.normal);
-				_mesh->_indices.emplace_back(index);
+				positions.emplace_back(test.xyzw);
+				uvs.emplace_back(test.uv);
+				normals.emplace_back(test.normal);
+				indices.emplace_back(index);
 
 				vertices[test] = index;
 			}
 		}
 
-		_mesh->build();
-		_mesh->buffer();
+		_meshes->set_positions(_mesh, positions);
+		_meshes->set_indices(_mesh, indices);
+		_meshes->set_normals(_mesh, normals);
+		_meshes->set_uvs(_mesh, uvs);
 
-		return _mesh->_indices.size() > 0;
-	}
-
-	object_loader::object_loader(const char* path)
-	{
-		is_valid_ = load_from_file(path);
+		return _meshes->build(_mesh);
 	}
 }
