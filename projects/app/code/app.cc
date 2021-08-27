@@ -164,7 +164,7 @@ namespace efiilj
 
 		// Hitmarker
 		
-		object_loader obj("../res/volumes/v_pointlight2.obj", meshes);
+		object_loader obj("../res/volumes/v_pointlight.obj", meshes);
 
 		entity_id e_hitmarker = entities->create();
 

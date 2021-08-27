@@ -43,9 +43,6 @@ namespace efiilj
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		setup_quad();
-		setup_volumes();
-
 	}
 
 	void deferred_renderer::draw_gui()
@@ -94,7 +91,9 @@ namespace efiilj
 		_shaders->compile(_fallback_primary);
 		_shaders->compile(_fallback_secondary);
 
+		setup_quad();
 		setup_uniforms();
+		setup_volumes();
 	}
 
 	unsigned deferred_renderer::gen_texture(unsigned attach, unsigned internal, unsigned format, unsigned type)
@@ -187,12 +186,12 @@ namespace efiilj
 
 	void deferred_renderer::setup_volumes()
 	{
-		//object_loader pl_loader(settings_.pointlight_volume_path.c_str());
+		object_loader pl_loader(settings_.pointlight_volume_path, _meshes);
 
-		//if (pl_loader.is_valid())
-		//	v_pointlight_ = pl_loader.get_resource();
-		//else 
-		//	fprintf(stderr, "FATAL: Failed to load point light volume!\n");
+		if (pl_loader.is_valid())
+			v_pointlight_ = pl_loader.get_mesh();
+		else 
+			fprintf(stderr, "FATAL: Failed to load point light volume!\n");
 	}	
 
 	void deferred_renderer::set_light_uniforms(light_id idx) const
@@ -238,10 +237,9 @@ namespace efiilj
 
 		_shaders->set_uniform("light_mvp", mvp);
 
-		// Draw pointlight volume
-		//v_pointlight_->bind();
-		//v_pointlight_->draw_elements();
-		//v_pointlight_->unbind();
+		_meshes->bind(v_pointlight_);
+		_meshes->draw_elements(v_pointlight_);
+		_meshes->unbind();
 	}
 
 	void deferred_renderer::on_begin_frame()
@@ -311,7 +309,7 @@ namespace efiilj
 
 						float radius = _transforms->get_scale(trf).length();
 
-						if (true || cam_dir.length() < radius)
+						if (cam_dir.length() < radius)
 							draw_directional();
 						else
 							draw_pointlight(model);

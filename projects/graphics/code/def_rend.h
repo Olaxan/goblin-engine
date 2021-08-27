@@ -46,8 +46,8 @@ namespace efiilj
 
 		shader_id _fallback_secondary;
 
-		//std::shared_ptr<mesh_resource> v_pointlight_;
-		//std::shared_ptr<mesh_resource> v_spotlight_;
+		mesh_id v_pointlight_;
+		mesh_id v_spotlight_;
 
 		std::vector<unsigned> textures_;
 

@@ -83,9 +83,11 @@ namespace efiilj
 
 			if (ImGui::TreeNode("Attenuation"))
 			{
-				ImGui::DragFloat("Constant", &_data.attenuation[idx].constant, 0.01f, 0, FLT_MAX);
-				ImGui::DragFloat("Linear", &_data.attenuation[idx].linear, 0.01f, 0, FLT_MAX);
-				ImGui::DragFloat("Exponential", &_data.attenuation[idx].exponential, 0.01f, 0, FLT_MAX);
+				if (ImGui::DragFloat("Constant", &_data.attenuation[idx].constant, 0.01f, 0, FLT_MAX)
+				|| ImGui::DragFloat("Linear", &_data.attenuation[idx].linear, 0.01f, 0, FLT_MAX)
+				|| ImGui::DragFloat("Exponential", &_data.attenuation[idx].exponential, 0.01f, 0, FLT_MAX))
+					update_falloff(idx);
+
 				ImGui::TreePop();
 			}
 
