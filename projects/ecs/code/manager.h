@@ -65,6 +65,7 @@ namespace efiilj
 						draw_gui(idx);
 						ImGui::TreePop();
 					}
+					ImGui::Separator();
 				}
 			}
 

@@ -62,6 +62,26 @@ namespace efiilj
 
 			void set_format(texture_id idx, unsigned int format);
 
+			const std::string& get_name(texture_id idx) const
+			{
+				return _data.name[idx];
+			}
+
+			const int& get_width(texture_id idx) const
+			{
+				return _data.width[idx];
+			}
+
+			const int& get_height(texture_id idx) const
+			{
+				return _data.height[idx];
+			}
+
+			const unsigned int& get_tex_id(texture_id idx) const
+			{
+				return _data.tex_id[idx];
+			}
+
 			const texture_type& get_type(texture_id idx) const
 			{
 				return _data.usage[idx];

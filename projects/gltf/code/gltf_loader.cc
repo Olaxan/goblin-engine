@@ -379,6 +379,7 @@ namespace efiilj
 			_textures->set_type(tex_id, tex_type);
 			_textures->bind(tex_id);
 			_textures->set_usage(tex_id, type);
+			_textures->set_name(tex_id, tex_base.name);
 			_textures->buffer(tex_id, src.width, src.height, &src.image.at(0));
 			_textures->unbind();
 

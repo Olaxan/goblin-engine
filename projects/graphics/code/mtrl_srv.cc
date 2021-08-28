@@ -1,4 +1,5 @@
 #include "mtrl_srv.h"
+#include "imgui.h"
 
 #include <GL/glew.h>
 
@@ -49,6 +50,60 @@ namespace efiilj
 	{
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		_textures = host->get_manager_from_fcc<texture_server>('TXSR');
+	}
+
+	void material_server::draw_gui(material_id idx)
+	{
+		shader_id sid = _data.shader[idx];
+
+		if (_shaders->is_valid(sid))
+		{
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), 
+					"Shader linked, id %d, program %u",
+					sid, _shaders->get_program_id(sid));
+		}
+		else
+			ImGui::TextColored(ImVec4(1,0,0,1), "Shader unlinked");
+
+		if (ImGui::TreeNode("Textures"))
+		{
+			for (const auto& img : _data.textures[idx])
+			{
+				unsigned int tex_id = _textures->get_tex_id(img);
+				ImGui::Image(reinterpret_cast<void*>(tex_id), ImVec2(128, 128));
+				ImGui::SameLine();
+				ImGui::BeginGroup();
+
+				ImGui::TextWrapped("%s", _textures->get_name(img).c_str());
+				ImGui::Text("Texture %u (%dx%d)", 
+						tex_id,
+						_textures->get_width(img), 
+						_textures->get_height(img));
+				ImGui::EndGroup();
+			}
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Properies"))
+		{
+			if (ImGui::TreeNode("Base color"))
+			{
+				ImGui::ColorPicker4("Base color", &_data.base_color[idx].x);
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Emissive"))
+			{
+				ImGui::ColorPicker4("Emissive factor", &_data.emissive_factor[idx].x);
+				ImGui::TreePop();
+			}
+
+			ImGui::DragFloat("Metallic factor", &_data.metallic_factor[idx], 0.05f);
+			ImGui::DragFloat("Roughness", &_data.roughness_factor[idx], 0.05f);
+			ImGui::DragFloat("Alpha cutoff", &_data.alpha_cutoff[idx], 0.05f);
+
+			ImGui::TreePop();
+		}
 	}
 
 	bool material_server::apply(material_id idx, shader_id fallback)

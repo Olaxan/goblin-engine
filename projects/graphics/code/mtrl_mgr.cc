@@ -24,19 +24,23 @@ namespace efiilj
 
 	void material_manager::draw_gui(material_instance_id idx)
 	{
-		ImGui::TextColored(ImVec4(0,1,0,1), "Material %d", idx);
 		
 		material_id mid = _data.id[idx];
 
-		if (_materials->is_valid(mid))
+		if (!_materials->is_valid(mid))
 		{
-			ImGui::Text("Linked to material %d", mid);
+			ImGui::TextColored(ImVec4(1,0,0,1), "Invalid material ID %d!", mid);
+			return;
 		}
+
+		_materials->draw_gui(mid);
+
 	}
 
 	void material_manager::on_register(std::shared_ptr<manager_host> host)
 	{
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
+		_textures = host->get_manager_from_fcc<texture_server>('TXSR');
 	}
 
 	material_id material_manager::get_material(material_instance_id idx)

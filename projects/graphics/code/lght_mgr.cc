@@ -57,8 +57,6 @@ namespace efiilj
 
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Light %d", idx);
 
-		_transforms->draw_gui(_data.transform[idx]);
-
 		if (ImGui::TreeNode("Light data"))
 		{
 

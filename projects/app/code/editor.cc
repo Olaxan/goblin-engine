@@ -23,7 +23,12 @@ namespace efiilj
 		for (const auto& id : ids)
 		{
 			char label[128];
-			sprintf(label, "Entity %d", id);
+			meta_id met_id = _metadata->get_component(id);
+			if (_metadata->is_valid(met_id))
+				sprintf(label, "%s", _metadata->get_name(met_id).c_str());
+			else
+				sprintf(label, "Entity %d", id);
+
 			if (ImGui::Selectable(label, _selected_entity == id))
 				_selected_entity = id;
 		}
@@ -45,5 +50,6 @@ namespace efiilj
 	void entity_editor::get_managers()
 	{
 		_managers = _mgr_host->get_components();
+		_metadata = _mgr_host->get_manager_from_fcc<meta_manager>('META');
 	}
 }

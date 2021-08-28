@@ -30,6 +30,8 @@ namespace efiilj
 				return new_id;
 			}
 
+			virtual void draw_gui(T) {}
+
 			virtual bool destroy(T id)
 			{
 				_alive[id] = false;

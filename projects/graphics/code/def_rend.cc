@@ -60,13 +60,21 @@ namespace efiilj
 		ImGui::BulletText("Nodes: %lu", _instances.size());
 		ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
 
-		ImGui::Separator();
-
 		bool err = _data.error[idx];
 		bool vis = _data.visible[idx];
 
 		ImGui::TextColored(err ? ImVec4(1, 0, 0, 1) : ImVec4(0, 1, 0, 1), err ? "Model error state!" : "No error detected!");
-		ImGui::Text("Visible: %s", vis ? "true" : "false");
+
+		if (vis)
+		{
+			if (ImGui::Button("Visible"))
+				_data.visible[idx] = false;
+		}
+		else
+		{
+			if (ImGui::Button("Hidden"))
+				_data.visible[idx] = true;
+		}
 
 	}
 

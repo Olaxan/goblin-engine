@@ -21,6 +21,7 @@ namespace efiilj
 			} _data;
 
 			std::shared_ptr<material_server> _materials;
+			std::shared_ptr<texture_server> _textures;
 
 		public:
 

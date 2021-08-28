@@ -16,6 +16,14 @@ namespace efiilj
 
 	typedef int collider_id;
 
+	struct trace_hit
+	{
+		vector3 hit;
+		vector3 norm;
+		mesh_id mesh;
+		entity_id eid;
+	};
+
 	class collider_manager : public manager<collider_id> 
 	{
 		private:
