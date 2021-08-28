@@ -22,6 +22,7 @@ namespace efiilj
 		_data.scale.emplace_back(vector4(1.0f, 1.0f, 1.0f, 1.0f));
 		_data.rotation.emplace_back(quaternion());
 		_data.parent.emplace_back(-1);
+		_data.children.emplace_back();
 		_data.model_updated.emplace_back(true);
 		_data.inverse_updated.emplace_back(true);
 	}

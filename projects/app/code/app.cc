@@ -154,10 +154,20 @@ namespace efiilj
 		gltf->load(test_mdl);
 		gltf->get_nodes(test_mdl);
 
+		entity_id parent = entities->create();
+
+		meta_id parent_meta = metadata->register_entity(parent);
+		metadata->set_name(parent_meta, "Flight helmet");
+		metadata->set_description(parent_meta, "This container entity demonstrates parent-transform behaviour.");
+
+		transform_id parent_trf = transforms->register_entity(parent);
+
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
 		{
 			rdef->register_entity(node);
 			colliders->register_entity(node);
+			transform_id child_trf = transforms->get_component(node);
+			transforms->set_parent(child_trf, parent_trf);
 		}
 
 		gltf->unload(test_mdl);

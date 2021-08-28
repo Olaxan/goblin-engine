@@ -50,6 +50,11 @@ namespace efiilj
 			transform_id get_parent(transform_id) const;
 			void set_parent(transform_id child_id, transform_id parent_id);
 
+			const std::vector<transform_id>& get_children(transform_id idx) const
+			{
+				return _data.children[idx];
+			}
+
 			vector3 get_position(transform_id) const;
 			void set_position(transform_id, const vector3& pos);
 

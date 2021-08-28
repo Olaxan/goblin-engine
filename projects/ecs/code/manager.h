@@ -88,6 +88,11 @@ namespace efiilj
 				return (idx >= 0 && idx < static_cast<int>(_instances.size()));
 			}
 
+			const entity_id& get_entity(T idx) const
+			{
+				return _entities[idx];
+			}
+
 			const std::vector<T>& get_instances()
 			{
 				return _instances;
