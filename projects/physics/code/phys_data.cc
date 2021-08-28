@@ -72,26 +72,24 @@ namespace efiilj
 
 	}
 
-	bool collider_manager::test_hit(const ray& ray, vector3& hit, vector3& norm) const
+	bool collider_manager::test_hit(const ray& ray, trace_hit& result) const
 	{
 
 		float nearest = std::numeric_limits<float>::max();
 
 		bool ret = false;
-		vector3 near_hit;
-		vector3 near_norm;
+		trace_hit temp_result;
 
 		for (const auto& idx : _instances)
 		{
-			if (test_hit(idx, ray, near_hit, near_norm))
+			if (test_hit(idx, ray, temp_result))
 			{
 				ret = true;
-				float len = (near_hit - ray.origin).length();
+				float len = (temp_result.position - ray.origin).length();
 				if (len < nearest)
 				{
 					nearest = len;
-					hit = near_hit;
-					norm = near_norm;
+					result = temp_result;
 				}
 			}
 		}
@@ -99,7 +97,7 @@ namespace efiilj
 		return ret;
 	}
 
-	bool collider_manager::test_hit(collider_id idx, const ray& ray, vector3& hit, vector3& norm) const
+	bool collider_manager::test_hit(collider_id idx, const ray& ray, trace_hit& result) const
 	{
 
 		entity_id eid = _entities[idx];
@@ -140,8 +138,10 @@ namespace efiilj
 				if (len < nearest)
 				{
 					nearest = len;
-					hit = near_hit;
-					norm = near_norm;
+					result.position = near_hit;
+					result.normal = near_norm;
+					result.mesh = mid;
+					result.entity = eid;
 				}
 			}
 		}

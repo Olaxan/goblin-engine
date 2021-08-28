@@ -13,6 +13,11 @@ namespace efiilj
 	{
 		private:
 
+			int _selection_mask = (1 << 2);
+			ImGuiTreeNodeFlags _base_flags = 
+				ImGuiTreeNodeFlags_OpenOnArrow 
+				| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
 			entity_id _selected_entity;
 			std::shared_ptr<manager_host> _mgr_host;
 			std::shared_ptr<entity_manager> _entities;
@@ -33,8 +38,11 @@ namespace efiilj
 
 			void set_selected(entity_id eid)
 			{
-				if (_entities->is_valid(eid))
-					_selected_entity = eid;
+				if (!_entities->is_valid(eid))
+					return;
+
+				_selected_entity = eid;
+				_selection_mask = (1 << eid);
 			}
 	};
 }

@@ -18,10 +18,10 @@ namespace efiilj
 
 	struct trace_hit
 	{
-		vector3 hit;
-		vector3 norm;
+		vector3 position;
+		vector3 normal;
 		mesh_id mesh;
-		entity_id eid;
+		entity_id entity;
 	};
 
 	class collider_manager : public manager<collider_id> 
@@ -51,8 +51,8 @@ namespace efiilj
 
 			bool update_bounds(collider_id idx);
 
-			bool test_hit(const ray& ray, vector3& hit, vector3& norm) const;
-			bool test_hit(collider_id idx, const ray& ray, vector3& hit, vector3& norm) const;
+			bool test_hit(const ray& ray, trace_hit& hit) const;
+			bool test_hit(collider_id idx, const ray& ray, trace_hit& hit) const;
 
 			void update()
 			{

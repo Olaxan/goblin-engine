@@ -14,8 +14,8 @@ namespace efiilj
 
 			struct TransformData
 			{
-				mutable std::vector<matrix4> model;
-				mutable std::vector<matrix4> inverse;
+				std::vector<matrix4> model;
+				std::vector<matrix4> inverse;
 
 				std::vector<vector4> position;
 				std::vector<vector4> scale;
@@ -23,8 +23,8 @@ namespace efiilj
 
 				std::vector<transform_id> parent;
 
-				mutable std::vector<bool> model_updated;
-				mutable std::vector<bool> inverse_updated;
+				std::vector<bool> model_updated;
+				std::vector<bool> inverse_updated;
 
 				std::vector<std::vector<transform_id>> children;
 
@@ -44,18 +44,20 @@ namespace efiilj
 
 			void update_models();
 
-			const matrix4& get_model(transform_id) const;
-			const matrix4& get_model_inv(transform_id) const;
+			const matrix4& get_model(transform_id);
+			const matrix4& get_model_inv(transform_id);
 
 			transform_id get_parent(transform_id) const;
 			void set_parent(transform_id child_id, transform_id parent_id);
+			
+			void set_updated(transform_id idx, bool updated);
 
 			const std::vector<transform_id>& get_children(transform_id idx) const
 			{
 				return _data.children[idx];
 			}
 
-			vector3 get_position(transform_id) const;
+			vector3 get_position(transform_id);
 			void set_position(transform_id, const vector3& pos);
 
 			const quaternion& get_rotation(transform_id) const;
@@ -69,12 +71,12 @@ namespace efiilj
 			void add_scale(transform_id, const vector3& delta);
 			void add_rotation(transform_id, const vector3& axis, float angle);
 
-			vector3 get_left(transform_id) const;
-			vector3 get_right(transform_id) const;
-			vector3 get_up(transform_id) const;
-			vector3 get_down(transform_id) const;
-			vector3 get_forward(transform_id) const;
-			vector3 get_backward(transform_id) const;
+			vector3 get_left(transform_id);
+			vector3 get_right(transform_id);
+			vector3 get_up(transform_id);
+			vector3 get_down(transform_id);
+			vector3 get_forward(transform_id);
+			vector3 get_backward(transform_id);
 
 	};
 }

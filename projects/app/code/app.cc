@@ -24,15 +24,6 @@
 
 namespace fs = std::filesystem;
 
-float randf(float max = 1.0f)
-{
-	return static_cast<float>(rand()) / static_cast <float> (static_cast<float>(RAND_MAX) / max);
-}
-
-float randf(float min, float max)
-{
-	return min + static_cast<float>(rand()) / ( static_cast<float>(static_cast<float>(RAND_MAX) / (max - min)));
-}
 
 namespace efiilj
 {
@@ -252,13 +243,17 @@ namespace efiilj
 
 				is_dragging_mouse = true;
 
-				camera_id active = cameras->get_camera();
-				ray r = cameras->get_ray_from_camera(active, mouse_x, mouse_y);
-
-				vector3 hit, norm;
-				if (colliders->test_hit(r, hit, norm))
+				if (button == GLFW_MOUSE_BUTTON_RIGHT)
 				{
-					transforms->set_position(trf_hitmarker, hit);
+					camera_id active = cameras->get_camera();
+					ray r = cameras->get_ray_from_camera(active, mouse_x, mouse_y);
+
+					trace_hit hit;
+					if (colliders->test_hit(r, hit))
+					{
+						transforms->set_position(trf_hitmarker, hit.position);
+						editor->set_selected(hit.entity);
+					}
 				}
 			}
 			else

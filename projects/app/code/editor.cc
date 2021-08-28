@@ -32,13 +32,8 @@ namespace efiilj
 
 		std::stringstream ss;
 
-		static int selection_mask = (1 << 2);
-		static ImGuiTreeNodeFlags base_flags = 
-			ImGuiTreeNodeFlags_OpenOnArrow 
-			| ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
-		ImGuiTreeNodeFlags node_flags = base_flags;
-		const bool is_selected = (selection_mask & (1 << id)) != 0;
+		ImGuiTreeNodeFlags node_flags = _base_flags;
+		const bool is_selected = (_selection_mask & (1 << id)) != 0;
 
 		if (is_selected)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
@@ -68,6 +63,8 @@ namespace efiilj
 
 		if (children.size() > 0) // we are tree
 		{
+			ss << " [" << children.size() << "]";
+
 			bool node_open = ImGui::TreeNodeEx(
 					reinterpret_cast<void*>(id), node_flags, 
 					"%s", ss.str().c_str());
@@ -102,10 +99,16 @@ namespace efiilj
 		if (ImGui::TreeNode("Scene root"))
 		{
 
-			//int node_clicked = -1;
+			int node_clicked = -1;
 
 			for (const auto& id : ids)
-				draw_node(id, 0, _selected_entity);
+				draw_node(id, 0, node_clicked);
+
+			if (node_clicked != -1)
+			{
+				_selection_mask = (1 << node_clicked);
+				_selected_entity = node_clicked;
+			}
 
 			ImGui::TreePop();
 		}
