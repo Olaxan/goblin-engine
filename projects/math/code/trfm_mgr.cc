@@ -161,6 +161,9 @@ namespace efiilj
 
 		detach(child_id);
 
+		if (_data.children[child_id].find(parent_id) != _data.children[child_id].end())
+			detach(parent_id);
+
 		_data.parent[child_id] = parent_id;
 		_data.children[parent_id].emplace(child_id);
 		_data.model_updated[child_id] = false;
