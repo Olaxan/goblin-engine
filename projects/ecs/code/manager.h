@@ -30,7 +30,7 @@ namespace efiilj
 
 		public:
 
-			virtual T register_entity(entity_id eid)
+			T register_entity(entity_id eid)
 			{
 				T new_id = static_cast<T>(_instances.size());
 
@@ -44,7 +44,7 @@ namespace efiilj
 				return new_id;
 			}
 
-			virtual bool unregister_entity(T idx)
+			bool unregister_entity(T idx)
 			{
 				_alive[idx] = false;
 			}
@@ -54,7 +54,6 @@ namespace efiilj
 				register_entity(eid);
 			}
 			
-			// Maybe improve in the future
 			virtual void draw_gui() override {}
 
 			virtual void draw_entity_gui(entity_id eid) override
@@ -80,14 +79,14 @@ namespace efiilj
 
 			virtual void draw_gui(T) {};
 
-			const std::string& get_name() const override
-			{
-				return _name;
-			}
-
 			virtual bool is_valid(T idx) const
 			{
 				return (idx >= 0 && idx < static_cast<int>(_instances.size()));
+			}
+
+			const std::string& get_name() const override
+			{
+				return _name;
 			}
 
 			const entity_id& get_entity(T idx) const

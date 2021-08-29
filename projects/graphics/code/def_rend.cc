@@ -296,6 +296,7 @@ namespace efiilj
 
 			for (auto& idx : _lights->get_instances())
 			{
+
 				set_light_uniforms(idx);
 
 				switch(_lights->get_type(idx))

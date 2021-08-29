@@ -56,6 +56,8 @@ namespace efiilj
 	{
 		shader_id sid = _data.shader[idx];
 
+		ImGui::Text("Material %d", idx);
+
 		if (_shaders->is_valid(sid))
 		{
 			ImGui::TextColored(ImVec4(0, 1, 0, 1), 

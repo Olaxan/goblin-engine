@@ -40,6 +40,8 @@ namespace efiilj
 			return true;
 
 		generate(idx);
+		bind(idx);
+
 		set_params(idx);
 
 		stbi_set_flip_vertically_on_load(true);
@@ -84,7 +86,7 @@ namespace efiilj
 
 	void texture_server::buffer(texture_id idx, const unsigned int& width, const unsigned int& height, void* data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 				width, height, 0, _data.tex_format[idx], _data.tex_type[idx], data);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -96,8 +98,6 @@ namespace efiilj
 
 	void texture_server::set_params(texture_id idx)
 	{
-		glBindTexture(GL_TEXTURE_2D, _data.tex_id[idx]);
-
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _data.tex_wrap_s[idx]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _data.tex_wrap_t[idx]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _data.tex_min_filter[idx]);

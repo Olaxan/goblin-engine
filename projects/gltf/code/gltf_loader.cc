@@ -375,9 +375,9 @@ namespace efiilj
 			texture_id tex_id = _textures->create();
 
 			_textures->generate(tex_id);
+			_textures->bind(tex_id);
 			_textures->set_format(tex_id, tex_format);
 			_textures->set_type(tex_id, tex_type);
-			_textures->bind(tex_id);
 			_textures->set_usage(tex_id, type);
 			_textures->set_name(tex_id, tex_base.name);
 			_textures->buffer(tex_id, src.width, src.height, &src.image.at(0));

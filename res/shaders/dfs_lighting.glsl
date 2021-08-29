@@ -100,8 +100,8 @@ vec4 calc_base(light_base light, vec3 direction, vec3 position, vec3 normal, vec
     F0 = mix(F0, albedo, orm.z);	
 
 	// cook-torrance brdf
-	float NDF = distribution_GGX(normal, halfway_dir, orm.x);        
-	float G   = geometry_smith(normal, view_dir, direction, orm.x);      
+	float NDF = distribution_GGX(normal, halfway_dir, orm.y);        
+	float G   = geometry_smith(normal, view_dir, direction, orm.y);      
 	vec3 F    = fresnel_schlick(max(dot(halfway_dir, view_dir), 0.0), F0);       
 	
 	vec3 kS = F;
