@@ -8,6 +8,7 @@ namespace efiilj
 	graphics_manager::graphics_manager()
 	{
 		printf("Init graphics...\n");
+		_name = "Graphics instance";
 	}
 
 	graphics_manager::~graphics_manager()

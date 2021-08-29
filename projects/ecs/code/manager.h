@@ -48,6 +48,11 @@ namespace efiilj
 			{
 				_alive[idx] = false;
 			}
+
+			void register_from_editor(entity_id eid) override
+			{
+				register_entity(eid);
+			}
 			
 			// Maybe improve in the future
 			virtual void draw_gui() override {}
@@ -60,27 +65,24 @@ namespace efiilj
 				{
 					T idx = it->second;
 
-					if (ImGui::TreeNode(get_name(idx).c_str()))
+					ImGui::PushID(idx);
+
+					if (ImGui::TreeNode(get_name().c_str()))
 					{
 						draw_gui(idx);
 						ImGui::TreePop();
 					}
+
+					ImGui::PopID();
 					ImGui::Separator();
 				}
 			}
 
 			virtual void draw_gui(T) {};
 
-			const std::string& get_name() const
+			const std::string& get_name() const override
 			{
 				return _name;
-			}
-
-			const std::string get_name(T idx) const
-			{
-				std::stringstream ss;
-				ss << _name << " " << idx;
-				return ss.str();
 			}
 
 			virtual bool is_valid(T idx) const

@@ -58,6 +58,9 @@ namespace efiilj
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Camera %d", idx);
 		ImGui::Text("Uniform buffer %d", _ubo);
 
+		if (!(_current == idx) && ImGui::Button("Set active"))
+			set_camera(idx);
+
 		if (ImGui::TreeNode("Properties"))
 		{
 			if (ImGui::InputFloat("Width", &_data.width[idx])

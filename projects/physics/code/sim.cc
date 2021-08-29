@@ -6,6 +6,7 @@ namespace efiilj
 	simulator::simulator()
 	{
 		printf("Init simulator...\n");
+		_name = "Simulator";
 	}
 
 	simulator::~simulator()

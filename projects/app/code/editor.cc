@@ -17,17 +17,7 @@ namespace efiilj
 		printf("Editor exit\n");
 	}
 
-	bool entity_editor::draw_leaf(entity_id id, ImGuiTreeNodeFlags& node_flags, const std::string& name)
-	{
-		node_flags |= ImGuiTreeNodeFlags_Leaf 
-			| ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-		ImGui::TreeNodeEx(reinterpret_cast<void*>(id), node_flags, "%s", name.c_str()); 
-
-		return ImGui::IsItemClicked();
-	}
-
-	bool entity_editor::draw_node(entity_id id, int depth, int& node_clicked)
+	void entity_editor::draw_node(entity_id id, int depth, int& node_clicked)
 	{
 
 		std::stringstream ss;
@@ -53,7 +43,7 @@ namespace efiilj
 			// Skip if invoked by main loop and we're a child
 			// since we'll be drawn by our parent
 			if (depth == 0 && _transforms->get_parent(trf_id) != -1)
-				return true;
+				return;
 
 			const auto& children = _transforms->get_children(trf_id);
 			child_nodes.insert(child_nodes.end(), children.begin(), children.end());
@@ -77,7 +67,6 @@ namespace efiilj
 
 		if (ImGui::BeginDragDropSource())
 		{
-			printf("Dragging entity %d\n", trf_id);
 			ImGui::SetDragDropPayload("TRF_ENTITY", &trf_id, sizeof(transform_id));
 			ImGui::EndDragDropSource();
 		}
@@ -88,32 +77,20 @@ namespace efiilj
 			{
 				transform_id drag_trf = *static_cast<const transform_id*>(payload->Data);
 				_transforms->set_parent(drag_trf, trf_id);
-				ImGui::EndDragDropTarget();
-				ImGui::TreePop();
-
-				return false;
 			}
 			ImGui::EndDragDropTarget();
 		}
 
 		if (node_open)
 		{
-			for (const auto& child : child_nodes) //NOLINT
+			for (const auto& child : child_nodes)
 			{
 				entity_id child_eid = _transforms->get_entity(child);
-
-				// If a state change has occurred, break early
-				if (!draw_node(child_eid, depth + 1, node_clicked))
-				{
-					ImGui::TreePop();
-					return false;
-				}
+				draw_node(child_eid, depth + 1, node_clicked);
 			}
 
 			ImGui::TreePop();
 		}
-
-		return true;
 	}
 
 	void entity_editor::show_entity_gui()
@@ -128,10 +105,7 @@ namespace efiilj
 
 			for (const auto& id : ids)
 			{
-				if (!draw_node(id, 0, node_clicked))
-				{
-					break;
-				}
+				draw_node(id, 0, node_clicked);
 			}
 
 			if (node_clicked != -1)
@@ -152,6 +126,32 @@ namespace efiilj
 			{
 				mgr->draw_entity_gui(_selected_entity);
 			}
+
+			static bool is_add_comp_open = false;
+
+			if (_selected_entity != -1)
+			{
+
+				if (is_add_comp_open)
+				{
+					ImGui::BeginChild("Add component", ImVec2(0, 128), true);
+					if (ImGui::SmallButton("Close"))
+						is_add_comp_open = false;
+
+					for (const auto& mgr : _managers)
+					{
+						if (ImGui::Selectable(mgr->get_name().c_str()))
+						{
+							mgr->register_from_editor(_selected_entity);
+							is_add_comp_open = false;
+						}
+					}
+					ImGui::EndChild();
+				}
+				else if (ImGui::Button("Add component"))
+					is_add_comp_open = true;
+			}
+
             ImGui::EndChild();
             ImGui::EndGroup();
         }
