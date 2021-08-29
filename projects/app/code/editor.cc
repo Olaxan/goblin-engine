@@ -27,10 +27,12 @@ namespace efiilj
 		return ImGui::IsItemClicked();
 	}
 
-	void entity_editor::draw_node(entity_id id, int depth, int& node_clicked)
+	bool entity_editor::draw_node(entity_id id, int depth, int& node_clicked)
 	{
 
 		std::stringstream ss;
+
+		std::vector<transform_id> child_nodes;
 
 		ImGuiTreeNodeFlags node_flags = _base_flags;
 		const bool is_selected = (_selection_mask & (1 << id)) != 0;
@@ -46,49 +48,72 @@ namespace efiilj
 		else
 			ss << "Entity " << id;
 
-		if (!_transforms->is_valid(trf_id))
+		if (_transforms->is_valid(trf_id))
 		{
-			ss << " (virtual)";
-			if (draw_leaf(id, node_flags, ss.str()))
-				node_clicked = id;
-			return;
-		}
+			// Skip if invoked by main loop and we're a child
+			// since we'll be drawn by our parent
+			if (depth == 0 && _transforms->get_parent(trf_id) != -1)
+				return true;
 
-		// Skip if invoked by main loop and we're a child
-		// since we'll be rendered by our parent later
-		if (depth == 0 && _transforms->get_parent(trf_id) != -1)
-			return;
-
-		const auto& children = _transforms->get_children(trf_id);
-
-		if (children.size() > 0) // we are tree
-		{
-			ss << " [" << children.size() << "]";
-
-			bool node_open = ImGui::TreeNodeEx(
-					reinterpret_cast<void*>(id), node_flags, 
-					"%s", ss.str().c_str());
-
-			if (ImGui::IsItemClicked())
-				node_clicked = id;
-
-			if (node_open)
-			{
-				for (const auto& child : children) //NOLINT
-				{
-					entity_id child_eid = _transforms->get_entity(child);
-					draw_node(child_eid, depth + 1, node_clicked);
-				}
-
-				ImGui::TreePop();
-			}
+			const auto& children = _transforms->get_children(trf_id);
+			child_nodes.insert(child_nodes.end(), children.begin(), children.end());
 		}
 		else
+			ss << " (virtual)";
+
+		bool has_children = child_nodes.size() > 0;
+
+		if (has_children)
+			ss << " [" << child_nodes.size() << "]";
+		else
+			node_flags |= ImGuiTreeNodeFlags_Leaf;
+
+		bool node_open = ImGui::TreeNodeEx(
+				reinterpret_cast<void*>(id), node_flags, 
+				"%s", ss.str().c_str());
+
+		if (ImGui::IsItemClicked())
+			node_clicked = id;
+
+		if (ImGui::BeginDragDropSource())
 		{
-			if (draw_leaf(id, node_flags, ss.str()))
-				node_clicked = id;
-			return;
+			printf("Dragging entity %d\n", trf_id);
+			ImGui::SetDragDropPayload("TRF_ENTITY", &trf_id, sizeof(transform_id));
+			ImGui::EndDragDropSource();
 		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TRF_ENTITY"))
+			{
+				transform_id drag_trf = *static_cast<const transform_id*>(payload->Data);
+				_transforms->set_parent(drag_trf, trf_id);
+				ImGui::EndDragDropTarget();
+				ImGui::TreePop();
+
+				return false;
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		if (node_open)
+		{
+			for (const auto& child : child_nodes) //NOLINT
+			{
+				entity_id child_eid = _transforms->get_entity(child);
+
+				// If a state change has occurred, break early
+				if (!draw_node(child_eid, depth + 1, node_clicked))
+				{
+					ImGui::TreePop();
+					return false;
+				}
+			}
+
+			ImGui::TreePop();
+		}
+
+		return true;
 	}
 
 	void entity_editor::show_entity_gui()
@@ -102,7 +127,12 @@ namespace efiilj
 			int node_clicked = -1;
 
 			for (const auto& id : ids)
-				draw_node(id, 0, node_clicked);
+			{
+				if (!draw_node(id, 0, node_clicked))
+				{
+					break;
+				}
+			}
 
 			if (node_clicked != -1)
 			{

@@ -143,10 +143,26 @@ namespace efiilj
 		return _data.parent[idx];
 	}
 
+	void transform_manager::detach(transform_id idx)
+	{
+		transform_id parent = get_parent(idx);
+
+		if (is_valid(parent))
+		{
+			_data.children[parent].erase(idx);
+			_data.parent[idx] = -1;
+		}
+	}
+
 	void transform_manager::set_parent(transform_id child_id, transform_id parent_id)
 	{
+		if (child_id == parent_id)
+			return;
+
+		detach(child_id);
+
 		_data.parent[child_id] = parent_id;
-		_data.children[parent_id].emplace_back(child_id);
+		_data.children[parent_id].emplace(child_id);
 		_data.model_updated[child_id] = false;
 	}
 

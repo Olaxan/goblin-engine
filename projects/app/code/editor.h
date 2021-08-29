@@ -27,7 +27,7 @@ namespace efiilj
 			std::shared_ptr<transform_manager> _transforms;
 
 			bool draw_leaf(entity_id id, ImGuiTreeNodeFlags& node_flags, const std::string& name);
-			void draw_node(entity_id id, int depth, int& node_clicked);
+			bool draw_node(entity_id id, int depth, int& node_clicked);
 		public:
 
 			entity_editor(std::shared_ptr<entity_manager> ent, std::shared_ptr<manager_host> mgr_host);

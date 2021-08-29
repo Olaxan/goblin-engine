@@ -4,6 +4,8 @@
 #include "ifmgr.h"
 #include "quat.h"
 
+#include <set>
+
 namespace efiilj
 {
 	typedef int transform_id;
@@ -26,7 +28,7 @@ namespace efiilj
 				std::vector<bool> model_updated;
 				std::vector<bool> inverse_updated;
 
-				std::vector<std::vector<transform_id>> children;
+				std::vector<std::set<transform_id>> children;
 
 			} _data;
 
@@ -47,12 +49,14 @@ namespace efiilj
 			const matrix4& get_model(transform_id);
 			const matrix4& get_model_inv(transform_id);
 
+			void detach(transform_id);
+
 			transform_id get_parent(transform_id) const;
 			void set_parent(transform_id child_id, transform_id parent_id);
 			
 			void set_updated(transform_id idx, bool updated);
 
-			const std::vector<transform_id>& get_children(transform_id idx) const
+			const std::set<transform_id>& get_children(transform_id idx) const
 			{
 				return _data.children[idx];
 			}
