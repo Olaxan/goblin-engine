@@ -66,6 +66,7 @@ namespace efiilj
 
 			const quaternion& get_rotation(transform_id) const;
 			void set_rotation(transform_id, const quaternion& rot);
+			void set_rotation(transform_id, const vector3& euler);
 
 			vector3 get_scale(transform_id)	const;
 			void set_scale(transform_id, const vector3& scale);

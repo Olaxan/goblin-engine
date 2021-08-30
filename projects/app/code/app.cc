@@ -96,8 +96,8 @@ namespace efiilj
 
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
-		sim = std::make_shared<simulator>();
 		colliders = std::make_shared<collider_manager>();
+		sim = std::make_shared<simulator>();
 		gltf = std::make_shared<gltf_model_server>();
 
 		managers->register_manager(entities, 'ENTS');

@@ -266,11 +266,8 @@ namespace efiilj
 		/// </summary>
 		/// <param name="index">The index to access</param>
 		/// <returns>The value at the specified position in the vector</returns>
-		float& operator [] (const int& index)
+		float& operator [] (int index)
 		{
-			if (index > 3)
-				throw new std::out_of_range("Vector index out of range");
-
 			return arr_[index];
 		}
 
@@ -279,7 +276,15 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The vector index to access</param>
 		/// <returns>The value at the specified position in the vector</returns>
-		const float& at(int y) const
+		float& at(int y) 
+		{
+			if (y > 3)
+				throw new std::out_of_range("Vector index out of range");
+
+			return arr_[y];
+		}
+
+		const float& get(int y) const
 		{
 			if (y > 3)
 				throw new std::out_of_range("Vector index out of range");
@@ -406,7 +411,7 @@ namespace efiilj
 			float len = v.magnitude();
 			float err = fabs(1.0f - len);
 
-			return len > EPSILON ? v / len : v;
+			return err > EPSILON ? v / len : v;
 		}
 
 		void normalize()
@@ -434,14 +439,14 @@ namespace efiilj
 		/// Returns a formatted multi-line string representation of the vector.
 		/// </summary>
 		/// <returns>A formatted multi-line string representation of the vector</returns>
-		std::string to_string() const
+		std::string to_string()
 		{
 			std::stringstream ss;
 			ss << x << ";\n" << y << ";\n" << z << ";\n" << w << ";\n";
 			return ss.str();
 		}
 
-		std::string to_mem_string() const
+		std::string to_mem_string()
 		{
 			std::stringstream ss;
 			for (int i = 0; i < 4; i++)

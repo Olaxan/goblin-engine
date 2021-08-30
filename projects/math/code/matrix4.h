@@ -44,10 +44,10 @@ namespace efiilj
 		{
 			clear();
 
-			(*this)(0, 0) = copy.a;
-			(*this)(1, 0) = copy.b;
-			(*this)(0, 1) = copy.c;
-			(*this)(1, 1) = copy.d;
+			(*this)[0][0] = copy.a;
+			(*this)[1][0] = copy.b;
+			(*this)[0][1] = copy.c;
+			(*this)[1][1] = copy.d;
 		}
 
 		/// <summary>
@@ -85,17 +85,17 @@ namespace efiilj
 		{
 			clear();
 
-			(*this)(0, 0) = copy.at(0, 0);
-			(*this)(1, 0) = copy.at(1, 0);
-			(*this)(2, 0) = copy.at(2, 0);
+			(*this)[0][0] = copy.at(0, 0);
+			(*this)[1][0] = copy.at(1, 0);
+			(*this)[2][0] = copy.at(2, 0);
 
-			(*this)(0, 1) = copy.at(0, 1);
-			(*this)(1, 1) = copy.at(1, 1);
-			(*this)(2, 1) = copy.at(2, 1);
+			(*this)[0][1] = copy.at(0, 1);
+			(*this)[1][1] = copy.at(1, 1);
+			(*this)[2][1] = copy.at(2, 1);
 
-			(*this)(0, 2) = copy.at(0, 2);
-			(*this)(1, 2) = copy.at(1, 2);
-			(*this)(2, 2) = copy.at(2, 2);
+			(*this)[0][2] = copy.at(0, 2);
+			(*this)[1][2] = copy.at(1, 2);
+			(*this)[2][2] = copy.at(2, 2);
 		}
 
 		/// <summary>
@@ -116,25 +116,25 @@ namespace efiilj
 		/// <returns>A reference to the current matrix, after modification</returns>
 		matrix4& operator = (const matrix4& other)
 		{
-			(*this)(0, 0) = other.at(0, 0);
-			(*this)(0, 1) = other.at(0, 1);
-			(*this)(0, 2) = other.at(0, 2);
-			(*this)(0, 3) = other.at(0, 3);
+			(*this)[0][0] = other.get(0, 0);
+			(*this)[0][1] = other.get(0, 1);
+			(*this)[0][2] = other.get(0, 2);
+			(*this)[0][3] = other.get(0, 3);
 
-			(*this)(1, 0) = other.at(1, 0);
-			(*this)(1, 1) = other.at(1, 1);
-			(*this)(1, 2) = other.at(1, 2);
-			(*this)(1, 3) = other.at(1, 3);
+			(*this)[1][0] = other.get(1, 0);
+			(*this)[1][1] = other.get(1, 1);
+			(*this)[1][2] = other.get(1, 2);
+			(*this)[1][3] = other.get(1, 3);
 
-			(*this)(2, 0) = other.at(2, 0);
-			(*this)(2, 1) = other.at(2, 1);
-			(*this)(2, 2) = other.at(2, 2);
-			(*this)(2, 3) = other.at(2, 3);
+			(*this)[2][0] = other.get(2, 0);
+			(*this)[2][1] = other.get(2, 1);
+			(*this)[2][2] = other.get(2, 2);
+			(*this)[2][3] = other.get(2, 3);
 
-			(*this)(3, 0) = other.at(3, 0);
-			(*this)(3, 1) = other.at(3, 1);
-			(*this)(3, 2) = other.at(3, 2);
-			(*this)(3, 3) = other.at(3, 3);
+			(*this)[3][0] = other.get(3, 0);
+			(*this)[3][1] = other.get(3, 1);
+			(*this)[3][2] = other.get(3, 2);
+			(*this)[3][3] = other.get(3, 3);
 
 			return *this;
 		}
@@ -148,25 +148,25 @@ namespace efiilj
 		{
 			matrix4 mat;
 
-			mat(0, 0) = vector4::dot4(row(0), other.col(0));
-			mat(1, 0) = vector4::dot4(row(0), other.col(1));
-			mat(2, 0) = vector4::dot4(row(0), other.col(2));
-			mat(3, 0) = vector4::dot4(row(0), other.col(3));
+			mat[0][0] = vector4::dot4(row(0), other.col(0));
+			mat[1][0] = vector4::dot4(row(0), other.col(1));
+			mat[2][0] = vector4::dot4(row(0), other.col(2));
+			mat[3][0] = vector4::dot4(row(0), other.col(3));
 
-			mat(0, 1) = vector4::dot4(row(1), other.col(0));
-			mat(1, 1) = vector4::dot4(row(1), other.col(1));
-			mat(2, 1) = vector4::dot4(row(1), other.col(2));
-			mat(3, 1) = vector4::dot4(row(1), other.col(3));
+			mat[0][1] = vector4::dot4(row(1), other.col(0));
+			mat[1][1] = vector4::dot4(row(1), other.col(1));
+			mat[2][1] = vector4::dot4(row(1), other.col(2));
+			mat[3][1] = vector4::dot4(row(1), other.col(3));
 
-			mat(0, 2) = vector4::dot4(row(2), other.col(0));
-			mat(1, 2) = vector4::dot4(row(2), other.col(1));
-			mat(2, 2) = vector4::dot4(row(2), other.col(2));
-			mat(3, 2) = vector4::dot4(row(2), other.col(3));
+			mat[0][2] = vector4::dot4(row(2), other.col(0));
+			mat[1][2] = vector4::dot4(row(2), other.col(1));
+			mat[2][2] = vector4::dot4(row(2), other.col(2));
+			mat[3][2] = vector4::dot4(row(2), other.col(3));
 
-			mat(0, 3) = vector4::dot4(row(3), other.col(0));
-			mat(1, 3) = vector4::dot4(row(3), other.col(1));
-			mat(2, 3) = vector4::dot4(row(3), other.col(2));
-			mat(3, 3) = vector4::dot4(row(3), other.col(3));
+			mat[0][3] = vector4::dot4(row(3), other.col(0));
+			mat[1][3] = vector4::dot4(row(3), other.col(1));
+			mat[2][3] = vector4::dot4(row(3), other.col(2));
+			mat[3][3] = vector4::dot4(row(3), other.col(3));
 
 			return mat;
 		}
@@ -182,7 +182,7 @@ namespace efiilj
 
 			for (int i = 0; i < 16; i++)
 			{
-				mat(i) *= other;
+				mat.at(i) *= other;
 			}
 
 			return mat;
@@ -235,30 +235,9 @@ namespace efiilj
 
 		/* === ACCESSORS === */
 
-		float& operator [] (const int i)
+		vector4& operator [] (int column)
 		{
-			return _cols[i / 4][i % 4];
-		}
-
-		/// <summary>
-		/// Returns the (non-const) value at the n:th position in the matrix, from top-left to bottom-right.
-		/// </summary>
-		/// <param name="i">The matrix index to query</param>
-		/// <returns>The value at matrix index n</returns>
-		float& operator () (const int i)
-		{
-			return _cols[i / 4][i % 4];
-		}
-
-		/// <summary>
-		/// Returns the (non-const) value at matrix position x, y.
-		/// </summary>
-		/// <param name="x">Matrix x-position, column</param>
-		/// <param name="y">Matrix y-poisition, row</param>
-		/// <returns>The value at matrix position x, y</returns>
-		float& operator () (const int col, const int row)
-		{
-			return _cols[col][row];
+			return _cols[column];
 		}
 
 		/// <summary>
@@ -266,12 +245,20 @@ namespace efiilj
 		/// </summary>
 		/// <param name="n">The matrix index to access</param>
 		/// <returns>The value at matrix index n</returns>
-		const float& at(const int n) const
+		float& at(int n)
 		{
 			if (n >= 16)
 				throw std::out_of_range("Matrix index out of range");
 
 			return at(n / 4, n % 4);
+		}
+
+		const float& get(const int index) const
+		{
+			if (index >= 16)
+				throw std::out_of_range("Matrix index out of range");
+
+			return get(index / 4, index % 4);
 		}
 
 		/// <summary>
@@ -280,12 +267,20 @@ namespace efiilj
 		/// <param name="x">Matrix x-position, column</param>
 		/// <param name="y">Matrix y-position, row</param>
 		/// <returns>The value at matrix position x, y</returns>
-		const float& at(const int col, const int row) const
+		float& at(int col, int row)
 		{
 			if (col >= 4 || row >= 4)
 				throw std::out_of_range("Matrix index out of range");
 
 			return _cols[col].at(row);
+		}
+		
+		const float& get(const int col, const int row) const
+		{
+			if (col >= 4 || row >= 4)
+				throw std::out_of_range("Matrix index out of range");
+
+			return _cols[col].get(row);
 		}
 
 		/// <summary>
@@ -293,7 +288,7 @@ namespace efiilj
 		/// </summary>
 		/// <param name="y">The row index to return</param>
 		/// <returns>The row at the specified y-position</returns>
-	 	vector4 col(const int x) const
+	 	vector4 col(int x) const
 		{
 			if (x >= 4)
 				throw std::out_of_range("Row index out of range");
@@ -307,7 +302,7 @@ namespace efiilj
 		/// <param name="y">The row index to change</param>
 		/// <param name="row">The Vector4 to replace the row with</param>
 		/// <param name="relative">Whether the operation should be added to the existing values, or replace them<param name=""></param>
-		void col(const int x, const vector4& col)
+		void col(int x, const vector4& col)
 		{
 			if (x >= 4)
 				throw std::out_of_range("Column index out of range");
@@ -325,7 +320,7 @@ namespace efiilj
 			if (y > 4)
 				throw std::out_of_range("Column index out of range");
 
-			return vector4(at(0, y), at(1, y), at(2, y), at(3, y));
+			return vector4(get(0, y), get(1, y), get(2, y), get(3, y));
 		}
 
 		/// <summary>
@@ -336,13 +331,10 @@ namespace efiilj
 		/// <param name="relative">Whether the operation should be added to the existing values, or replace them</param>
 		void row(const int y, const vector4& row)
 		{
-			if (y > 4)
-				throw std::out_of_range("Row index out of range");
-
-			(*this)(0, y) = row.x;
-			(*this)(1, y) = row.y;
-			(*this)(2, y) = row.z;
-			(*this)(3, y) = row.w;
+			(*this).at(0, y) = row.x;
+			(*this).at(1, y) = row.y;
+			(*this).at(2, y) = row.z;
+			(*this).at(3, y) = row.w;
 		}
 
 		/* === MATRIX FUNCTIONS === */
@@ -355,7 +347,7 @@ namespace efiilj
 		{
 			for (int i = 0; i < 16; i++)
 			{
-				(*this)(i) = identity && (i % 5 == 0);
+				at(i) = identity && (i % 5 == 0);
 			}
 		}
 
@@ -374,7 +366,7 @@ namespace efiilj
 			{
 				if (i % 4 != x && i / 4 != y)
 				{
-					mat(j) = at(i);
+					mat(j) = get(i);
 					j++;
 				}
 
@@ -396,7 +388,7 @@ namespace efiilj
 			const matrix3 c = minor(2, 0);
 			const matrix3 d = minor(3, 0);
 
-			return at(0) * a.determinant() - at(1) * b.determinant() + at(2) * c.determinant() - at(3) * d.determinant();
+			return get(0) * a.determinant() - get(1) * b.determinant() + get(2) * c.determinant() - get(3) * d.determinant();
 		}
 
 		/// <summary>
@@ -407,25 +399,25 @@ namespace efiilj
 		{
 			matrix4 mat;
 
-			mat(0, 0) = at(0, 0);
-			mat(0, 1) = at(1, 0);
-			mat(0, 2) = at(2, 0);
-			mat(0, 3) = at(3, 0);
+			mat[0][0] = get(0, 0);
+			mat[0][1] = get(1, 0);
+			mat[0][2] = get(2, 0);
+			mat[0][3] = get(3, 0);
 
-			mat(1, 0) = at(0, 1);
-			mat(1, 1) = at(1, 1);
-			mat(1, 2) = at(2, 1);
-			mat(1, 3) = at(3, 1);
+			mat[1][0] = get(0, 1);
+			mat[1][1] = get(1, 1);
+			mat[1][2] = get(2, 1);
+			mat[1][3] = get(3, 1);
 
-			mat(2, 0) = at(0, 2);
-			mat(2, 1) = at(1, 2);
-			mat(2, 2) = at(2, 2);
-			mat(2, 3) = at(3, 2);
+			mat[2][0] = get(0, 2);
+			mat[2][1] = get(1, 2);
+			mat[2][2] = get(2, 2);
+			mat[2][3] = get(3, 2);
 
-			mat(3, 0) = at(0, 3);
-			mat(3, 1) = at(1, 3);
-			mat(3, 2) = at(2, 3);
-			mat(3, 3) = at(3, 3);
+			mat[3][0] = get(0, 3);
+			mat[3][1] = get(1, 3);
+			mat[3][2] = get(2, 3);
+			mat[3][3] = get(3, 3);
 
 			return mat;
 		}
@@ -446,10 +438,10 @@ namespace efiilj
 			{
 				for (int x = 0; x < 4; x++)
 				{
-					inv(x, y) = minor(x, y).determinant();
+					inv[x][y] = minor(x, y).determinant();
 
 					if ((x + (y % 2 == 0)) % 2 == 0)
-						inv(x, y) *= -1;
+						inv[x][y] *= -1;
 				}
 			}
 
@@ -492,9 +484,9 @@ namespace efiilj
 		{
 			matrix4 mat = matrix4();
 
-			mat(0, 0) = x;
-			mat(1, 1) = y;
-			mat(2, 2) = z;
+			mat[0][0] = x;
+			mat[1][1] = y;
+			mat[2][2] = z;
 
 			return mat;
 		}
@@ -523,10 +515,10 @@ namespace efiilj
 		{
 			matrix4 mat;
 
-			mat(1, 1) = cosf(rad);
-			mat(1, 2) = -sinf(rad);
-			mat(2, 1) = sinf(rad);
-			mat(2, 2) = cosf(rad);
+			mat[1][1] = cosf(rad);
+			mat[1][2] = -sinf(rad);
+			mat[2][1] = sinf(rad);
+			mat[2][2] = cosf(rad);
 
 			return mat;
 		}
@@ -540,10 +532,10 @@ namespace efiilj
 		{
 			matrix4 mat;
 
-			mat(0, 0) = cosf(rad);
-			mat(0, 2) = sinf(rad);
-			mat(2, 0) = -sinf(rad);
-			mat(2, 2) = cosf(rad);
+			mat[0][0] = cosf(rad);
+			mat[0][2] = sinf(rad);
+			mat[2][0] = -sinf(rad);
+			mat[2][2] = cosf(rad);
 
 			return mat;
 		}
@@ -557,19 +549,19 @@ namespace efiilj
 		{
 			matrix4 mat;
 
-			mat(0, 0) = cosf(rad);
-			mat(0, 1) = -sinf(rad);
-			mat(1, 0) = sinf(rad);
-			mat(1, 1) = cosf(rad);
+			mat[0][0] = cosf(rad);
+			mat[0][1] = -sinf(rad);
+			mat[1][0] = sinf(rad);
+			mat[1][1] = cosf(rad);
 
 			return mat;
 		}
 
-		static matrix4 get_rotation_euler(const float pitch, const float yaw, const float roll) 
+		static matrix4 get_rotation_euler(const float pitch, const float yaw, const float) 
 		{
 			const float sinP = sin(pitch); const float cosP = cos(pitch);
 			const float sinY = sin(yaw);   const float cosY = cos(yaw);
-			const float sinR = sin(roll);  const float cosR = cos(roll);
+			//const float sinR = sin(roll);  const float cosR = cos(roll);
 
 			const vector4 right(cosY, 0, -sinY, 0.0f);
 			const vector4 up(sinY * sinP, cosP, cosY * sinP, 0.0f);
@@ -603,13 +595,13 @@ namespace efiilj
 
 			matrix4 mat(false);
 
-			mat(0, 0) = (2.0f * near) / (right - left);
-			mat(2, 0) = -((right + left) / (right - left));
-			mat(1, 1) = (2.0f * near) / (top - bottom);
-			mat(2, 1) = -((top + bottom) / (top - bottom));
-			mat(2, 2) = -((far + near) / (far - near));
-			mat(3, 2) = -((2 * far * near) / (far - near));
-			mat(2, 3) = -1.0f;
+			mat[0][0] = (2.0f * near) / (right - left);
+			mat[2][0] = -((right + left) / (right - left));
+			mat[1][1] = (2.0f * near) / (top - bottom);
+			mat[2][1] = -((top + bottom) / (top - bottom));
+			mat[2][2] = -((far + near) / (far - near));
+			mat[3][2] = -((2 * far * near) / (far - near));
+			mat[2][3] = -1.0f;
 
 			return mat;
 		}
@@ -633,9 +625,9 @@ namespace efiilj
 			const vector3 camera_up = vector3::cross(camera_right, camera_direction);
 
 			matrix4 a = matrix4(vector4(camera_right, 0), vector4(camera_up, 0), -vector4(camera_direction, 0), vector4(), false);
-			a(12) = -vector3::dot(camera_right, camera_pos);
-			a(13) = -vector3::dot(camera_up, camera_pos);
-			a(14) =  vector3::dot(camera_direction, camera_pos);
+			a.at(12) = -vector3::dot(camera_right, camera_pos);
+			a.at(13) = -vector3::dot(camera_up, camera_pos);
+			a.at(14) =  vector3::dot(camera_direction, camera_pos);
 
 			return a;
 		}
@@ -661,7 +653,7 @@ namespace efiilj
 			std::stringstream ss;
 			for (int i = 0; i < 16; i++)
 			{
-				ss << *(&(*this).at(0) + i) << ", ";
+				ss << *(&(*this).get(0) + i) << ", ";
 			}
 
 			ss << std::endl;

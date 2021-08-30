@@ -48,27 +48,31 @@ namespace efiilj
 
 		if (ImGui::TreeNode("Properties"))
 		{
-			if (ImGui::DragFloat3("Position", &_data.position[idx].x, 0.1f) 
-				|| ImGui::DragFloat4("Rotation", &_data.rotation[idx].x)
-				|| ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.1f))
-			{
+			vector3 temp_euler = _data.rotation[idx].get_euler();
+			bool pos_changed = ImGui::DragFloat3("Position", &_data.position[idx].x, 0.01f);
+			bool rot_changed = ImGui::DragFloat3("Rotation", &temp_euler.x, 0.01f);
+			bool scl_changed = ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.01f);
+
+			if (rot_changed)
+				set_rotation(idx, temp_euler);
+
+			if (pos_changed || rot_changed || scl_changed)
 				set_updated(idx, false);
-			}
 
 			ImGui::TreePop();
 		}
 
 		if (ImGui::TreeNode("Model matrix"))
 		{
-			ImGui::InputFloat4("X", &_data.model[idx](0, 0));
-			ImGui::InputFloat4("Y", &_data.model[idx](1, 0));
-			ImGui::InputFloat4("Z", &_data.model[idx](2, 0));
-			ImGui::InputFloat4("W", &_data.model[idx](3, 0));
+			ImGui::InputFloat4("X", &_data.model[idx][0].x);
+			ImGui::InputFloat4("Y", &_data.model[idx][1].x);
+			ImGui::InputFloat4("Z", &_data.model[idx][2].x);
+			ImGui::InputFloat4("W", &_data.model[idx][3].x);
 
 			if (ImGui::Button("Randomize!"))
 			{
 				for (size_t i = 0; i < 4 * 4; i++)
-					_data.model[idx][i] = randf(-1.0f, 1.0f);
+					_data.model[idx].at(i) = randf(-1.0f, 1.0f);
 
 				set_updated(idx, false);
 			}
@@ -189,6 +193,12 @@ namespace efiilj
 	void transform_manager::set_rotation(transform_id idx, const quaternion& rot)
 	{
 		_data.rotation[idx] = rot;	
+		set_updated(idx, false);
+	}
+	
+	void transform_manager::set_rotation(transform_id idx, const vector3& euler)
+	{
+		_data.rotation[idx] = quaternion(euler);
 		set_updated(idx, false);
 	}
 

@@ -20,6 +20,7 @@ namespace efiilj
 			quaternion(const vector3& euler);
 			quaternion(const vector3& axis, const float& angle);
 			quaternion(const vector4& xyzw);
+			quaternion(float x, float y, float z, float w);
 
 			quaternion(const quaternion& copy);
 			quaternion(const quaternion&& move);
@@ -35,9 +36,11 @@ namespace efiilj
 			void add_axis_rotation(const vector3& axis, const float& angle);
 
 			matrix4 get_rotation_matrix() const;
+			vector3 get_euler() const;
 			quaternion get_local_rotation(const vector3& axis, const float& angle);
 
 			quaternion operator * (const quaternion& other) const;
+			quaternion operator * (const float& s) const;
 
 			void operator = (const quaternion& other);
 

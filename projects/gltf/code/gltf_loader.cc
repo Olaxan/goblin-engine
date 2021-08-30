@@ -132,7 +132,7 @@ namespace efiilj
 		efiilj::matrix4 mat;
 		for (size_t i = 0; i < 16; i++)
 		{
-			mat[i] = static_cast<float>(m[i]);
+			mat.at(i) = static_cast<float>(m[i]);
 		}
 
 		return mat;

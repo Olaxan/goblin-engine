@@ -24,7 +24,7 @@ namespace efiilj
 		_data.uri.emplace_back();
 	}
 
-	void shader_server::on_register(std::shared_ptr<manager_host> host)
+	void shader_server::on_register(std::shared_ptr<manager_host> host) //NOLINT
 	{
 		
 	}
@@ -128,7 +128,7 @@ namespace efiilj
 		if (uniform == -1)
 			return false;
 
-		glUniform4fv(uniform, 1, &vec.at(0));
+		glUniform4fv(uniform, 1, &vec.get(0));
 		return true;
 	}
 
@@ -139,7 +139,7 @@ namespace efiilj
 		if (uniform == -1)
 			return false;
 
-		glUniformMatrix4fv(uniform, 1, GL_FALSE, &mat.at(0));
+		glUniformMatrix4fv(uniform, 1, GL_FALSE, &mat.get(0));
 		return true;
 	}
 

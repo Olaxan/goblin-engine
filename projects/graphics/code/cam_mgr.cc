@@ -78,20 +78,20 @@ namespace efiilj
 
 			if (ImGui::TreeNode("Perspective matrix"))
 			{
-				ImGui::InputFloat4("X", &_data.perspective[idx](0, 0));
-				ImGui::InputFloat4("Y", &_data.perspective[idx](1, 0));
-				ImGui::InputFloat4("Z", &_data.perspective[idx](2, 0));
-				ImGui::InputFloat4("W", &_data.perspective[idx](3, 0));
+				ImGui::InputFloat4("X", &_data.perspective[idx][0].x);
+				ImGui::InputFloat4("Y", &_data.perspective[idx][1].x);
+				ImGui::InputFloat4("Z", &_data.perspective[idx][2].x);
+				ImGui::InputFloat4("W", &_data.perspective[idx][3].x);
 
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode("View matrix"))
 			{
-				ImGui::InputFloat4("X", &_data.view[idx](0, 0));
-				ImGui::InputFloat4("Y", &_data.view[idx](1, 0));
-				ImGui::InputFloat4("Z", &_data.view[idx](2, 0));
-				ImGui::InputFloat4("W", &_data.view[idx](3, 0));
+				ImGui::InputFloat4("X", &_data.view[idx][0].x);
+				ImGui::InputFloat4("Y", &_data.view[idx][1].x);
+				ImGui::InputFloat4("Z", &_data.view[idx][2].x);
+				ImGui::InputFloat4("W", &_data.view[idx][3].x);
 				
 				ImGui::TreePop();
 			}
