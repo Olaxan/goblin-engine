@@ -390,7 +390,9 @@ namespace efiilj
 
 			return ss.str();
 		}
-
+		
 		~vector3() { }
 	};
+	
+	extern vector3 operator * (float lhs, const vector3& rhs);
 }

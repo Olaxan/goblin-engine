@@ -111,7 +111,12 @@ namespace efiilj
 
 	quaternion quaternion::operator * (const float& s) const
 	{
-		quaternion q(xyzw.x * s, xyzw.y * s, xyzw.z * s, xyzw.w * s);
+		return quaternion(xyzw.x * s, xyzw.y * s, xyzw.z * s, xyzw.w * s);
+	}
+	
+	quaternion quaternion::operator + (const quaternion& other) const
+	{
+		return (*this) * other;
 	}
 
 	void quaternion::operator = (const quaternion& other)
@@ -125,6 +130,12 @@ namespace efiilj
 	quaternion& quaternion::operator *= (const quaternion& other)
 	{
 		*this = other * (*this);
+		return *this;
+	}
+
+	quaternion& quaternion::operator += (const quaternion& other)
+	{
+		*this = other + (*this);
 		return *this;
 	}
 
@@ -189,6 +200,11 @@ namespace efiilj
 			);
 
 		return quaternion(v);
+	}
+
+	quaternion operator * (float lhs, const quaternion& rhs)
+	{
+		return rhs * lhs;
 	}
 }
 

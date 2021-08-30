@@ -153,6 +153,8 @@ namespace efiilj
 
 		transform_id parent_trf = transforms->register_entity(parent);
 
+		physics_id parent_rb = sim->register_entity(parent);
+
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
 		{
 			rdef->register_entity(node);
@@ -315,12 +317,15 @@ namespace efiilj
 			cameras->update();
 			colliders->update();
 
+			sim->begin_frame();
 			rdef->begin_frame();
 		    rfwd->begin_frame();
 
+			sim->simulate();
 			rdef->render_frame();
 		    rfwd->render_frame();
 
+			sim->end_frame();
 			rdef->end_frame();
 			rfwd->end_frame();
 
