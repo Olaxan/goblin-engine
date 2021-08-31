@@ -21,8 +21,8 @@ namespace efiilj
 		_data.previous.emplace_back();
 		_data.inertia.emplace_back(1.0f);
 		_data.inverse_inertia.emplace_back(0.1f);
-		_data.mass.emplace_back(0.1f);
-		_data.inverse_mass.emplace_back(1.0f / 0.1f);
+		_data.mass.emplace_back(1.0f);
+		_data.inverse_mass.emplace_back(0.1f);
 
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
@@ -74,13 +74,13 @@ namespace efiilj
 		state.angular_velocity = state.angular_momentum * 
 			_data.inverse_inertia[idx];
 
-		//state.orientation.normalize();
+		state.orientation.normalize();
 
 		const vector3& av = state.angular_velocity;
 
 		quaternion q(av.x, av.y, av.z, 0);
 
-		state.spin = 0.5f * q * state.orientation;
+		state.spin = (0.5f * q) * state.orientation;
 	}
 
 
@@ -149,6 +149,7 @@ namespace efiilj
 		next_state.momentum = state.momentum + d.force * dt;
 		next_state.orientation = state.orientation + d.spin * dt;
 		next_state.angular_momentum = state.angular_momentum + d.torque * dt;
+
 		recalculate_state(idx, next_state);
 
 		output.velocity = next_state.velocity;
@@ -196,7 +197,7 @@ namespace efiilj
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
-		return vector3(0, 1, 0) * 0.0001f - state.angular_velocity * 0.1f;
+		return vector3(0, 1, 0) * 0.01f - state.angular_velocity * 0.1f;
 	}
 
 	void simulator::end_frame()

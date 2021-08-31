@@ -40,14 +40,20 @@ namespace efiilj
 			vector3 get_euler() const;
 			quaternion get_local_rotation(const vector3& axis, const float& angle);
 
-			quaternion operator + (const quaternion& other) const;
 			quaternion operator * (const quaternion& other) const;
+			quaternion operator + (const quaternion& other) const;
+			quaternion operator - (const quaternion& other) const;
 			quaternion operator * (const float s) const;
+			quaternion operator / (const float s) const;
 
 			void operator = (const quaternion& other);
 
 			quaternion& operator *= (const quaternion& other);
 			quaternion& operator += (const quaternion& other);
+			quaternion& operator -= (const quaternion& other);
+			quaternion& operator *= (float f);
+			quaternion& operator /= (float f);
+
 	};
 
 	extern quaternion operator * (float lhs, const quaternion& rhs);

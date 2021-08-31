@@ -108,15 +108,26 @@ namespace efiilj
 
 		return quaternion(q);
 	}
+	
+	quaternion quaternion::operator + (const quaternion& other) const
+	{
+		return quaternion(x + other.x, y + other.y, z + other.z, w + other.z);
+	}
+
+	quaternion quaternion::operator - (const quaternion& other) const
+	{
+		return quaternion(x - other.x, y - other.y, z - other.z, w - other.z);
+	}
 
 	quaternion quaternion::operator * (const float s) const
 	{
 		return quaternion(xyzw.x * s, xyzw.y * s, xyzw.z * s, xyzw.w * s);
 	}
-	
-	quaternion quaternion::operator + (const quaternion& other) const
+
+	quaternion quaternion::operator / (const float s) const
 	{
-		return (*this) * other;
+		float inv = 1.0f / s;
+		return quaternion(xyzw.x * inv, xyzw.y * inv, xyzw.z * inv, xyzw.w * inv);
 	}
 
 	void quaternion::operator = (const quaternion& other)
@@ -135,7 +146,38 @@ namespace efiilj
 
 	quaternion& quaternion::operator += (const quaternion& other)
 	{
-		*this = (*this) * other;
+		x += other.x;
+		y += other.y;
+		z += other.z;
+		w += other.w;
+		return *this;
+	}
+
+	quaternion& quaternion::operator -= (const quaternion& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+		w -= other.w;
+		return *this;
+	}
+
+	quaternion& quaternion::operator *= (float f)
+	{
+		x *= f;
+		y *= f;
+		z *= f;
+		w *= f;
+		return *this;
+	}
+
+	quaternion& quaternion::operator /= (float f)
+	{
+		float inv = 1.0f / f;
+		x *= inv;
+		y *= inv;
+		z *= inv;
+		w *= inv;
 		return *this;
 	}
 

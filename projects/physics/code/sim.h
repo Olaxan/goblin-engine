@@ -24,9 +24,9 @@ namespace efiilj
 			struct Derivative
 			{
 				vector3 velocity; 	// dx/dt (position change over time)
-				vector3 force;		// dlV/dt (velocity change over time)
+				vector3 force;		// dv/dt (velocity change over time)
 				quaternion spin;	// dr/dt (orientation change over time)
-				vector3 torque;		// daV/dt (angular velocity change over time)
+				vector3 torque;		// dw/dt (angular velocity change over time)
 			};
 
 			struct PhysicsState

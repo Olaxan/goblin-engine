@@ -30,11 +30,6 @@ namespace efiilj
 
 	void transform_manager::draw_gui()
 	{
-		if (ImGui::TreeNode("Transform"))
-		{
-			ImGui::Text("No transform selected.");
-			ImGui::TreePop();
-		}
 	}
 
 	void transform_manager::draw_gui(transform_id idx)
@@ -51,6 +46,7 @@ namespace efiilj
 			vector3 temp_euler = _data.rotation[idx].get_euler();
 			bool pos_changed = ImGui::DragFloat3("Position", &_data.position[idx].x, 0.01f);
 			bool rot_changed = ImGui::DragFloat3("Rotation", &temp_euler.x, 0.01f);
+			ImGui::InputFloat4("Quaternion", &_data.rotation[idx].x);
 			bool scl_changed = ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.01f);
 
 			if (rot_changed)
