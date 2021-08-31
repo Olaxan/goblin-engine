@@ -109,7 +109,7 @@ namespace efiilj
 		return quaternion(q);
 	}
 
-	quaternion quaternion::operator * (const float& s) const
+	quaternion quaternion::operator * (const float s) const
 	{
 		return quaternion(xyzw.x * s, xyzw.y * s, xyzw.z * s, xyzw.w * s);
 	}
@@ -129,13 +129,13 @@ namespace efiilj
 
 	quaternion& quaternion::operator *= (const quaternion& other)
 	{
-		*this = other * (*this);
+		*this = (*this) * other;
 		return *this;
 	}
 
 	quaternion& quaternion::operator += (const quaternion& other)
 	{
-		*this = other + (*this);
+		*this = (*this) * other;
 		return *this;
 	}
 

@@ -42,7 +42,7 @@ namespace efiilj
 
 			quaternion operator + (const quaternion& other) const;
 			quaternion operator * (const quaternion& other) const;
-			quaternion operator * (const float& s) const;
+			quaternion operator * (const float s) const;
 
 			void operator = (const quaternion& other);
 

@@ -383,11 +383,7 @@ namespace efiilj
 		std::string to_mem_string() const
 		{
 			std::stringstream ss;
-			for (int i = 0; i < 3; i++)
-			{
-				ss << *(&(*this).at(0) + i) << ", ";
-			}
-
+			ss << x << ", " << y << ", " << z;
 			return ss.str();
 		}
 		

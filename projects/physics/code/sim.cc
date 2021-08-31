@@ -1,5 +1,6 @@
 #include "sim.h"
 
+#include "imgui.h"
 #include "vector3.h"
 
 namespace efiilj
@@ -16,13 +17,15 @@ namespace efiilj
 
 	void simulator::extend_defaults(physics_id idx)
 	{
-		extend_state(_current, idx);
-		extend_state(_previous, idx);
+		_data.current.emplace_back();
+		_data.previous.emplace_back();
+		_data.inertia.emplace_back(1.0f);
+		_data.inverse_inertia.emplace_back(0.1f);
+		_data.mass.emplace_back(0.1f);
+		_data.inverse_mass.emplace_back(1.0f / 0.1f);
 
-		_constants.inertia.emplace_back(1.0f);
-		_constants.inverse_inertia.emplace_back(0.1f);
-		_constants.mass.emplace_back(1.0f);
-		_constants.inverse_mass.emplace_back(0.1f);
+		set_mass(idx, 1.0f);
+		set_inertia_as_cube(idx, 1.0f);
 	}
 
 	void simulator::draw_gui()
@@ -31,73 +34,77 @@ namespace efiilj
 	void simulator::draw_gui(physics_id idx)
 	{
 		ImGui::Text("Rigidbody %d", idx);	
+		ImGui::Text("Simulation time: %f", t);
+
+		ImGui::SliderFloat("Time step", &dt, 0.01f, 0.25f);
+
+		if (!is_valid(idx))
+			return;
+
+		PhysicsState& state = _data.current[idx];
+
+		if (ImGui::DragFloat("Mass", &_data.mass[idx], 0.01f))
+		{
+			set_mass(idx, _data.mass[idx]);
+			set_inertia_as_cube(idx, 1.0f);
+			recalculate_state(idx, state);
+		}
+
+		if (ImGui::DragFloat3("Momentum", &state.momentum.x, 0.01f)
+		|| ImGui::DragFloat3("Velocity", &state.velocity.x, 0.01f)
+		|| ImGui::DragFloat3("Angular momentum", &state.angular_momentum.x, 0.01f)
+		|| ImGui::DragFloat3("Angular velocity", &state.angular_velocity.x, 0.01f))
+		{
+			recalculate_state(idx, state);
+		}
 	}
 	
 	void simulator::on_register(std::shared_ptr<manager_host> host)
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
+		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 	}
 
-	void simulator::extend_state(PhysicsState& state, physics_id)
+	void simulator::recalculate_state(physics_id idx, PhysicsState& state)
 	{
-		state.velocity.emplace_back();
-		state.momentum.emplace_back();
-		state.position.emplace_back();
-		state.orientation.emplace_back();
-		state.angular_momentum.emplace_back();
-		state.spin.emplace_back();
-		state.angular_velocity.emplace_back();
-	}
+		state.velocity = state.momentum *
+			_data.inverse_mass[idx];
 
-	void simulator::recalculate_state(PhysicsState& state, physics_id idx)
-	{
-		state.velocity[idx] = state.momentum[idx] *
-			_constants.inverse_mass[idx];
+		state.angular_velocity = state.angular_momentum * 
+			_data.inverse_inertia[idx];
 
-		state.angular_velocity[idx] = state.angular_momentum[idx] * 
-			_constants.inverse_inertia[idx];
+		//state.orientation.normalize();
 
-		state.orientation[idx].normalize();
-
-		const vector3& av = state.angular_velocity[idx];
+		const vector3& av = state.angular_velocity;
 
 		quaternion q(av.x, av.y, av.z, 0);
 
-		state.spin[idx] = (q * state.orientation[idx]) * 0.5f;
+		state.spin = 0.5f * q * state.orientation;
 	}
 
-	void simulator::swap_state(physics_id idx)
-	{
-		_previous.position[idx] = _current.position[idx];
-		_previous.velocity[idx] = _current.velocity[idx];
-		_previous.momentum[idx] = _current.momentum[idx];
-		_previous.orientation[idx] = _current.orientation[idx];
-		_previous.angular_momentum[idx] = _current.angular_momentum[idx];
-		_previous.angular_velocity[idx] = _current.angular_velocity[idx];
-		_previous.spin[idx] = _current.spin[idx];
-	}
 
-	void simulator::read_transform(physics_id idx)
+	void simulator::read_transform(physics_id idx, PhysicsState& state)
 	{
 		entity_id eid = _entities[idx];
 		transform_id trf_id = _transforms->get_component(eid);
 
 		if (_transforms->is_valid(trf_id))
 		{
-			_current.position[idx] = _transforms->get_position(trf_id);
-			_current.orientation[idx] = _transforms->get_position(trf_id);
+			state.position = _transforms->get_position(trf_id);
+			state.orientation = _transforms->get_rotation(trf_id);
 		}
 	}
 
-	void simulator::write_transform(physics_id idx)
+	void simulator::write_transform(physics_id idx, PhysicsState& state)
 	{
 		entity_id eid = _entities[idx];
 		transform_id trf_id = _transforms->get_component(eid);
 
 		if (_transforms->is_valid(trf_id))
 		{
-			_transforms->set_position(trf_id, _current.position[idx]);
-			_transforms->set_rotation(trf_id, _current.orientation[idx]);
+			_transforms->set_position(trf_id, state.position);
+			_transforms->set_rotation(trf_id, state.orientation);
 		}
 	}
 
@@ -120,10 +127,12 @@ namespace efiilj
 		{
 			for (const auto& idx : _instances)
 			{
-				read_transform(idx);
-				swap_state(idx);
-				integrate(idx, t, dt);
-				write_transform(idx);
+				PhysicsState& current = _data.current[idx];
+				_data.previous[idx] = current;
+				read_transform(idx, current);
+				integrate(idx, current, t, dt);
+				recalculate_state(idx, current);
+				write_transform(idx, current);
 			}
 
 			t += dt;
@@ -131,28 +140,33 @@ namespace efiilj
 		}
 	}
 	
-	simulator::Derivative simulator::evaluate(physics_id idx, const Derivative& d, float t, float dt)
+	simulator::Derivative simulator::evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt)
 	{
 		Derivative output;
+		PhysicsState next_state;
 
-		vector3 pos = _current.position[idx] + d.velocity * dt;
-		vector3 vel = _current.velocity[idx] + d.force * dt;
-		//quaternion spin = _current.orientation[idx] + d.spin * dt;
+		next_state.position = state.position + d.velocity * dt;
+		next_state.momentum = state.momentum + d.force * dt;
+		next_state.orientation = state.orientation + d.spin * dt;
+		next_state.angular_momentum = state.angular_momentum + d.torque * dt;
+		recalculate_state(idx, next_state);
 
-		output.velocity = vel;
-		output.force = acceleration(idx, t + dt);
+		output.velocity = next_state.velocity;
+		output.force = acceleration(idx, next_state, t + dt);
+		output.spin = next_state.spin;
+		output.torque = torque(idx, next_state, t + dt);
 
 		return output;
 	}
 	
-	void simulator::integrate(physics_id idx, const float t, const float dt)
+	void simulator::integrate(physics_id idx, PhysicsState& state, const float t, const float dt)
 	{
 		Derivative a, b, c, d;
 
-		a = evaluate(idx, Derivative(), t, 0.0f);
-		b = evaluate(idx, a, t, dt * 0.5f);
-		c = evaluate(idx, b, t, dt * 0.5f);
-		d = evaluate(idx, c, t, dt);
+		a = evaluate(idx, state, Derivative(), t, 0.0f);
+		b = evaluate(idx, state, a, t, dt * 0.5f);
+		c = evaluate(idx, state, b, t, dt * 0.5f);
+		d = evaluate(idx, state, c, t, dt);
 
 		vector3 dxdt = 1.0f / 6.0f * 
 			(a.velocity + 2.0f * (b.velocity + c.velocity) + d.velocity);
@@ -160,27 +174,29 @@ namespace efiilj
 		vector3 dvdt = 1.0f / 6.0f * 
 			(a.force + 2.0f * (b.force + c.force) + d.force);
 
-		quaternion dsdt = 1.0f / 6.0f * 
-			(a.spin + 2.0f * (b.spin + c.spin)  + d.spin);
+		quaternion drdt = 1.0f / 6.0f * 
+			(a.spin + 2.0f * (b.spin + c.spin) + d.spin);
 
 		vector3 dtdt = 1.0f / 6.0f *
 			(a.torque + 2.0f * (b.torque + c.torque) + d.torque);
 
-		_current.position[idx] += dxdt * dt;
-		_current.velocity[idx] += dvdt * dt;
-		_current.orientation[idx] += dsdt * dt;
-		_current.angular_velocity[idx] += dtdt * dt;
+		// Position, momentum, orientation, angular momentum
+		state.position += dxdt * dt;
+		state.momentum += dvdt * dt;
+		state.orientation += drdt * dt;
+		state.angular_momentum += dtdt * dt;
 
 	}
 
-	vector3 simulator::acceleration(physics_id idx, float t)
-	{
-		return vector3(0, -1, 0) * 9.82f * 0.0001f;
-	}
-
-	vector3 simulator::torque(physics_id idx, float t)
+	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
 		return vector3();
+		return vector3(0, -9.82, 0) * 0.001f - state.velocity * 0.1f;
+	}
+
+	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
+	{
+		return vector3(0, 1, 0) * 0.0001f - state.angular_velocity * 0.1f;
 	}
 
 	void simulator::end_frame()

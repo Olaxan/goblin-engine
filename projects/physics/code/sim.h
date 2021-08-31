@@ -23,41 +23,42 @@ namespace efiilj
 
 			struct Derivative
 			{
-				vector3 velocity;
-				vector3 force;
-				quaternion spin;
-				vector3 torque;
+				vector3 velocity; 	// dx/dt (position change over time)
+				vector3 force;		// dlV/dt (velocity change over time)
+				quaternion spin;	// dr/dt (orientation change over time)
+				vector3 torque;		// daV/dt (angular velocity change over time)
 			};
 
 			struct PhysicsState
 			{
 				// PRIMARY
 				// === Linear
-				std::vector<vector3> position;
-				std::vector<vector3> momentum;
+				vector3 position;
+				vector3 momentum;
 
 				// === Angular
-				std::vector<quaternion> orientation;
-				std::vector<vector3> angular_momentum;
+				quaternion orientation;
+				vector3 angular_momentum;
 
 				// SECONDARY
 				// === Linear
-				std::vector<vector3> velocity;
+				vector3 velocity;
 
 				// === Angular
-				std::vector<quaternion> spin;
-				std::vector<vector3> angular_velocity;
-
-				// CONSTANT
+				quaternion spin;
+				vector3 angular_velocity;
 			};
 
-			struct PhysicsConstants
+			struct PhysicsData
 			{
+				std::vector<PhysicsState> current;
+				std::vector<PhysicsState> previous;
+
 				std::vector<float> mass;
 				std::vector<float> inverse_mass;
 				std::vector<float> inertia;
 				std::vector<float> inverse_inertia;
-			};
+			} _data;
 
 			float t = 0.0f;
 			float dt = 0.01f;
@@ -66,11 +67,9 @@ namespace efiilj
 
 			float accumulator = 0.0f;
 
-			PhysicsState _current;
-			PhysicsState _previous;
-			PhysicsConstants _constants;
-
 			std::shared_ptr<transform_manager> _transforms;
+			std::shared_ptr<mesh_manager> _mesh_instances;
+			std::shared_ptr<mesh_server> _meshes;
 
 	public:
 
@@ -83,33 +82,36 @@ namespace efiilj
 
 		void on_register(std::shared_ptr<manager_host> host) override;
 
-		void extend_state(PhysicsState& state, physics_id idx);
-		void swap_state(physics_id idx);
-		void recalculate_state(PhysicsState& state, physics_id idx);
+		void recalculate_state(physics_id idx, PhysicsState& state);
 
-		void read_transform(physics_id);
-		void write_transform(physics_id);
+		void read_transform(physics_id, PhysicsState& state);
+		void write_transform(physics_id, PhysicsState& state);
 
 		void begin_frame();
 		void simulate();
 		void end_frame();
 
-		Derivative evaluate(physics_id idx, const Derivative& d, float t, float dt);
-		void integrate(physics_id idx, const float t, const float dt);
+		Derivative evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt);
+		void integrate(physics_id idx, PhysicsState& state, const float t, const float dt);
 
-		vector3 acceleration(physics_id idx, float t);
-		vector3 torque(physics_id idx, float t);
+		vector3 acceleration(physics_id idx, const PhysicsState& state, float t);
+		vector3 torque(physics_id idx, const PhysicsState& state, float t);
 
 		void set_mass(physics_id idx, float mass)
 		{
-			_constants.mass[idx] = mass;
-			_constants.inverse_mass[idx] = 1.0f / mass;
+			_data.mass[idx] = mass;
+			_data.inverse_mass[idx] = 1.0f / mass;
 		}
 
 		void set_inertia(physics_id idx, float inertia)
 		{
-			_constants.inertia[idx] = inertia;
-			_constants.inverse_inertia[idx] = 1.0f / inertia;
+			_data.inertia[idx] = inertia;
+			_data.inverse_inertia[idx] = 1.0f / inertia;
 		}
+
+		void set_inertia_as_cube(physics_id idx, float length)
+		{
+			set_inertia(idx, 1.0f / 6.0f * (length * length) * _data.mass[idx]);
+		};
 	};
 }
