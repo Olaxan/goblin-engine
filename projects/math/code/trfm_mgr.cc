@@ -70,7 +70,7 @@ namespace efiilj
 				for (size_t i = 0; i < 4 * 4; i++)
 					_data.model[idx].at(i) = randf(-1.0f, 1.0f);
 
-				set_updated(idx, false);
+				set_updated(idx, true);
 			}
 			ImGui::TreePop();
 		}

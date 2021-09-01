@@ -51,6 +51,8 @@ namespace efiilj
 			recalculate_state(idx, state);
 		}
 
+		ImGui::DragFloat3("CoM", &_data.com[idx].x, 0.01f);
+
 		if (ImGui::DragFloat3("Momentum", &state.momentum.x, 0.01f)
 		|| ImGui::DragFloat3("Velocity", &state.velocity.x, 0.01f)
 		|| ImGui::DragFloat3("Angular momentum", &state.angular_momentum.x, 0.01f)
@@ -253,7 +255,6 @@ namespace efiilj
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
-		return vector3();
 		return vector3(1, 0, 0) * 0.01f - state.angular_velocity * 0.1f;
 	}
 
