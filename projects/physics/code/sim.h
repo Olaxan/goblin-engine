@@ -106,6 +106,8 @@ namespace efiilj
 		{
 			return _data.com[idx];
 		}
+		
+		void set_com(physics_id idx, const vector3& com);
 
 		void set_mass(physics_id idx, float mass)
 		{

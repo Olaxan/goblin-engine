@@ -54,7 +54,8 @@ namespace efiilj
 		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
 		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
 
-		ImGui::DragFloat3("CoM", &_data.com[idx].x, 0.01f);
+		if (ImGui::DragFloat3("CoM", &_data.com[idx].x, 0.01f))
+			set_com(idx, _data.com[idx]);
 
 		if (ImGui::DragFloat3("Momentum", &state.momentum.x, 0.01f)
 		| ImGui::DragFloat3("Velocity", &state.velocity.x, 0.01f)
@@ -122,7 +123,14 @@ namespace efiilj
 	void simulator::recalculate_com(physics_id idx)
 	{
 		entity_id eid = _entities[idx];
-		_data.com[idx] = calculate_com(eid);
+		set_com(idx, calculate_com(eid));
+	}
+
+	void simulator::set_com(physics_id idx, const vector3& com)
+	{
+		entity_id eid = _entities[idx];
+
+		_data.com[idx] = com;
 
 		transform_id trf_id = _transforms->get_component(eid);
 		if (_transforms->is_valid(trf_id))
