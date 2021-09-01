@@ -20,6 +20,7 @@ namespace efiilj
 				std::vector<matrix4> inverse;
 
 				std::vector<vector4> position;
+				std::vector<vector4> offset;
 				std::vector<vector4> scale;
 				std::vector<quaternion> rotation;
 
@@ -59,6 +60,17 @@ namespace efiilj
 			const std::set<transform_id>& get_children(transform_id idx) const
 			{
 				return _data.children[idx];
+			}
+
+			void set_offset(transform_id idx, const vector3& offset)
+			{
+				_data.offset[idx] = vector4(offset, 1.0f);
+				set_updated(idx, false);
+			}
+
+			vector3 get_offset(transform_id idx) const
+			{
+				return _data.offset[idx].xyz();
 			}
 
 			vector3 get_position(transform_id);

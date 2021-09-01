@@ -51,12 +51,15 @@ namespace efiilj
 			recalculate_state(idx, state);
 		}
 
+		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
+		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
+
 		ImGui::DragFloat3("CoM", &_data.com[idx].x, 0.01f);
 
 		if (ImGui::DragFloat3("Momentum", &state.momentum.x, 0.01f)
-		|| ImGui::DragFloat3("Velocity", &state.velocity.x, 0.01f)
-		|| ImGui::DragFloat3("Angular momentum", &state.angular_momentum.x, 0.01f)
-		|| ImGui::DragFloat3("Angular velocity", &state.angular_velocity.x, 0.01f))
+		| ImGui::DragFloat3("Velocity", &state.velocity.x, 0.01f)
+		| ImGui::DragFloat3("Angular momentum", &state.angular_momentum.x, 0.01f)
+		| ImGui::DragFloat3("Angular velocity", &state.angular_velocity.x, 0.01f))
 		{
 			recalculate_state(idx, state);
 		}
@@ -120,7 +123,10 @@ namespace efiilj
 	{
 		entity_id eid = _entities[idx];
 		_data.com[idx] = calculate_com(eid);
-		printf("CoM: %s\n", _data.com[idx].to_string().c_str());
+
+		transform_id trf_id = _transforms->get_component(eid);
+		if (_transforms->is_valid(trf_id))
+			_transforms->set_offset(trf_id, -_data.com[idx]);
 	}
 
 	void simulator::recalculate_state(physics_id idx, PhysicsState& state)
@@ -186,7 +192,7 @@ namespace efiilj
 			{
 				PhysicsState& current = _data.current[idx];
 				_data.previous[idx] = current;
-				read_transform(idx, current);
+				//read_transform(idx, current);
 				integrate(idx, current, t, dt);
 				write_transform(idx, current);
 			}
@@ -250,7 +256,7 @@ namespace efiilj
 	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
 		return vector3();
-		return vector3(0, -9.82, 0) * 0.01f - state.velocity * 0.1f;
+		return vector3(0, -9.82f * gravity_mult, 0) * _data.mass[idx] - state.velocity * air_drag_mult;
 	}
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT

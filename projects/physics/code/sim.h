@@ -63,6 +63,8 @@ namespace efiilj
 
 			float t = 0.0f;
 			float dt = 0.01f;
+			float gravity_mult = 1.0f;
+			float air_drag_mult = 1.0f;
 
 			frame_time current_time = frame_timer::now();
 

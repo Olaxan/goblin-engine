@@ -20,6 +20,7 @@ namespace efiilj
 		_data.model.emplace_back(matrix4());
 		_data.inverse.emplace_back(matrix4());
 		_data.position.emplace_back(vector4());
+		_data.offset.emplace_back(vector4());
 		_data.scale.emplace_back(vector4(1.0f, 1.0f, 1.0f, 1.0f));
 		_data.rotation.emplace_back(quaternion());
 		_data.parent.emplace_back(-1);
@@ -45,6 +46,7 @@ namespace efiilj
 		{
 			vector3 temp_euler = _data.rotation[idx].get_euler();
 			bool pos_changed = ImGui::DragFloat3("Position", &_data.position[idx].x, 0.01f);
+			bool off_changed = ImGui::DragFloat3("Pivot offset", &_data.offset[idx].x, 0.01f);
 			bool rot_changed = ImGui::DragFloat3("Rotation", &temp_euler.x, 0.01f);
 			ImGui::InputFloat4("Quaternion", &_data.rotation[idx].x);
 			bool scl_changed = ImGui::DragFloat3("Scale", &_data.scale[idx].x, 0.01f);
@@ -52,7 +54,7 @@ namespace efiilj
 			if (rot_changed)
 				set_rotation(idx, temp_euler);
 
-			if (pos_changed || rot_changed || scl_changed)
+			if (pos_changed || off_changed || rot_changed || scl_changed)
 				set_updated(idx, false);
 
 			ImGui::TreePop();
@@ -96,11 +98,12 @@ namespace efiilj
 
 		if (!_data.model_updated[idx])
 		{
-			matrix4 t = matrix4::get_translation(_data.position[idx]);
+			matrix4 t = matrix4::get_translation(_data.position[idx] - _data.offset[idx]);
 			matrix4 r = _data.rotation[idx].get_rotation_matrix();
 			matrix4 s = matrix4::get_scale(_data.scale[idx]);
+			matrix4 o = matrix4::get_translation(_data.offset[idx]);
 
-			_data.model[idx] = t * r * s;
+			_data.model[idx] = t * r * o * s;
 
 			transform_id parent_id = _data.parent[idx];
 

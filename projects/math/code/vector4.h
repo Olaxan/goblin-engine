@@ -137,7 +137,7 @@ namespace efiilj
 
 		vector4 operator - () const 
 		{
-			return *this * -1;
+			return vector4(-this->x, -this->y, -this->z, this->w);
 		}
 
 		/// <summary>
