@@ -23,8 +23,8 @@ namespace efiilj
 		_data.uvs.emplace_back();
 		_data.tangents.emplace_back();
 		_data.indices.emplace_back();
-		_data.min.emplace_back(vector3(0));
-		_data.max.emplace_back(vector3(0));
+		_data.bbox.emplace_back();
+		_data.center.emplace_back();
 		_data.material.emplace_back(-1);
 		_data.usage.emplace_back(GL_STATIC_DRAW);
 		_data.vao.emplace_back(0);
@@ -139,15 +139,26 @@ namespace efiilj
 	{
 		glDrawElements(GL_TRIANGLES, get_index_count(idx), GL_UNSIGNED_INT, nullptr);
 	}
+	
+	void mesh_server::calculate_center(mesh_id idx)
+	{
+		vector3 sum;
+		for (const auto& v : _data.positions[idx])
+			sum += v;
+
+		_data.center[idx] = sum / static_cast<float>(get_vertex_count(idx));
+	}
 
 	void mesh_server::set_positions(mesh_id idx, std::vector<vector3>& positions)
 	{
 		_data.positions[idx] = std::move(positions);
+		calculate_center(idx);
 	}
 
 	void mesh_server::set_positions(mesh_id idx, const std::vector<vector3>& positions)
 	{
 		_data.positions[idx] = positions;
+		calculate_center(idx);
 	}
 
 	void mesh_server::set_normals(mesh_id idx, std::vector<vector3>& normals)

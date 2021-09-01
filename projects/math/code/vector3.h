@@ -377,11 +377,6 @@ namespace efiilj
 		/// <returns>A formatted multi-line string representation of the vector</returns>
 		std::string to_string() const
 		{
-			return std::to_string(this->x) + ";\n" + std::to_string(this->y) + ";\n" + std::to_string(this->z) + ";\n";
-		}
-
-		std::string to_mem_string() const
-		{
 			std::stringstream ss;
 			ss << x << ", " << y << ", " << z;
 			return ss.str();

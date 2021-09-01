@@ -54,6 +54,7 @@ namespace efiilj
 				std::vector<PhysicsState> current;
 				std::vector<PhysicsState> previous;
 
+				std::vector<vector3> com;
 				std::vector<float> mass;
 				std::vector<float> inverse_mass;
 				std::vector<float> inertia;
@@ -82,6 +83,8 @@ namespace efiilj
 
 		void on_register(std::shared_ptr<manager_host> host) override;
 
+		vector3 calculate_com(entity_id eid) const;
+		void recalculate_com(physics_id idx);
 		void recalculate_state(physics_id idx, PhysicsState& state);
 
 		void read_transform(physics_id, PhysicsState& state);
@@ -96,6 +99,11 @@ namespace efiilj
 
 		vector3 acceleration(physics_id idx, const PhysicsState& state, float t);
 		vector3 torque(physics_id idx, const PhysicsState& state, float t);
+
+		const vector3& get_com(physics_id idx) const
+		{
+			return _data.com[idx];
+		}
 
 		void set_mass(physics_id idx, float mass)
 		{

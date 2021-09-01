@@ -163,6 +163,8 @@ namespace efiilj
 			transforms->set_parent(child_trf, parent_trf);
 		}
 
+		sim->recalculate_com(parent_rb);
+
 		gltf->unload(test_mdl);
 
 		// Hitmarker
@@ -188,6 +190,8 @@ namespace efiilj
 
 			rfwd->register_entity(e_hitmarker);
 		}
+
+		transforms->set_position(trf_hitmarker, sim->get_com(parent_rb));
 
 		// Lights
 		

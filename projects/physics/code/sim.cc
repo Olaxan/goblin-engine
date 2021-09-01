@@ -19,6 +19,7 @@ namespace efiilj
 	{
 		_data.current.emplace_back();
 		_data.previous.emplace_back();
+		_data.com.emplace_back();
 		_data.inertia.emplace_back(1.0f);
 		_data.inverse_inertia.emplace_back(0.1f);
 		_data.mass.emplace_back(1.0f);
@@ -64,6 +65,60 @@ namespace efiilj
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
+	}
+	
+	vector3 simulator::calculate_com(entity_id eid) const
+	{
+		vector3 com;
+
+		// Get the transform of this entity
+		transform_id trf_id = _transforms->get_component(eid);
+
+		// This shouldn't happen on recursions, 
+		// since a transform is required for parenting
+		if (!_transforms->is_valid(trf_id))
+			return com;
+
+		auto range = _mesh_instances->get_components(eid);
+		size_t mesh_count = std::distance(range.first, range.second);
+
+		if (mesh_count > 0)
+		{
+			// Sum up all mesh centers of this entity
+			for (auto it = range.first; it != range.second; it++)
+			{
+				mesh_id mid = _mesh_instances->get_mesh(it->second);
+				com += _meshes->get_center(mid);
+			}
+
+			// Divide by number of meshes
+			com /= static_cast<float>(mesh_count);
+		}
+
+		const auto& children = _transforms->get_children(trf_id);
+		const size_t child_count = children.size();
+
+		if (child_count > 0)
+		{
+			// Recurse, find CoM for transform children as well
+			for (const auto& child : children)
+			{
+				entity_id child_eid = _transforms->get_entity(child);
+				com += calculate_com(child_eid);	
+			}
+
+			// Divide by number of children
+			com /= static_cast<float>(children.size());
+		}
+
+		return com;
+	}
+
+	void simulator::recalculate_com(physics_id idx)
+	{
+		entity_id eid = _entities[idx];
+		_data.com[idx] = calculate_com(eid);
+		printf("CoM: %s\n", _data.com[idx].to_string().c_str());
 	}
 
 	void simulator::recalculate_state(physics_id idx, PhysicsState& state)
@@ -193,11 +248,12 @@ namespace efiilj
 	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
 		return vector3();
-		return vector3(0, -9.82, 0) * 0.001f - state.velocity * 0.1f;
+		return vector3(0, -9.82, 0) * 0.01f - state.velocity * 0.1f;
 	}
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
+		return vector3();
 		return vector3(1, 0, 0) * 0.01f - state.angular_velocity * 0.1f;
 	}
 

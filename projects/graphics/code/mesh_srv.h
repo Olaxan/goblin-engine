@@ -25,8 +25,8 @@ namespace efiilj
 				std::vector<std::vector<vector2>> uvs;
 				std::vector<std::vector<vector4>> tangents;
 				std::vector<std::vector<unsigned>> indices;
-				std::vector<vector3> min;
-				std::vector<vector3> max;
+				std::vector<bounds> bbox;
+				std::vector<vector3> center;
 				std::vector<material_id> material;
 				std::vector<unsigned> usage;
 				std::vector<unsigned> vao;
@@ -59,6 +59,13 @@ namespace efiilj
 			bool has_color_data(mesh_id idx) const { return _data.colors[idx].size() > 0; }
 			bool has_uv_data(mesh_id idx) const { return _data.uvs[idx].size() > 0; }
 			bool has_tangent_data(mesh_id idx) const { return _data.tangents[idx].size() > 0; }
+
+			void calculate_center(mesh_id idx);
+
+			const vector3& get_center(mesh_id idx) const
+			{
+				return _data.center[idx];
+			}
 
 			const vector3& get_position(mesh_id idx, size_t index) const 
 			{ return _data.positions[idx][index]; }
@@ -110,39 +117,37 @@ namespace efiilj
 
 			bounds get_bounds(mesh_id idx)
 			{
-				return bounds(_data.min[idx], _data.max[idx]);
+				return _data.bbox[idx];
 			}
 
 			void set_bounds(mesh_id idx, const bounds& bounds)
 			{
-				_data.min[idx] = bounds.min;
-				_data.max[idx] = bounds.max;
+				_data.bbox[idx] = bounds;
 			}
 
 			void set_bounds(mesh_id idx, const vector3& min, const vector3& max)
 			{
-				_data.min[idx] = min;
-				_data.max[idx] = max;
+				_data.bbox[idx] = bounds(min, max);
 			}
 
 			const vector3& get_min(mesh_id idx) const
 			{
-				return _data.min[idx];
+				return _data.bbox[idx].min;
 			}
 
 			void set_min(mesh_id idx, const vector3& min)
 			{
-				_data.min[idx] = min;
+				_data.bbox[idx].min = min;
 			}
 
 			const vector3& get_max(mesh_id idx) const
 			{
-				return _data.max[idx];
+				return _data.bbox[idx].max;
 			}
 
 			void set_max(mesh_id idx, const vector3& max)
 			{
-				_data.max[idx] = max;
+				_data.bbox[idx].max = max;
 			}
 
 			void set_material(mesh_id idx, material_id mat_id)
