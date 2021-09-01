@@ -20,6 +20,7 @@ namespace efiilj
 		_data.current.emplace_back();
 		_data.previous.emplace_back();
 		_data.com.emplace_back();
+		_data.impulse.emplace_back();
 		_data.inertia.emplace_back(1.0f);
 		_data.inverse_inertia.emplace_back(0.1f);
 		_data.mass.emplace_back(1.0f);
@@ -260,21 +261,34 @@ namespace efiilj
 		recalculate_state(idx, state);
 
 	}
+	
+	void simulator::add_impulse(physics_id idx, const PointForce& force)
+	{
+		// we should sum these up I think!!
+		_data.impulse[idx] = force;	
+	}
 
 	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
-		return vector3();
-		return vector3(0, -9.82f * gravity_mult, 0) * _data.mass[idx] - state.velocity * air_drag_mult;
+		const PointForce& impulse = _data.impulse[idx];
+		return impulse.force;
 	}
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
-		return vector3(1, 0, 0) * 0.01f - state.angular_velocity * 0.1f;
+		const PointForce& impulse = _data.impulse[idx];
+		return vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
 	}
 
 	void simulator::end_frame()
 	{
 		float alpha = accumulator / dt;
 		// interpolate and write to transform
+		//
+		for (const auto& idx : _instances)
+		{
+			// not perfect
+			_data.impulse[idx] = PointForce();
+		}
 	}
 }

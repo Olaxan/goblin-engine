@@ -17,6 +17,12 @@ namespace efiilj
 	typedef std::chrono::high_resolution_clock frame_timer;
 	typedef std::chrono::time_point<frame_timer> frame_time;
 
+	struct PointForce
+	{
+		vector3 p;
+		vector3 force;
+	};
+
 	class simulator : public manager<physics_id>
 	{
 		private:
@@ -53,6 +59,8 @@ namespace efiilj
 			{
 				std::vector<PhysicsState> current;
 				std::vector<PhysicsState> previous;
+
+				std::vector<PointForce> impulse;
 
 				std::vector<vector3> com;
 				std::vector<float> mass;
@@ -98,6 +106,8 @@ namespace efiilj
 
 		Derivative evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt);
 		void integrate(physics_id idx, PhysicsState& state, const float t, const float dt);
+
+		void add_impulse(physics_id idx, const PointForce& force);
 
 		vector3 acceleration(physics_id idx, const PhysicsState& state, float t);
 		vector3 torque(physics_id idx, const PhysicsState& state, float t);

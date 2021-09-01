@@ -249,16 +249,24 @@ namespace efiilj
 
 				is_dragging_mouse = true;
 
-				if (button == GLFW_MOUSE_BUTTON_RIGHT)
-				{
-					camera_id active = cameras->get_camera();
-					ray r = cameras->get_ray_from_camera(active, mouse_x, mouse_y);
+				camera_id active = cameras->get_camera();
+				ray r = cameras->get_ray_from_camera(active, mouse_x, mouse_y);
+				trace_hit hit;
 
-					trace_hit hit;
-					if (colliders->test_hit(r, hit))
+				if (colliders->test_hit(r, hit))
+				{
+					if (button == GLFW_MOUSE_BUTTON_RIGHT)
 					{
 						transforms->set_position(trf_hitmarker, hit.position);
 						editor->set_selected(hit.entity);
+					}
+					else if (button == GLFW_MOUSE_BUTTON_LEFT)
+					{
+						PointForce impulse;
+						impulse.force = r.direction * 0.1f;
+						impulse.p = hit.position;
+
+						sim->add_impulse(parent_rb, impulse);
 					}
 				}
 			}
