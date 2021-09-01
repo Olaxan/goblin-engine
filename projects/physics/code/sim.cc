@@ -131,7 +131,6 @@ namespace efiilj
 				_data.previous[idx] = current;
 				read_transform(idx, current);
 				integrate(idx, current, t, dt);
-				recalculate_state(idx, current);
 				write_transform(idx, current);
 			}
 
@@ -187,6 +186,8 @@ namespace efiilj
 		state.orientation += drdt * dt;
 		state.angular_momentum += dtdt * dt;
 
+		recalculate_state(idx, state);
+
 	}
 
 	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t) //NOLINT
@@ -197,7 +198,7 @@ namespace efiilj
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
 	{
-		return vector3(0, 1, 0) * 0.01f - state.angular_velocity * 0.1f;
+		return vector3(1, 0, 0) * 0.01f - state.angular_velocity * 0.1f;
 	}
 
 	void simulator::end_frame()

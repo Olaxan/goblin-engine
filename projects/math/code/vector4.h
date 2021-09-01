@@ -439,23 +439,16 @@ namespace efiilj
 		/// Returns a formatted multi-line string representation of the vector.
 		/// </summary>
 		/// <returns>A formatted multi-line string representation of the vector</returns>
-		std::string to_string()
+		std::string to_string() const
 		{
 			std::stringstream ss;
-			ss << x << ";\n" << y << ";\n" << z << ";\n" << w << ";\n";
+			ss << x << ", " << y << ", " << z << ", " << w << ";";
 			return ss.str();
 		}
 
-		std::string to_mem_string()
+		std::string to_mem_string() const
 		{
-			std::stringstream ss;
-			for (int i = 0; i < 4; i++)
-			{
-				ss << *(&(*this).at(0) + i) << ", ";
-			}
-
-			ss << std::endl;
-			return ss.str();
+			return "deprecated";
 		}
 
 		~vector4() { }

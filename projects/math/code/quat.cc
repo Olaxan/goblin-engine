@@ -77,6 +77,34 @@ namespace efiilj
 	{
 		xyzw.normalize();
 	}
+	
+	quaternion quaternion::slerp(const quaternion& from, const quaternion& to, float lambda)
+	{
+		const vector4& q1v = from.xyzw;
+		const vector4& q2v = to.xyzw;
+
+		float dot = vector4::dot4(from.xyzw, to.xyzw);
+
+		float theta, st, sut, sout, coeff1, coeff2;
+
+		theta = std::acos(dot);
+		if (theta < 0.0f)
+			theta = -theta;
+
+		st = sinf(theta);
+		sut = sinf(lambda * theta);
+		sout = sinf((1 - lambda) * theta);
+		coeff1 = sout / st;
+		coeff2 = sut / st;
+
+		vector4 qv;
+		qv.x = coeff1 * q1v.x + coeff2 * q2v.x;
+		qv.y = coeff1 * q1v.y + coeff2 * q2v.y;
+		qv.z = coeff1 * q1v.z + coeff2 * q2v.z;
+		qv.w = coeff1 * q1v.w + coeff2 * q2v.w;
+
+		return quaternion(qv);
+	}
 
 	void quaternion::add_axis_rotation(const vector3& axis, const float& angle)
 	{
@@ -92,6 +120,11 @@ namespace efiilj
 			normalize();
 		}
 
+	}
+	
+	void quaternion::add_slerp_rotation(const quaternion& quat, float lambda)
+	{
+		
 	}
 	
 	quaternion quaternion::operator * (const quaternion& other) const
@@ -111,12 +144,12 @@ namespace efiilj
 	
 	quaternion quaternion::operator + (const quaternion& other) const
 	{
-		return quaternion(x + other.x, y + other.y, z + other.z, w + other.z);
+		return quaternion(x + other.x, y + other.y, z + other.z, w + other.w);
 	}
 
 	quaternion quaternion::operator - (const quaternion& other) const
 	{
-		return quaternion(x - other.x, y - other.y, z - other.z, w - other.z);
+		return quaternion(x - other.x, y - other.y, z - other.z, w - other.w);
 	}
 
 	quaternion quaternion::operator * (const float s) const

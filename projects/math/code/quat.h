@@ -34,7 +34,10 @@ namespace efiilj
 			float square_magnitude() const;
 			float magnitude() const;
 
+			static quaternion slerp(const quaternion& from, const quaternion& to, float lambda);
+
 			void add_axis_rotation(const vector3& axis, const float& angle);
+			void add_slerp_rotation(const quaternion& quat, float lambda);
 
 			matrix4 get_rotation_matrix() const;
 			vector3 get_euler() const;
