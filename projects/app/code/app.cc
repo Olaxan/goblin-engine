@@ -96,6 +96,7 @@ namespace efiilj
 
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
+		rdbg = std::make_shared<debug_renderer>();
 		colliders = std::make_shared<collider_manager>();
 		sim = std::make_shared<simulator>();
 		gltf = std::make_shared<gltf_model_server>();
@@ -120,6 +121,8 @@ namespace efiilj
 		managers->register_manager(sim, 'PHYS');
 		managers->register_manager(colliders, 'RAYS');
 		managers->register_manager(gltf, 'GLTF');
+
+		managers->register_manager(rdbg, 'RDBG');
 
 		editor = std::make_shared<entity_editor>(entities, managers);
 
@@ -153,8 +156,6 @@ namespace efiilj
 
 		transform_id parent_trf = transforms->register_entity(parent);
 
-		physics_id parent_rb = sim->register_entity(parent);
-
 		for (const auto& node : gltf->get_scene(test_mdl).nodes)
 		{
 			rdef->register_entity(node);
@@ -163,12 +164,16 @@ namespace efiilj
 			transforms->set_parent(child_trf, parent_trf);
 		}
 
-		sim->recalculate_com(parent_rb);
-
 		gltf->unload(test_mdl);
 
+		// Rigidbody
+		physics_id parent_rb = sim->register_entity(parent);
+		sim->recalculate_com(parent_rb);
+
+		// Debug drawing
+		rdbg->set_shader(rfwd->get_fallback_shader());
+
 		// Hitmarker
-		
 		object_loader obj("../res/volumes/v_pointlight.obj", meshes);
 
 		entity_id e_hitmarker = entities->create();
@@ -332,14 +337,17 @@ namespace efiilj
 			sim->begin_frame();
 			rdef->begin_frame();
 		    rfwd->begin_frame();
+			rdbg->begin_frame();
 
 			sim->simulate();
 			rdef->render_frame();
 		    rfwd->render_frame();
+			rdbg->render_frame();
 
 			sim->end_frame();
 			rdef->end_frame();
 			rfwd->end_frame();
+			rdbg->end_frame();
 
 			this->window_->SwapBuffers();
 			

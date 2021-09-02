@@ -6,6 +6,7 @@ namespace efiilj
 {
 	
 	mesh_server::mesh_server()
+		: _current_vao(0)
 	{
 		printf("Init mesh...\n");
 	}
@@ -27,6 +28,7 @@ namespace efiilj
 		_data.center.emplace_back();
 		_data.material.emplace_back(-1);
 		_data.usage.emplace_back(GL_STATIC_DRAW);
+		_data.mode.emplace_back(GL_TRIANGLES);
 		_data.vao.emplace_back(0);
 		_data.vbo.emplace_back(0);
 		_data.ibo.emplace_back(0);
@@ -38,7 +40,11 @@ namespace efiilj
 		if (!_data.state[idx])
 			return false;
 
-		glBindVertexArray(_data.vao[idx]);
+		if (_current_vao == _data.vao[idx])
+			return true;
+
+		_current_vao = _data.vao[idx];
+		glBindVertexArray(_current_vao);
 		return true;
 	}
 	
@@ -84,6 +90,9 @@ namespace efiilj
 
 	bool mesh_server::buffer(mesh_id idx)
 	{
+
+		bind(idx);
+
 		size_t offset = 0;
 		if (has_position_data(idx))
 		{
@@ -133,11 +142,13 @@ namespace efiilj
 	{
 		if (_data.usage[idx] == GL_DYNAMIC_DRAW)
 			buffer(idx);
+		else
+			fprintf(stderr, "Err: Mesh %d - Tried to update static buffer\n", idx);
 	}
 
 	void mesh_server::draw_elements(mesh_id idx)
 	{
-		glDrawElements(GL_TRIANGLES, get_index_count(idx), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(_data.mode[idx], get_index_count(idx), GL_UNSIGNED_INT, nullptr);
 	}
 	
 	void mesh_server::calculate_center(mesh_id idx)

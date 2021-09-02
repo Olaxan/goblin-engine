@@ -13,6 +13,12 @@ namespace efiilj
 {
 	typedef int mesh_id;
 
+	enum class primitive
+	{
+		cube,
+		bbox
+	};
+
 	class mesh_server : public server<mesh_id>
 	{
 		private:
@@ -29,11 +35,17 @@ namespace efiilj
 				std::vector<vector3> center;
 				std::vector<material_id> material;
 				std::vector<unsigned> usage;
+				std::vector<unsigned> mode;
 				std::vector<unsigned> vao;
 				std::vector<unsigned> vbo;
 				std::vector<unsigned> ibo;
 				std::vector<bool> state;
 			} _data;
+
+			unsigned int _current_vao;
+
+			void create_cube(mesh_id idx);
+			void create_bbox(mesh_id idx);
 			
 		public:
 
@@ -41,6 +53,8 @@ namespace efiilj
 			~mesh_server();
 
 			void append_defaults(mesh_id idx) override;
+
+			mesh_id create_primitive(primitive type);
 
 			bool bind(mesh_id idx);
 			bool build(mesh_id idx);
@@ -148,6 +162,11 @@ namespace efiilj
 			void set_max(mesh_id idx, const vector3& max)
 			{
 				_data.bbox[idx].max = max;
+			}
+
+			void set_triangle_mode(mesh_id idx, unsigned mode)
+			{
+				_data.mode[idx] = mode;
 			}
 
 			void set_material(mesh_id idx, material_id mat_id)

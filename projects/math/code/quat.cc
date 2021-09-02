@@ -115,10 +115,7 @@ namespace efiilj
 		float err = fabs(1.0f - square_magnitude());
 
 		if (err > EPSILON)
-		{
-			printf("Normalized quaternion from %f\n", err);
 			normalize();
-		}
 
 	}
 	

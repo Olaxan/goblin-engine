@@ -25,6 +25,7 @@
 #include "shdr_mgr.h"
 #include "mtrl_mgr.h"
 #include "def_rend.h"
+#include "dbg_rend.h"
 #include "gltf_loader.h"
 #include "sim.h"
 #include "phys_data.h"
@@ -65,6 +66,7 @@ namespace efiilj
 		std::shared_ptr<camera_manager> cameras;
 		std::shared_ptr<graphics_manager> graphics;
 		std::shared_ptr<forward_renderer> rfwd;
+		std::shared_ptr<debug_renderer> rdbg;
 		std::shared_ptr<deferred_renderer> rdef;
 		std::shared_ptr<light_manager> lights;
 		std::shared_ptr<material_manager> material_instances;

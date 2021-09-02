@@ -74,9 +74,7 @@ namespace efiilj
 		if (!is_valid(idx) || !get_visible(idx) || get_error(idx))
 			return;
 
-		entity_id eid = _entities[idx];
-
-		const auto& meshes = _mesh_instances->get_components(eid);
+		entity_id eid = get_entity(idx);
 
 		transform_id trf_id = _transforms->get_component(eid);
 
@@ -87,6 +85,7 @@ namespace efiilj
 		}
 
 		const matrix4& model = _transforms->get_model(trf_id);
+		const auto& meshes = _mesh_instances->get_components(eid);
 		
 		for (auto it = meshes.first; it != meshes.second; it++)
 		{
