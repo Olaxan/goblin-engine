@@ -5,6 +5,9 @@
 #include <memory>
 #include <limits>
 
+#define GJK_MAX_ITERATIONS 64
+#define IS_ALIGNED(a, b) vector3::dot(a, b) < 0
+
 namespace efiilj
 {
 
@@ -23,7 +26,8 @@ namespace efiilj
 	{
 		_data.mesh_bounds.emplace_back();
 		_data.bounds_updated.emplace_back(false);
-		_data.collisions.emplace_back();
+		_data.broad_collisions.emplace_back();
+		_data.narrow_collisions.emplace_back();
 
 		update_bounds(idx);
 	}
@@ -45,7 +49,7 @@ namespace efiilj
 
 		std::stringstream ss;
 
-		for (auto col : _data.collisions[idx])
+		for (auto col : _data.broad_collisions[idx])
 			ss << col << ", ";
 
 		ImGui::Text("Broad: %s", ss.str().c_str());
@@ -159,7 +163,7 @@ namespace efiilj
 			points_z.emplace(idx, bounds.min.z);
 			points_z.emplace(idx, bounds.max.z);
 
-			_data.collisions[idx].clear();
+			_data.broad_collisions[idx].clear();
 		}
 
 		std::map<collider_id, std::set<collider_id>> hits_x;
@@ -181,7 +185,94 @@ namespace efiilj
 			std::set_intersection(ixy.begin(), ixy.end(), hits_z[idx].begin(), hits_z[idx].end(),
 					std::inserter(ixyz, ixyz.begin()));
 
-			_data.collisions[idx] = ixyz;
+			_data.broad_collisions[idx] = ixyz;
+		}
+	}
+
+	vector3 collider_manager::support(collider_id idx, const vector3& dir) const
+	{
+		return vector3();
+	}
+
+	bool collider_manager::check_simplex3(vector3 simplex[4], int dim, vector3& dir)
+	{
+
+	}
+
+	bool collider_manager::check_simplex4(vector3 simplex[4], int dim, vector3& dir)
+	{
+
+	}
+	
+	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2)
+	{
+		if (!(is_valid(col1) && is_valid(col2)))
+			return false;
+
+		entity_id eid1 = get_entity(col1);
+		entity_id eid2 = get_entity(col2);
+
+		transform_id trf1 = _transforms->get_component(eid1);
+		transform_id trf2 = _transforms->get_component(eid2);
+
+		if (!(_transforms->is_valid(trf1) && _transforms->is_valid(trf2)))
+			return false;
+
+		vector3 simplex[4];
+		vector3& a = simplex[0];
+		vector3& b = simplex[1];
+		vector3& c = simplex[2];
+		vector3& d = simplex[3];
+
+		vector3 search_dir = _transforms->get_position(trf1) - _transforms->get_position(trf2);
+
+		c = support(col2, search_dir) - support(col1, -search_dir);
+		search_dir = -c;
+		b = support(col2, search_dir) - support(col1, -search_dir);
+
+		if (IS_ALIGNED(b, search_dir))
+			return false;
+
+		search_dir = vector3::cross(vector3::cross(c - b, -b), c - b);
+
+		/*if (search_dir.is_zero())
+		{
+			search_dir = vector3::cross(c - b, vector3(1, 0, 0));
+
+			if (search_dir.is_zero())
+				search_dir = vector3::cross(c - b, vector3(0, 0, -1));
+		}*/
+
+		int dim = 2;
+
+		for (size_t i = 0; i < GJK_MAX_ITERATIONS; i++)
+		{
+			a = support(col2, search_dir) - support(col1, -search_dir);
+
+			if (IS_ALIGNED(a, search_dir))
+				return false;
+
+			dim++;
+			if (dim == 3)
+				check_simplex3(simplex, dim, search_dir);
+			else if (check_simplex4(simplex, dim, search_dir))
+				return true;
+		}
+
+		return false;
+	}
+
+	void collider_manager::update_narrow()
+	{
+		vector3 s; // = support(random);
+
+		std::vector<vector3> simplex;
+		vector3 d = -s;
+
+		while (true)
+		{
+			vector3 a; // = support(d);
+
 		}
 	}
 
@@ -223,13 +314,15 @@ namespace efiilj
 	bool collider_manager::test_hit(collider_id idx, const ray& ray, trace_hit& result) const
 	{
 
+		bool ret = false;
+		float nearest = std::numeric_limits<float>::max();
+		vector3 near_hit;
+		vector3 near_norm;
+
 		entity_id eid = _entities[idx];
 
-		//if (_data.bounds_updated[idx])
-		//{
-		//	if (!_data.mesh_bounds[idx].ray_intersection(ray, hit))
-		//		return false;
-		//}
+		if (!get_bounds_world(idx).ray_intersection(ray, near_hit))
+			return false;
 
 		transform_id trf_id = _transforms->get_component(eid);
 
@@ -237,11 +330,6 @@ namespace efiilj
 			return false;
 
 		const matrix4& model = _transforms->get_model(trf_id);
-
-		bool ret = false;
-		float nearest = std::numeric_limits<float>::max();
-		vector3 near_hit;
-		vector3 near_norm;
 
 		auto range = _mesh_instances->get_components(eid);
 		for (auto it = range.first; it != range.second; it++)
