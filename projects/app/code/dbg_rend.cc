@@ -38,8 +38,6 @@ namespace efiilj
 		if (!_transforms->is_valid(trf_id))
 			return;
 
-		const matrix4& mat = _transforms->get_model(trf_id);
-
 		if (_colliders->is_valid(col_id))
 		{
 			bounds bt = _colliders->get_bounds_world(col_id);
@@ -105,9 +103,15 @@ namespace efiilj
 		mesh_id mid = _data.bbox[idx];
 		_meshes->bind(mid);
 
+		entity_id eid = get_entity(idx);
+
+		collider_id col_id = _colliders->get_component(eid);
+
+		vector4 color = (_colliders->is_valid(col_id) && _colliders->test_broad(col_id)) ? vector4(1, 0, 0, 1) : vector4(1, 1, 1, 1);
+
 		if (_shaders->use(_shader))
 		{
-			_shaders->set_uniform("base_color_factor", vector4(1,1,1,1));
+			_shaders->set_uniform("base_color_factor", color);
 			_shaders->set_uniform("model", matrix4());
 			_meshes->draw_elements(mid);
 		}

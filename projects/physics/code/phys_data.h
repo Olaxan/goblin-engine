@@ -64,13 +64,16 @@ namespace efiilj
 			void draw_gui(collider_id) override;
 
 			bool update_bounds(collider_id idx);
-
 			void update_broad();
+			void update();
 
 			bool test_hit(const ray& ray, trace_hit& hit) const;
 			bool test_hit(collider_id idx, const ray& ray, trace_hit& hit) const;
 
-			void update();
+			bool test_broad(collider_id idx) const
+			{
+				return _data.collisions[idx].size() > 0;
+			}
 
 			const bounds& get_bounds(collider_id idx) const
 			{
