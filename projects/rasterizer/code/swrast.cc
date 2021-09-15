@@ -258,7 +258,7 @@ namespace efiilj
 	{
 		const vector4 u = b - a;
 		const vector4 v = c - a;
-		return vector4::cross(u, v);
+		return vector4::cross(v, u);
 	}
 
 	float rasterizer::get_winding_order(const vector4& a, const vector4& b, const vector4& c)

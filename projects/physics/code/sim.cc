@@ -264,20 +264,19 @@ namespace efiilj
 	
 	void simulator::add_impulse(physics_id idx, const PointForce& force)
 	{
-		// we should sum these up I think!!
 		_data.impulse[idx] = force;	
 	}
 
-	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t) //NOLINT
+	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t)
 	{
 		const PointForce& impulse = _data.impulse[idx];
 		return impulse.force;
 	}
 
-	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t) //NOLINT
+	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t)
 	{
 		const PointForce& impulse = _data.impulse[idx];
-		return vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
+		return vector3::cross(impulse.force, impulse.p - (_data.com[idx] + state.position));
 	}
 
 	void simulator::end_frame()

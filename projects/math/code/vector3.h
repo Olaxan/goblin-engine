@@ -328,9 +328,13 @@ namespace efiilj
 		{
 			vector3 vect;
 
-			vect.x = y * other.z - z * other.y;
-			vect.y = z * other.x - x * other.z;
-			vect.z = x * other.y - y * other.x;
+			vect.x = other.y * z - other.z * y;
+			vect.y = other.z * x - other.x * z;
+			vect.z = other.x * y - other.y * x;
+
+			//vect.x = y * other.z - z * other.y;
+			//vect.y = z * other.x - x * other.z;
+			//vect.z = x * other.y - y * other.x;
 
 			return vect;
 		}

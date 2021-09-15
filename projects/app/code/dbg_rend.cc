@@ -42,8 +42,7 @@ namespace efiilj
 
 		if (_colliders->is_valid(col_id))
 		{
-			bounds b = _colliders->get_bounds(col_id);
-			bounds bt = b.get_transformed_bounds(mat);
+			bounds bt = _colliders->get_bounds_world(col_id);
 
 			std::vector<vector3> positions = {
 				vector3(bt.max.x, bt.min.y, bt.min.z),

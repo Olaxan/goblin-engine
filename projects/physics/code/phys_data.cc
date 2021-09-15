@@ -1,5 +1,7 @@
 #include "phys_data.h"
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
 #include <limits>
 
@@ -17,10 +19,13 @@ namespace efiilj
 		printf("Collider manager exit\n");
 	}
 
-	void collider_manager::extend_defaults(collider_id)
+	void collider_manager::extend_defaults(collider_id idx)
 	{
 		_data.mesh_bounds.emplace_back();
 		_data.bounds_updated.emplace_back(false);
+		_data.collisions.emplace_back();
+
+		update_bounds(idx);
 	}
 
 	void collider_manager::on_register(std::shared_ptr<manager_host> host)
@@ -28,6 +33,22 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+	}
+
+	void collider_manager::draw_gui()
+	{}
+
+	void collider_manager::draw_gui(collider_id idx)
+	{
+
+		ImGui::Text("Collider %d", idx);
+
+		std::stringstream ss;
+
+		for (auto col : _data.collisions[idx])
+			ss << col << ", ";
+
+		ImGui::Text("Broad: %s", ss.str().c_str());
 	}
 
 	bool collider_manager::update_bounds(collider_id idx)
@@ -70,6 +91,108 @@ namespace efiilj
 
 		return true;
 
+	}
+
+	bounds collider_manager::get_bounds_world(collider_id idx) const
+	{
+		const bounds& b = get_bounds(idx);
+
+		entity_id eid = get_entity(idx);
+
+		transform_id trf_id = _transforms->get_component(eid);
+
+		if (!_transforms->is_valid(trf_id))
+			return b;
+
+		const matrix4& model = _transforms->get_model(trf_id);
+
+		return b.get_transformed_bounds(model);
+	}
+	
+	void collider_manager::check_axis_sweep(const std::set<point, point_comp>& points, std::map<collider_id, std::set<collider_id>>& hits) const
+	{
+
+		std::set<collider_id> intervals;
+
+		for (const auto& point : points)
+		{
+			collider_id new_id = point.first;
+
+			// If this is the beginning of a new interval
+			if (intervals.find(new_id) == intervals.end())
+			{
+				// Add the new interval id to all existing intervals
+				for (const auto& idx : intervals)
+					hits[idx].insert(new_id);
+
+				// Add the existing intervals to the new interval
+				hits[new_id].insert(intervals.begin(), intervals.end());
+
+				// Insert the new interval
+				intervals.insert(new_id);
+			}
+			else
+			{
+				// Otherwise erase the interval
+				intervals.erase(new_id);
+			}
+		}
+	}
+
+	void collider_manager::update_broad()
+	{
+
+		std::set<point, point_comp> points_x;
+		std::set<point, point_comp> points_y;
+		std::set<point, point_comp> points_z;
+
+		for (const auto& idx : _instances)
+		{
+			const auto& bounds = get_bounds_world(idx);
+
+			points_x.emplace(idx, bounds.min.x);
+			points_x.emplace(idx, bounds.max.x);
+
+			points_y.emplace(idx, bounds.min.y);
+			points_y.emplace(idx, bounds.max.y);
+
+			points_z.emplace(idx, bounds.min.z);
+			points_z.emplace(idx, bounds.max.z);
+
+			_data.collisions[idx].clear();
+		}
+
+		std::map<collider_id, std::set<collider_id>> hits_x;
+		std::map<collider_id, std::set<collider_id>> hits_y;
+		std::map<collider_id, std::set<collider_id>> hits_z;
+
+		check_axis_sweep(points_x, hits_x);
+		check_axis_sweep(points_y, hits_y);
+		check_axis_sweep(points_z, hits_z);
+
+		for (const auto& idx : _instances)
+		{
+			std::set<collider_id> ixy;
+			std::set<collider_id> ixyz;
+
+			std::set_intersection(hits_x[idx].begin(), hits_x[idx].end(), hits_y[idx].begin(), hits_y[idx].end(),
+					std::inserter(ixy, ixy.begin()));
+
+			std::set_intersection(ixy.begin(), ixy.end(), hits_z[idx].begin(), hits_z[idx].end(),
+					std::inserter(ixyz, ixyz.begin()));
+
+			_data.collisions[idx] = ixyz;
+		}
+	}
+
+	void collider_manager::update()
+	{
+		for (auto& idx : _instances)
+		{
+			update_bounds(idx);
+		}
+
+		update_broad();
 	}
 
 	bool collider_manager::test_hit(const ray& ray, trace_hit& result) const
@@ -194,13 +317,13 @@ namespace efiilj
 
 			const vector3 e1 = b - a;
 			const vector3 e2 = c - a;
-			const vector3 n = vector3::cross(e1, e2);
+			const vector3 n = vector3::cross(e2, e1); // Cross product order changed
 
 			const float det = -vector3::dot(d, n);
 			const float invdet = 1.0f / det;
 
 			const vector3 ao = o - a;
-			const vector3 dao = vector3::cross(ao, d);
+			const vector3 dao = vector3::cross(d, ao); // Cross product order changed
 
 			const float u = vector3::dot(e2, dao) * invdet;
 			const float v = -vector3::dot(e1, dao) * invdet;

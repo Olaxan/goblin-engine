@@ -374,9 +374,9 @@ namespace efiilj
 		vector4 cross(const vector4& other) const
 		{
 			vector4 vect;
-			vect.x = y * other.z - z * other.y;
-			vect.y = z * other.x - x * other.z;
-			vect.z = x * other.y - y * other.x;
+			vect.x = other.y * z - other.z * y;
+			vect.y = other.z * x - other.x * z;
+			vect.z = other.x * y - other.y * x;
 			vect.w = 1.0;
 			return vect;
 		}
