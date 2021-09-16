@@ -42,8 +42,8 @@ namespace efiilj
 			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
 			vector3 support(collider_id, const vector3& dir) const;
-			bool check_simplex3(vector3 simplex[4], int dim, vector3& dir);
-			bool check_simplex4(vector3 simplex[4], int dim, vector3& dir);
+			bool check_simplex3(vector3 simplex[4], int& dim, vector3& dir);
+			bool check_simplex4(vector3 simplex[4], int& dim, vector3& dir);
 			bool check_gjk_intersect(collider_id col1, collider_id col2);
 
 			struct PhysicsData
@@ -78,14 +78,19 @@ namespace efiilj
 			bool test_hit(collider_id idx, const ray& ray, trace_hit& hit) const;
 
 			bool test_broad(collider_id idx) const
+			{ return _data.broad_collisions[idx].size() > 0; }
+
+			bool test_narrow(collider_id idx) const
+			{ return _data.narrow_collisions[idx].size() > 0; }
+
+			bool collides_with(collider_id idx, collider_id other)
 			{
-				return _data.broad_collisions[idx].size() > 0;
+				return _data.narrow_collisions[idx].find(other) !=
+					_data.narrow_collisions[idx].end();
 			}
 
 			const bounds& get_bounds(collider_id idx) const
-			{
-				return _data.mesh_bounds[idx];
-			}
+			{ return _data.mesh_bounds[idx]; }
 			
 			bounds get_bounds_world(collider_id idx) const;
 

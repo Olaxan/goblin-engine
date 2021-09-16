@@ -7,6 +7,8 @@
 
 #include "vector2.h"
 
+#define EPSILON 0.00001f
+
 namespace efiilj
 {
 
@@ -360,6 +362,11 @@ namespace efiilj
 			return len > 0 ? v / len : v;
 		}
 
+		bool is_zero() const
+		{
+			return fabs(x) < EPSILON && fabs(y) < EPSILON && fabs(z) < EPSILON;
+		}
+
 		/* === FACTORY FUNCTIONS === */
 
 		/// <summary>
@@ -391,3 +398,5 @@ namespace efiilj
 	
 	extern vector3 operator * (float lhs, const vector3& rhs);
 }
+
+#undef EPSILON

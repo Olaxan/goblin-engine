@@ -84,6 +84,9 @@ namespace efiilj
 			const vector3& get_position(mesh_id idx, size_t index) const 
 			{ return _data.positions[idx][index]; }
 
+			const std::vector<vector3>& get_positions(mesh_id idx) const
+			{ return _data.positions[idx]; }
+
 			const vector3& get_indexed_position(mesh_id idx, size_t index) const 
 			{ return get_position(idx, _data.indices[idx][index]); }
 

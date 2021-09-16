@@ -6,7 +6,7 @@
 #include <limits>
 
 #define GJK_MAX_ITERATIONS 64
-#define IS_ALIGNED(a, b) vector3::dot(a, b) < 0
+#define IS_ALIGNED(a, b) (vector3::dot(a, b) > 0)
 
 namespace efiilj
 {
@@ -47,12 +47,20 @@ namespace efiilj
 
 		ImGui::Text("Collider %d", idx);
 
-		std::stringstream ss;
+		// I don't care about efficienty,
+		// just want to make sure no weirdness tricks me
+		std::stringstream ss1;
+		std::stringstream ss2;
 
 		for (auto col : _data.broad_collisions[idx])
-			ss << col << ", ";
+			ss1 << col << ", ";
 
-		ImGui::Text("Broad: %s", ss.str().c_str());
+		ImGui::Text("Broad: %s", ss1.str().c_str());
+
+		for (auto col : _data.narrow_collisions[idx])
+			ss2 << col << ", ";
+
+		ImGui::Text("Narrow: %s", ss2.str().c_str());
 	}
 
 	bool collider_manager::update_bounds(collider_id idx)
@@ -191,17 +199,124 @@ namespace efiilj
 
 	vector3 collider_manager::support(collider_id idx, const vector3& dir) const
 	{
-		return vector3();
+		entity_id eid = get_entity(idx);
+
+		transform_id trf_id = _transforms->get_component(eid);
+
+		if (!is_valid(trf_id))
+			return vector3();
+
+		vector3 inv_dir = _transforms->get_model_inv(trf_id) * dir;
+		vector3 furthest_point = vector3();
+		float max_dot = -1.0f;
+
+		auto range = _mesh_instances->get_components(eid);
+
+		for (auto it = range.first; it != range.second; it++)
+		{
+			mesh_instance_id miid = it->second;
+			mesh_id mid = _mesh_instances->get_mesh(miid);
+
+			const auto& points = _meshes->get_positions(mid);
+
+			for (const auto& point : points)
+			{
+				float d = vector3::dot(point, inv_dir);
+
+				if (d > max_dot)
+				{
+					max_dot = d;
+					furthest_point = point;
+				}
+			}
+		}
+		
+		return _transforms->get_model(trf_id) * furthest_point;
 	}
 
-	bool collider_manager::check_simplex3(vector3 simplex[4], int dim, vector3& dir)
+	bool collider_manager::check_simplex3(vector3 simplex[4], int& dim, vector3& dir)
 	{
+		vector3& a = simplex[0];
+		vector3& b = simplex[1];
+		vector3& c = simplex[2];
+		vector3& d = simplex[3];
 
+		vector3 n = vector3::cross(b - a, c - a);
+		vector3 ao = -a;
+
+		dim = 2;
+
+		if (IS_ALIGNED(vector3::cross(b - a, n), ao))
+		{
+			c = a;
+			dir = vector3::cross(vector3::cross(b - a, ao), b - a);
+			return false;
+		}
+
+		if (IS_ALIGNED(vector3::cross(n, c - a), ao))
+		{
+			b = a;
+			dir = vector3::cross(vector3::cross(c - a, ao), c - a);
+			return false;
+		}
+
+		dim = 3;
+
+		if (IS_ALIGNED(n, ao))
+		{
+			d = c;
+			c = b;
+			b = a;
+			dir = n;
+			return false;
+		}
+
+		d = b;
+		b = a;
+		dir = -n;
+		return true;
 	}
 
-	bool collider_manager::check_simplex4(vector3 simplex[4], int dim, vector3& dir)
+	bool collider_manager::check_simplex4(vector3 simplex[4], int& dim, vector3& dir)
 	{
+		vector3& a = simplex[0];
+		vector3& b = simplex[1];
+		vector3& c = simplex[2];
+		vector3& d = simplex[3];
 
+		vector3 abc = vector3::cross(b - a, c - a);
+		vector3 acd = vector3::cross(c - a, d - a);
+		vector3 adb = vector3::cross(d - a, b - a);
+
+		vector3 ao = -a;
+		dim = 3;
+
+		if (IS_ALIGNED(abc, ao))
+		{
+			d = c;
+			c = b;
+			b = a;
+			dir = abc;
+			return false;
+		}
+
+		if (IS_ALIGNED(acd, ao))
+		{
+			b = a;
+			dir = acd;
+			return false;
+		}
+
+		if (IS_ALIGNED(adb, ao))
+		{
+			c = d;
+			d = b;
+			b = a;
+			dir = adb;
+			return false;
+		}
+
+		return true;
 	}
 	
 	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2)
@@ -230,18 +345,18 @@ namespace efiilj
 		search_dir = -c;
 		b = support(col2, search_dir) - support(col1, -search_dir);
 
-		if (IS_ALIGNED(b, search_dir))
+		if (!IS_ALIGNED(b, search_dir))
 			return false;
 
 		search_dir = vector3::cross(vector3::cross(c - b, -b), c - b);
 
-		/*if (search_dir.is_zero())
+		if (search_dir.is_zero())
 		{
 			search_dir = vector3::cross(c - b, vector3(1, 0, 0));
 
 			if (search_dir.is_zero())
 				search_dir = vector3::cross(c - b, vector3(0, 0, -1));
-		}*/
+		}
 
 		int dim = 2;
 
@@ -249,7 +364,7 @@ namespace efiilj
 		{
 			a = support(col2, search_dir) - support(col1, -search_dir);
 
-			if (IS_ALIGNED(a, search_dir))
+			if (!IS_ALIGNED(a, search_dir))
 				return false;
 
 			dim++;
@@ -264,15 +379,22 @@ namespace efiilj
 
 	void collider_manager::update_narrow()
 	{
-		vector3 s; // = support(random);
+		for (auto idx : _instances)
+			_data.narrow_collisions[idx].clear();
 
-		std::vector<vector3> simplex;
-		vector3 d = -s;
-
-		while (true)
+		for (auto idx : _instances)
 		{
-			vector3 a; // = support(d);
+			for (auto col : _data.broad_collisions[idx])
+			{
+				if (collides_with(idx, col))
+					continue;
 
+				if (check_gjk_intersect(idx, col))
+				{
+					_data.narrow_collisions[idx].insert(col);
+					_data.narrow_collisions[col].insert(idx);
+				}
+			}
 		}
 	}
 
@@ -284,6 +406,7 @@ namespace efiilj
 		}
 
 		update_broad();
+		update_narrow();
 	}
 
 	bool collider_manager::test_hit(const ray& ray, trace_hit& result) const
