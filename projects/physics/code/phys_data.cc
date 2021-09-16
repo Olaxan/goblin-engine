@@ -203,7 +203,7 @@ namespace efiilj
 
 		transform_id trf_id = _transforms->get_component(eid);
 
-		if (!is_valid(trf_id))
+		if (!_transforms->is_valid(trf_id))
 			return vector3();
 
 		vector3 inv_dir = _transforms->get_model_inv(trf_id) * dir;
@@ -475,6 +475,7 @@ namespace efiilj
 					result.position = near_hit;
 					result.normal = near_norm;
 					result.mesh = mid;
+					result.collider = idx;
 					result.entity = eid;
 				}
 			}

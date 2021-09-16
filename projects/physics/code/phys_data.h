@@ -21,6 +21,7 @@ namespace efiilj
 		vector3 position;
 		vector3 normal;
 		mesh_id mesh;
+		collider_id collider;
 		entity_id entity;
 	};
 
@@ -41,7 +42,6 @@ namespace efiilj
 			bool point_inside_bounds(collider_id idx, const vector3& point) const;
 			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
-			vector3 support(collider_id, const vector3& dir) const;
 			bool check_simplex3(vector3 simplex[4], int& dim, vector3& dir);
 			bool check_simplex4(vector3 simplex[4], int& dim, vector3& dir);
 			bool check_gjk_intersect(collider_id col1, collider_id col2);
@@ -62,6 +62,8 @@ namespace efiilj
 
 			collider_manager();
 			~collider_manager();
+
+			vector3 support(collider_id, const vector3& dir) const;
 
 			void extend_defaults(collider_id) override;
 			void on_register(std::shared_ptr<manager_host> host) override;

@@ -144,31 +144,34 @@ namespace efiilj
 		// GLTF
 		
 		model_id test_mdl = gltf->create();
-		gltf->set_uri(test_mdl, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		model_id test_mdl2 = gltf->create();
+
+		gltf->set_uri(test_mdl, "../res/gltf/Avocado/Avocado.gltf");
+		gltf->set_uri(test_mdl2, "../res/gltf/Avocado/Avocado.gltf");
+
 		gltf->load(test_mdl);
+		gltf->load(test_mdl2);
+
 		gltf->get_nodes(test_mdl);
+		gltf->get_nodes(test_mdl2);
 
-		entity_id parent = entities->create();
+		auto node = gltf->get_scene(test_mdl).nodes[0];
+		auto node2 = gltf->get_scene(test_mdl2).nodes[0];
 
-		meta_id parent_meta = metadata->register_entity(parent);
-		metadata->set_name(parent_meta, "Flight helmet");
-		metadata->set_description(parent_meta, "This container entity demonstrates parent-transform behaviour.");
+		graphics_id test_gfx = rdef->register_entity(node);
+		graphics_id test_gfx2 = rdef->register_entity(node2);
 
-		transform_id parent_trf = transforms->register_entity(parent);
+		collider_id test_col = colliders->register_entity(node);
+		collider_id test_col2 = colliders->register_entity(node2);
 
-		for (const auto& node : gltf->get_scene(test_mdl).nodes)
-		{
-			rdef->register_entity(node);
-			colliders->register_entity(node);
-			transform_id child_trf = transforms->get_component(node);
-			transforms->set_parent(child_trf, parent_trf);
-		}
+		//physics_id test_rb = sim->register_entity(node);
+		//physics_id test_rb2 = sim->register_entity(node2);
+
+		//sim->recalculate_com(test_rb);
+		//sim->recalculate_com(test_rb2);
 
 		gltf->unload(test_mdl);
-
-		// Rigidbody
-		physics_id parent_rb = sim->register_entity(parent);
-		sim->recalculate_com(parent_rb);
+		gltf->unload(test_mdl2);
 
 		// Debug drawing
 		rdbg->set_shader(rfwd->get_fallback_shader());
@@ -195,8 +198,6 @@ namespace efiilj
 
 			rfwd->register_entity(e_hitmarker);
 		}
-
-		transforms->set_position(trf_hitmarker, sim->get_com(parent_rb));
 
 		// Lights
 		
@@ -262,7 +263,9 @@ namespace efiilj
 				{
 					if (button == GLFW_MOUSE_BUTTON_RIGHT)
 					{
-						transforms->set_position(trf_hitmarker, hit.position);
+						vector3 f = colliders->support(hit.collider, r.direction);
+						//transforms->set_position(trf_hitmarker, hit.position);
+						transforms->set_position(trf_hitmarker, f);
 						editor->set_selected(hit.entity);
 					}
 					else if (button == GLFW_MOUSE_BUTTON_LEFT)
@@ -271,7 +274,10 @@ namespace efiilj
 						impulse.force = r.direction * 0.1f;
 						impulse.p = hit.position;
 
-						sim->add_impulse(parent_rb, impulse);
+						physics_id idp = sim->get_component(hit.entity);
+
+						if (sim->is_valid(idp))
+							sim->add_impulse(idp, impulse);
 					}
 				}
 			}
