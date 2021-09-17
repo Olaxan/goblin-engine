@@ -158,6 +158,15 @@ namespace efiilj
 		auto node = gltf->get_scene(test_mdl).nodes[0];
 		auto node2 = gltf->get_scene(test_mdl2).nodes[0];
 
+		transform_id test_trf = transforms->get_component(node);
+		transform_id test_trf2 = transforms->get_component(node2);
+
+		transforms->set_scale(test_trf, 3.0f);
+		transforms->set_scale(test_trf2, 5.0f);
+
+		transforms->set_position(test_trf, vector3(-0.5f, 0, 0));
+		transforms->set_position(test_trf2, vector3(0.5f, 0, 0));
+
 		graphics_id test_gfx = rdef->register_entity(node);
 		graphics_id test_gfx2 = rdef->register_entity(node2);
 

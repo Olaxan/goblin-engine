@@ -234,7 +234,7 @@ namespace efiilj
 		return _transforms->get_model(trf_id) * furthest_point;
 	}
 
-	bool collider_manager::check_simplex3(vector3 simplex[4], int& dim, vector3& dir)
+	void collider_manager::test_simplex3(vector3 simplex[4], int& dim, vector3& dir)
 	{
 		vector3& a = simplex[0];
 		vector3& b = simplex[1];
@@ -250,14 +250,14 @@ namespace efiilj
 		{
 			c = a;
 			dir = vector3::cross(vector3::cross(b - a, ao), b - a);
-			return false;
+			return;
 		}
 
 		if (IS_ALIGNED(vector3::cross(n, c - a), ao))
 		{
 			b = a;
 			dir = vector3::cross(vector3::cross(c - a, ao), c - a);
-			return false;
+			return;
 		}
 
 		dim = 3;
@@ -268,16 +268,15 @@ namespace efiilj
 			c = b;
 			b = a;
 			dir = n;
-			return false;
+			return;
 		}
 
 		d = b;
 		b = a;
 		dir = -n;
-		return true;
 	}
 
-	bool collider_manager::check_simplex4(vector3 simplex[4], int& dim, vector3& dir)
+	bool collider_manager::test_simplex4(vector3 simplex[4], int& dim, vector3& dir)
 	{
 		vector3& a = simplex[0];
 		vector3& b = simplex[1];
@@ -369,8 +368,8 @@ namespace efiilj
 
 			dim++;
 			if (dim == 3)
-				check_simplex3(simplex, dim, search_dir);
-			else if (check_simplex4(simplex, dim, search_dir))
+				test_simplex3(simplex, dim, search_dir);
+			else if (test_simplex4(simplex, dim, search_dir))
 				return true;
 		}
 

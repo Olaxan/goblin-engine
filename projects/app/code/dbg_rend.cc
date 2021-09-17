@@ -107,7 +107,14 @@ namespace efiilj
 
 		collider_id col_id = _colliders->get_component(eid);
 
-		vector4 color = (_colliders->is_valid(col_id) && _colliders->test_broad(col_id)) ? vector4(1, 0, 0, 1) : vector4(1, 1, 1, 1);
+		vector4 color(1,1,1,1);
+		if (_colliders->is_valid(col_id) && _colliders->test_broad(col_id))
+		{
+			if (_colliders->test_narrow(col_id))
+				color = vector4(1,0,0,1);
+			else
+				color = vector4(1,1,0,1);
+		}
 
 		if (_shaders->use(_shader))
 		{
