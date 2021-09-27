@@ -621,8 +621,8 @@ namespace efiilj
 		static matrix4 get_lookat(const vector3& camera_pos, const vector3& camera_target, const vector3& up_direction)
 		{
 			const vector3 camera_direction = (camera_target - camera_pos).norm();
-			const vector3 camera_right = vector3::cross(up_direction, camera_direction).norm();
-			const vector3 camera_up = vector3::cross(camera_direction, camera_right);
+			const vector3 camera_right = vector3::cross(camera_direction, up_direction).norm();
+			const vector3 camera_up = vector3::cross(camera_right, camera_direction);
 
 			matrix4 a = matrix4(vector4(camera_right, 0), vector4(camera_up, 0), -vector4(camera_direction, 0), vector4(), false);
 			a.at(12) = -vector3::dot(camera_right, camera_pos);

@@ -336,9 +336,14 @@ namespace efiilj
 		/// <param name="x">The first vector</param>
 		/// <param name="y">The second vector</param>
 		/// <returns>The cross product as a float</returns>
-		static vector4 cross(const vector4& x, const vector4& y)
+		static vector4 cross(const vector4& a, const vector4& b)
 		{
-			return x.cross(y);
+			vector4 vect;
+			vect.x = a.y * b.z - a.z * b.y;
+			vect.y = a.z * b.x - a.x * b.z;
+			vect.z = a.x * b.y - a.y * b.x;
+			vect.w = 1.0;
+			return vect;
 		}
 
 		static bool is_near(const vector4& a, const vector4& b, float epsilon = 0.01f)
@@ -373,12 +378,7 @@ namespace efiilj
 		/// <returns>The cross product as a float</returns>
 		vector4 cross(const vector4& other) const
 		{
-			vector4 vect;
-			vect.x = other.y * z - other.z * y;
-			vect.y = other.z * x - other.x * z;
-			vect.z = other.x * y - other.y * x;
-			vect.w = 1.0;
-			return vect;
+			return vector4::cross(*this, other);
 		}
 
 		/// <summary>

@@ -276,7 +276,7 @@ namespace efiilj
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t)
 	{
 		const PointForce& impulse = _data.impulse[idx];
-		return vector3::cross(impulse.force, impulse.p - (_data.com[idx] + state.position));
+		return vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
 	}
 
 	void simulator::end_frame()

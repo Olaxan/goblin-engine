@@ -118,7 +118,7 @@ namespace efiilj
 
 		vector3 operator - () const
 		{
-			return *this * -1;
+			return *this * -1.0f;
 		}
 
 		/// <summary>
@@ -156,9 +156,7 @@ namespace efiilj
 		/// <returns>The Vector3 resulting from the operation</returns>
 		vector3 operator / (const float& other) const
 		{
-			vector3 v = *this;
-
-			return v * (1 / other);
+			return *this * (1.0f / other);
 		}
 
 		/// <summary>
@@ -285,9 +283,9 @@ namespace efiilj
 		/// <param name="x">The first vector</param>
 		/// <param name="y">The second vector</param>
 		/// <returns>The dot product as a float</returns>
-		static float dot(const vector3& x, const vector3& y)
+		static float dot(const vector3& a, const vector3& b)
 		{
-			return x.dot(y);
+			return (a.x * b.x + a.y * b.y + a.z * b.z);
 		}
 
 		/// <summary>
@@ -296,9 +294,13 @@ namespace efiilj
 		/// <param name="x">The first vector</param>
 		/// <param name="y">The second vector</param>
 		/// <returns>The cross product as a float</returns>
-		static vector3 cross(const vector3& x, const vector3& y)
+		static vector3 cross(const vector3& a, const vector3& b)
 		{
-			return x.cross(y);
+			vector3 vect;
+			vect.x = a.y * b.z - a.z * b.y;
+			vect.y = a.z * b.x - a.x * b.z;
+			vect.z = a.x * b.y - a.y * b.x;
+			return vect;
 		}
 
 		static vector3 min(const vector3& a, const vector3& b)
@@ -318,7 +320,7 @@ namespace efiilj
 		/// <returns>The dot product as a float</returns>
 		float dot(const vector3& other) const
 		{
-			return (this->x * other.x + this->y * other.y + this->z * other.z);
+			return vector3::dot(*this, other);
 		}
 
 		/// <summary>
@@ -328,17 +330,7 @@ namespace efiilj
 		/// <returns>The cross product as a float</returns>
 		vector3 cross(const vector3& other) const
 		{
-			vector3 vect;
-
-			vect.x = other.y * z - other.z * y;
-			vect.y = other.z * x - other.x * z;
-			vect.z = other.x * y - other.y * x;
-
-			//vect.x = y * other.z - z * other.y;
-			//vect.y = z * other.x - x * other.z;
-			//vect.z = x * other.y - y * other.x;
-
-			return vect;
+			return vector3::cross(*this, other);
 		}
 
 		/// <summary>
