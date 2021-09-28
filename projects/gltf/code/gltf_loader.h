@@ -107,5 +107,10 @@ namespace efiilj
 		{
 			_data.uri[idx] = uri;
 		}
+
+		void set_binary(model_id idx, bool is_binary)
+		{
+			_data.binary[idx] = is_binary;
+		}
 	};
 }

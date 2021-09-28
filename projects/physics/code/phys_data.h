@@ -44,6 +44,7 @@ namespace efiilj
 
 			bool update_simplex(vector3 simplex[4], int& dim, vector3& dir);
 			bool check_gjk_intersect(collider_id col1, collider_id col2);
+			vector3 epa_expand(vector3 simplex[4], collider_id col1, collider_id col2);
 
 			struct PhysicsData
 			{

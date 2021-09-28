@@ -31,22 +31,29 @@ namespace efiilj
 
 		if (!is_valid(idx))
 		{
-			ImGui::TextColored(ImVec4(1, 0, 0, 1), "No mesh selected");
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), "No mesh selected");
 			return;
+		}
+
+		mesh_id mid = get_mesh(idx);
+
+		if (!_meshes->is_valid(mid))
+		{
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid mesh!");
 		}
 
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Mesh instance %d", idx);
 
 		if (ImGui::TreeNode("Mesh data"))
 		{
-			ImGui::BulletText("%ld vertices", _meshes->get_vertex_count(idx));
-			ImGui::BulletText("%ld indices", _meshes->get_index_count(idx));
+			ImGui::BulletText("%ld vertices", _meshes->get_vertex_count(mid));
+			ImGui::BulletText("%ld indices", _meshes->get_index_count(mid));
 			ImGui::BulletText("Material: %d", _data.material[idx]);
-			ImGui::BulletText("Loaded: %s", _meshes->get_state(idx) ? "true" : "false");
+			ImGui::BulletText("Loaded: %s", _meshes->get_state(mid) ? "true" : "false");
 			ImGui::BulletText("VAO: %d, VBO: %d, IBO: %d", 
-					_meshes->get_vao(idx),
-					_meshes->get_vbo(idx),
-					_meshes->get_ibo(idx));
+					_meshes->get_vao(mid),
+					_meshes->get_vbo(mid),
+					_meshes->get_ibo(mid));
 
 			ImGui::TreePop();
 		}

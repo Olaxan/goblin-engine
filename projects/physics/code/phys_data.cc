@@ -462,6 +462,140 @@ check_two:
 
 		return true;
 	}
+
+#define EPA_MAX_ITERATIONS 32
+#define EPA_TOLERANCE 0.0001f
+
+	vector3 collider_manager::epa_expand(vector3 simplex[4], collider_id col1, collider_id col2)
+	{
+		vector3& a = simplex[0];	
+		vector3& b = simplex[1];	
+		vector3& c = simplex[2];	
+		vector3& d = simplex[3];	
+
+		struct face
+		{
+			vector3 a;
+			vector3 b;
+			vector3 c;
+			vector3 normal;
+		};
+
+		std::vector<face> faces;
+
+		// Add termination simplex to face vector
+		faces.emplace_back(a, b, c, vector3::cross(b - a, c - a).norm());
+		faces.emplace_back(a, c, d, vector3::cross(c - a, d - a).norm());
+		faces.emplace_back(a, d, b, vector3::cross(d - a, b - a).norm());
+		faces.emplace_back(b, d, c, vector3::cross(d - b, c - b).norm());
+
+		size_t closest_face = 0;
+
+		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
+		{
+			closest_face = 0;
+
+			float min_dist = vector3::dot(faces[0].a, faces[0].normal);
+			size_t num_faces = faces.size();
+
+			for (size_t i = 1; i < num_faces; i++)
+			{
+				float dist = vector3::dot(faces[i].a, faces[i].normal);
+				if (dist < min_dist)
+				{
+					min_dist = dist;
+					closest_face = i;
+				}
+			}
+
+			vector3 search_dir = faces[closest_face].normal;
+			vector3 p = support(col2, search_dir) - support(col1, -search_dir);
+
+			if (vector3::dot(p, search_dir) - min_dist < EPA_TOLERANCE)
+			{
+				return faces[closest_face].normal * vector3::dot(p, search_dir);		
+			}
+
+			struct edge
+			{
+				vector3 a;
+				vector3 b;
+			};
+
+			std::vector<edge> edges;
+
+			size_t num_edges = 0;
+
+			for (size_t i = 0; i < num_faces; i++)
+			{
+				if (IS_ALIGNED(faces[i].normal, p - faces[i].a))
+				{
+					for (size_t j = 0; j < 3; j++)
+					{
+						edge current_edge;
+
+						switch (j)
+						{
+						case 0:
+							current_edge = { faces[i].a, faces[i].b };
+							break;
+						case 1:
+							current_edge = { faces[i].b, faces[i].c };
+							break;
+						case 2:
+							current_edge = { faces[i].c, faces[i].a };
+							break;
+						}
+
+						bool has_edge = false;
+						num_edges = edges.size();
+
+						for (size_t k = 0; k < num_edges; k++)
+						{
+							if (edges[k].b == current_edge.a && edges[k].a == current_edge.b)
+							{
+								edges[k].a = edges[num_edges - 1].a;
+								edges[k].b = edges[num_edges - 1].b;
+								edges.pop_back();
+								has_edge = true;
+								break;
+							}
+						}
+
+						if (!has_edge)
+							edges.emplace_back(current_edge);
+
+					}
+
+					faces[i] = faces[num_faces - 1];
+					faces.pop_back();
+					i--;
+
+				}
+			}
+
+			for (size_t i = 0; i < num_edges; i++)
+			{
+				face& last_face = faces[num_faces];
+				last_face.a = edges[i].a;
+				last_face.b = edges[i].b;
+				last_face.c = p;
+				last_face.normal = vector3::cross(
+						edges[i].a - edges[i].b, 
+						edges[i].a - p).norm();
+
+				const float bias = 0.000001f;
+
+				if (IS_NOT_ALIGNED(last_face.a, last_face.normal + bias))
+				{
+					vector3 temp = last_face.a;
+					last_face.a = last_face.b;
+					last_face.b = temp;
+					last_face.normal = -last_face.normal;
+				}
+			}
+		}
+	}
 	
 	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2)
 	{
@@ -499,7 +633,7 @@ check_two:
 
 		return true;
 	}
-
+			
 	void collider_manager::update_narrow()
 	{
 		for (auto idx : _instances)
