@@ -49,6 +49,7 @@ namespace efiilj
 			struct PhysicsData
 			{
 				std::vector<bounds> mesh_bounds;
+				std::vector<vector3> collision_vector;
 				std::vector<bool> bounds_updated;
 				std::vector<std::set<collider_id>> broad_collisions;
 				std::vector<std::set<collider_id>> narrow_collisions;

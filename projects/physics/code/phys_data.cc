@@ -4,8 +4,8 @@
 #include <iterator>
 #include <memory>
 #include <limits>
+#include <tuple>
 
-#define GJK_MAX_ITERATIONS 64
 #define IS_ALIGNED(a, b) (vector3::dot(a, b) > 0)
 #define IS_NOT_ALIGNED(a, b) (vector3::dot(a, b) < 0)
 
@@ -26,6 +26,7 @@ namespace efiilj
 	void collider_manager::extend_defaults(collider_id idx)
 	{
 		_data.mesh_bounds.emplace_back();
+		_data.collision_vector.emplace_back();
 		_data.bounds_updated.emplace_back(false);
 		_data.broad_collisions.emplace_back();
 		_data.narrow_collisions.emplace_back();
@@ -62,6 +63,15 @@ namespace efiilj
 			ss2 << col << ", ";
 
 		ImGui::Text("Narrow: %s", ss2.str().c_str());
+
+		if (ImGui::Button("Free"))
+		{
+			entity_id eid = get_entity(idx);
+			transform_id trf_id = _transforms->get_component(eid);
+
+			if (_transforms->is_valid(trf_id))
+				_transforms->add_position(trf_id, _data.collision_vector[idx]);
+		}
 	}
 
 	bool collider_manager::update_bounds(collider_id idx)
@@ -479,9 +489,29 @@ check_two:
 			vector3 b;
 			vector3 c;
 			vector3 normal;
+
+			face()
+				: a(vector3()), b(vector3()), c(vector3()),
+				normal(vector3()) {}
+
+			face(vector3 a, vector3 b, vector3 c, vector3 n)
+				: a(a), b(b), c(c), normal(n) {}
+		};
+
+		struct edge
+		{
+			vector3 a;
+			vector3 b;
+
+			edge()
+				: a(vector3()), b(vector3()) {}
+
+			edge(const vector3& a, const vector3& b)
+				: a(a), b(b) {}
 		};
 
 		std::vector<face> faces;
+		size_t closest_face = 0;
 
 		// Add termination simplex to face vector
 		faces.emplace_back(a, b, c, vector3::cross(b - a, c - a).norm());
@@ -489,16 +519,13 @@ check_two:
 		faces.emplace_back(a, d, b, vector3::cross(d - a, b - a).norm());
 		faces.emplace_back(b, d, c, vector3::cross(d - b, c - b).norm());
 
-		size_t closest_face = 0;
-
 		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
 		{
 			closest_face = 0;
 
 			float min_dist = vector3::dot(faces[0].a, faces[0].normal);
-			size_t num_faces = faces.size();
 
-			for (size_t i = 1; i < num_faces; i++)
+			for (size_t i = 1; i < faces.size(); i++)
 			{
 				float dist = vector3::dot(faces[i].a, faces[i].normal);
 				if (dist < min_dist)
@@ -516,17 +543,9 @@ check_two:
 				return faces[closest_face].normal * vector3::dot(p, search_dir);		
 			}
 
-			struct edge
-			{
-				vector3 a;
-				vector3 b;
-			};
-
 			std::vector<edge> edges;
 
-			size_t num_edges = 0;
-
-			for (size_t i = 0; i < num_faces; i++)
+			for (size_t i = 0; i < faces.size(); i++)
 			{
 				if (IS_ALIGNED(faces[i].normal, p - faces[i].a))
 				{
@@ -548,12 +567,12 @@ check_two:
 						}
 
 						bool has_edge = false;
-						num_edges = edges.size();
 
-						for (size_t k = 0; k < num_edges; k++)
+						for (size_t k = 0; k < edges.size(); k++)
 						{
 							if (edges[k].b == current_edge.a && edges[k].a == current_edge.b)
 							{
+								size_t num_edges = edges.size();
 								edges[k].a = edges[num_edges - 1].a;
 								edges[k].b = edges[num_edges - 1].b;
 								edges.pop_back();
@@ -567,16 +586,16 @@ check_two:
 
 					}
 
-					faces[i] = faces[num_faces - 1];
+					faces[i] = faces[faces.size() - 1];
 					faces.pop_back();
 					i--;
 
 				}
 			}
 
-			for (size_t i = 0; i < num_edges; i++)
+			for (size_t i = 0; i < edges.size(); i++)
 			{
-				face& last_face = faces[num_faces];
+				face last_face;
 				last_face.a = edges[i].a;
 				last_face.b = edges[i].b;
 				last_face.c = p;
@@ -593,9 +612,16 @@ check_two:
 					last_face.b = temp;
 					last_face.normal = -last_face.normal;
 				}
+
+				faces.emplace_back(last_face);
 			}
 		}
+
+		face& ret = faces[closest_face];
+		return ret.normal * vector3::dot(ret.a, ret.normal);
 	}
+
+#define GJK_MAX_ITERATIONS 64
 	
 	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2)
 	{
@@ -628,7 +654,12 @@ check_two:
 				return false;
 
 			if (update_simplex(simplex, dim, search_dir))
+			{
+				vector3 dir = epa_expand(simplex, col1, col2);
+				_data.collision_vector[col1] = dir;
+				_data.collision_vector[col2] = -dir;
 				return true;
+			}
 		}
 
 		return true;
