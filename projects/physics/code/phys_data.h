@@ -42,9 +42,9 @@ namespace efiilj
 			bool point_inside_bounds(collider_id idx, const vector3& point) const;
 			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
-			bool update_simplex(vector3 simplex[4], int& dim, vector3& dir);
-			bool check_gjk_intersect(collider_id col1, collider_id col2);
-			vector3 epa_expand(vector3 simplex[4], collider_id col1, collider_id col2);
+			bool update_simplex(vector3 simplex[4], int& dim, vector3& dir) const;
+			bool check_gjk_intersect(collider_id col1, collider_id col2, vector3 simplex[4]) const;
+			vector3 epa_expand(collider_id col1, collider_id col2, vector3 simplex[4]) const;
 
 			struct PhysicsData
 			{
@@ -79,17 +79,42 @@ namespace efiilj
 
 			bool test_hit(const ray& ray, trace_hit& hit) const;
 			bool test_hit(collider_id idx, const ray& ray, trace_hit& hit) const;
+			bool test_collision(collider_id obj1, collider_id obj2, vector3& epa) const;
 
 			bool test_broad(collider_id idx) const
-			{ return _data.broad_collisions[idx].size() > 0; }
+			{ 
+				return _data.broad_collisions[idx].size() > 0; 
+			}
+
+			bool test_broad(collider_id obj1, collider_id obj2) const
+			{
+				return _data.broad_collisions[obj1].find(obj2) != _data.broad_collisions[obj1].end();
+			}
 
 			bool test_narrow(collider_id idx) const
-			{ return _data.narrow_collisions[idx].size() > 0; }
+			{ 
+				return _data.narrow_collisions[idx].size() > 0; 
+			}
+
+			bool test_narrow(collider_id obj1, collider_id obj2) const
+			{
+				return _data.narrow_collisions[obj1].find(obj2) != _data.narrow_collisions[obj1].end();
+			}
 
 			bool collides_with(collider_id idx, collider_id other)
 			{
 				return _data.narrow_collisions[idx].find(other) !=
 					_data.narrow_collisions[idx].end();
+			}
+
+			const std::set<collider_id>& get_collisions(collider_id idx)
+			{
+				return _data.narrow_collisions[idx];
+			}
+
+			const vector3& get_collision_vector(collider_id idx)
+			{
+				return _data.collision_vector[idx];
 			}
 
 			const bounds& get_bounds(collider_id idx) const

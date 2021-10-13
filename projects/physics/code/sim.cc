@@ -70,6 +70,7 @@ namespace efiilj
 	void simulator::on_register(std::shared_ptr<manager_host> host)
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+		_colliders = host->get_manager_from_fcc<collider_manager>('COLS');
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 	}
@@ -191,23 +192,77 @@ namespace efiilj
 			dt_seconds = 0.25f;
 
 		accumulator += dt_seconds;
+
+		for (const auto& idx : _instances)
+		{
+			_data.previous[idx] = _data.current[idx];
+			read_transform(idx, _data.current[idx]);
+		}
 	}
 
 	void simulator::simulate()
 	{
+
+		// TODO: Variable max pen depth
+		const float max_pen_depth = 0.1;
+		const float max_sqr_pen_depth = max_pen_depth * max_pen_depth;
+
 		while (accumulator >= dt)
 		{
 			for (const auto& idx : _instances)
 			{
-				PhysicsState& current = _data.current[idx];
-				_data.previous[idx] = current;
-				//read_transform(idx, current);
-				integrate(idx, current, t, dt);
-				write_transform(idx, current);
+				integrate(idx, _data.current[idx], t, dt);	
+				write_transform(idx, _data.current[idx]);
+			}
+
+			_colliders->update();
+
+			for (const auto& col_id : _colliders->get_instances())
+			{
+				float h = dt;
+				physics_id phys_id = get_component(_colliders->get_entity(col_id));
+
+				for (const auto& other_id : _colliders->get_collisions(col_id))
+				{
+					PhysicsState intermediary = _data.previous[phys_id];
+					vector3 epa;
+
+					while (true)
+					{
+						integrate(phys_id, intermediary, t, h);
+						write_transform(phys_id, intermediary);
+
+						if (_colliders->test_collision(col_id, other_id, epa))
+						{
+							if (epa.square_magnitude() < max_sqr_pen_depth)
+							{
+								// do collishion response things
+								break;
+							}
+
+							h *= 0.5f;
+						}
+						else
+						{
+							h *= 1.5;
+						}
+					}
+				}
 			}
 
 			t += dt;
 			accumulator -= dt;
+		}
+	}
+
+	void simulator::end_frame()
+	{
+		float alpha = accumulator / dt;
+
+		for (const auto& idx : _instances)
+		{
+			write_transform(idx, _data.current[idx]);
+			_data.impulse[idx].force = vector3(0);
 		}
 	}
 	
@@ -277,17 +332,5 @@ namespace efiilj
 	{
 		const PointForce& impulse = _data.impulse[idx];
 		return vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
-	}
-
-	void simulator::end_frame()
-	{
-		float alpha = accumulator / dt;
-		// interpolate and write to transform
-		//
-		for (const auto& idx : _instances)
-		{
-			// not perfect
-			_data.impulse[idx] = PointForce();
-		}
 	}
 }

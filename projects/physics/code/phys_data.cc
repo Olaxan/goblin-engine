@@ -251,7 +251,7 @@ namespace efiilj
 		return vector3::cross(vector3::cross(a, b), a);
 	}
 	
-	bool collider_manager::update_simplex(vector3 simplex[4], int& dim, vector3& dir)
+	bool collider_manager::update_simplex(vector3 simplex[4], int& dim, vector3& dir) const
 	{
 		vector3& a = simplex[0];
 		vector3& b = simplex[1];
@@ -476,7 +476,7 @@ check_two:
 #define EPA_MAX_ITERATIONS 32
 #define EPA_TOLERANCE 0.0001f
 
-	vector3 collider_manager::epa_expand(vector3 simplex[4], collider_id col1, collider_id col2)
+	vector3 collider_manager::epa_expand(collider_id col1, collider_id col2, vector3 simplex[4]) const
 	{
 		vector3& a = simplex[0];	
 		vector3& b = simplex[1];	
@@ -623,7 +623,7 @@ check_two:
 
 #define GJK_MAX_ITERATIONS 64
 	
-	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2)
+	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2, vector3 simplex[4]) const
 	{
 		if (!(is_valid(col1) && is_valid(col2)))
 			return false;
@@ -637,7 +637,6 @@ check_two:
 		if (!(_transforms->is_valid(trf1) && _transforms->is_valid(trf2)))
 			return false;
 
-		vector3 simplex[4];
 		vector3& a = simplex[0];
 
 		// Arbitrary starting direction
@@ -654,19 +653,17 @@ check_two:
 				return false;
 
 			if (update_simplex(simplex, dim, search_dir))
-			{
-				vector3 dir = epa_expand(simplex, col1, col2);
-				_data.collision_vector[col1] = dir;
-				_data.collision_vector[col2] = -dir;
 				return true;
-			}
 		}
 
 		return true;
 	}
-			
+		
 	void collider_manager::update_narrow()
 	{
+		vector3 simplex[4];
+		vector3 collision_point;
+
 		for (auto idx : _instances)
 			_data.narrow_collisions[idx].clear();
 
@@ -677,10 +674,14 @@ check_two:
 				if (collides_with(idx, col))
 					continue;
 
-				if (check_gjk_intersect(idx, col))
+				if (check_gjk_intersect(idx, col, simplex))
 				{
 					_data.narrow_collisions[idx].insert(col);
 					_data.narrow_collisions[col].insert(idx);
+
+					collision_point = epa_expand(idx, col, simplex);
+
+					// Do stuff
 				}
 			}
 		}
@@ -695,6 +696,19 @@ check_two:
 
 		update_broad();
 		update_narrow();
+	}
+
+	bool collider_manager::test_collision(collider_id obj1, collider_id obj2, vector3& epa) const
+	{
+		vector3 simplex[4];
+
+		if (check_gjk_intersect(obj1, obj2, simplex))
+		{
+			epa = epa_expand(obj1, obj2, simplex);
+			return true;
+		}
+
+		return false;
 	}
 
 	bool collider_manager::test_hit(const ray& ray, trace_hit& result) const

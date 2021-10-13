@@ -339,7 +339,17 @@ namespace efiilj
 		/// <returns>The vector length as a float</returns>
 		float length() const
 		{
-			return sqrt(powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2));
+			return sqrt(x * x + y * y + z * z);
+		}
+
+		float magnitude() const
+		{
+			return sqrt(x * x + y * y + z * z);
+		}
+
+		float square_magnitude() const
+		{
+			return x * x + y * y + z * z;
 		}
 
 		/// <summary>

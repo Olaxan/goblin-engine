@@ -79,6 +79,7 @@ namespace efiilj
 			float accumulator = 0.0f;
 
 			std::shared_ptr<transform_manager> _transforms;
+			std::shared_ptr<collider_manager> _colliders;
 			std::shared_ptr<mesh_manager> _mesh_instances;
 			std::shared_ptr<mesh_server> _meshes;
 
@@ -96,6 +97,8 @@ namespace efiilj
 		vector3 calculate_com(entity_id eid) const;
 		void recalculate_com(physics_id idx);
 		void recalculate_state(physics_id idx, PhysicsState& state);
+
+		bool step(physics_id idx, PhysicsState& state, const float t, const float dt);
 
 		void read_transform(physics_id, PhysicsState& state);
 		void write_transform(physics_id, PhysicsState& state);
