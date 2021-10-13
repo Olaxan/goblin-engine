@@ -662,7 +662,6 @@ check_two:
 	void collider_manager::update_narrow()
 	{
 		vector3 simplex[4];
-		vector3 collision_point;
 
 		for (auto idx : _instances)
 			_data.narrow_collisions[idx].clear();
@@ -674,14 +673,15 @@ check_two:
 				if (collides_with(idx, col))
 					continue;
 
-				if (check_gjk_intersect(idx, col, simplex))
+				vector3 epa;
+				if (test_collision(idx, col, epa))
 				{
 					_data.narrow_collisions[idx].insert(col);
 					_data.narrow_collisions[col].insert(idx);
 
-					collision_point = epa_expand(idx, col, simplex);
-
-					// Do stuff
+					// this is probably not correct with regards to normal?
+					_data.collision_vector[idx] = epa;
+					_data.collision_vector[col] = -epa;
 				}
 			}
 		}
