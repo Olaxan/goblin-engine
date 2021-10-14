@@ -204,7 +204,7 @@ namespace efiilj
 	{
 
 		// TODO: Variable max pen depth
-		const float max_pen_depth = 0.01;
+		const float max_pen_depth = 0.001;
 		const float max_sqr_pen_depth = max_pen_depth * max_pen_depth;
 
 		while (accumulator >= dt)
@@ -221,7 +221,9 @@ namespace efiilj
 			for (const auto& col_a : _colliders->get_instances())
 			{
 
-				float h = dt * 0.5f;
+				float hl = 0;
+				float hr = dt;
+				float h = 0;
 
 				physics_id phys_a = get_component(_colliders->get_entity(col_a));
 				PhysicsState& state_a = _data.current[phys_a];
@@ -237,8 +239,12 @@ namespace efiilj
 
 					PhysicsState& state_b = _data.current[phys_b];
 
-					while (true)
+					int i = 0;
+					while (hl < hr)
 					{
+						i++;
+						h = (hl + hr) / 2.0f;
+
 						// We'll always step from the last physics state
 						state_a = _data.previous[phys_a];
 
@@ -264,7 +270,6 @@ namespace efiilj
 							if (epa.square_magnitude() < max_sqr_pen_depth)
 							{
 
-
 								float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 								float num = -(1.0f + rest) * vrel;
 
@@ -283,14 +288,16 @@ namespace efiilj
 								integrate(phys_a, state_a, t + h, dt - h);
 								integrate(phys_b, state_b, t + h, dt - h);
 
+								printf("Reponse %d <-> %d, seek %d, h = %f, j = %f, vrel = %f, epa = %f\n", phys_a, phys_b, i, h, j, vrel, epa.length());
+
 								break;
 							}
 
-							h *= 0.5f;
+							hr = h;
 						}
 						else
 						{
-							h *= 1.5;
+							hl = h;
 						}
 					}
 				}
