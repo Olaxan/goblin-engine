@@ -118,8 +118,8 @@ namespace efiilj
 
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(rdef, 'RDEF');
-		managers->register_manager(sim, 'PHYS');
 		managers->register_manager(colliders, 'RAYS');
+		managers->register_manager(sim, 'PHYS');
 		managers->register_manager(gltf, 'GLTF');
 
 		managers->register_manager(rdbg, 'RDBG');
@@ -173,11 +173,11 @@ namespace efiilj
 		collider_id test_col = colliders->register_entity(node);
 		collider_id test_col2 = colliders->register_entity(node2);
 
-		//physics_id test_rb = sim->register_entity(node);
-		//physics_id test_rb2 = sim->register_entity(node2);
+		physics_id test_rb = sim->register_entity(node);
+		physics_id test_rb2 = sim->register_entity(node2);
 
-		//sim->recalculate_com(test_rb);
-		//sim->recalculate_com(test_rb2);
+		sim->recalculate_com(test_rb);
+		sim->recalculate_com(test_rb2);
 
 		gltf->unload(test_mdl);
 		gltf->unload(test_mdl2);

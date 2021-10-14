@@ -174,8 +174,7 @@ namespace efiilj
 
 	vector3 transform_manager::get_position(transform_id idx)
 	{
-		get_model(idx);
-		return _data.model[idx].col(3).xyz();
+		return _data.position[idx].xyz();
 	}
 
 	void transform_manager::set_position(transform_id idx, const vector3& pos)

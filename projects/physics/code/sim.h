@@ -21,6 +21,13 @@ namespace efiilj
 	{
 		vector3 p;
 		vector3 force;
+
+		PointForce()
+			: p(vector3(0)), force(vector3(0)) { }
+
+		PointForce(const vector3& p, const vector3& force)
+			: p(p), force(force) { }
+
 	};
 
 	class simulator : public manager<physics_id>
@@ -67,6 +74,7 @@ namespace efiilj
 				std::vector<float> inverse_mass;
 				std::vector<float> inertia;
 				std::vector<float> inverse_inertia;
+				std::vector<float> restitution;
 			} _data;
 
 			float t = 0.0f;

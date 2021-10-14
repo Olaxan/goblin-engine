@@ -25,6 +25,7 @@ namespace efiilj
 		_data.inverse_inertia.emplace_back(0.1f);
 		_data.mass.emplace_back(1.0f);
 		_data.inverse_mass.emplace_back(0.1f);
+		_data.restitution.emplace_back(0.9f);
 
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
@@ -70,7 +71,7 @@ namespace efiilj
 	void simulator::on_register(std::shared_ptr<manager_host> host)
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
-		_colliders = host->get_manager_from_fcc<collider_manager>('COLS');
+		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 	}
@@ -156,7 +157,6 @@ namespace efiilj
 		state.spin = (0.5f * q) * state.orientation;
 	}
 
-
 	void simulator::read_transform(physics_id idx, PhysicsState& state)
 	{
 		entity_id eid = _entities[idx];
@@ -194,49 +194,82 @@ namespace efiilj
 		accumulator += dt_seconds;
 
 		for (const auto& idx : _instances)
-		{
-			_data.previous[idx] = _data.current[idx];
 			read_transform(idx, _data.current[idx]);
-		}
+
 	}
 
 	void simulator::simulate()
 	{
 
 		// TODO: Variable max pen depth
-		const float max_pen_depth = 0.1;
+		const float max_pen_depth = 0.01;
 		const float max_sqr_pen_depth = max_pen_depth * max_pen_depth;
 
 		while (accumulator >= dt)
 		{
 			for (const auto& idx : _instances)
 			{
+				_data.previous[idx] = _data.current[idx];
 				integrate(idx, _data.current[idx], t, dt);	
 				write_transform(idx, _data.current[idx]);
 			}
 
 			_colliders->update();
 
-			for (const auto& col_id : _colliders->get_instances())
+			for (const auto& col_a : _colliders->get_instances())
 			{
-				float h = dt;
-				physics_id phys_id = get_component(_colliders->get_entity(col_id));
 
-				for (const auto& other_id : _colliders->get_collisions(col_id))
+				float h = dt * 0.5f;
+
+				physics_id phys_a = get_component(_colliders->get_entity(col_a));
+				PhysicsState& state_a = _data.current[phys_a];
+
+				if (!is_valid(phys_a))
+					continue;
+
+				for (const auto& col_b: _colliders->get_collisions(col_a))
 				{
-					PhysicsState intermediary = _data.previous[phys_id];
 					vector3 epa;
+
+					physics_id phys_b = get_component(_colliders->get_entity(col_b));
+					PhysicsState& state_b = _data.current[phys_b];
 
 					while (true)
 					{
-						integrate(phys_id, intermediary, t, h);
-						write_transform(phys_id, intermediary);
+						// We'll always step from the last physics state
+						state_a = _data.previous[phys_a];
 
-						if (_colliders->test_collision(col_id, other_id, epa))
+						integrate(phys_a, state_a, t, h);
+						write_transform(phys_a, state_a);
+
+						if (_colliders->test_collision(col_a, col_b, epa))
 						{
 							if (epa.square_magnitude() < max_sqr_pen_depth)
 							{
-								// do collishion response things
+								vector3 p = state_a.position + epa;
+								vector3 n = epa.norm();
+
+								vector3 vpa = vector3::cross(state_a.velocity + state_a.angular_velocity, p - _data.com[phys_a]);
+								vector3 vpb = vector3::cross(state_b.velocity + state_b.angular_velocity, p - _data.com[phys_b]);
+
+								float vrel = vector3::dot(n, (vpa - vpb));
+
+								float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
+								float num = -(1.0f + rest) * vrel;
+
+								float denom = _data.inverse_mass[phys_a] + _data.inverse_mass[phys_b] 
+									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_a] * vector3::cross(nullptr, n), nullptr))
+									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_b] * vector3::cross(nullptr, n), nullptr));
+
+								float j = num / denom;
+
+								PointForce response_a(p, j * n);
+								PointForce response_b(p, -(j * n));
+
+								add_impulse(phys_a, response_a);
+								add_impulse(phys_b, response_b);
+
+								integrate(phys_a, state_a, t + h, dt - h);
 								break;
 							}
 
@@ -257,12 +290,11 @@ namespace efiilj
 
 	void simulator::end_frame()
 	{
-		float alpha = accumulator / dt;
+		//float alpha = accumulator / dt;
 
 		for (const auto& idx : _instances)
 		{
-			write_transform(idx, _data.current[idx]);
-			_data.impulse[idx].force = vector3(0);
+			_data.impulse[idx] = PointForce();
 		}
 	}
 	
