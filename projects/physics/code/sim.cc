@@ -198,6 +198,8 @@ namespace efiilj
 
 	}
 
+#define MAX_SEEK_ITERATIONS 32
+
 	void simulator::simulate()
 	{
 
@@ -232,6 +234,7 @@ namespace efiilj
 					vector3 epa;
 
 					physics_id phys_b = get_component(_colliders->get_entity(col_b));
+
 					PhysicsState& state_b = _data.current[phys_b];
 
 					while (true)
@@ -244,22 +247,30 @@ namespace efiilj
 
 						if (_colliders->test_collision(col_a, col_b, epa))
 						{
+							vector3 p = state_a.position + epa;
+							vector3 n = epa.norm();
+
+							vector3 ra = p - _data.com[phys_a];
+							vector3 rb = p - _data.com[phys_b];
+
+							vector3 vpa = vector3::cross(state_a.velocity + state_a.angular_velocity, ra);
+							vector3 vpb = vector3::cross(state_b.velocity + state_b.angular_velocity, rb);
+
+							float vrel = vector3::dot(n, (vpa - vpb));
+
+							if (vrel > 0)
+								break;
+
 							if (epa.square_magnitude() < max_sqr_pen_depth)
 							{
-								vector3 p = state_a.position + epa;
-								vector3 n = epa.norm();
 
-								vector3 vpa = vector3::cross(state_a.velocity + state_a.angular_velocity, p - _data.com[phys_a]);
-								vector3 vpb = vector3::cross(state_b.velocity + state_b.angular_velocity, p - _data.com[phys_b]);
-
-								float vrel = vector3::dot(n, (vpa - vpb));
 
 								float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 								float num = -(1.0f + rest) * vrel;
 
 								float denom = _data.inverse_mass[phys_a] + _data.inverse_mass[phys_b] 
-									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_a] * vector3::cross(nullptr, n), nullptr))
-									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_b] * vector3::cross(nullptr, n), nullptr));
+									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_a] * vector3::cross(ra, n), ra))
+									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_b] * vector3::cross(rb, n), rb));
 
 								float j = num / denom;
 
@@ -270,6 +281,8 @@ namespace efiilj
 								add_impulse(phys_b, response_b);
 
 								integrate(phys_a, state_a, t + h, dt - h);
+								integrate(phys_b, state_b, t + h, dt - h);
+
 								break;
 							}
 
