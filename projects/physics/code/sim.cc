@@ -25,7 +25,7 @@ namespace efiilj
 		_data.inverse_inertia.emplace_back(0.1f);
 		_data.mass.emplace_back(1.0f);
 		_data.inverse_mass.emplace_back(0.1f);
-		_data.restitution.emplace_back(0.9f);
+		_data.restitution.emplace_back(1.0f);
 
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
@@ -204,7 +204,7 @@ namespace efiilj
 	{
 
 		// TODO: Variable max pen depth
-		const float max_pen_depth = 0.001;
+		const float max_pen_depth = 0.000001;
 		const float max_sqr_pen_depth = max_pen_depth * max_pen_depth;
 
 		while (accumulator >= dt)
@@ -267,6 +267,8 @@ namespace efiilj
 							if (vrel > 0)
 								break;
 
+							printf("h = %f, epa = %f\n", h, epa.length());
+
 							if (epa.square_magnitude() < max_sqr_pen_depth)
 							{
 
@@ -288,12 +290,14 @@ namespace efiilj
 								integrate(phys_a, state_a, t + h, dt - h);
 								integrate(phys_b, state_b, t + h, dt - h);
 
-								printf("Reponse %d <-> %d, seek %d, h = %f, j = %f, vrel = %f, epa = %f\n", phys_a, phys_b, i, h, j, vrel, epa.length());
+								printf("Reponse %d <-> %d, h = %f, j = %f, vrel = %f, epa = %f\n", phys_a, phys_b, h, j, vrel, epa.length());
 
 								break;
 							}
-
-							hr = h;
+							else
+							{
+								hr = h;
+							}
 						}
 						else
 						{
