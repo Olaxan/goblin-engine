@@ -1,4 +1,5 @@
 #include "phys_data.h"
+#include "imgui.h"
 
 #include <algorithm>
 #include <iterator>
@@ -26,10 +27,10 @@ namespace efiilj
 	void collider_manager::extend_defaults(collider_id idx)
 	{
 		_data.mesh_bounds.emplace_back();
-		_data.collision_vector.emplace_back();
 		_data.bounds_updated.emplace_back(false);
 		_data.broad_collisions.emplace_back();
 		_data.narrow_collisions.emplace_back();
+		_data.collisions.emplace_back();
 
 		update_bounds(idx);
 	}
@@ -64,14 +65,26 @@ namespace efiilj
 
 		ImGui::Text("Narrow: %s", ss2.str().c_str());
 
-		if (ImGui::Button("Free"))
-		{
-			entity_id eid = get_entity(idx);
-			transform_id trf_id = _transforms->get_component(eid);
+		entity_id eid = get_entity(idx);
+		transform_id trf_id = _transforms->get_component(eid);
 
-			if (_transforms->is_valid(trf_id))
-				_transforms->add_position(trf_id, _data.collision_vector[idx]);
+		if (!_transforms->is_valid(trf_id))
+			return;
+
+		ImGui::BeginChild("Collisions");
+		for (const auto& col : _data.collisions[idx])
+		{
+			ImGui::Text("Collision %d, normal = %s, depth = %f", col.object1, col.normal.to_string().c_str(),  col.depth);
+
+			if (ImGui::SmallButton("Free"))
+				_transforms->add_position(trf_id, col.normal * col.depth);
+
+			ImGui::SameLine();
+
+			if (ImGui::SmallButton("To Collision"))
+				_transforms->set_position(trf_id, col.point1);
 		}
+		ImGui::EndChild();
 	}
 
 	bool collider_manager::update_bounds(collider_id idx)
@@ -208,7 +221,14 @@ namespace efiilj
 		}
 	}
 
-	vector3 collider_manager::support(collider_id idx, const vector3& dir) const
+	SupportPoint collider_manager::support(collider_id col1, collider_id col2, const vector3& dir) const
+	{
+		vector3 a = get_furthest_point(col1, -dir);
+		vector3 b = get_furthest_point(col2, dir);
+		return SupportPoint(a, b);
+	}
+
+	vector3 collider_manager::get_furthest_point(collider_id idx, const vector3& dir) const
 	{
 		entity_id eid = get_entity(idx);
 
@@ -251,12 +271,12 @@ namespace efiilj
 		return vector3::cross(vector3::cross(a, b), a);
 	}
 	
-	bool collider_manager::update_simplex(vector3 simplex[4], int& dim, vector3& dir) const
+	bool collider_manager::update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const
 	{
-		vector3& a = simplex[0];
-		vector3& b = simplex[1];
-		vector3& c = simplex[2];
-		vector3& d = simplex[3];
+		vector3& a = simplex[0].point;
+		vector3& b = simplex[1].point;
+		vector3& c = simplex[2].point;
+		vector3& d = simplex[3].point;
 
 		switch (dim)
 		{
@@ -476,58 +496,85 @@ check_two:
 #define EPA_MAX_ITERATIONS 32
 #define EPA_TOLERANCE 0.0001f
 
-	vector3 collider_manager::epa_expand(collider_id col1, collider_id col2, vector3 simplex[4]) const
+	void barycentric(const vector3& p, const vector3& a, const vector3& b, const vector3& c, float* u, float* v, float* w) 
 	{
-		vector3& a = simplex[0];	
-		vector3& b = simplex[1];	
-		vector3& c = simplex[2];	
-		vector3& d = simplex[3];	
+		// code from Crister Erickson's Real-Time Collision Detection
+		vector3 v0 = b - a,v1 = c - a,v2 = p - a;
+		float d00 = vector3::dot(v0,  v0);
+		float d01 = vector3::dot(v0,  v1);
+		float d11 = vector3::dot(v1,  v1);
+		float d20 = vector3::dot(v2,  v0);
+		float d21 = vector3::dot(v2,  v1);
+		float denom = d00 * d11 - d01 * d01;
+		*v = (d11 * d20 - d01 * d21) / denom;
+		*w = (d00 * d21 - d01 * d20) / denom;
+		*u = 1.0f - *v - *w;
+	}
+
+	Collision collider_manager::epa_expand(collider_id col1, collider_id col2, const SupportPoint simplex[4]) const
+	{
+		const SupportPoint& a = simplex[0];	
+		const SupportPoint& b = simplex[1];	
+		const SupportPoint& c = simplex[2];	
+		const SupportPoint& d = simplex[3];	
+
+		Collision ret;
+		ret.object1 = col1;
+		ret.object2 = col2;
 
 		struct face
 		{
-			vector3 a;
-			vector3 b;
-			vector3 c;
+			SupportPoint a;
+			SupportPoint b;
+			SupportPoint c;
 			vector3 normal;
 
 			face()
-				: a(vector3()), b(vector3()), c(vector3()),
+				: a(SupportPoint()), b(SupportPoint()), c(SupportPoint()),
 				normal(vector3()) {}
 
-			face(vector3 a, vector3 b, vector3 c, vector3 n)
-				: a(a), b(b), c(c), normal(n) {}
+			face(
+					const SupportPoint& a, 
+					const SupportPoint& b, 
+					const SupportPoint& c
+				) 
+				: a(a), b(b), c(c), 
+				normal(vector3::cross(b.point - a.point, c.point - a.point).norm()) {}
 		};
 
 		struct edge
 		{
-			vector3 a;
-			vector3 b;
+			SupportPoint a;
+			SupportPoint b;
 
 			edge()
-				: a(vector3()), b(vector3()) {}
+				: a(SupportPoint()), b(SupportPoint()) {}
 
-			edge(const vector3& a, const vector3& b)
+			edge(const SupportPoint& a, const SupportPoint& b)
 				: a(a), b(b) {}
 		};
 
 		std::vector<face> faces;
+		std::vector<edge> edges;
 		size_t closest_face = 0;
 
 		// Add termination simplex to face vector
-		faces.emplace_back(a, b, c, vector3::cross(b - a, c - a).norm());
-		faces.emplace_back(a, c, d, vector3::cross(c - a, d - a).norm());
-		faces.emplace_back(a, d, b, vector3::cross(d - a, b - a).norm());
-		faces.emplace_back(b, d, c, vector3::cross(d - b, c - b).norm());
+		faces.emplace_back(a, b, c);
+		faces.emplace_back(a, c, d);
+		faces.emplace_back(a, d, b);
+		faces.emplace_back(b, d, c);
 
-		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
+		size_t iterations = 0;
+		while (true)
 		{
+			iterations++;
 			closest_face = 0;
 
-			float min_dist = vector3::dot(faces[0].a, faces[0].normal);
+			float min_dist = vector3::dot(faces[0].a.point, faces[0].normal);
 
 			for (size_t i = 1; i < faces.size(); i++)
 			{
-				float dist = vector3::dot(faces[i].a, faces[i].normal);
+				float dist = vector3::dot(faces[i].a.point, faces[i].normal);
 				if (dist < min_dist)
 				{
 					min_dist = dist;
@@ -536,18 +583,43 @@ check_two:
 			}
 
 			vector3 search_dir = faces[closest_face].normal;
-			vector3 p = support(col2, search_dir) - support(col1, -search_dir);
+			SupportPoint sup = support(col1, col2, search_dir);
 
-			if (vector3::dot(p, search_dir) - min_dist < EPA_TOLERANCE)
+			float d = vector3::dot(sup.point, search_dir);
+
+			if (d - min_dist < EPA_TOLERANCE || iterations == EPA_MAX_ITERATIONS - 1)
 			{
-				return faces[closest_face].normal * vector3::dot(p, search_dir);		
+				float bary_u, bary_v, bary_w;
+
+				const face& closest = faces[closest_face];
+
+     			barycentric(closest.normal * min_dist,
+                    closest.a.point,
+                    closest.b.point,
+                    closest.c.point,
+                    &bary_u,
+                    &bary_v,
+                    &bary_w);
+
+				ret.normal = -closest.normal;
+				ret.depth = min_dist;
+				ret.point1 = bary_u * closest.a.s1 
+					+ bary_v * closest.b.s1 
+					+ bary_w * closest.c.s1;
+
+				ret.point2 = bary_u * closest.a.s2
+					+ bary_v * closest.b.s2
+					+ bary_w * closest.c.s2;
+
+				return ret;
 			}
 
-			std::vector<edge> edges;
+			edges.clear();
 
 			for (size_t i = 0; i < faces.size(); i++)
 			{
-				if (IS_ALIGNED(faces[i].normal, p - faces[i].a))
+
+				if (IS_ALIGNED(faces[i].normal, sup.point - faces[i].a.point))
 				{
 					for (size_t j = 0; j < 3; j++)
 					{
@@ -598,16 +670,16 @@ check_two:
 				face last_face;
 				last_face.a = edges[i].a;
 				last_face.b = edges[i].b;
-				last_face.c = p;
+				last_face.c = sup;
 				last_face.normal = vector3::cross(
-						edges[i].a - edges[i].b, 
-						edges[i].a - p).norm();
+						edges[i].a.point - edges[i].b.point, 
+						edges[i].a.point - sup.point).norm();
 
 				const float bias = 0.000001f;
 
-				if (IS_NOT_ALIGNED(last_face.a, last_face.normal + bias))
+				if (IS_NOT_ALIGNED(last_face.a.point, last_face.normal + bias))
 				{
-					vector3 temp = last_face.a;
+					SupportPoint temp = last_face.a;
 					last_face.a = last_face.b;
 					last_face.b = temp;
 					last_face.normal = -last_face.normal;
@@ -617,13 +689,12 @@ check_two:
 			}
 		}
 
-		face& ret = faces[closest_face];
-		return ret.normal * vector3::dot(ret.a, ret.normal);
+		return ret;
 	}
 
 #define GJK_MAX_ITERATIONS 64
 	
-	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2, vector3 simplex[4]) const
+	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2, SupportPoint simplex[4]) const
 	{
 		if (!(is_valid(col1) && is_valid(col2)))
 			return false;
@@ -637,7 +708,7 @@ check_two:
 		if (!(_transforms->is_valid(trf1) && _transforms->is_valid(trf2)))
 			return false;
 
-		vector3& a = simplex[0];
+		SupportPoint& a = simplex[0];
 
 		// Arbitrary starting direction
 		vector3 search_dir = vector3(0, 0, 1);
@@ -647,9 +718,9 @@ check_two:
 
 		for (size_t i = 0; i < GJK_MAX_ITERATIONS; i++)
 		{
-			a = support(col2, search_dir) - support(col1, -search_dir);
+			a = support(col1, col2, search_dir);
 
-			if (IS_NOT_ALIGNED(a, search_dir))
+			if (IS_NOT_ALIGNED(a.point, search_dir))
 				return false;
 
 			if (update_simplex(simplex, dim, search_dir))
@@ -664,7 +735,10 @@ check_two:
 		vector3 simplex[4];
 
 		for (auto idx : _instances)
+		{
 			_data.narrow_collisions[idx].clear();
+			_data.collisions[idx].clear();
+		}
 
 		for (auto idx : _instances)
 		{
@@ -673,15 +747,14 @@ check_two:
 				if (collides_with(idx, col))
 					continue;
 
-				vector3 epa;
-				if (test_collision(idx, col, epa))
+				Collision col1, col2;
+				if (test_collision(idx, col, col1, col2))
 				{
 					_data.narrow_collisions[idx].insert(col);
 					_data.narrow_collisions[col].insert(idx);
 
-					// this is probably not correct with regards to normal?
-					_data.collision_vector[idx] = epa;
-					_data.collision_vector[col] = -epa;
+					_data.collisions[idx].emplace_back(col2);
+					_data.collisions[col].emplace_back(col1);
 				}
 			}
 		}
@@ -698,13 +771,14 @@ check_two:
 		update_narrow();
 	}
 
-	bool collider_manager::test_collision(collider_id obj1, collider_id obj2, vector3& epa) const
+	bool collider_manager::test_collision(collider_id obj1, collider_id obj2, Collision& col1, Collision& col2) const
 	{
-		vector3 simplex[4];
+		SupportPoint simplex[4];
 
 		if (check_gjk_intersect(obj1, obj2, simplex))
 		{
-			epa = epa_expand(obj1, obj2, simplex);
+			col1 = epa_expand(obj1, obj2, simplex);
+			col2 = epa_expand(obj2, obj1, simplex);
 			return true;
 		}
 

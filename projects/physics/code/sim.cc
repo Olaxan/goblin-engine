@@ -20,12 +20,12 @@ namespace efiilj
 		_data.current.emplace_back();
 		_data.previous.emplace_back();
 		_data.com.emplace_back();
-		_data.impulse.emplace_back();
+		_data.impulses.emplace_back();
 		_data.inertia.emplace_back(1.0f);
 		_data.inverse_inertia.emplace_back(0.1f);
 		_data.mass.emplace_back(1.0f);
 		_data.inverse_mass.emplace_back(0.1f);
-		_data.restitution.emplace_back(1.0f);
+		_data.restitution.emplace_back(0.5f);
 
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
@@ -203,107 +203,77 @@ namespace efiilj
 	void simulator::simulate()
 	{
 
-		// TODO: Variable max pen depth
-		const float max_pen_depth = 0.000001;
-		const float max_sqr_pen_depth = max_pen_depth * max_pen_depth;
-
 		while (accumulator >= dt)
 		{
+			// March entire simulation forward one timestep
 			for (const auto& idx : _instances)
 			{
 				_data.previous[idx] = _data.current[idx];
 				integrate(idx, _data.current[idx], t, dt);	
 				write_transform(idx, _data.current[idx]);
+				_data.impulses[idx].clear();
 			}
 
+			// Update narrow collision (detect all collisions since last frame)
 			_colliders->update();
 
+			// Iterate through colliders
 			for (const auto& col_a : _colliders->get_instances())
 			{
 
-				float hl = 0;
-				float hr = dt;
-				float h = 0;
+				if (col_a == 0)
+					continue;
 
-				physics_id phys_a = get_component(_colliders->get_entity(col_a));
+				entity_id e_a = _colliders->get_entity(col_a);
+				physics_id phys_a = get_component(e_a);
+				transform_id trf_a = _transforms->get_component(e_a);
+
 				PhysicsState& state_a = _data.current[phys_a];
 
 				if (!is_valid(phys_a))
 					continue;
 
-				for (const auto& col_b: _colliders->get_collisions(col_a))
+				// Iterate through all collisions for this collider
+				for (const auto& col: _colliders->get_collisions(col_a))
 				{
-					vector3 epa;
 
-					physics_id phys_b = get_component(_colliders->get_entity(col_b));
+					collider_id col_b = col.object1;
+
+					if (col_a == col_b)
+						continue;
+
+					entity_id e_b = _colliders->get_entity(col_b);
+					physics_id phys_b = get_component(e_b);
+					transform_id trf_b = _transforms->get_component(e_b);
 
 					PhysicsState& state_b = _data.current[phys_b];
 
-					int i = 0;
-					while (hl < hr)
-					{
-						i++;
-						h = (hl + hr) / 2.0f;
+					vector3 ra = col.point1 - _transforms->get_model(trf_a) * _data.com[phys_a];
+					vector3 rb = col.point2 - _transforms->get_model(trf_b) * _data.com[phys_b];
 
-						// We'll always step from the last physics state
-						state_a = _data.previous[phys_a];
+					vector3 vpa = state_a.velocity + vector3::cross(state_a.angular_velocity, ra);
+					vector3 vpb = state_b.velocity + vector3::cross(state_b.angular_velocity, rb);
 
-						integrate(phys_a, state_a, t, h);
-						write_transform(phys_a, state_a);
+					float vrel = vector3::dot(col.normal, (vpa - vpb));
 
-						if (_colliders->test_collision(col_a, col_b, epa))
-						{
-							vector3 p = state_a.position + epa;
-							vector3 n = epa.norm();
+					if (vrel > 0)
+						continue;
 
-							vector3 ra = p - _data.com[phys_a];
-							vector3 rb = p - _data.com[phys_b];
+					float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
+					float num = -(1.0f + rest) * vrel;
 
-							vector3 vpa = vector3::cross(state_a.velocity + state_a.angular_velocity, ra);
-							vector3 vpb = vector3::cross(state_b.velocity + state_b.angular_velocity, rb);
+					float denom = _data.inverse_mass[phys_a] + _data.inverse_mass[phys_b] 
+						+ vector3::dot(col.normal, vector3::cross(_data.inverse_inertia[phys_a] * vector3::cross(ra, col.normal), ra))
+						+ vector3::dot(col.normal, vector3::cross(_data.inverse_inertia[phys_b] * vector3::cross(rb, col.normal), rb));
 
-							float vrel = vector3::dot(n, (vpa - vpb));
+					float j = num / denom;
 
-							if (vrel > 0)
-								break;
+					PointForce response_a(col.point2, j * col.normal);
 
-							printf("h = %f, epa = %f\n", h, epa.length());
+					add_impulse(phys_a, response_a);
 
-							if (epa.square_magnitude() < max_sqr_pen_depth)
-							{
-
-								float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
-								float num = -(1.0f + rest) * vrel;
-
-								float denom = _data.inverse_mass[phys_a] + _data.inverse_mass[phys_b] 
-									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_a] * vector3::cross(ra, n), ra))
-									+ vector3::dot(n, vector3::cross(_data.inverse_inertia[phys_b] * vector3::cross(rb, n), rb));
-
-								float j = num / denom;
-
-								PointForce response_a(p, j * n);
-								PointForce response_b(p, -(j * n));
-
-								add_impulse(phys_a, response_a);
-								add_impulse(phys_b, response_b);
-
-								integrate(phys_a, state_a, t + h, dt - h);
-								integrate(phys_b, state_b, t + h, dt - h);
-
-								printf("Reponse %d <-> %d, h = %f, j = %f, vrel = %f, epa = %f\n", phys_a, phys_b, h, j, vrel, epa.length());
-
-								break;
-							}
-							else
-							{
-								hr = h;
-							}
-						}
-						else
-						{
-							hl = h;
-						}
-					}
+					//if (_data.inverse_mass[phys_a] > 0.0001f)
+					//	_transforms->add_position(trf_a, col.normal * col.depth);
 				}
 			}
 
@@ -315,11 +285,6 @@ namespace efiilj
 	void simulator::end_frame()
 	{
 		//float alpha = accumulator / dt;
-
-		for (const auto& idx : _instances)
-		{
-			_data.impulse[idx] = PointForce();
-		}
 	}
 	
 	simulator::Derivative simulator::evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt)
@@ -372,21 +337,27 @@ namespace efiilj
 		recalculate_state(idx, state);
 
 	}
-	
-	void simulator::add_impulse(physics_id idx, const PointForce& force)
-	{
-		_data.impulse[idx] = force;	
-	}
 
 	vector3 simulator::acceleration(physics_id idx, const PhysicsState& state, float t)
 	{
-		const PointForce& impulse = _data.impulse[idx];
-		return impulse.force;
+		vector3 sum_impulses;
+
+		for (const auto& i : _data.impulses[idx])
+			sum_impulses += i.force;
+
+		vector3 gravity = -9.82f * vector3(0, 1, 0) * gravity_mult;
+		vector3 air_drag = state.velocity * air_drag_mult;
+
+		return sum_impulses + gravity - air_drag;
 	}
 
 	vector3 simulator::torque(physics_id idx, const PhysicsState& state, float t)
 	{
-		const PointForce& impulse = _data.impulse[idx];
-		return vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
+		vector3 sum_impulse_torque;
+
+		for (const auto& impulse : _data.impulses[idx])
+			sum_impulse_torque += vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
+
+		return sum_impulse_torque;
 	}
 }

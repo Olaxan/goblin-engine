@@ -8,6 +8,7 @@
 #include "lght_mgr.h"
 #include "cam_mgr.h"
 #include "phys_data.h"
+#include "sim.h"
 
 #include <memory>
 #include <chrono>
@@ -26,6 +27,17 @@ namespace efiilj
 				std::vector<bool> draw_bounds;
 			} _data;
 
+			struct DebugSphere 
+			{
+				vector3 location;
+				float scale;
+				size_t frames;
+
+				DebugSphere(const vector3& pos, float scale, size_t frames)
+					: location(pos), scale(scale), frames(frames)
+				{ }
+			};
+
 			shader_id _shader;
 
 			std::shared_ptr<camera_manager> _cameras;
@@ -37,9 +49,15 @@ namespace efiilj
 			std::shared_ptr<material_server> _materials;
 			std::shared_ptr<shader_server> _shaders;
 			std::shared_ptr<collider_manager> _colliders;
+			std::shared_ptr<simulator> _sim;
 
 			void create_bbox_mesh(debug_id idx);
 			void update_bbox_mesh(debug_id idx);
+
+			std::vector<DebugSphere> spheres;
+
+			mesh_id sphere;
+			mesh_id line;
 
 		public:
 
@@ -53,6 +71,11 @@ namespace efiilj
 			void on_register(std::shared_ptr<manager_host> host) override;
 
 			void render(debug_id idx);
+
+			void add_debug_sphere(const vector3& pos, float size, size_t frames)
+			{
+				spheres.emplace_back(pos, size, frames);
+			}
 
 			void begin_frame();
 			void render_frame();

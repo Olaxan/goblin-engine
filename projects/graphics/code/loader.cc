@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <vector>
 #include <map>
@@ -183,12 +184,25 @@ namespace efiilj
 		std::vector<vector3> normals;
 		std::vector<vector2> uvs;
 
+		vector3 min(
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max(),
+				std::numeric_limits<float>::max());
+
+		vector3 max(
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min(),
+				std::numeric_limits<float>::min());
+
 		// Map holds vertices and their corresponding indices
 		std::map<vertex, unsigned int> vertices;
 
 		for (int i = 0; i < count; i++)
 		{
 			vertex test = in_vertices[i];
+
+			min = vector3::min(min, test.xyzw);
+			max = vector3::max(max, test.xyzw);
 
 			// Try to find vertices identical to this one in map
 			auto it = vertices.find(test);
@@ -215,6 +229,8 @@ namespace efiilj
 		_meshes->set_indices(_mesh, indices);
 		_meshes->set_normals(_mesh, normals);
 		_meshes->set_uvs(_mesh, uvs);
+		_meshes->set_min(_mesh, min);
+		_meshes->set_max(_mesh, max);
 
 		return _meshes->build(_mesh);
 	}

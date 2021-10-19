@@ -1,3 +1,5 @@
+#pragma once
+
 #include "manager.h"
 #include "ifmgr.h"
 
@@ -67,7 +69,8 @@ namespace efiilj
 				std::vector<PhysicsState> current;
 				std::vector<PhysicsState> previous;
 
-				std::vector<PointForce> impulse;
+				std::vector<std::vector<PointForce>> impulses;
+				std::vector<std::vector<PointForce>> forces;
 
 				std::vector<vector3> com;
 				std::vector<float> mass;
@@ -79,8 +82,8 @@ namespace efiilj
 
 			float t = 0.0f;
 			float dt = 0.01f;
-			float gravity_mult = 1.0f;
-			float air_drag_mult = 1.0f;
+			float gravity_mult = 0.0f;
+			float air_drag_mult = 0.0f;
 
 			frame_time current_time = frame_timer::now();
 
@@ -118,7 +121,15 @@ namespace efiilj
 		Derivative evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt);
 		void integrate(physics_id idx, PhysicsState& state, const float t, const float dt);
 
-		void add_impulse(physics_id idx, const PointForce& force);
+		void add_impulse(physics_id idx, const PointForce& force)
+		{
+			_data.impulses[idx].emplace_back(force);
+		}
+
+		void add_force(physics_id idx, const PointForce& force)
+		{
+			_data.forces[idx].emplace_back(force);
+		}
 
 		vector3 acceleration(physics_id idx, const PhysicsState& state, float t);
 		vector3 torque(physics_id idx, const PhysicsState& state, float t);
@@ -140,6 +151,13 @@ namespace efiilj
 		{
 			_data.inertia[idx] = inertia;
 			_data.inverse_inertia[idx] = 1.0f / inertia;
+		}
+
+		void set_static(physics_id idx, bool is_static)
+		{
+			// TODO: fix
+			_data.inverse_mass[idx] = is_static ? 0 : 1.0f / _data.mass[idx];
+			_data.inverse_inertia[idx] = is_static ? 0 : 1.0f / _data.inertia[idx];
 		}
 
 		void set_inertia_as_cube(physics_id idx, float length)

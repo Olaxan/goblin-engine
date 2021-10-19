@@ -1,4 +1,5 @@
 #include "dbg_rend.h"
+#include "loader.h"
 
 #include "imgui.h"
 
@@ -96,10 +97,18 @@ namespace efiilj
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
+		_sim = host->get_manager_from_fcc<simulator>('PHYS');
+
+		object_loader loader("../res/volumes/v_pointlight.obj", _meshes);
+		sphere = loader.get_mesh();
 	}
 
 	void debug_renderer::render(debug_id idx)
 	{
+
+		if (!_shaders->use(_shader))
+			return;
+
 		mesh_id mid = _data.bbox[idx];
 		_meshes->bind(mid);
 
@@ -107,21 +116,57 @@ namespace efiilj
 
 		collider_id col_id = _colliders->get_component(eid);
 
+		if (!_colliders->is_valid(col_id))
+			return;
+
+		bool collision = _colliders->test_narrow(col_id);
+
 		vector4 color(1,1,1,1);
-		if (_colliders->is_valid(col_id) && _colliders->test_broad(col_id))
+		if (_colliders->test_broad(col_id))
 		{
-			if (_colliders->test_narrow(col_id))
-				color = vector4(1,0,0,1);
-			else
-				color = vector4(1,1,0,1);
+			color = collision ? vector4(1,0,0,1) : vector4(1,1,0,1);
 		}
 
-		if (_shaders->use(_shader))
+		_shaders->set_uniform("base_color_factor", color);
+		_shaders->set_uniform("model", matrix4());
+		_meshes->draw_elements(mid);
+
+		const auto& collisions = _colliders->get_collisions(col_id);
+
+		transform_id trf_id = _transforms->get_component(eid);
+
+		if (!_transforms->is_valid(trf_id))
+			return;
+
+		vector3 pos = _transforms->get_position(trf_id);
+		matrix4 s = matrix4::get_scale(0.01f);
+		_meshes->bind(sphere);
+
+		for (const auto& col : collisions)
 		{
-			_shaders->set_uniform("base_color_factor", color);
-			_shaders->set_uniform("model", matrix4());
-			_meshes->draw_elements(mid);
+			matrix4 t = matrix4::get_translation(vector4(col.point1, 1.0f));
+			_shaders->set_uniform("model", t * s);
+			_shaders->set_uniform("base_color_factor", vector4(0, 1.0f, 0, 1.0f));
+			_meshes->draw_elements(sphere);
+
+			t = matrix4::get_translation(vector4(col.point2, 1.0f));
+			_shaders->set_uniform("model", t * s);
+			_shaders->set_uniform("base_color_factor", vector4(1.0f, 0, 1.0f, 1.0f));
+			_meshes->draw_elements(sphere);
 		}
+
+		physics_id phys_id = _sim->get_component(eid);
+
+		if (!_sim->is_valid(phys_id))
+			return;
+
+		vector3 com = pos + _sim->get_com(phys_id);
+
+		matrix4 t = matrix4::get_translation(vector4(com, 1.0f));
+		_shaders->set_uniform("model", t * s);
+		_shaders->set_uniform("base_color_factor", vector4(0, 0, 1.0f, 1.0f));
+		_meshes->draw_elements(sphere);
+
 	}
 
 	void debug_renderer::begin_frame()
@@ -131,6 +176,8 @@ namespace efiilj
 
 	void debug_renderer::render_frame()
 	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+
 		for (const auto& idx : _instances)
 		{
 			if (_data.draw_bounds[idx])

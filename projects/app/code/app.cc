@@ -141,6 +141,31 @@ namespace efiilj
 		metadata->set_name(cam_meta_id, "Main camera");
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
 
+		// Ground
+		
+		object_loader cube("../res/meshes/cube.obj", meshes);
+		mesh_id mesh_cube = cube.get_mesh();
+
+		entity_id e_cube = entities->create();
+		transform_id trf_cube = transforms->register_entity(e_cube);
+		transforms->set_position(trf_cube, vector3(0, -15.0f, 0));
+		transforms->set_scale(trf_cube, vector3(10.0f, 10.0f, 10.0f));
+
+		mesh_instance_id miid_cube = mesh_instances->register_entity(e_cube);
+		mesh_instances->set_mesh(miid_cube, mesh_cube);
+
+		material_id mtrl_cube = materials->create();
+		materials->set_base_color(mtrl_cube, vector4(1, 1, 1, 1));
+		meshes->set_material(mesh_cube, mtrl_cube);
+		mesh_instances->set_material(miid_cube, mtrl_cube);
+
+		rfwd->register_entity(e_cube);
+		colliders->register_entity(e_cube);
+		physics_id rb_cube = sim->register_entity(e_cube);
+
+		sim->recalculate_com(rb_cube);
+		sim->set_static(rb_cube, true);
+
 		// GLTF
 		
 		model_id test_mdl = gltf->create();
@@ -272,15 +297,13 @@ namespace efiilj
 				{
 					if (button == GLFW_MOUSE_BUTTON_RIGHT)
 					{
-						vector3 f = colliders->support(hit.collider, r.direction);
-						//transforms->set_position(trf_hitmarker, hit.position);
-						transforms->set_position(trf_hitmarker, f);
+						transforms->set_position(trf_hitmarker, hit.position);
 						editor->set_selected(hit.entity);
 					}
 					else if (button == GLFW_MOUSE_BUTTON_LEFT)
 					{
 						PointForce impulse;
-						impulse.force = r.direction * 0.1f;
+						impulse.force = r.direction * 1.0f;
 						impulse.p = hit.position;
 
 						physics_id idp = sim->get_component(hit.entity);

@@ -25,6 +25,54 @@ namespace efiilj
 		entity_id entity;
 	};
 
+	struct SupportPoint
+	{
+		vector3 s1;
+		vector3 s2;
+		vector3 point;
+
+		SupportPoint()
+			: s1(vector3()), s2(vector3()), point(vector3()) { }
+
+		SupportPoint(const vector3& a, const vector3& b)
+			: s1(a), s2(b), point(b - a) { }
+
+		bool operator == (const SupportPoint& other)
+		{
+			return point == other.point;
+		}
+	};
+
+	struct Collision
+	{
+		collider_id object1;
+		collider_id object2;
+		vector3 point1;
+		vector3 point2;
+		vector3 normal;
+		float depth;
+
+		Collision() 
+			: object1(-1),
+			object2(-1),
+			point1(vector3()),
+			point2(vector3()),
+			normal(vector3()),
+			depth(0) {}
+
+		Collision(
+				collider_id obj1, 
+				collider_id obj2,
+				const vector3& point1,
+				const vector3& point2,
+				const vector3& normal,
+				float depth)
+			: 
+				object1(obj1), object2(obj2), 
+				point1(point1), point2(point2),
+				normal(normal), depth(depth) { }
+	};
+
 	class collider_manager : public manager<collider_id> 
 	{
 		private:
@@ -37,22 +85,23 @@ namespace efiilj
 			  { return lhs.second < rhs.second; }
 			};	
 
+
 			void check_axis_sweep(const std::set<point, point_comp>& points, std::map<collider_id, std::set<collider_id>>& hits) const;
 
 			bool point_inside_bounds(collider_id idx, const vector3& point) const;
 			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
-			bool update_simplex(vector3 simplex[4], int& dim, vector3& dir) const;
-			bool check_gjk_intersect(collider_id col1, collider_id col2, vector3 simplex[4]) const;
-			vector3 epa_expand(collider_id col1, collider_id col2, vector3 simplex[4]) const;
+			bool update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const;
+			bool check_gjk_intersect(collider_id col1, collider_id col2, SupportPoint simplex[4]) const;
+			Collision epa_expand(collider_id col1, collider_id col2, const SupportPoint simplex[4]) const;
 
 			struct PhysicsData
 			{
 				std::vector<bounds> mesh_bounds;
-				std::vector<vector3> collision_vector;
 				std::vector<bool> bounds_updated;
 				std::vector<std::set<collider_id>> broad_collisions;
 				std::vector<std::set<collider_id>> narrow_collisions;
+				std::vector<std::vector<Collision>> collisions;
 			} _data;
 
 			std::shared_ptr<mesh_server> _meshes;
@@ -64,7 +113,8 @@ namespace efiilj
 			collider_manager();
 			~collider_manager();
 
-			vector3 support(collider_id, const vector3& dir) const;
+			SupportPoint support(collider_id, collider_id, const vector3& dir) const;
+			vector3 get_furthest_point(collider_id, const vector3& dir) const;
 
 			void extend_defaults(collider_id) override;
 			void on_register(std::shared_ptr<manager_host> host) override;
@@ -79,7 +129,7 @@ namespace efiilj
 
 			bool test_hit(const ray& ray, trace_hit& hit) const;
 			bool test_hit(collider_id idx, const ray& ray, trace_hit& hit) const;
-			bool test_collision(collider_id obj1, collider_id obj2, vector3& epa) const;
+			bool test_collision(collider_id obj1, collider_id obj2, Collision& col1, Collision& col2) const;
 
 			bool test_broad(collider_id idx) const
 			{ 
@@ -107,14 +157,9 @@ namespace efiilj
 					_data.narrow_collisions[idx].end();
 			}
 
-			const std::set<collider_id>& get_collisions(collider_id idx)
+			const std::vector<Collision>& get_collisions(collider_id idx)
 			{
-				return _data.narrow_collisions[idx];
-			}
-
-			const vector3& get_collision_vector(collider_id idx)
-			{
-				return _data.collision_vector[idx];
+				return _data.collisions[idx];
 			}
 
 			const bounds& get_bounds(collider_id idx) const
