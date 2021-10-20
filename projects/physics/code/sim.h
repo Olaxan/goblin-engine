@@ -6,6 +6,7 @@
 #include <chrono>
 #include <vector>
 #include <memory>
+#include <queue>
 
 #include "phys_data.h"
 
@@ -69,7 +70,7 @@ namespace efiilj
 				std::vector<PhysicsState> current;
 				std::vector<PhysicsState> previous;
 
-				std::vector<std::vector<PointForce>> impulses;
+				std::vector<std::queue<PointForce>> impulses;
 				std::vector<std::vector<PointForce>> forces;
 
 				std::vector<vector3> com;
@@ -93,6 +94,8 @@ namespace efiilj
 			std::shared_ptr<collider_manager> _colliders;
 			std::shared_ptr<mesh_manager> _mesh_instances;
 			std::shared_ptr<mesh_server> _meshes;
+
+			void apply_impulses(physics_id, PhysicsState& state);
 
 	public:
 
@@ -123,7 +126,7 @@ namespace efiilj
 
 		void add_impulse(physics_id idx, const PointForce& force)
 		{
-			_data.impulses[idx].emplace_back(force);
+			_data.impulses[idx].push(force);
 		}
 
 		void add_force(physics_id idx, const PointForce& force)

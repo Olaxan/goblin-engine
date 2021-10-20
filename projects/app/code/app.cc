@@ -166,6 +166,23 @@ namespace efiilj
 		sim->recalculate_com(rb_cube);
 		sim->set_static(rb_cube, true);
 
+		// Testcube
+
+		//entity_id e_testcube = entities->create();
+		//transform_id trf_testcube = transforms->register_entity(e_testcube);
+		//transforms->set_position(trf_testcube, vector3(0, 0, 5.0f));
+		//transforms->set_scale(trf_testcube, vector3(1.0f, 1.0f, 1.0f));
+
+		//mesh_instance_id miid_testcube = mesh_instances->register_entity(e_testcube);
+		//mesh_instances->set_mesh(miid_testcube, mesh_cube);
+		//mesh_instances->set_material(miid_testcube, mtrl_cube);
+
+		//rfwd->register_entity(e_testcube);
+		//colliders->register_entity(e_testcube);
+		//physics_id rb_testcube = sim->register_entity(e_testcube);
+
+		//sim->recalculate_com(rb_testcube);
+
 		// GLTF
 		
 		model_id test_mdl = gltf->create();
@@ -303,7 +320,7 @@ namespace efiilj
 					else if (button == GLFW_MOUSE_BUTTON_LEFT)
 					{
 						PointForce impulse;
-						impulse.force = r.direction * 1.0f;
+						impulse.force = r.direction * 0.1f;
 						impulse.p = hit.position;
 
 						physics_id idp = sim->get_component(hit.entity);
