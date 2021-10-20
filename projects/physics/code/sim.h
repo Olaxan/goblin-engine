@@ -79,12 +79,15 @@ namespace efiilj
 				std::vector<float> inertia;
 				std::vector<float> inverse_inertia;
 				std::vector<float> restitution;
+				std::vector<float> friction;
 			} _data;
 
 			float t = 0.0f;
 			float dt = 0.01f;
 			float gravity_mult = 0.0f;
 			float air_drag_mult = 0.0f;
+
+			bool collision_rejection = false;
 
 			frame_time current_time = frame_timer::now();
 

@@ -3,6 +3,8 @@
 #include "imgui.h"
 #include "vector3.h"
 
+#include <algorithm>
+
 namespace efiilj
 {
 
@@ -26,6 +28,7 @@ namespace efiilj
 		_data.mass.emplace_back(1.0f);
 		_data.inverse_mass.emplace_back(0.1f);
 		_data.restitution.emplace_back(0.5f);
+		_data.friction.emplace_back(0.1f);
 
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
@@ -36,7 +39,10 @@ namespace efiilj
 
 	void simulator::draw_gui(physics_id idx)
 	{
-		ImGui::Text("Rigidbody %d", idx);	
+
+		ImVec4 yellow(1.0f, 1.0f, 0, 1.0f);
+
+		ImGui::TextColored(yellow, "Rigidbody %d", idx);	
 		ImGui::Text("Simulation time: %f", t);
 
 		ImGui::SliderFloat("Time step", &dt, 0.01f, 0.25f);
@@ -46,6 +52,13 @@ namespace efiilj
 
 		PhysicsState& state = _data.current[idx];
 
+		ImGui::TextColored(yellow, "Global settings");
+		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
+		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
+		ImGui::Checkbox("Collision rejection", &collision_rejection);
+
+		ImGui::TextColored(yellow, "Object settings");
+
 		if (ImGui::DragFloat("Mass", &_data.mass[idx], 0.01f))
 		{
 			set_mass(idx, _data.mass[idx]);
@@ -53,21 +66,32 @@ namespace efiilj
 			recalculate_state(idx, state);
 		}
 
-		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
-		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
-
 		if (ImGui::DragFloat3("CoM", &_data.com[idx].x, 0.01f))
 			set_com(idx, _data.com[idx]);
 
 		ImGui::DragFloat("Restitution", &_data.restitution[idx], 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Friction", &_data.friction[idx], 0.01f, 0.0f, 1.0f);
+
+		ImGui::TextColored(yellow, "Primary");
 
 		if (ImGui::DragFloat3("Momentum", &state.momentum.x, 0.01f)
-		| ImGui::DragFloat3("Velocity", &state.velocity.x, 0.01f)
-		| ImGui::DragFloat3("Angular momentum", &state.angular_momentum.x, 0.01f)
-		| ImGui::DragFloat3("Angular velocity", &state.angular_velocity.x, 0.01f))
+		| ImGui::DragFloat3("Angular momentum", &state.angular_momentum.x, 0.01f))
 		{
 			recalculate_state(idx, state);
 		}
+
+		ImGui::TextColored(yellow, "Secondary");
+
+		ImGui::Text("Velocity");
+		ImGui::Text("%f, %f, %f", 
+				state.velocity.x,
+				state.velocity.y,
+				state.velocity.z);
+		ImGui::Text("Angular velocity");
+		ImGui::Text("%f, %f, %f", 
+				state.angular_velocity.x,
+				state.angular_velocity.y,
+				state.angular_velocity.z);
 	}
 	
 	void simulator::on_register(std::shared_ptr<manager_host> host)
@@ -201,6 +225,7 @@ namespace efiilj
 	}
 
 #define MAX_SEEK_ITERATIONS 32
+#define FRICTION_TOLERANCE 0.00001f
 
 	void simulator::simulate()
 	{
@@ -258,8 +283,8 @@ namespace efiilj
 
 					float vrel = vector3::dot(col.normal, (vpa - vpb));
 
-					if (vrel > 0)
-						continue;
+					//if (vrel > 0)
+					//	continue;
 
 					float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 					float num = -(1.0f + rest) * vrel;
@@ -277,13 +302,34 @@ namespace efiilj
 
 					float j = std::max(num / denom, 0.0f);
 
-					// Coloumb friction
-					
 					PointForce response(col.point1, j * col.normal);
-
 					add_impulse(phys_a, response);
 
-					if (_data.inverse_mass[phys_a] > 0.0001f)
+					// Coloumb friction
+					
+					vector3 tvel = vpa - col.normal * vector3::dot(vpa, col.normal);
+
+					if (tvel.square_magnitude() > FRICTION_TOLERANCE)
+					{
+						vector3 tangent = tvel.norm();
+
+						float vt = vector3::dot(vpa, tangent);
+						float kt = _data.inverse_mass[phys_a] + 
+							vector3::dot(vector3::cross(ra, tangent), 
+									_data.inverse_inertia[phys_a] * vector3::cross(ra, tangent));
+
+						float u = std::min(_data.friction[phys_a], _data.friction[phys_b]);
+
+						float jf = std::clamp(-vt / kt, -j * u, j * u);
+
+						PointForce friction(col.point1, jf * tangent);
+
+						add_impulse(phys_a, friction);
+					}
+
+					// Rejection
+
+					if (collision_rejection && _data.inverse_mass[phys_a] > 0.0001f)
 						state_a.position += col.normal * col.depth;
 				}
 			}
