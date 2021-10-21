@@ -73,6 +73,38 @@ namespace efiilj
 				normal(normal), depth(depth) { }
 	};
 
+	struct SupportFace
+	{
+		SupportPoint a;
+		SupportPoint b;
+		SupportPoint c;
+		vector3 normal;
+
+		SupportFace()
+			: a(SupportPoint()), b(SupportPoint()), c(SupportPoint()),
+			normal(vector3()) {}
+
+		SupportFace(
+				const SupportPoint& a, 
+				const SupportPoint& b, 
+				const SupportPoint& c
+			) 
+			: a(a), b(b), c(c), 
+			normal(vector3::cross(b.point - a.point, c.point - a.point).norm()) {}
+	};
+
+	struct SupportEdge
+	{
+		SupportPoint a;
+		SupportPoint b;
+
+		SupportEdge()
+			: a(SupportPoint()), b(SupportPoint()) {}
+
+		SupportEdge(const SupportPoint& a, const SupportPoint& b)
+			: a(a), b(b) {}
+	};
+
 	class collider_manager : public manager<collider_id> 
 	{
 		private:
@@ -93,6 +125,7 @@ namespace efiilj
 
 			bool update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const;
 			bool check_gjk_intersect(collider_id col1, collider_id col2, SupportPoint simplex[4]) const;
+			bool epa(collider_id col1, collider_id col2, const SupportPoint simplex[4], Collision& result) const;
 			Collision epa_expand(collider_id col1, collider_id col2, const SupportPoint simplex[4]) const;
 
 			struct PhysicsData

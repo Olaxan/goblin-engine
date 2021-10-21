@@ -509,6 +509,146 @@ check_two:
 		*u = 1.0f - *v - *w;
 	}
 
+	bool collider_manager::epa(collider_id col1, collider_id col2, const SupportPoint simplex[4], Collision& result) const
+	{
+		const SupportPoint& a = simplex[0];	
+		const SupportPoint& b = simplex[1];	
+		const SupportPoint& c = simplex[2];	
+		const SupportPoint& d = simplex[3];	
+
+		result.object1 = col1;
+		result.object2 = col2;
+
+		std::vector<SupportFace> faces;
+		std::vector<SupportEdge> edges;
+		size_t closest_face = 0;
+
+		// Add termination simplex to face vector
+		faces.emplace_back(a, b, c);
+		faces.emplace_back(a, c, d);
+		faces.emplace_back(a, d, b);
+		faces.emplace_back(b, d, c);
+
+		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
+		{
+			float min_dist = vector3::dot(faces[0].a.point, faces[0].normal);
+
+			for (size_t i = 1; i < faces.size(); i++)
+			{
+				float dist = vector3::dot(faces[i].a.point, faces[i].normal);
+				if (dist < min_dist)
+				{
+					min_dist = dist;
+					closest_face = i;
+				}
+			}
+
+			vector3 search_dir = faces[closest_face].normal;
+			SupportPoint sup = support(col1, col2, search_dir);
+
+			float d = vector3::dot(sup.point, search_dir);
+
+			if (d - min_dist < EPA_TOLERANCE)
+			{
+				float bary_u, bary_v, bary_w;
+
+				const SupportFace& closest = faces[closest_face];
+
+     			barycentric(closest.normal * min_dist,
+                    closest.a.point,
+                    closest.b.point,
+                    closest.c.point,
+                    &bary_u,
+                    &bary_v,
+                    &bary_w);
+
+				result.normal = -closest.normal;
+				result.depth = min_dist;
+				result.point1 = bary_u * closest.a.s1 
+					+ bary_v * closest.b.s1 
+					+ bary_w * closest.c.s1;
+
+				result.point2 = bary_u * closest.a.s2
+					+ bary_v * closest.b.s2
+					+ bary_w * closest.c.s2;
+
+				if (bary_u > 1.0f || bary_v > 1.0f || bary_w > 1.0f)
+					return false;
+
+				if (result.normal.is_zero())
+					return false;
+
+				return true;
+			}
+
+			edges.clear();
+
+			for (size_t i = 0; i < faces.size(); i++)
+			{
+				SupportFace& face = faces[i];
+				if (IS_ALIGNED(face.normal, sup.point - face.a.point))
+				{
+
+					SupportEdge current_edge;
+
+					for (size_t j = 0; j < 3; j++)
+					{
+						switch(j)
+						{
+							case 0:
+								current_edge = { face.a, face.b };
+								break;
+							case 1:
+								current_edge = { face.b, face.c };
+								break;
+							case 2:
+								current_edge = { face.c, face.a };
+								break;
+						}
+
+						bool found_edge = false;
+
+						for (size_t k = 0; k < edges.size(); k++)
+						{
+							if (current_edge.a == edges[k].b &&
+								current_edge.b == edges[k].a)
+							{
+								edges.erase(edges.begin() + k);
+								found_edge = true;
+								k = edges.size();
+							}
+						}
+
+						if (!found_edge)
+							edges.emplace_back(current_edge);
+					}
+
+					faces.erase(faces.begin() + i);
+					i--;
+				}
+			}
+
+			for (size_t i = 0; i < edges.size(); i++)
+			{
+				SupportFace new_face(edges[i].a, edges[i].b, sup);
+
+				const float bias = 0.00001f;
+
+				if (vector3::dot(new_face.a.point, new_face.normal) + bias < 0)
+				{
+					SupportPoint temp = new_face.a;
+					new_face.a = new_face.b;
+					new_face.b = temp;
+					new_face.normal = -new_face.normal;
+				}
+
+				faces.emplace_back(new_face);
+			}
+		}
+
+		return false;
+	}
+
 	Collision collider_manager::epa_expand(collider_id col1, collider_id col2, const SupportPoint simplex[4]) const
 	{
 		const SupportPoint& a = simplex[0];	
@@ -591,7 +731,7 @@ check_two:
 
 				const face& closest = faces[closest_face];
 
-     			barycentric(closest.normal * min_dist,
+     			barycentric(closest.normal,
                     closest.a.point,
                     closest.b.point,
                     closest.c.point,
@@ -640,14 +780,15 @@ check_two:
 
 						for (size_t k = 0; k < edges.size(); k++)
 						{
-							if (edges[k].b == current_edge.a && edges[k].a == current_edge.b)
+							if (edges[k].b == current_edge.a && 
+								edges[k].a == current_edge.b)
 							{
 								size_t num_edges = edges.size();
 								edges[k].a = edges[num_edges - 1].a;
 								edges[k].b = edges[num_edges - 1].b;
 								edges.pop_back();
 								has_edge = true;
-								break;
+								k = edges.size();
 							}
 						}
 
@@ -689,6 +830,8 @@ check_two:
 
 		return ret;
 	}
+
+
 
 #define GJK_MAX_ITERATIONS 64
 	
@@ -775,9 +918,7 @@ check_two:
 
 		if (check_gjk_intersect(obj1, obj2, simplex))
 		{
-			col1 = epa_expand(obj1, obj2, simplex);
-			col2 = epa_expand(obj2, obj1, simplex);
-			return true;
+			return epa(obj1, obj2, simplex, col1) && epa(obj2, obj1, simplex, col2);
 		}
 
 		return false;

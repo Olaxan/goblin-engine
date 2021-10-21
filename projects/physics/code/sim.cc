@@ -29,7 +29,7 @@ namespace efiilj
 		_data.mass.emplace_back(1.0f);
 		_data.inverse_mass.emplace_back(0.1f);
 		_data.restitution.emplace_back(0.5f);
-		_data.friction.emplace_back(0.1f);
+		_data.friction.emplace_back(0.5f);
 
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
@@ -282,8 +282,8 @@ namespace efiilj
 
 					float vrel = vector3::dot(col.normal, (vpa - vpb));
 
-					//if (vrel > 0)
-					//	continue;
+					if (vrel > 0)
+						continue;
 
 					float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 					float num = -(1.0f + rest) * vrel;
