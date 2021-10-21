@@ -282,8 +282,8 @@ namespace efiilj
 
 					float vrel = vector3::dot(col.normal, (vpa - vpb));
 
-					if (vrel > 0)
-						continue;
+					//if (vrel > 0)
+					//	continue;
 
 					float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 					float num = -(1.0f + rest) * vrel;
@@ -306,11 +306,11 @@ namespace efiilj
 
 					// Coloumb friction
 					
-					vector3 tvel = vpa - col.normal * vector3::dot(vpa, col.normal);
+					vector3 tv = vpa - col.normal * vector3::dot(vpa, col.normal);
 
-					if (tvel.square_magnitude() > FRICTION_TOLERANCE)
+					if (tv.square_magnitude() > FRICTION_TOLERANCE)
 					{
-						vector3 tangent = tvel.norm();
+						vector3 tangent = tv.norm();
 
 						float vt = vector3::dot(vpa, tangent);
 						float kt = _data.inverse_mass[phys_a] + 

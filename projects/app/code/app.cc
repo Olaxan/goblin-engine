@@ -168,20 +168,27 @@ namespace efiilj
 
 		// Testcube
 
-		//entity_id e_testcube = entities->create();
-		//transform_id trf_testcube = transforms->register_entity(e_testcube);
-		//transforms->set_position(trf_testcube, vector3(0, 0, 5.0f));
-		//transforms->set_scale(trf_testcube, vector3(1.0f, 1.0f, 1.0f));
+		object_loader testcube("../res/meshes/cube.obj", meshes);
+		mesh_id mesh_testcube = testcube.get_mesh();
 
-		//mesh_instance_id miid_testcube = mesh_instances->register_entity(e_testcube);
-		//mesh_instances->set_mesh(miid_testcube, mesh_cube);
-		//mesh_instances->set_material(miid_testcube, mtrl_cube);
+		entity_id e_testcube = entities->create();
+		transform_id trf_testcube = transforms->register_entity(e_testcube);
+		transforms->set_position(trf_testcube, vector3(0, 0, 0));
+		transforms->set_scale(trf_testcube, 0.5f);
 
-		//rfwd->register_entity(e_testcube);
-		//colliders->register_entity(e_testcube);
-		//physics_id rb_testcube = sim->register_entity(e_testcube);
+		mesh_instance_id miid_testcube = mesh_instances->register_entity(e_testcube);
+		mesh_instances->set_mesh(miid_testcube, mesh_testcube);
 
-		//sim->recalculate_com(rb_testcube);
+		material_id mtrl_testcube = materials->create();
+		materials->set_base_color(mtrl_testcube, vector4(1, 0, 0, 1));
+		meshes->set_material(mesh_testcube, mtrl_testcube);
+		mesh_instances->set_material(miid_testcube, mtrl_testcube);
+
+		rfwd->register_entity(e_testcube);
+		colliders->register_entity(e_testcube);
+		physics_id rb_testcube = sim->register_entity(e_testcube);
+
+		sim->recalculate_com(rb_testcube);
 
 		// GLTF
 		

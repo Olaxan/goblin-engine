@@ -531,6 +531,7 @@ check_two:
 
 		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
 		{
+			closest_face = 0;
 			float min_dist = vector3::dot(faces[0].a.point, faces[0].normal);
 
 			for (size_t i = 1; i < faces.size(); i++)
@@ -613,7 +614,9 @@ check_two:
 							if (current_edge.a == edges[k].b &&
 								current_edge.b == edges[k].a)
 							{
-								edges.erase(edges.begin() + k);
+								//edges.erase(edges.begin() + k);
+								edges[k] = edges.back();
+								edges.pop_back();
 								found_edge = true;
 								k = edges.size();
 							}
@@ -623,7 +626,9 @@ check_two:
 							edges.emplace_back(current_edge);
 					}
 
-					faces.erase(faces.begin() + i);
+					//faces.erase(faces.begin() + i);
+					faces[i] = faces.back();
+					faces.pop_back();
 					i--;
 				}
 			}
