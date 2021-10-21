@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include "vector3.h"
+#include <cassert>
 
 #include <algorithm>
 
@@ -56,6 +57,7 @@ namespace efiilj
 		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
 		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
 		ImGui::Checkbox("Collision rejection", &collision_rejection);
+		ImGui::InputFloat("Rejection depth", &reject_pen_depth);
 
 		ImGui::TextColored(yellow, "Object settings");
 
@@ -248,9 +250,6 @@ namespace efiilj
 			for (const auto& col_a : _colliders->get_instances())
 			{
 
-				if (col_a == 0)
-					continue;
-
 				entity_id e_a = _colliders->get_entity(col_a);
 				physics_id phys_a = get_component(e_a);
 
@@ -265,8 +264,7 @@ namespace efiilj
 
 					collider_id col_b = col.object1;
 
-					if (col_a == col_b)
-						continue;
+					assert(("Colliders should not be same!", col_a != col_b));
 
 					entity_id e_b = _colliders->get_entity(col_b);
 					physics_id phys_b = get_component(e_b);
@@ -329,7 +327,9 @@ namespace efiilj
 
 					// Rejection
 
-					if (collision_rejection && _data.inverse_mass[phys_a] > 0.0001f)
+					if (collision_rejection 
+							&& _data.inverse_mass[phys_a] > 0.0001f
+							&& col.depth > reject_pen_depth)
 						state_a.position += col.normal * col.depth;
 				}
 			}

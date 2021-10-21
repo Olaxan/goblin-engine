@@ -87,7 +87,8 @@ namespace efiilj
 			float gravity_mult = 0.0f;
 			float air_drag_mult = 0.0f;
 
-			bool collision_rejection = false;
+			bool collision_rejection = true;
+			float reject_pen_depth = 1.0f;
 
 			frame_time current_time = frame_timer::now();
 

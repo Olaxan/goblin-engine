@@ -71,7 +71,6 @@ namespace efiilj
 		if (!_transforms->is_valid(trf_id))
 			return;
 
-		ImGui::BeginChild("Collisions");
 		for (const auto& col : _data.collisions[idx])
 		{
 			ImGui::Text("Collision %d, normal = %s, depth = %f", col.object1, col.normal.to_string().c_str(),  col.depth);
@@ -84,7 +83,6 @@ namespace efiilj
 			if (ImGui::SmallButton("To Collision"))
 				_transforms->set_position(trf_id, col.point1);
 		}
-		ImGui::EndChild();
 	}
 
 	bool collider_manager::update_bounds(collider_id idx)
@@ -677,7 +675,7 @@ check_two:
 
 				const float bias = 0.000001f;
 
-				if (IS_NOT_ALIGNED(last_face.a.point, last_face.normal + bias))
+				if (vector3::dot(last_face.a.point, last_face.normal) + bias < 0)
 				{
 					SupportPoint temp = last_face.a;
 					last_face.a = last_face.b;
