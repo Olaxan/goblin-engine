@@ -614,9 +614,7 @@ check_two:
 							if (current_edge.a == edges[k].b &&
 								current_edge.b == edges[k].a)
 							{
-								//edges.erase(edges.begin() + k);
-								edges[k] = edges.back();
-								edges.pop_back();
+								edges.erase(edges.begin() + k);
 								found_edge = true;
 								k = edges.size();
 							}
@@ -626,9 +624,7 @@ check_two:
 							edges.emplace_back(current_edge);
 					}
 
-					//faces.erase(faces.begin() + i);
-					faces[i] = faces.back();
-					faces.pop_back();
+					faces.erase(faces.begin() + i);
 					i--;
 				}
 			}
