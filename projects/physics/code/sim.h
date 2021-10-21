@@ -86,6 +86,7 @@ namespace efiilj
 			float dt = 0.01f;
 			float gravity_mult = 0.0f;
 			float air_drag_mult = 0.0f;
+			float force_mult = 1.0f;
 
 			bool collision_rejection = true;
 			float reject_pen_depth = 1.0f;

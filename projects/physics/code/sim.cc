@@ -56,6 +56,7 @@ namespace efiilj
 		ImGui::TextColored(yellow, "Global settings");
 		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
 		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
+		ImGui::InputFloat("Force mult", &force_mult);
 		ImGui::Checkbox("Collision rejection", &collision_rejection);
 		ImGui::InputFloat("Rejection depth", &reject_pen_depth);
 
@@ -298,7 +299,7 @@ namespace efiilj
 
 					float denom = m1 + m2 + vector3::dot(ra1 + rb2, col.normal);
 
-					float j = std::max(num / denom, 0.0f);
+					float j = std::max(num / denom, 0.0f) * force_mult;
 
 					PointForce response(col.point1, j * col.normal);
 					add_impulse(phys_a, response);
