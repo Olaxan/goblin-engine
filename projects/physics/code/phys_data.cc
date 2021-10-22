@@ -509,6 +509,14 @@ check_two:
 		*u = 1.0f - *v - *w;
 	}
 
+	bool is_valid(const float& c)
+	{
+		float max = std::numeric_limits<float>::max();
+		float min = -max;
+
+		return (c == c) && (c > min && c < max);
+	}
+
 	bool collider_manager::epa(collider_id col1, collider_id col2, const SupportPoint simplex[4], Collision& result) const
 	{
 		const SupportPoint& a = simplex[0];	
@@ -574,6 +582,9 @@ check_two:
 					+ bary_w * closest.c.s2;
 
 				if (bary_u > 1.0f || bary_v > 1.0f || bary_w > 1.0f)
+					return false;
+
+				if (!(is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)))
 					return false;
 
 				if (result.normal.is_zero())
