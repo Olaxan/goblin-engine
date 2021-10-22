@@ -15,6 +15,7 @@ namespace efiilj
 
 	enum class primitive
 	{
+		line,
 		cube,
 		bbox
 	};
@@ -44,6 +45,7 @@ namespace efiilj
 
 			unsigned int _current_vao;
 
+			void create_line(mesh_id idx);
 			void create_cube(mesh_id idx);
 			void create_bbox(mesh_id idx);
 			

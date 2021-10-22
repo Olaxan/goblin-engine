@@ -70,7 +70,7 @@ namespace efiilj
 				std::vector<PhysicsState> current;
 				std::vector<PhysicsState> previous;
 
-				std::vector<std::queue<PointForce>> impulses;
+				std::vector<std::vector<PointForce>> impulses;
 				std::vector<std::vector<PointForce>> forces;
 
 				std::vector<vector3> com;
@@ -137,7 +137,7 @@ namespace efiilj
 
 		void add_impulse(physics_id idx, const PointForce& force)
 		{
-			_data.impulses[idx].push(force);
+			_data.impulses[idx].emplace_back(force);
 		}
 
 		void add_force(physics_id idx, const PointForce& force)
@@ -153,6 +153,11 @@ namespace efiilj
 			return _data.com[idx];
 		}
 		
+		const std::vector<PointForce>& get_impulses(physics_id idx) const
+		{
+			return _data.impulses[idx];
+		}
+
 		void set_com(physics_id idx, const vector3& com);
 
 		void set_mass(physics_id idx, float mass)

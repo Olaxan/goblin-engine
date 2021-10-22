@@ -3,7 +3,24 @@
 namespace efiilj
 {
 
-	void mesh_server::create_cube(mesh_id idx) //NOLINT
+	void mesh_server::create_line(mesh_id idx)
+	{
+		std::vector<unsigned int> indices = 
+		{
+			0, 1
+		};
+
+		set_indices(idx, indices);
+
+		std::vector<vector3> positions = {
+			vector3(0, 0, 0),
+			vector3(0, 1, 0)
+		};
+
+		set_positions(idx, positions);
+	}
+
+	void mesh_server::create_cube(mesh_id idx)
 	{
 
 	}
@@ -55,6 +72,10 @@ namespace efiilj
 
 		switch (type)
 		{
+			case primitive::line:
+				create_line(idx);
+				break;
+
 			case primitive::cube:
 				create_cube(idx);
 				break;

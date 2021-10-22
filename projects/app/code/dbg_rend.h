@@ -52,6 +52,7 @@ namespace efiilj
 			std::shared_ptr<simulator> _sim;
 
 			void create_bbox_mesh(debug_id idx);
+			void create_line_mesh();
 			void update_bbox_mesh(debug_id idx);
 
 			std::vector<DebugSphere> spheres;
@@ -71,6 +72,9 @@ namespace efiilj
 			void on_register(std::shared_ptr<manager_host> host) override;
 
 			void render(debug_id idx);
+
+			void draw_line(const vector3& a, const vector3& b, const vector4& color) const;
+			void draw_line(const vector3& a, const vector3& b) const;
 
 			void add_debug_sphere(const vector3& pos, float size, size_t frames)
 			{

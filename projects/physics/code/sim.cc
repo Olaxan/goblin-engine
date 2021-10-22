@@ -414,15 +414,13 @@ namespace efiilj
 		auto& impulses = _data.impulses[idx];
 		float mi = _data.inverse_mass[idx];
 
-		while (!impulses.empty())
+		for (const auto& impulse : impulses)
 		{
-			PointForce& impulse = impulses.front();
-
 			state.momentum += mi * impulse.force;
 			state.angular_momentum += vector3::cross(impulse.p - (_data.com[idx] + state.position), mi * impulse.force);
-
-			impulses.pop();
 		}
+
+		impulses.clear();
 
 		recalculate_state(idx, state);
 	}

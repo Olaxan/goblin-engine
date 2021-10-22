@@ -581,7 +581,7 @@ check_two:
 					+ bary_v * closest.b.s2
 					+ bary_w * closest.c.s2;
 
-				if (fabs(bary_u) > 1.0f || fabs(bary_v) > 1.0f || fabs(bary_w) > 1.0f)
+				if (!(bary_u > 0 && bary_u < 1.0f) && (bary_v > 0 && bary_v < 1.0f) && (bary_w > 0 && bary_w < 1.0f))
 					return false;
 
 				if (!(is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)))

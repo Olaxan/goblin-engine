@@ -26,6 +26,13 @@ namespace efiilj
 		_meshes->set_triangle_mode(mid, GL_LINES);
 		_data.bbox[idx] = mid;
 	}
+
+	void debug_renderer::create_line_mesh()
+	{
+		line = _meshes->create_primitive(primitive::line);
+		_meshes->build(line, GL_DYNAMIC_DRAW);
+		_meshes->set_triangle_mode(line, GL_LINES);
+	}
 	
 	void debug_renderer::update_bbox_mesh(debug_id idx)
 	{
@@ -101,6 +108,9 @@ namespace efiilj
 
 		object_loader loader("../res/volumes/v_pointlight.obj", _meshes);
 		sphere = loader.get_mesh();
+
+		create_line_mesh();
+
 	}
 
 	void debug_renderer::render(debug_id idx)
@@ -109,8 +119,15 @@ namespace efiilj
 		if (!_shaders->use(_shader))
 			return;
 
-		mesh_id mid = _data.bbox[idx];
-		_meshes->bind(mid);
+		const vector4 white(1, 1, 1, 1);
+		const vector4 red(1, 0, 0, 1);
+		const vector4 green(0, 1, 0, 1);
+		const vector4 blue(0, 0, 1, 1);
+		const vector4 yellow(1, 1, 0, 1);
+		const vector4 pink(1, 0, 1, 1);
+
+		mesh_id bbox = _data.bbox[idx];
+		_meshes->bind(bbox);
 
 		entity_id eid = get_entity(idx);
 
@@ -121,15 +138,15 @@ namespace efiilj
 
 		bool collision = _colliders->test_narrow(col_id);
 
-		vector4 color(1,1,1,1);
+		vector4 color = white;
 		if (_colliders->test_broad(col_id))
 		{
-			color = collision ? vector4(1,0,0,1) : vector4(1,1,0,1);
+			color = collision ? red : yellow;
 		}
 
 		_shaders->set_uniform("base_color_factor", color);
 		_shaders->set_uniform("model", matrix4());
-		_meshes->draw_elements(mid);
+		_meshes->draw_elements(bbox);
 
 		const auto& collisions = _colliders->get_collisions(col_id);
 
@@ -146,12 +163,12 @@ namespace efiilj
 		{
 			matrix4 t = matrix4::get_translation(vector4(col.point1, 1.0f));
 			_shaders->set_uniform("model", t * s);
-			_shaders->set_uniform("base_color_factor", vector4(0, 1.0f, 0, 1.0f));
+			_shaders->set_uniform("base_color_factor", green);
 			_meshes->draw_elements(sphere);
 
 			t = matrix4::get_translation(vector4(col.point2, 1.0f));
 			_shaders->set_uniform("model", t * s);
-			_shaders->set_uniform("base_color_factor", vector4(1.0f, 0, 1.0f, 1.0f));
+			_shaders->set_uniform("base_color_factor", pink);
 			_meshes->draw_elements(sphere);
 		}
 
@@ -164,9 +181,31 @@ namespace efiilj
 
 		matrix4 t = matrix4::get_translation(vector4(com, 1.0f));
 		_shaders->set_uniform("model", t * s);
-		_shaders->set_uniform("base_color_factor", vector4(0, 0, 1.0f, 1.0f));
+		_shaders->set_uniform("base_color_factor", blue);
 		_meshes->draw_elements(sphere);
 
+		const auto& impulses = _sim->get_impulses(phys_id);
+
+		for (const auto& impulse : impulses)
+		{
+			draw_line(impulse.p, impulse.p + impulse.force * 100.0f, green);
+		}
+	}
+
+	void debug_renderer::draw_line(const vector3& a, const vector3& b, const vector4& color) const
+	{
+		_shaders->set_uniform("base_color_factor", color);
+		draw_line(a, b);
+	}
+
+	void debug_renderer::draw_line(const vector3& a, const vector3& b) const
+	{
+		_meshes->bind(line);
+		_shaders->set_uniform("model", matrix4());
+		std::vector<vector3> ab = { a, b };
+		_meshes->set_positions(line, ab);
+		_meshes->update(line);
+		_meshes->draw_elements(line);
 	}
 
 	void debug_renderer::begin_frame()
