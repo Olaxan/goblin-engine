@@ -581,11 +581,11 @@ check_two:
 					+ bary_v * closest.b.s2
 					+ bary_w * closest.c.s2;
 
-				if (bary_u > 1.0f || bary_v > 1.0f || bary_w > 1.0f)
+				if (fabs(bary_u) > 1.0f || fabs(bary_v) > 1.0f || fabs(bary_w) > 1.0f)
 					return false;
 
 				if (!(is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)))
-					return false;
+				  return false;
 
 				if (result.normal.is_zero())
 					return false;
@@ -889,7 +889,7 @@ check_two:
 	{
 		SupportPoint simplex[4];
 
-		if (gjk(obj1, obj2, simplex))
+		if (check_gjk_intersect(obj1, obj2, simplex))
 		{
 			return epa(obj1, obj2, simplex, col1) && epa(obj2, obj1, simplex, col2);
 		}
