@@ -56,9 +56,12 @@ namespace efiilj
 		ImGui::TextColored(yellow, "Global settings");
 		ImGui::DragFloat("Gravity", &gravity_mult, 0.01f);
 		ImGui::DragFloat("Air drag", &air_drag_mult, 0.01f);
-		ImGui::InputFloat("Force mult", &force_mult);
+		ImGui::InputFloat("Response force mult", &response_force_mult);
+		ImGui::Checkbox("Collision penalty", &collision_penalty);
+		ImGui::InputFloat("Penalty force mult", &penalty_force_mult);
 		ImGui::Checkbox("Collision rejection", &collision_rejection);
 		ImGui::InputFloat("Rejection depth", &reject_pen_depth);
+		ImGui::Checkbox("Friction", &friction);
 
 		ImGui::TextColored(yellow, "Object settings");
 
@@ -265,7 +268,7 @@ namespace efiilj
 
 					collider_id col_b = col.object1;
 
-					assert(("Colliders should not be same!", col_a != col_b));
+					assert(("Colliders should not be same!", col_a != col_b)); //NOLINT
 
 					entity_id e_b = _colliders->get_entity(col_b);
 					physics_id phys_b = get_component(e_b);
@@ -282,8 +285,8 @@ namespace efiilj
 
 					float vrel = vector3::dot(col.normal, (vpa - vpb));
 
-					//if (vrel > 0)
-					//	continue;
+					if (vrel > 0)
+						continue;
 
 					float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 					float num = -(1.0f + rest) * vrel;
@@ -299,16 +302,26 @@ namespace efiilj
 
 					float denom = m1 + m2 + vector3::dot(ra1 + rb2, col.normal);
 
-					float j = std::max(num / denom, 0.0f) * force_mult;
+					float j = std::max(num / denom, 0.0f) * response_force_mult;
 
 					PointForce response(col.point1, j * col.normal);
 					add_impulse(phys_a, response);
+
+					// Penalty force
+					
+					if (collision_penalty)
+					{
+						float k = col.depth * penalty_force_mult;
+
+						PointForce penalty(col.point1, k * col.normal);
+						add_impulse(phys_a, penalty);
+					}
 
 					// Coloumb friction
 					
 					vector3 tv = vpa - col.normal * vector3::dot(vpa, col.normal);
 
-					if (tv.square_magnitude() > FRICTION_TOLERANCE)
+					if (friction && tv.square_magnitude() > FRICTION_TOLERANCE)
 					{
 						vector3 tangent = tv.norm();
 

@@ -86,10 +86,16 @@ namespace efiilj
 			float dt = 0.01f;
 			float gravity_mult = 0.0f;
 			float air_drag_mult = 0.0f;
-			float force_mult = 1.0f;
 
-			bool collision_rejection = true;
+			float response_force_mult = 1.0f;
+
+			bool collision_penalty = true;
+			float penalty_force_mult = 0.0f;
+			float penalty_force_damp = 0.1f;
+
+			bool collision_rejection = false;
 			float reject_pen_depth = 1.0f;
+			bool friction = true;
 
 			frame_time current_time = frame_timer::now();
 
