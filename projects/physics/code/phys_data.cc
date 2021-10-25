@@ -352,6 +352,7 @@ namespace efiilj
 			case 3:
 			{
 				vector3 ao = -a;
+
 				vector3 ab = b - a;
 				vector3 ac = c - a;
 				vector3 ad = d - a;
@@ -511,10 +512,7 @@ check_two:
 
 	bool is_valid(const float& c)
 	{
-		float max = std::numeric_limits<float>::max();
-		float min = -max;
-
-		return (c == c) && (c > min && c < max);
+		return (c == c) && (c > 0.0f && c < 1.0f);
 	}
 
 	bool collider_manager::epa(collider_id col1, collider_id col2, const SupportPoint simplex[4], Collision& result) const
@@ -540,11 +538,11 @@ check_two:
 		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
 		{
 			closest_face = 0;
-			float min_dist = vector3::dot(faces[0].a.point, faces[0].normal);
+			float min_dist = std::numeric_limits<float>::max();
 
-			for (size_t i = 1; i < faces.size(); i++)
+			for (size_t i = 0; i < faces.size(); i++)
 			{
-				float dist = vector3::dot(faces[i].a.point, faces[i].normal);
+				float dist = fabs(vector3::dot(faces[i].a.point, faces[i].normal));
 				if (dist < min_dist)
 				{
 					min_dist = dist;
@@ -563,6 +561,7 @@ check_two:
 
 				const SupportFace& closest = faces[closest_face];
 
+				assert(("EPA result had zero normal", !closest.normal.is_zero())); //NOLINT
      			barycentric(closest.normal * min_dist,
                     closest.a.point,
                     closest.b.point,
@@ -581,80 +580,44 @@ check_two:
 					+ bary_v * closest.b.s2
 					+ bary_w * closest.c.s2;
 
-				if (!(bary_u > 0 && bary_u < 1.0f) && (bary_v > 0 && bary_v < 1.0f) && (bary_w > 0 && bary_w < 1.0f))
-					return false;
-
 				if (!(is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)))
 				  return false;
 
-				if (result.normal.is_zero())
-					return false;
 
 				return true;
 			}
 
 			edges.clear();
 
-			for (size_t i = 0; i < faces.size(); i++)
+			auto add_edge = [&](const SupportPoint& a, const SupportPoint& b)
 			{
-				SupportFace& face = faces[i];
-				if (IS_ALIGNED(face.normal, sup.point - face.a.point))
+				for (auto it = edges.begin(); it != edges.end(); it++)
 				{
-
-					SupportEdge current_edge;
-
-					for (size_t j = 0; j < 3; j++)
+					if (it->a == b && it->b == a)
 					{
-						switch(j)
-						{
-							case 0:
-								current_edge = { face.a, face.b };
-								break;
-							case 1:
-								current_edge = { face.b, face.c };
-								break;
-							case 2:
-								current_edge = { face.c, face.a };
-								break;
-						}
-
-						bool found_edge = false;
-
-						for (size_t k = 0; k < edges.size(); k++)
-						{
-							if (current_edge.a == edges[k].b &&
-								current_edge.b == edges[k].a)
-							{
-								edges.erase(edges.begin() + k);
-								found_edge = true;
-								k = edges.size();
-							}
-						}
-
-						if (!found_edge)
-							edges.emplace_back(current_edge);
+						edges.erase(it);
+						return;
 					}
-
-					faces.erase(faces.begin() + i);
-					i--;
 				}
+				edges.emplace_back(a, b);
+			};
+
+			for (auto it = faces.begin(); it != faces.end();)
+			{
+				if (IS_ALIGNED(it->normal, sup.point - it->a.point))
+				{
+					add_edge(it->a, it->b);
+					add_edge(it->b, it->c);
+					add_edge(it->c, it->a);
+					faces.erase(it);
+					continue;
+				}
+				it++;
 			}
 
-			for (size_t i = 0; i < edges.size(); i++)
+			for (auto it = edges.begin(); it != edges.end(); it++)
 			{
-				SupportFace new_face(edges[i].a, edges[i].b, sup);
-
-				const float bias = 0.00001f;
-
-				if (vector3::dot(new_face.a.point, new_face.normal) + bias < 0)
-				{
-					SupportPoint temp = new_face.a;
-					new_face.a = new_face.b;
-					new_face.b = temp;
-					new_face.normal = -new_face.normal;
-				}
-
-				faces.emplace_back(new_face);
+				faces.emplace_back(sup, it->a, it->b);
 			}
 		}
 
@@ -680,7 +643,7 @@ check_two:
 		SupportPoint& a = simplex[0];
 
 		// Arbitrary starting direction
-		vector3 search_dir = vector3(0, 0, 1);
+		vector3 search_dir = _transforms->get_position(trf1) - _transforms->get_position(trf2);
 
 		// Simplex is non-initialized
 		int dim = 0;

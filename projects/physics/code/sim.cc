@@ -313,7 +313,7 @@ namespace efiilj
 					{
 						float k = col.depth * penalty_force_mult;
 
-						PointForce penalty(col.point1, k * col.normal);
+						PointForce penalty(_data.com[phys_a], k * col.normal);
 						add_impulse(phys_a, penalty);
 					}
 

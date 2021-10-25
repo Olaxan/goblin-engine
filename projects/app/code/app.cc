@@ -142,7 +142,7 @@ namespace efiilj
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
 
 		// Ground
-		
+	
 		object_loader cube("../res/meshes/cube.obj", meshes);
 		mesh_id mesh_cube = cube.get_mesh();
 
@@ -211,10 +211,10 @@ namespace efiilj
 		transform_id test_trf2 = transforms->get_component(node2);
 
 		transforms->set_scale(test_trf, 3.0f);
-		transforms->set_scale(test_trf2, 5.0f);
+		transforms->set_scale(test_trf2, 1.0f);
 
-		transforms->set_position(test_trf, vector3(-0.5f, 0, 0));
-		transforms->set_position(test_trf2, vector3(0.5f, 0, 0));
+		transforms->set_position(test_trf, vector3(-2.0f, 0, 0));
+		transforms->set_position(test_trf2, vector3(2.0f, 0, 0));
 
 		graphics_id test_gfx = rdef->register_entity(node);
 		graphics_id test_gfx2 = rdef->register_entity(node2);

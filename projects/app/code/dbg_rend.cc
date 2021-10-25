@@ -151,41 +151,27 @@ namespace efiilj
 		const auto& collisions = _colliders->get_collisions(col_id);
 
 		transform_id trf_id = _transforms->get_component(eid);
+		physics_id phys_id = _sim->get_component(eid);
 
 		if (!_transforms->is_valid(trf_id))
 			return;
 
-		vector3 pos = _transforms->get_position(trf_id);
-		matrix4 s = matrix4::get_scale(0.01f);
-		_meshes->bind(sphere);
-
-		for (const auto& col : collisions)
-		{
-			matrix4 t = matrix4::get_translation(vector4(col.point1, 1.0f));
-			_shaders->set_uniform("model", t * s);
-			_shaders->set_uniform("base_color_factor", green);
-			_meshes->draw_elements(sphere);
-
-			t = matrix4::get_translation(vector4(col.point2, 1.0f));
-			_shaders->set_uniform("model", t * s);
-			_shaders->set_uniform("base_color_factor", pink);
-			_meshes->draw_elements(sphere);
-		}
-
-		physics_id phys_id = _sim->get_component(eid);
-
 		if (!_sim->is_valid(phys_id))
 			return;
 
+		vector3 pos = _transforms->get_position(trf_id);
 		vector3 com = pos + _sim->get_com(phys_id);
 
-		matrix4 t = matrix4::get_translation(vector4(com, 1.0f));
-		_shaders->set_uniform("model", t * s);
-		_shaders->set_uniform("base_color_factor", blue);
-		_meshes->draw_elements(sphere);
+		draw_sphere(com, 0.05f, blue);
+
+		for (const auto& col : collisions)
+		{
+			draw_sphere(col.point1, 0.01f, green);
+			draw_sphere(col.point2, 0.01f, pink);
+			draw_line(com, com + col.normal * col.depth, white);
+		}
 
 		const auto& impulses = _sim->get_impulses(phys_id);
-
 		for (const auto& impulse : impulses)
 		{
 			draw_line(impulse.p, impulse.p + impulse.force * 100.0f, green);
@@ -206,6 +192,21 @@ namespace efiilj
 		_meshes->set_positions(line, ab);
 		_meshes->update(line);
 		_meshes->draw_elements(line);
+	}
+
+	void debug_renderer::draw_sphere(const vector3& pos, float size, const vector4& color) const
+	{
+		_shaders->set_uniform("base_color_factor", color);
+		draw_sphere(pos, size);
+	}
+
+	void debug_renderer::draw_sphere(const vector3& pos, float size) const
+	{
+		_meshes->bind(sphere);
+		matrix4 t = matrix4::get_translation(vector4(pos, 1.0f));
+		matrix4 s = matrix4::get_scale(size);
+		_shaders->set_uniform("model", t * s);
+		_meshes->draw_elements(sphere);
 	}
 
 	void debug_renderer::begin_frame()

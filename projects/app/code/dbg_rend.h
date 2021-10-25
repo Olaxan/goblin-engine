@@ -76,6 +76,10 @@ namespace efiilj
 			void draw_line(const vector3& a, const vector3& b, const vector4& color) const;
 			void draw_line(const vector3& a, const vector3& b) const;
 
+			void draw_sphere(const vector3& pos, float size) const;
+			void draw_sphere(const vector3& pos, float size, const vector4& color) const;
+
+
 			void add_debug_sphere(const vector3& pos, float size, size_t frames)
 			{
 				spheres.emplace_back(pos, size, frames);
