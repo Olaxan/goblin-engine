@@ -168,7 +168,7 @@ namespace efiilj
 		{
 			draw_sphere(col.point1, 0.01f, green);
 			draw_sphere(col.point2, 0.01f, pink);
-			draw_line(com, com + col.normal * col.depth, white);
+			draw_line(com, com + col.normal * col.depth, yellow);
 		}
 
 		const auto& impulses = _sim->get_impulses(phys_id);

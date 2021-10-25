@@ -583,7 +583,6 @@ check_two:
 				if (!(is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)))
 				  return false;
 
-
 				return true;
 			}
 
