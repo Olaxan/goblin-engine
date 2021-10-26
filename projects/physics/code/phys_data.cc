@@ -50,6 +50,9 @@ namespace efiilj
 
 		ImGui::Text("Collider %d", idx);
 
+		if (ImGui::Button("Recalculate AABB"))
+			update_bounds(idx);
+
 		// I don't care about efficienty,
 		// just want to make sure no weirdness tricks me
 		std::stringstream ss1;
@@ -71,9 +74,20 @@ namespace efiilj
 		if (!_transforms->is_valid(trf_id))
 			return;
 
+		ImVec4 yellow(1, 1, 0, 1);
+
 		for (const auto& col : _data.collisions[idx])
 		{
-			ImGui::Text("Collision %d, normal = %s, depth = %f", col.object1, col.normal.to_string().c_str(),  col.depth);
+			ImGui::TextColored(yellow, "Collision --> %d", col.object1);
+
+			const vector3& n = col.normal;
+			const vector3& p1 = col.point1;
+			const vector3& p2 = col.point2;
+
+			ImGui::Text("Normal: %f %f %f", n.x, n.y, n.z);
+			ImGui::Text("Point 1: %f %f %f", p1.x, p1.y, p1.z);
+			ImGui::Text("Point 2: %f %f %f", p2.x, p2.y, p2.z);
+			ImGui::Text("Depth: %f", col.depth);
 
 			if (ImGui::SmallButton("Free"))
 				_transforms->add_position(trf_id, col.normal * col.depth);
@@ -221,8 +235,8 @@ namespace efiilj
 
 	SupportPoint collider_manager::support(collider_id col1, collider_id col2, const vector3& dir) const
 	{
-		vector3 a = get_furthest_point(col1, -dir);
-		vector3 b = get_furthest_point(col2, dir);
+		vector3 a = get_furthest_point(col1, dir);
+		vector3 b = get_furthest_point(col2, -dir);
 		return SupportPoint(a, b);
 	}
 
@@ -232,15 +246,23 @@ namespace efiilj
 
 		transform_id trf_id = _transforms->get_component(eid);
 
-		if (!_transforms->is_valid(trf_id))
-			return vector3();
+		assert(("Invalid transform id, get_furthest_point!", //NOLINT
+					_transforms->is_valid(trf_id)));
 
 		vector3 pos = _transforms->get_position(trf_id);
+
+		matrix4 inv_mat = _transforms->get_model_inv(trf_id);
+		inv_mat.row(3, vector4());
+		//vector3 inv_dir = inv_mat * dir;
+
 		vector3 inv_dir = _transforms->get_model_inv(trf_id) * (dir + pos);
 		vector3 furthest_point = vector3();
-		float max_dot = -1.0f;
+		float max_dot = std::numeric_limits<float>::min();
 
 		auto range = _mesh_instances->get_components(eid);
+
+		assert(("GJK: No meshes in component!", 
+					std::distance(range.first, range.second) > 0));
 
 		for (auto it = range.first; it != range.second; it++)
 		{
@@ -248,6 +270,9 @@ namespace efiilj
 			mesh_id mid = _mesh_instances->get_mesh(miid);
 
 			const auto& points = _meshes->get_positions(mid);
+
+			assert(("GJK: Empty mesh!", 
+						points.size() > 0));
 
 			for (const auto& point : points)
 			{
@@ -261,7 +286,11 @@ namespace efiilj
 			}
 		}
 		
-		return _transforms->get_model(trf_id) * furthest_point;
+		vector3 wp = _transforms->get_model(trf_id) * furthest_point;
+
+		assert(("Minowski point zero!", !wp.is_zero())); //NOLINT
+
+		return wp;
 	}
 
 	inline vector3 cross_aba(const vector3& a, const vector3& b)
@@ -561,7 +590,6 @@ check_two:
 
 				const SupportFace& closest = faces[closest_face];
 
-				assert(("EPA result had zero normal", !closest.normal.is_zero())); //NOLINT
      			barycentric(closest.normal * min_dist,
                     closest.a.point,
                     closest.b.point,
@@ -570,8 +598,10 @@ check_two:
                     &bary_v,
                     &bary_w);
 
-				result.normal = -closest.normal;
+				result.normal = closest.normal;
 				result.depth = min_dist;
+				result.face = closest;
+
 				result.point1 = bary_u * closest.a.s1 
 					+ bary_v * closest.b.s1 
 					+ bary_w * closest.c.s1;
@@ -580,8 +610,14 @@ check_two:
 					+ bary_v * closest.b.s2
 					+ bary_w * closest.c.s2;
 
-				if (!(is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)))
-				  return false;
+				assert(("EPA: Zero normal", 
+							!closest.normal.is_zero()));
+
+				assert(("EPA: Invalid barycentric!",
+							is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)));
+
+				assert(("EPA: Mismatched barycentric!",
+							is_valid(bary_u + bary_v + bary_w)));
 
 				return true;
 			}
@@ -625,7 +661,7 @@ check_two:
 
 #define GJK_MAX_ITERATIONS 64
 	
-	bool collider_manager::check_gjk_intersect(collider_id col1, collider_id col2, SupportPoint simplex[4]) const
+	bool collider_manager::gjk(collider_id col1, collider_id col2, SupportPoint simplex[4]) const
 	{
 		if (!(is_valid(col1) && is_valid(col2)))
 			return false;
@@ -660,151 +696,6 @@ check_two:
 
 		return true;
 	}
-
-	void collider_manager::simplex3(SupportPoint simplex[4], int& dim, vector3& dir) const 
-	{
-		vector3& a = simplex[0].point;
-		vector3& b = simplex[1].point;
-		vector3& c = simplex[2].point;
-		vector3& d = simplex[3].point;
-
-		vector3 n = vector3::cross(b - a, c - a);
-		vector3 ao = -a;
-
-		dim = 2;
-
-		if (IS_ALIGNED(vector3::cross(b - a, n), ao))
-		{
-			c = a;
-			dir = cross_aba(b - a, ao);
-			return;
-		}
-
-		if (IS_ALIGNED(vector3::cross(n, c - a), ao))
-		{
-			b = a;
-			dir = cross_aba(c - a, ao);
-			return;
-		}
-
-		dim = 3;
-
-		if (IS_ALIGNED(n, ao))
-		{
-			d = c;
-			c = b;
-			b = a;
-			dir = n;
-			return;
-		}
-
-		d = b;
-		b = a;
-		dir = -n;
-	}
-
-	bool collider_manager::simplex4(SupportPoint simplex[4], int& dim, vector3& dir) const 
-	{
-		vector3& a = simplex[0].point;
-		vector3& b = simplex[1].point;
-		vector3& c = simplex[2].point;
-		vector3& d = simplex[3].point;
-
-		vector3 abc = vector3::cross(b - a, c - a);
-		vector3 acd = vector3::cross(c - a, d - a);
-		vector3 adb = vector3::cross(d - a, b - a);
-
-		vector3 ao = -a;
-
-		dim = 3;
-
-		if (IS_ALIGNED(abc, ao))
-		{
-			d = c;
-			c = b;
-			b = a;
-			dir = abc;
-			return false;
-		}
-
-		if (IS_ALIGNED(acd, ao))
-		{
-			b = a;
-			dir = acd;
-			return false;
-		}
-
-		if (IS_ALIGNED(adb, ao))
-		{
-			c = d;
-			d = b;
-			b = a;
-			dir = adb;
-			return false;
-		}
-
-		return true;
-	}
-
-	bool collider_manager::gjk(collider_id col1, collider_id col2, SupportPoint simplex[4]) const
-	{
-		if (!(is_valid(col1) && is_valid(col2)))
-			return false;
-
-		entity_id eid1 = get_entity(col1);
-		entity_id eid2 = get_entity(col2);
-
-		transform_id trf1 = _transforms->get_component(eid1);
-		transform_id trf2 = _transforms->get_component(eid2);
-
-		if (!(_transforms->is_valid(trf1) && _transforms->is_valid(trf2)))
-			return false;
-
-		SupportPoint& a = simplex[0];
-		SupportPoint& b = simplex[1];
-		SupportPoint& c = simplex[2];
-		SupportPoint& d = simplex[3];
-
-		// Arbitrary starting direction
-		vector3 search_dir = _transforms->get_position(trf1) - _transforms->get_position(trf2);
-
-		c = support(col1, col2, search_dir);
-		search_dir = -c.point;
-		b = support(col1, col2, search_dir);
-
-		if (IS_NOT_ALIGNED(b.point, search_dir))
-			return false;
-
-		if (search_dir.is_zero())
-		{
-			search_dir = vector3::cross(c.point - b.point, vector3(1, 0, 0));
-
-			if (search_dir.is_zero())
-			{
-				search_dir = vector3::cross(c.point - b.point, vector3(0, 0, -1));
-			}
-		}
-
-		// Simplex is initialized with line
-		int dim = 2;
-
-		for (size_t i = 0; i < GJK_MAX_ITERATIONS; i++)
-		{
-			a = support(col1, col2, search_dir);
-
-			if (IS_NOT_ALIGNED(a.point, search_dir))
-				return false;
-
-			dim++;
-
-			if (dim == 3)
-				simplex3(simplex, dim, search_dir);
-			else if (simplex4(simplex, dim, search_dir))
-				return true;
-		}
-
-		return false;
-	}
 		
 	void collider_manager::update_narrow()
 	{
@@ -818,8 +709,13 @@ check_two:
 
 		for (auto idx : _instances)
 		{
-			for (auto col : _data.broad_collisions[idx])
+			//for (auto col : _data.broad_collisions[idx])
+			for (auto col : _instances)
 			{
+
+				if (col == idx)
+					continue;
+
 				if (collides_with(idx, col))
 					continue;
 
@@ -851,9 +747,12 @@ check_two:
 	{
 		SupportPoint simplex[4];
 
-		if (check_gjk_intersect(obj1, obj2, simplex))
+		if (gjk(obj1, obj2, simplex))
 		{
-			return epa(obj1, obj2, simplex, col1) && epa(obj2, obj1, simplex, col2);
+			assert(("GJK / EPA: Collision disagreement!", 
+						epa(obj1, obj2, simplex, col1) && epa(obj2, obj1, simplex, col2)));
+
+			return true;
 		}
 
 		return false;

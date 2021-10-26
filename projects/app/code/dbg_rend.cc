@@ -162,13 +162,24 @@ namespace efiilj
 		vector3 pos = _transforms->get_position(trf_id);
 		vector3 com = pos + _sim->get_com(phys_id);
 
-		draw_sphere(com, 0.05f, blue);
+		draw_sphere(com, 0.02f, blue);
 
 		for (const auto& col : collisions)
 		{
 			draw_sphere(col.point1, 0.01f, green);
 			draw_sphere(col.point2, 0.01f, pink);
 			draw_line(com, com + col.normal * col.depth, yellow);
+			draw_line(col.point1, col.point2, white);
+
+			auto face = col.face;
+
+			draw_line(face.a.s1, face.b.s1, green);
+			draw_line(face.b.s1, face.c.s1, green);
+			draw_line(face.c.s1, face.a.s1, green);
+
+			draw_line(face.a.s2, face.b.s2, pink);
+			draw_line(face.b.s2, face.c.s2, pink);
+			draw_line(face.c.s2, face.a.s2, pink);
 		}
 
 		const auto& impulses = _sim->get_impulses(phys_id);
