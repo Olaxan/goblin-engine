@@ -210,7 +210,7 @@ namespace efiilj
 		transform_id test_trf = transforms->get_component(node);
 		transform_id test_trf2 = transforms->get_component(node2);
 
-		transforms->set_scale(test_trf, 3.0f);
+		transforms->set_scale(test_trf, 10.0f);
 		transforms->set_scale(test_trf2, 1.0f);
 
 		transforms->set_position(test_trf, vector3(-2.0f, 0, 0));

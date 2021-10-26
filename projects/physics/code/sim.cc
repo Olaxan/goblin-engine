@@ -415,12 +415,11 @@ namespace efiilj
 	void simulator::apply_impulses(physics_id idx, PhysicsState& state)
 	{
 		auto& impulses = _data.impulses[idx];
-		float mi = _data.inverse_mass[idx];
 
 		for (const auto& impulse : impulses)
 		{
-			state.momentum += mi * impulse.force;
-			state.angular_momentum += vector3::cross(impulse.p - (_data.com[idx] + state.position), mi * impulse.force);
+			state.momentum += impulse.force;
+			state.angular_momentum += vector3::cross(impulse.p - (_data.com[idx] + state.position), impulse.force);
 		}
 
 		impulses.clear();
