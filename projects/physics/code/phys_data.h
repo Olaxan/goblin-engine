@@ -186,8 +186,7 @@ namespace efiilj
 			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
 			bool update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const;
-			bool gjk(collider_id col1, collider_id col2, SupportPoint simplex[4]) const;
-			bool gjk2(collider_id col1, collider_id col2, Simplex& simplex) const;
+			bool gjk(collider_id col1, collider_id col2, Simplex& simplex) const;
 			bool epa(collider_id col1, collider_id col2, const Simplex& simplex, Collision& result) const;
 
 			struct PhysicsData

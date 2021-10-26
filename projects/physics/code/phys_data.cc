@@ -283,229 +283,6 @@ namespace efiilj
 	{
 		return vector3::cross(vector3::cross(a, b), a);
 	}
-	
-	bool collider_manager::update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const
-	{
-		vector3& a = simplex[0].point;
-		vector3& b = simplex[1].point;
-		vector3& c = simplex[2].point;
-		vector3& d = simplex[3].point;
-
-		switch (dim)
-		{
-			case 0:
-			{
-				b = a;
-				dir = -a;
-				dim = 1;
-
-				return false;
-			}
-
-			case 1:
-			{
-				dir = cross_aba(b - a, -a);
-
-				c = b;
-				b = a;
-				dim = 2;
-
-				return false;
-			}
-
-			case 2:
-			{
-				vector3 ao = -a;
-
-				vector3 ab = b - a;
-				vector3 ac = c - a;
-
-				vector3 abc = vector3::cross(ab, ac);
-
-				vector3 abp = vector3::cross(ab, abc);
-
-				if (IS_ALIGNED(abp, ao))
-				{
-					c = b;
-					b = a;
-
-					dir = cross_aba(ab, ao);
-
-					return false;
-				}
-
-				vector3 acp = vector3::cross(abc, ac);
-
-				if (IS_ALIGNED(acp, ao))
-				{
-					b = a;
-					dir = cross_aba(ac, ao);
-
-					return false;
-				}
-
-				if (IS_ALIGNED(abc, ao))
-				{
-					d = c;
-					c = b;
-					b = a;
-
-					dir = abc;
-				}
-				else
-				{
-					d = b;
-					b = a;
-
-					dir = -abc;
-				}
-
-				dim = 3;
-
-				return false;
-			}
-			case 3:
-			{
-				vector3 ao = -a;
-
-				vector3 ab = b - a;
-				vector3 ac = c - a;
-				vector3 ad = d - a;
-
-				vector3 abc = vector3::cross(ab, ac);
-				vector3 acd = vector3::cross(ac, ad);
-				vector3 adb = vector3::cross(ad, ab);
-
-				vector3 temp;
-
-				const int over_abc = 0x1;
-				const int over_acd = 0x2;
-				const int over_adb = 0x4;
-
-				int test = 
-					(IS_ALIGNED(abc, ao) ? over_abc : 0) |
-					(IS_ALIGNED(acd, ao) ? over_acd : 0) |
-					(IS_ALIGNED(adb, ao) ? over_adb : 0);
-
-				switch (test)
-				{
-					case 0:
-						return true;
-
-					case over_abc:
-						goto check_one;
-
-					case over_acd:
-
-						b = c;
-						c = d;
-						ab = ac;
-						ac = ad;
-						abc = acd;
-
-						goto check_one;
-
-					case over_adb:
-						
-						c = b;
-						b = d;
-						ac = ab;
-						ab = ad;
-
-						abc = adb;
-
-						goto check_one;
-
-					case over_abc | over_acd:
-						goto check_two;
-
-					case over_acd | over_adb:
-
-						temp = b;
-						b = c;
-						c = d;
-						d = temp;
-
-						temp = ab;
-						ab = ac;
-						ac = ad;
-						ad = temp;
-
-						abc = acd;
-						acd = adb;
-
-						goto check_two;
-
-					case over_adb | over_abc:
-
-						temp = c;
-						c = b;
-						b = d;
-						d = temp;
-
-						temp = ac;
-						ac = ab;
-						ab = ad;
-						ad = temp;
-
-						acd = abc;
-						abc = adb;
-
-						goto check_two;
-
-					default:
-						return true;
-				}
-check_one:
-
-				if (IS_ALIGNED(vector3::cross(abc, ac), ao))
-				{
-					b = a;
-					dir = cross_aba(ac, ao);
-					dim = 2;
-
-					return false;
-				}
-
-check_one_cont:
-
-				if (IS_ALIGNED(vector3::cross(ab, abc), ao))
-				{
-					c = b;
-					b = a;
-					dir = cross_aba(ab, ao);
-					dim = 2;
-
-					return false;
-				}
-
-				d = c;
-				c = b;
-				b = a;
-				dir = abc;
-				dim = 3;
-
-				return false;
-
-check_two:
-
-				if (IS_ALIGNED(vector3::cross(abc, ac), ao))
-				{
-					b = c;
-					c = d;
-					ab = ac;
-					ac = ad;
-					abc = acd;
-
-					goto check_one;
-				}
-
-				goto check_one_cont;
-			}
-		}
-
-		return true;
-	}
 
 #define EPA_MAX_ITERATIONS 32
 #define EPA_TOLERANCE 0.0001f
@@ -646,43 +423,7 @@ check_two:
 
 #define GJK_MAX_ITERATIONS 64
 	
-	bool collider_manager::gjk(collider_id col1, collider_id col2, SupportPoint simplex[4]) const
-	{
-		if (!(is_valid(col1) && is_valid(col2)))
-			return false;
-
-		entity_id eid1 = get_entity(col1);
-		entity_id eid2 = get_entity(col2);
-
-		transform_id trf1 = _transforms->get_component(eid1);
-		transform_id trf2 = _transforms->get_component(eid2);
-
-		if (!(_transforms->is_valid(trf1) && _transforms->is_valid(trf2)))
-			return false;
-
-		SupportPoint& a = simplex[0];
-
-		// Arbitrary starting direction
-		vector3 search_dir = _transforms->get_position(trf1) - _transforms->get_position(trf2);
-
-		// Simplex is non-initialized
-		int dim = 0;
-
-		for (size_t i = 0; i < GJK_MAX_ITERATIONS; i++)
-		{
-			a = support(col1, col2, search_dir);
-
-			if (IS_NOT_ALIGNED(a.point, search_dir))
-				return false;
-
-			if (update_simplex(simplex, dim, search_dir))
-				return true;
-		}
-
-		return true;
-	}
-
-	bool collider_manager::gjk2(collider_id col1, collider_id col2, Simplex& simplex) const
+	bool collider_manager::gjk(collider_id col1, collider_id col2, Simplex& simplex) const
 	{
 
 		const vector3& a = simplex.a.point;
@@ -817,7 +558,6 @@ check_face:
 		
 	void collider_manager::update_narrow()
 	{
-		vector3 simplex[4];
 
 		for (auto idx : _instances)
 		{
@@ -827,12 +567,8 @@ check_face:
 
 		for (auto idx : _instances)
 		{
-			//for (auto col : _data.broad_collisions[idx])
-			for (auto col : _instances)
+			for (auto col : _data.broad_collisions[idx])
 			{
-
-				if (col == idx)
-					continue;
 
 				if (collides_with(idx, col))
 					continue;
@@ -866,7 +602,7 @@ check_face:
 
 		Simplex simplex;
 
-		if (gjk2(obj1, obj2, simplex))
+		if (gjk(obj1, obj2, simplex))
 		{
 			assert(("GJK / EPA: Collision disagreement!", 
 						epa(obj1, obj2, simplex, col1) && epa(obj2, obj1, simplex, col2)));
