@@ -90,11 +90,11 @@ namespace efiilj
 
 			float response_force_mult = 1.0f;
 
-			bool collision_penalty = false;
+			bool collision_penalty = true;
 			float penalty_force_mult = 0.01f;
 			float penalty_force_damp = 0.1f;
 
-			bool collision_rejection = true;
+			bool collision_rejection = false;
 			float reject_pen_depth = 0.1f;
 
 			bool friction = true;

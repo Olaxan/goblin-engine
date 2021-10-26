@@ -166,8 +166,6 @@ namespace efiilj
 		sim->recalculate_com(rb_cube);
 		sim->set_static(rb_cube, true);
 
-		meshes->unbind();
-
 		// Testcube
 
 #define NUM_CUBES 3
@@ -222,52 +220,49 @@ namespace efiilj
 		gltf->unload(test_mdl);
 #endif
 
-#ifdef HELMET_TEST
-		model_id test_mdl2 = gltf->create();
+		object_loader sphere("../res/volumes/v_pointlight.obj", meshes);
+		mesh_id mesh_sphere = sphere.get_mesh();
 
-		gltf->set_uri(test_mdl2, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
-		gltf->load(test_mdl2);
-		gltf->get_nodes(test_mdl2);
+#define SPHERE_TEST
+#ifdef SPHERE_TEST
 
-		for (const auto& eid : gltf->get_scene(test_mdl2).nodes)
-		{
-			transform_id trf = transforms->get_component(eid);
-			transforms->set_scale(trf, 1.0f);
-			transforms->set_position(trf, vector3(2.0f, 0, 0));
-			graphics_id gfx = rdef->register_entity(eid);
-			collider_id col = colliders->register_entity(eid);
-			physics_id rb = sim->register_entity(eid);
-			sim->recalculate_com(rb);
-		}
-		gltf->unload(test_mdl2);
+		entity_id e_sphere = entities->create();
+		transform_id trf_sphere = transforms->register_entity(e_sphere);
+		transforms->set_position(trf_sphere, vector3(0, 0, 2));
+		transforms->set_scale(trf_sphere, 1.0f);
+
+		mesh_instance_id miid_sphere = mesh_instances->register_entity(e_sphere);
+		mesh_instances->set_mesh(miid_sphere, mesh_sphere);
+
+		material_id mtrl_sphere = materials->create();
+		materials->set_base_color(mtrl_sphere, vector4(1, 0, 1, 1));
+		meshes->set_material(mesh_sphere, mtrl_sphere);
+		mesh_instances->set_material(miid_sphere, mtrl_sphere);
+
+		rfwd->register_entity(e_sphere);
+		colliders->register_entity(e_sphere);
+		physics_id rb_sphere = sim->register_entity(e_sphere);
+
+		sim->recalculate_com(rb_sphere);
+
 #endif
-
 
 		// Debug drawing
 		rdbg->set_shader(rfwd->get_fallback_shader());
-
-		// Hitmarker
-		object_loader obj("../res/volumes/v_pointlight.obj", meshes);
 
 		entity_id e_hitmarker = entities->create();
 
 		transform_id trf_hitmarker = transforms->register_entity(e_hitmarker);
 		transforms->set_scale(trf_hitmarker, 0.01f);
 
-		if (obj.is_valid())
-		{
+		mesh_instance_id miid_hitmarker = mesh_instances->register_entity(e_hitmarker);
+		mesh_instances->set_mesh(miid_hitmarker, mesh_sphere);
 
-			mesh_id mesh_hitmarker = obj.get_mesh();
-			mesh_instance_id miid_hitmarker = mesh_instances->register_entity(e_hitmarker);
-			mesh_instances->set_mesh(miid_hitmarker, mesh_hitmarker);
+		material_id mtrl_hitmarker = materials->create();
+		materials->set_base_color(mtrl_hitmarker, vector4(1, 0, 0, 1));
+		mesh_instances->set_material(miid_hitmarker, mtrl_hitmarker);
 
-			material_id mtrl_hitmarker = materials->create();
-			materials->set_base_color(mtrl_hitmarker, vector4(1, 0, 0, 1));
-			meshes->set_material(mesh_hitmarker, mtrl_hitmarker);
-			mesh_instances->set_material(miid_hitmarker, mtrl_hitmarker);
-
-			rfwd->register_entity(e_hitmarker);
-		}
+		rfwd->register_entity(e_hitmarker);
 
 		// Lights
 		
