@@ -148,8 +148,8 @@ namespace efiilj
 
 		entity_id e_cube = entities->create();
 		transform_id trf_cube = transforms->register_entity(e_cube);
-		transforms->set_position(trf_cube, vector3(0, -15.0f, 0));
-		transforms->set_scale(trf_cube, vector3(10.0f, 10.0f, 10.0f));
+		transforms->set_position(trf_cube, vector3(0, -101.0f, 0));
+		transforms->set_scale(trf_cube, vector3(100.0f, 100.0f, 100.0f));
 
 		mesh_instance_id miid_cube = mesh_instances->register_entity(e_cube);
 		mesh_instances->set_mesh(miid_cube, mesh_cube);
@@ -166,70 +166,82 @@ namespace efiilj
 		sim->recalculate_com(rb_cube);
 		sim->set_static(rb_cube, true);
 
+		meshes->unbind();
+
 		// Testcube
 
-		object_loader testcube("../res/meshes/cube.obj", meshes);
-		mesh_id mesh_testcube = testcube.get_mesh();
+#define NUM_CUBES 3
 
-		entity_id e_testcube = entities->create();
-		transform_id trf_testcube = transforms->register_entity(e_testcube);
-		transforms->set_position(trf_testcube, vector3(0, 0, 0));
-		transforms->set_scale(trf_testcube, 0.5f);
+		for (size_t i = 0; i < NUM_CUBES; i++)
+		{
+			entity_id eid = entities->create();
 
-		mesh_instance_id miid_testcube = mesh_instances->register_entity(e_testcube);
-		mesh_instances->set_mesh(miid_testcube, mesh_testcube);
+			transform_id trf_testcube = transforms->register_entity(eid);
+			transforms->set_position(trf_testcube, vector3(0, i * 1.1f, 0));
+			transforms->set_scale(trf_testcube, 0.5f);
 
-		material_id mtrl_testcube = materials->create();
-		materials->set_base_color(mtrl_testcube, vector4(1, 0, 0, 1));
-		meshes->set_material(mesh_testcube, mtrl_testcube);
-		mesh_instances->set_material(miid_testcube, mtrl_testcube);
+			mesh_instance_id miid_testcube = mesh_instances->register_entity(eid);
+			mesh_instances->set_mesh(miid_testcube, mesh_cube);
 
-		rfwd->register_entity(e_testcube);
-		colliders->register_entity(e_testcube);
-		physics_id rb_testcube = sim->register_entity(e_testcube);
+			material_id mtrl_testcube = materials->create();
 
-		sim->recalculate_com(rb_testcube);
+			float c = static_cast<float>(i) / static_cast<float>(NUM_CUBES);
+
+			materials->set_base_color(mtrl_testcube, vector4(c, 1.0f - c, 0, 1));
+			mesh_instances->set_material(miid_testcube, mtrl_testcube);
+
+			rfwd->register_entity(eid);
+			colliders->register_entity(eid);
+			physics_id rb_testcube = sim->register_entity(eid);
+
+			sim->recalculate_com(rb_testcube);
+
+			meta_id mid = metadata->register_entity(eid);
+			metadata->set_name(mid, "Cube " + std::to_string(i));
+		}
 
 		// GLTF
 		
+#define AVOCADO_TEST
+#ifdef AVOCADO_TEST
 		model_id test_mdl = gltf->create();
-		model_id test_mdl2 = gltf->create();
 
 		gltf->set_uri(test_mdl, "../res/gltf/Avocado/Avocado.gltf");
-		gltf->set_uri(test_mdl2, "../res/gltf/Avocado/Avocado.gltf");
-
 		gltf->load(test_mdl);
-		gltf->load(test_mdl2);
-
 		gltf->get_nodes(test_mdl);
-		gltf->get_nodes(test_mdl2);
 
 		auto node = gltf->get_scene(test_mdl).nodes[0];
-		auto node2 = gltf->get_scene(test_mdl2).nodes[0];
 
 		transform_id test_trf = transforms->get_component(node);
-		transform_id test_trf2 = transforms->get_component(node2);
-
 		transforms->set_scale(test_trf, 10.0f);
-		transforms->set_scale(test_trf2, 1.0f);
-
 		transforms->set_position(test_trf, vector3(-2.0f, 0, 0));
-		transforms->set_position(test_trf2, vector3(2.0f, 0, 0));
-
 		graphics_id test_gfx = rdef->register_entity(node);
-		graphics_id test_gfx2 = rdef->register_entity(node2);
-
 		collider_id test_col = colliders->register_entity(node);
-		collider_id test_col2 = colliders->register_entity(node2);
-
 		physics_id test_rb = sim->register_entity(node);
-		physics_id test_rb2 = sim->register_entity(node2);
-
 		sim->recalculate_com(test_rb);
-		sim->recalculate_com(test_rb2);
-
 		gltf->unload(test_mdl);
+#endif
+
+#ifdef HELMET_TEST
+		model_id test_mdl2 = gltf->create();
+
+		gltf->set_uri(test_mdl2, "../res/gltf/FlightHelmet/FlightHelmet.gltf");
+		gltf->load(test_mdl2);
+		gltf->get_nodes(test_mdl2);
+
+		for (const auto& eid : gltf->get_scene(test_mdl2).nodes)
+		{
+			transform_id trf = transforms->get_component(eid);
+			transforms->set_scale(trf, 1.0f);
+			transforms->set_position(trf, vector3(2.0f, 0, 0));
+			graphics_id gfx = rdef->register_entity(eid);
+			collider_id col = colliders->register_entity(eid);
+			physics_id rb = sim->register_entity(eid);
+			sim->recalculate_com(rb);
+		}
 		gltf->unload(test_mdl2);
+#endif
+
 
 		// Debug drawing
 		rdbg->set_shader(rfwd->get_fallback_shader());

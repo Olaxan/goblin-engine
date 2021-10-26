@@ -135,6 +135,7 @@ namespace efiilj
 
 	void mesh_server::unbind()
 	{
+		_current_vao = 0;
 		glBindVertexArray(0);
 	}
 

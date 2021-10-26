@@ -71,7 +71,13 @@ namespace efiilj
 
 	void forward_renderer::render(render_id idx)
 	{
-		if (!is_valid(idx) || !get_visible(idx) || get_error(idx))
+		if (!is_valid(idx))
+			return;
+
+		if (!get_visible(idx))
+			return;
+
+		if (get_error(idx))
 			return;
 
 		entity_id eid = get_entity(idx);
@@ -101,6 +107,7 @@ namespace efiilj
 				_meshes->draw_elements(mid);
 			}
 			else set_error(idx, true);
+
 		}
 
 		_meshes->unbind();

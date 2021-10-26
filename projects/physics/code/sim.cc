@@ -254,9 +254,6 @@ namespace efiilj
 			for (const auto& col_a : _colliders->get_instances())
 			{
 
-				if (col_a == 0)
-					continue;
-
 				entity_id e_a = _colliders->get_entity(col_a);
 				physics_id phys_a = get_component(e_a);
 
@@ -288,8 +285,8 @@ namespace efiilj
 
 					float vrel = vector3::dot(col.normal, (vpa - vpb));
 
-					//if (vrel > 0)
-					//	continue;
+					if (vrel > 0)
+						continue;
 
 					float rest = std::min(_data.restitution[phys_a], _data.restitution[phys_b]);
 					float num = -(1.0f + rest) * vrel;

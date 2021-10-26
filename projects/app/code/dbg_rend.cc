@@ -73,7 +73,7 @@ namespace efiilj
 		_data.draw_com.emplace_back(true);
 		_data.draw_penetration.emplace_back(true);
 		_data.draw_impulses.emplace_back(true);
-		_data.draw_minowski.emplace_back(true);
+		_data.draw_minowski.emplace_back(false);
 		
 		create_bbox_mesh(idx);
 	}
