@@ -25,6 +25,10 @@ namespace efiilj
 			{
 				std::vector<mesh_id> bbox;
 				std::vector<bool> draw_bounds;
+				std::vector<bool> draw_com;
+				std::vector<bool> draw_penetration;
+				std::vector<bool> draw_impulses;
+				std::vector<bool> draw_minowski;
 			} _data;
 
 			struct DebugSphere 

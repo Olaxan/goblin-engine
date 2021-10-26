@@ -237,6 +237,7 @@ namespace efiilj
 	{
 		vector3 a = get_furthest_point(col1, dir);
 		vector3 b = get_furthest_point(col2, -dir);
+
 		return SupportPoint(a, b);
 	}
 
@@ -250,19 +251,11 @@ namespace efiilj
 					_transforms->is_valid(trf_id)));
 
 		vector3 pos = _transforms->get_position(trf_id);
-
-		matrix4 inv_mat = _transforms->get_model_inv(trf_id);
-		inv_mat.row(3, vector4());
-		//vector3 inv_dir = inv_mat * dir;
-
 		vector3 inv_dir = _transforms->get_model_inv(trf_id) * (dir + pos);
 		vector3 furthest_point = vector3();
 		float max_dot = std::numeric_limits<float>::min();
 
 		auto range = _mesh_instances->get_components(eid);
-
-		assert(("GJK: No meshes in component!", 
-					std::distance(range.first, range.second) > 0));
 
 		for (auto it = range.first; it != range.second; it++)
 		{
@@ -270,9 +263,6 @@ namespace efiilj
 			mesh_id mid = _mesh_instances->get_mesh(miid);
 
 			const auto& points = _meshes->get_positions(mid);
-
-			assert(("GJK: Empty mesh!", 
-						points.size() > 0));
 
 			for (const auto& point : points)
 			{
@@ -286,11 +276,7 @@ namespace efiilj
 			}
 		}
 		
-		vector3 wp = _transforms->get_model(trf_id) * furthest_point;
-
-		assert(("Minowski point zero!", !wp.is_zero())); //NOLINT
-
-		return wp;
+		return _transforms->get_model(trf_id) * furthest_point;
 	}
 
 	inline vector3 cross_aba(const vector3& a, const vector3& b)
@@ -544,19 +530,18 @@ check_two:
 		return (c == c) && (c > 0.0f && c < 1.0f);
 	}
 
-	bool collider_manager::epa(collider_id col1, collider_id col2, const SupportPoint simplex[4], Collision& result) const
+	bool collider_manager::epa(collider_id col1, collider_id col2, const Simplex& simplex, Collision& result) const
 	{
-		const SupportPoint& a = simplex[0];	
-		const SupportPoint& b = simplex[1];	
-		const SupportPoint& c = simplex[2];	
-		const SupportPoint& d = simplex[3];	
+		const SupportPoint& a = simplex.a;	
+		const SupportPoint& b = simplex.b;	
+		const SupportPoint& c = simplex.c;	
+		const SupportPoint& d = simplex.d;	
 
 		result.object1 = col1;
 		result.object2 = col2;
 
 		std::vector<SupportFace> faces;
 		std::vector<SupportEdge> edges;
-		size_t closest_face = 0;
 
 		// Add termination simplex to face vector
 		faces.emplace_back(a, b, c);
@@ -566,20 +551,22 @@ check_two:
 
 		for (size_t iterations = 0; iterations < EPA_MAX_ITERATIONS; iterations++)
 		{
-			closest_face = 0;
+			auto closest_face = faces.begin();
 			float min_dist = std::numeric_limits<float>::max();
 
-			for (size_t i = 0; i < faces.size(); i++)
+			for (auto it = faces.begin(); it != faces.end(); it++)
 			{
-				float dist = fabs(vector3::dot(faces[i].a.point, faces[i].normal));
+				float dist = fabs(vector3::dot(it->a.point, it->normal));
+
 				if (dist < min_dist)
 				{
 					min_dist = dist;
-					closest_face = i;
+					closest_face = it;
 				}
 			}
 
-			vector3 search_dir = faces[closest_face].normal;
+			vector3 search_dir = closest_face->normal;
+
 			SupportPoint sup = support(col1, col2, search_dir);
 
 			float d = vector3::dot(sup.point, search_dir);
@@ -588,30 +575,28 @@ check_two:
 			{
 				float bary_u, bary_v, bary_w;
 
-				const SupportFace& closest = faces[closest_face];
-
-     			barycentric(closest.normal * min_dist,
-                    closest.a.point,
-                    closest.b.point,
-                    closest.c.point,
+     			barycentric(closest_face->normal * min_dist,
+                    closest_face->a.point,
+                    closest_face->b.point,
+                    closest_face->c.point,
                     &bary_u,
                     &bary_v,
                     &bary_w);
 
-				result.normal = closest.normal;
+				result.normal = closest_face->normal;
 				result.depth = min_dist;
-				result.face = closest;
+				result.face = *closest_face;
 
-				result.point1 = bary_u * closest.a.s1 
-					+ bary_v * closest.b.s1 
-					+ bary_w * closest.c.s1;
+				result.point1 = bary_u * closest_face->a.s1 
+					+ bary_v * closest_face->b.s1 
+					+ bary_w * closest_face->c.s1;
 
-				result.point2 = bary_u * closest.a.s2
-					+ bary_v * closest.b.s2
-					+ bary_w * closest.c.s2;
+				result.point2 = bary_u * closest_face->a.s2
+					+ bary_v * closest_face->b.s2
+					+ bary_w * closest_face->c.s2;
 
 				assert(("EPA: Zero normal", 
-							!closest.normal.is_zero()));
+							!closest_face->normal.is_zero()));
 
 				assert(("EPA: Invalid barycentric!",
 							is_valid(bary_u) && is_valid(bary_v) && is_valid(bary_w)));
@@ -624,7 +609,7 @@ check_two:
 
 			edges.clear();
 
-			auto add_edge = [&](const SupportPoint& a, const SupportPoint& b)
+			const auto add_edge = [&](const SupportPoint& a, const SupportPoint& b)
 			{
 				for (auto it = edges.begin(); it != edges.end(); it++)
 				{
@@ -644,7 +629,7 @@ check_two:
 					add_edge(it->a, it->b);
 					add_edge(it->b, it->c);
 					add_edge(it->c, it->a);
-					faces.erase(it);
+					it = faces.erase(it);
 					continue;
 				}
 				it++;
@@ -696,6 +681,139 @@ check_two:
 
 		return true;
 	}
+
+	bool collider_manager::gjk2(collider_id col1, collider_id col2, Simplex& simplex) const
+	{
+
+		const vector3& a = simplex.a.point;
+		const vector3& b = simplex.b.point;
+		const vector3& c = simplex.c.point;
+		const vector3& d = simplex.d.point;
+
+		simplex.clear();
+
+		vector3 search_dir(1, 0, 0);
+		SupportPoint s = support(col1, col2, search_dir);
+
+		if (fabs(vector3::dot(search_dir, s.point)) 
+				>= s.point.magnitude() * 0.8f)
+		{
+			search_dir = vector3(0, 1, 0);
+			s = support(col1, col2, search_dir);
+		}
+
+		simplex.push(s);
+		search_dir = -s.point;
+
+		for (size_t iterations = 0; iterations < GJK_MAX_ITERATIONS; iterations++)
+		{
+			assert(("GJK: Search direction is zero vector", 
+						!search_dir.is_zero()));
+
+			SupportPoint p = support(col1, col2, search_dir);
+
+			if (IS_NOT_ALIGNED(p.point, search_dir))
+				return false;
+
+			simplex.push(p);
+
+			const vector3 ao = -a;
+
+			switch (simplex.dim)
+			{
+				case 2:
+				{
+					const vector3 ab = b - a;
+					search_dir = cross_aba(ab, ao);
+					continue;
+				}
+				case 3:
+				{ 
+					const vector3 ab = b - a;
+					const vector3 ac = c - a;
+					const vector3 ad = d - a;
+					const vector3 abc = vector3::cross(ab, ac);
+
+					if (IS_ALIGNED(vector3::cross(ab, abc), ao))
+					{
+						simplex.set(simplex.a, simplex.b);
+						search_dir = cross_aba(ab, ao);
+						continue;
+					}
+
+					if (IS_ALIGNED(vector3::cross(abc, ac), ao))
+					{
+						simplex.set(simplex.a, simplex.c);
+						search_dir = cross_aba(ac, ao);
+						continue;
+					}
+
+					if (IS_ALIGNED(abc, ao))
+					{
+						search_dir = abc;
+						continue;
+					}
+
+					simplex.set(simplex.a, simplex.c, simplex.b);
+					search_dir = -abc;
+					continue;
+				}
+				case 4:
+				{
+					{
+						const vector3 ab = b - a;
+						const vector3 ac = c - a;
+
+						if (IS_ALIGNED(vector3::cross(ab, ac), ao))
+							goto check_face;
+
+						const vector3 ad = d - a;
+
+						if (IS_ALIGNED(vector3::cross(ac, ad), ao))
+						{
+							simplex.set(simplex.a, simplex.c, simplex.d);
+							goto check_face;
+						}
+
+						if (IS_ALIGNED(vector3::cross(ad, ab), ao))
+						{
+							simplex.set(simplex.a, simplex.d, simplex.b);
+							goto check_face;
+						}
+
+						return true;
+					}
+
+check_face:
+
+					const vector3 ab = b - a;
+					const vector3 ac = c - a;
+					const vector3 abc = vector3::cross(ab, ac);
+
+					if (IS_ALIGNED(vector3::cross(ab, abc), ao))
+					{
+						simplex.set(simplex.a, simplex.b);
+						search_dir = cross_aba(ab, ao);
+						continue;
+					}
+
+					if (IS_ALIGNED(vector3::cross(abc, ac), ao))
+					{
+						simplex.set(simplex.a, simplex.c);
+						search_dir = cross_aba(ac, ao);
+						continue;
+					}
+
+					simplex.set(simplex.a, simplex.b, simplex.c);
+					search_dir = abc;
+					continue;
+
+				}
+			}
+		}
+
+		return false;
+	}
 		
 	void collider_manager::update_narrow()
 	{
@@ -745,9 +863,10 @@ check_two:
 
 	bool collider_manager::test_collision(collider_id obj1, collider_id obj2, Collision& col1, Collision& col2) const
 	{
-		SupportPoint simplex[4];
 
-		if (gjk(obj1, obj2, simplex))
+		Simplex simplex;
+
+		if (gjk2(obj1, obj2, simplex))
 		{
 			assert(("GJK / EPA: Collision disagreement!", 
 						epa(obj1, obj2, simplex, col1) && epa(obj2, obj1, simplex, col2)));

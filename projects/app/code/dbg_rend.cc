@@ -70,6 +70,10 @@ namespace efiilj
 	{
 		_data.bbox.emplace_back(-1);
 		_data.draw_bounds.emplace_back(true);
+		_data.draw_com.emplace_back(true);
+		_data.draw_penetration.emplace_back(true);
+		_data.draw_impulses.emplace_back(true);
+		_data.draw_minowski.emplace_back(true);
 		
 		create_bbox_mesh(idx);
 	}
@@ -90,6 +94,22 @@ namespace efiilj
 		bool draw_bounds = _data.draw_bounds[idx];
 		if (ImGui::Checkbox("Draw collider bounds", &draw_bounds))
 			_data.draw_bounds[idx] = draw_bounds;
+
+		bool draw_com = _data.draw_com[idx];
+		if (ImGui::Checkbox("Draw center-of-mass", &draw_com))
+			_data.draw_com[idx] = draw_com;
+
+		bool draw_penetration = _data.draw_penetration[idx];
+		if (ImGui::Checkbox("Draw penetration", &draw_penetration))
+			_data.draw_penetration[idx] = draw_penetration;
+
+		bool draw_impulses = _data.draw_impulses[idx];
+		if (ImGui::Checkbox("Draw impulses", &draw_impulses))
+			_data.draw_impulses[idx] = draw_impulses;
+
+		bool draw_minowski = _data.draw_minowski[idx];
+		if (ImGui::Checkbox("Draw minowski regions", &draw_minowski))
+			_data.draw_minowski[idx] = draw_minowski;
 	}
 
 	void debug_renderer::on_register(std::shared_ptr<manager_host> host)
@@ -144,9 +164,12 @@ namespace efiilj
 			color = collision ? red : yellow;
 		}
 
-		_shaders->set_uniform("base_color_factor", color);
-		_shaders->set_uniform("model", matrix4());
-		_meshes->draw_elements(bbox);
+		if (_data.draw_bounds[idx])
+		{
+			_shaders->set_uniform("base_color_factor", color);
+			_shaders->set_uniform("model", matrix4());
+			_meshes->draw_elements(bbox);
+		}
 
 		const auto& collisions = _colliders->get_collisions(col_id);
 
@@ -162,30 +185,44 @@ namespace efiilj
 		vector3 pos = _transforms->get_position(trf_id);
 		vector3 com = pos + _sim->get_com(phys_id);
 
-		draw_sphere(com, 0.02f, blue);
+		if (_data.draw_com[idx])
+			draw_sphere(com, 0.02f, blue);
 
 		for (const auto& col : collisions)
 		{
-			draw_sphere(col.point1, 0.01f, green);
-			draw_sphere(col.point2, 0.01f, pink);
-			draw_line(com, com + col.normal * col.depth, yellow);
-			draw_line(col.point1, col.point2, white);
+			if (_data.draw_penetration[idx])
+			{
+				draw_sphere(col.point1, 0.01f, green);
+				draw_sphere(col.point2, 0.01f, pink);
+				draw_line(com, com + col.normal * col.depth, yellow);
+				draw_line(col.point1, col.point2, white);
+			}
 
 			auto face = col.face;
 
-			draw_line(face.a.s1, face.b.s1, green);
-			draw_line(face.b.s1, face.c.s1, green);
-			draw_line(face.c.s1, face.a.s1, green);
+			if (_data.draw_minowski[idx])
+			{
+				draw_line(face.a.s1, face.b.s1, green);
+				draw_line(face.b.s1, face.c.s1, green);
+				draw_line(face.c.s1, face.a.s1, green);
 
-			draw_line(face.a.s2, face.b.s2, pink);
-			draw_line(face.b.s2, face.c.s2, pink);
-			draw_line(face.c.s2, face.a.s2, pink);
+				draw_line(face.a.s2, face.b.s2, pink);
+				draw_line(face.b.s2, face.c.s2, pink);
+				draw_line(face.c.s2, face.a.s2, pink);
+
+				draw_line(face.a.point, face.b.point, yellow);
+				draw_line(face.b.point, face.c.point, yellow);
+				draw_line(face.c.point, face.a.point, yellow);
+			}
 		}
 
-		const auto& impulses = _sim->get_impulses(phys_id);
-		for (const auto& impulse : impulses)
+		if (_data.draw_impulses[idx])
 		{
-			draw_line(impulse.p, impulse.p + impulse.force * 100.0f, green);
+			const auto& impulses = _sim->get_impulses(phys_id);
+			for (const auto& impulse : impulses)
+			{
+				draw_line(impulse.p, impulse.p + impulse.force * 100.0f, green);
+			}
 		}
 	}
 

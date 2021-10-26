@@ -364,9 +364,11 @@ namespace efiilj
 			return len > 0 ? v / len : v;
 		}
 
-		bool is_zero() const
+		bool is_zero(float epsilon = EPSILON) const
 		{
-			return fabs(x) < EPSILON && fabs(y) < EPSILON && fabs(z) < EPSILON;
+			return fabs(x) < epsilon 
+				&& fabs(y) < epsilon 
+				&& fabs(z) < epsilon;
 		}
 
 		/* === FACTORY FUNCTIONS === */

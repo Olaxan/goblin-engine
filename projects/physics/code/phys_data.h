@@ -75,6 +75,66 @@ namespace efiilj
 			normal(vector3::cross(b.point - a.point, c.point - a.point).norm()) {}
 	};
 
+	struct Simplex
+	{
+		int dim;
+
+		SupportPoint points[4];	
+		SupportPoint& a;
+		SupportPoint& b;
+		SupportPoint& c;
+		SupportPoint& d;
+
+		Simplex()
+			  : dim(0),
+			  a(points[0]),
+			  b(points[1]),
+			  c(points[2]),
+			  d(points[3]) { }
+
+		void clear() { dim = 0; }
+
+		void set(SupportPoint a, SupportPoint b, SupportPoint c, SupportPoint d)
+		{
+			dim = 4;
+			this->a = a;
+			this->b = b;
+			this->c = c;
+			this->d = d;
+		}
+
+		void set(SupportPoint a, SupportPoint b, SupportPoint c)
+		{
+			dim = 3;
+			this->a = a;
+			this->b = b;
+			this->c = c;
+		}
+
+		void set(SupportPoint a, const SupportPoint& b)
+		{
+			dim = 2;
+			this->a = a;
+			this->b = b;
+		}
+
+		void set(SupportPoint a)
+		{
+			dim = 1;
+			this->a = a;
+		}
+
+		void push(SupportPoint p)
+		{
+			dim = std::min(dim + 1, 4);
+			for (int i = dim - 1; i > 0; i--)
+				points[i] = points[i - 1];
+
+			points[0] = p;
+		}
+
+	};
+
 	struct Collision
 	{
 		collider_id object1;
@@ -127,7 +187,8 @@ namespace efiilj
 
 			bool update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const;
 			bool gjk(collider_id col1, collider_id col2, SupportPoint simplex[4]) const;
-			bool epa(collider_id col1, collider_id col2, const SupportPoint simplex[4], Collision& result) const;
+			bool gjk2(collider_id col1, collider_id col2, Simplex& simplex) const;
+			bool epa(collider_id col1, collider_id col2, const Simplex& simplex, Collision& result) const;
 
 			struct PhysicsData
 			{
