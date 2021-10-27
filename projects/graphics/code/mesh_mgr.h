@@ -29,8 +29,8 @@ namespace efiilj
 			~mesh_manager();
 
 			void extend_defaults(mesh_instance_id) override;
-			void draw_gui() override;
-			void draw_gui(mesh_instance_id idx) override;
+			void on_editor_gui() override;
+			void on_editor_gui(mesh_instance_id idx) override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 

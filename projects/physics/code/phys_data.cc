@@ -42,10 +42,18 @@ namespace efiilj
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 	}
 
-	void collider_manager::draw_gui()
+	void collider_manager::on_begin_frame()
+	{
+		for (auto& idx : _instances)
+		{
+			update_bounds(idx);
+		}
+	}
+
+	void collider_manager::on_editor_gui()
 	{}
 
-	void collider_manager::draw_gui(collider_id idx)
+	void collider_manager::on_editor_gui(collider_id idx)
 	{
 
 		ImGui::Text("Collider %d", idx);
@@ -586,13 +594,8 @@ check_face:
 		}
 	}
 
-	void collider_manager::update()
+	void collider_manager::test_scene()
 	{
-		for (auto& idx : _instances)
-		{
-			update_bounds(idx);
-		}
-
 		update_broad();
 		update_narrow();
 	}

@@ -28,6 +28,11 @@ namespace efiilj
 
 			virtual void extend_defaults(T new_id) = 0;
 
+			virtual void on_activate(T new_id) { }
+
+			virtual void on_editor_gui() override {}
+			virtual void on_editor_gui(T) {};
+
 		public:
 
 			T register_entity(entity_id eid)
@@ -40,6 +45,7 @@ namespace efiilj
 				_instance_mapping.emplace(eid, new_id);
 
 				extend_defaults(new_id);
+				on_activate(new_id);
 
 				return new_id;
 			}
@@ -53,10 +59,8 @@ namespace efiilj
 			{
 				register_entity(eid);
 			}
-			
-			virtual void draw_gui() override {}
 
-			virtual void draw_entity_gui(entity_id eid) override
+			void draw_entity_gui(entity_id eid) override
 			{
 				auto range = get_components(eid);
 
@@ -68,7 +72,7 @@ namespace efiilj
 
 					if (ImGui::TreeNode(get_name().c_str()))
 					{
-						draw_gui(idx);
+						on_editor_gui(idx);
 						ImGui::TreePop();
 					}
 
@@ -76,9 +80,7 @@ namespace efiilj
 					ImGui::Separator();
 				}
 			}
-
-			virtual void draw_gui(T) {};
-
+			
 			virtual bool is_valid(T idx) const
 			{
 				return (idx >= 0 && idx < static_cast<int>(_instances.size()));

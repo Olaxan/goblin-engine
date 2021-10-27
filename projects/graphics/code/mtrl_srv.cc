@@ -52,7 +52,7 @@ namespace efiilj
 		_textures = host->get_manager_from_fcc<texture_server>('TXSR');
 	}
 
-	void material_server::draw_gui(material_id idx)
+	void material_server::on_editor_gui(material_id idx)
 	{
 		shader_id sid = _data.shader[idx];
 

@@ -29,8 +29,8 @@ namespace efiilj
 			~material_manager();
 
 			void extend_defaults(material_instance_id new_id) override;
-			void draw_gui() override;
-			void draw_gui(material_instance_id idx) override;
+			void on_editor_gui() override;
+			void on_editor_gui(material_instance_id idx) override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 

@@ -78,12 +78,12 @@ namespace efiilj
 		create_bbox_mesh(idx);
 	}
 
-	void debug_renderer::draw_gui()
+	void debug_renderer::on_editor_gui()
 	{
 
 	}
 
-	void debug_renderer::draw_gui(debug_id idx)
+	void debug_renderer::on_editor_gui(debug_id idx)
 	{
 		if (!is_valid(idx))
 			return;
@@ -125,12 +125,30 @@ namespace efiilj
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
 		_sim = host->get_manager_from_fcc<simulator>('PHYS');
+	}
+
+	void debug_renderer::on_setup()
+	{
 
 		object_loader loader("../res/volumes/v_pointlight.obj", _meshes);
 		sphere = loader.get_mesh();
 
 		create_line_mesh();
+	}
 
+	void debug_renderer::on_begin_frame()
+	{
+		_shaders->use(_shader);	
+	}
+
+	void debug_renderer::on_frame()
+	{
+		render_all();
+	}
+
+	void debug_renderer::on_end_frame()
+	{
+		_meshes->unbind();
 	}
 
 	void debug_renderer::render(debug_id idx)
@@ -226,6 +244,20 @@ namespace efiilj
 		}
 	}
 
+	void debug_renderer::render_all()
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		for (const auto& idx : _instances)
+		{
+			if (_data.draw_bounds[idx])
+			{
+				update_bbox_mesh(idx);
+				render(idx);
+			}
+		}
+	}
+
 	void debug_renderer::draw_line(const vector3& a, const vector3& b, const vector4& color) const
 	{
 		_shaders->set_uniform("base_color_factor", color);
@@ -257,28 +289,5 @@ namespace efiilj
 		_meshes->draw_elements(sphere);
 	}
 
-	void debug_renderer::begin_frame()
-	{
-		_shaders->use(_shader);	
-	}
-
-	void debug_renderer::render_frame()
-	{
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		for (const auto& idx : _instances)
-		{
-			if (_data.draw_bounds[idx])
-			{
-				update_bbox_mesh(idx);
-				render(idx);
-			}
-		}
-	}
-
-	void debug_renderer::end_frame()
-	{
-		_meshes->unbind();
-	}
 
 }

@@ -115,28 +115,37 @@ namespace efiilj
 		simulator();
 		~simulator();
 
+		// Virtual
 		void extend_defaults(physics_id) override;
-		void draw_gui() override;
-		void draw_gui(physics_id) override;
+		void on_editor_gui() override;
+		void on_editor_gui(physics_id) override;
 
 		void on_register(std::shared_ptr<manager_host> host) override;
+		void on_activate(physics_id idx) override;
+		void on_begin_frame() override;
+		void on_frame() override;
+		void on_end_frame() override;
 
+		// Main
+		void simulate();
+		bool step(physics_id idx, PhysicsState& state, const float t, const float dt);
+
+		// Utility
 		vector3 calculate_com(entity_id eid) const;
 		void recalculate_com(physics_id idx);
 		void recalculate_state(physics_id idx, PhysicsState& state);
 
-		bool step(physics_id idx, PhysicsState& state, const float t, const float dt);
-
 		void read_transform(physics_id, PhysicsState& state);
 		void write_transform(physics_id, PhysicsState& state);
 
-		void begin_frame();
-		void simulate();
-		void end_frame();
-
+		// Integrator
 		Derivative evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt);
 		void integrate(physics_id idx, PhysicsState& state, const float t, const float dt);
 
+		vector3 acceleration(physics_id idx, const PhysicsState& state, float t);
+		vector3 torque(physics_id idx, const PhysicsState& state, float t);
+
+		// Getters and Setters
 		void add_impulse(physics_id idx, const PointForce& force)
 		{
 			_data.impulses[idx].emplace_back(force);
@@ -146,9 +155,6 @@ namespace efiilj
 		{
 			_data.forces[idx].emplace_back(force);
 		}
-
-		vector3 acceleration(physics_id idx, const PhysicsState& state, float t);
-		vector3 torque(physics_id idx, const PhysicsState& state, float t);
 
 		const vector3& get_com(physics_id idx) const
 		{

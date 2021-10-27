@@ -40,8 +40,8 @@ namespace efiilj
 
 			void extend_defaults(transform_id new_id) override;
 
-			void draw_gui() override;
-			void draw_gui(transform_id idx) override;
+			void on_editor_gui() override;
+			void on_editor_gui(transform_id idx) override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 

@@ -213,13 +213,15 @@ namespace efiilj
 			void extend_defaults(collider_id) override;
 			void on_register(std::shared_ptr<manager_host> host) override;
 
-			void draw_gui() override;
-			void draw_gui(collider_id) override;
+			void on_editor_gui() override;
+			void on_editor_gui(collider_id) override;
+			void on_begin_frame() override;
 
 			bool update_bounds(collider_id idx);
 			void update_broad();
 			void update_narrow();
-			void update();
+
+			void test_scene();
 
 			bool test_hit(const ray& ray, trace_hit& hit) const;
 			bool test_hit(collider_id idx, const ray& ray, trace_hit& hit) const;

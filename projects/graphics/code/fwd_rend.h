@@ -46,19 +46,19 @@ namespace efiilj
 		~forward_renderer() = default;
 
 		void extend_defaults(render_id new_id) override;
-		void draw_gui() override;
-		void draw_gui(render_id idx) override;
-		
+
 		void on_register(std::shared_ptr<manager_host> host) override;
-	
+		void on_setup() override;
+
+		void on_editor_gui() override;
+		void on_editor_gui(render_id idx) override;
+
+		void on_begin_frame() override;
+		void on_frame() override;
+		void on_end_frame() override;
+
 		void render(render_id idx);
-
-		void begin_frame();
-		virtual void render_frame();
-		void end_frame();
-
-		virtual void on_begin_frame() {}
-		virtual void on_end_frame() {}
+		void render_all();
 
 		shader_id get_fallback_shader()
 		{

@@ -19,11 +19,10 @@ namespace efiilj
 		_data.error.emplace_back(false);
 	}
 
-	void forward_renderer::draw_gui()
-	{
-	}
+	void forward_renderer::on_editor_gui()
+	{ }
 
-	void forward_renderer::draw_gui(render_id idx)
+	void forward_renderer::on_editor_gui(render_id idx)
 	{
 		unsigned int s1 = _shaders->get_program_id(_fallback_primary);
 
@@ -58,16 +57,25 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
-		
+	}
+
+	void forward_renderer::on_setup()
+	{
 		_fallback_primary = _shaders->create();
 		_shaders->set_uri(_fallback_primary, settings_.default_fallback_path);
 		_shaders->compile(_fallback_primary);
 	}
 
-	void forward_renderer::begin_frame()
+	void forward_renderer::on_begin_frame()
+	{}
+
+	void forward_renderer::on_frame()
 	{
-		on_begin_frame();
+		render_all();
 	}
+
+	void forward_renderer::on_end_frame()
+	{}
 
 	void forward_renderer::render(render_id idx)
 	{
@@ -114,16 +122,11 @@ namespace efiilj
 
 	}
 
-	void forward_renderer::render_frame()
+	void forward_renderer::render_all()
 	{
 		for (auto& idx : _instances)
 		{
 			render(idx);
 		}
-	}
-
-	void forward_renderer::end_frame()
-	{
-		on_end_frame();
 	}
 }

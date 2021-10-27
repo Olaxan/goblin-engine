@@ -29,11 +29,10 @@ namespace efiilj
 		_data.inverse_updated.emplace_back(true);
 	}
 
-	void transform_manager::draw_gui()
-	{
-	}
+	void transform_manager::on_editor_gui()
+	{ }
 
-	void transform_manager::draw_gui(transform_id idx)
+	void transform_manager::on_editor_gui(transform_id idx)
 	{
 		if (!is_valid(idx))
 			return;

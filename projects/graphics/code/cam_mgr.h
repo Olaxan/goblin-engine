@@ -50,12 +50,13 @@ namespace efiilj
 		~camera_manager() = default;
 
 		void extend_defaults(camera_id eid) override;
-		void draw_gui() override;
-		void draw_gui(camera_id idx) override;
+
+		void on_editor_gui() override;
+		void on_editor_gui(camera_id idx) override;
 		
 		void on_register(std::shared_ptr<manager_host> host) override;
 
-		void update();
+		void on_begin_frame() override;
 
 		ray get_ray_from_camera(camera_id idx, int mouse_x, int mouse_y) const;
 

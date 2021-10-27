@@ -57,14 +57,14 @@ namespace efiilj
 
 		~deferred_renderer() = default;
 
-		void draw_gui() override;
-		void draw_gui(render_id idx) override;
+		void on_editor_gui() override;
+		void on_editor_gui(render_id idx) override;
 
 		void on_register(std::shared_ptr<manager_host> host) override;
-
-		void render_frame() override;
+		void on_setup() override;
 
 		void on_begin_frame() override;
+		void on_frame() override;
 		void on_end_frame() override;
 
 		shader_id get_secondary_fallback() const

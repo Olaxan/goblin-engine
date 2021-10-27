@@ -24,32 +24,12 @@ namespace efiilj
 		_data.transform.emplace_back(-1);
 	}
 
-	void light_manager::draw_gui()
+	void light_manager::on_editor_gui()
+	{ }
+
+	void light_manager::on_editor_gui(light_id idx)
 	{
-
-		static int selected_light = -1;
-
-		if (ImGui::TreeNode("Lights"))
-		{
-			ImGui::BeginChild("Lights", ImVec2(0, 100), true);
-			for (int i = 0; i < _instances.size(); i++)
-			{
-				char label[128];
-				sprintf(label, "Light %d", i);
-				if (ImGui::Selectable(label, selected_light == i))
-					selected_light = i;
-			}
-			ImGui::EndChild();
-
-			draw_gui(selected_light);
-
-			ImGui::TreePop();
-		}
-	}
-
-	void light_manager::draw_gui(light_id idx)
-	{
-		if (idx < 0 || idx > _instances.size() - 1)
+		if (!is_valid(idx))
 		{
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "No light selected");
 			return;

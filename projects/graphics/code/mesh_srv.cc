@@ -66,8 +66,8 @@ namespace efiilj
 		glGenBuffers(1, &_data.ibo[idx]);
 		glGenBuffers(1, &_data.vbo[idx]);
 
-		glBindBuffer(GL_ARRAY_BUFFER, _data.vbo[idx]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _data.ibo[idx]);
+		glBindBuffer(GL_ARRAY_BUFFER, _data.vbo[idx]);
 
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
 				get_index_count(idx) * sizeof(unsigned int), _data.indices[idx].data(), GL_STATIC_DRAW);

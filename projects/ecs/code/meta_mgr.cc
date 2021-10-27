@@ -22,9 +22,9 @@ namespace efiilj
 		_data.description.emplace_back();
 	}
 
-	void meta_manager::draw_gui() {}
+	void meta_manager::on_editor_gui() {}
 
-	void meta_manager::draw_gui(meta_id idx)
+	void meta_manager::on_editor_gui(meta_id idx)
 	{
 		if (is_valid(idx))
 		{

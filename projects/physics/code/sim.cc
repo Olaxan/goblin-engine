@@ -30,15 +30,12 @@ namespace efiilj
 		_data.inverse_mass.emplace_back(0.1f);
 		_data.restitution.emplace_back(0.5f);
 		_data.friction.emplace_back(0.5f);
-
-		set_mass(idx, 1.0f);
-		set_inertia_as_cube(idx, 1.0f);
 	}
 
-	void simulator::draw_gui()
+	void simulator::on_editor_gui()
 	{}
 
-	void simulator::draw_gui(physics_id idx)
+	void simulator::on_editor_gui(physics_id idx)
 	{
 
 		ImVec4 yellow(1.0f, 1.0f, 0, 1.0f);
@@ -106,6 +103,38 @@ namespace efiilj
 		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
+	}
+
+	void simulator::on_activate(physics_id idx) 
+	{
+		set_mass(idx, 1.0f);
+		set_inertia_as_cube(idx, 1.0f);
+	}
+
+	void simulator::on_begin_frame()
+	{
+		frame_time new_time = frame_timer::now();
+		duration delta_time = new_time - current_time;
+
+		float dt_seconds = delta_time.count();
+
+		if (dt_seconds > 0.25f)
+			dt_seconds = 0.25f;
+
+		accumulator += dt_seconds;
+
+		for (const auto& idx : _instances)
+			read_transform(idx, _data.current[idx]);
+	}
+
+	void simulator::on_frame() 
+	{
+		simulate();
+	}
+
+	void simulator::on_end_frame() 
+	{
+
 	}
 	
 	vector3 simulator::calculate_com(entity_id eid) const
@@ -213,23 +242,6 @@ namespace efiilj
 		}
 	}
 
-	void simulator::begin_frame()
-	{
-		frame_time new_time = frame_timer::now();
-		duration delta_time = new_time - current_time;
-
-		float dt_seconds = delta_time.count();
-
-		if (dt_seconds > 0.25f)
-			dt_seconds = 0.25f;
-
-		accumulator += dt_seconds;
-
-		for (const auto& idx : _instances)
-			read_transform(idx, _data.current[idx]);
-
-	}
-
 #define MAX_SEEK_ITERATIONS 32
 #define FRICTION_TOLERANCE 0.00001f
 
@@ -248,7 +260,7 @@ namespace efiilj
 			}
 
 			// Update narrow collision (detect all collisions since last frame)
-			_colliders->update();
+			_colliders->test_scene();
 
 			// Iterate through colliders
 			for (const auto& col_a : _colliders->get_instances())
@@ -351,11 +363,6 @@ namespace efiilj
 			t += dt;
 			accumulator -= dt;
 		}
-	}
-
-	void simulator::end_frame()
-	{
-		//float alpha = accumulator / dt;
 	}
 	
 	simulator::Derivative simulator::evaluate(physics_id idx, const PhysicsState& state, const Derivative& d, float t, float dt)

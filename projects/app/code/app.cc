@@ -116,13 +116,13 @@ namespace efiilj
 		managers->register_manager(mesh_instances, 'MEMR');
 		managers->register_manager(material_instances, 'MAMR');
 
-		managers->register_manager(rfwd, 'RFWD');
-		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(colliders, 'RAYS');
 		managers->register_manager(sim, 'PHYS');
-		managers->register_manager(gltf, 'GLTF');
-
+		managers->register_manager(rdef, 'RDEF');
+		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(rdbg, 'RDBG');
+
+		managers->register_manager(gltf, 'GLTF');
 
 		editor = std::make_shared<entity_editor>(entities, managers);
 
@@ -168,7 +168,7 @@ namespace efiilj
 
 		// Testcube
 
-#define NUM_CUBES 3
+#define NUM_CUBES 4
 
 		for (size_t i = 0; i < NUM_CUBES; i++)
 		{
@@ -248,7 +248,6 @@ namespace efiilj
 #endif
 
 		// Debug drawing
-		rdbg->set_shader(rfwd->get_fallback_shader());
 
 		entity_id e_hitmarker = entities->create();
 
@@ -350,10 +349,12 @@ namespace efiilj
 			}
 		});
 
+		managers->on_setup();
+		rdbg->set_shader(rfwd->get_fallback_shader());
+
 		while (this->window_->IsOpen())
 		{
 
-			//transform_id selected_trf = is_mouse_captured ? cam_trf_id : e1_trf;
 			transform_id selected_trf = cam_trf_id;
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -400,23 +401,27 @@ namespace efiilj
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 
-			cameras->update();
-			colliders->update();
+			//cameras->update();
+			//colliders->update();
 
-			sim->begin_frame();
-			rdef->begin_frame();
-		    rfwd->begin_frame();
-			rdbg->begin_frame();
+			managers->on_begin_frame();
+			managers->on_frame();
+			managers->on_end_frame();
 
-			sim->simulate();
-			rdef->render_frame();
-		    rfwd->render_frame();
-			rdbg->render_frame();
+			//sim->begin_frame();
+			//rdef->begin_frame();
+		    //rfwd->begin_frame();
+			//rdbg->begin_frame();
 
-			sim->end_frame();
-			rdef->end_frame();
-			rfwd->end_frame();
-			rdbg->end_frame();
+			//sim->simulate();
+			//rdef->render_frame();
+		    //rfwd->render_frame();
+			//rdbg->render_frame();
+
+			//sim->end_frame();
+			//rdef->end_frame();
+			//rfwd->end_frame();
+			//rdbg->end_frame();
 
 			this->window_->SwapBuffers();
 			

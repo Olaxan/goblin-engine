@@ -37,16 +37,16 @@ namespace efiilj
 		push_perspective();
 	}
 
-	void camera_manager::draw_gui()
+	void camera_manager::on_editor_gui()
 	{
 		if (ImGui::TreeNode("Camera"))
 		{
-			draw_gui(_current);
+			on_editor_gui(_current);
 			ImGui::TreePop();
 		}
 	}
 
-	void camera_manager::draw_gui(camera_id idx)
+	void camera_manager::on_editor_gui(camera_id idx)
 	{
 
 		if (!is_valid(idx))
@@ -106,7 +106,7 @@ namespace efiilj
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 	}
 
-	void camera_manager::update()
+	void camera_manager::on_begin_frame()
 	{
 		update_view(_current);
 		push_view();

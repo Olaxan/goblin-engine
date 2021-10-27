@@ -20,9 +20,9 @@ namespace efiilj
 		_data.id.emplace_back(-1);
 	}
 
-	void material_manager::draw_gui() {}
+	void material_manager::on_editor_gui() {}
 
-	void material_manager::draw_gui(material_instance_id idx)
+	void material_manager::on_editor_gui(material_instance_id idx)
 	{
 		
 		material_id mid = _data.id[idx];
@@ -33,7 +33,7 @@ namespace efiilj
 			return;
 		}
 
-		_materials->draw_gui(mid);
+		_materials->on_editor_gui(mid);
 
 	}
 

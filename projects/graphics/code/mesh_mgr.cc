@@ -21,12 +21,12 @@ namespace efiilj
 		_data.material.emplace_back(-1);
 	}
 
-	void mesh_manager::draw_gui()
+	void mesh_manager::on_editor_gui()
 	{
 
 	}
 
-	void mesh_manager::draw_gui(mesh_instance_id idx)
+	void mesh_manager::on_editor_gui(mesh_instance_id idx)
 	{
 
 		if (!is_valid(idx))

@@ -50,5 +50,10 @@ namespace efiilj
 			{
 				return _servers;
 			}
+
+			void on_setup();
+			void on_begin_frame();
+			void on_frame();
+			void on_end_frame();
 	};
 }

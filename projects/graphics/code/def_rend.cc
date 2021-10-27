@@ -45,11 +45,11 @@ namespace efiilj
 
 	}
 
-	void deferred_renderer::draw_gui()
+	void deferred_renderer::on_editor_gui()
 	{
 	}
 
-	void deferred_renderer::draw_gui(render_id idx) // NOLINT
+	void deferred_renderer::on_editor_gui(render_id idx) // NOLINT
 	{
 		unsigned int s1 = _shaders->get_program_id(_fallback_primary);
 		unsigned int s2 = _shaders->get_program_id(_fallback_secondary);
@@ -89,7 +89,10 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
+	}
 
+	void deferred_renderer::on_setup()
+	{
 		_fallback_primary = _shaders->create();
 		_fallback_secondary = _shaders->create();
 
@@ -257,7 +260,7 @@ namespace efiilj
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void deferred_renderer::render_frame()
+	void deferred_renderer::on_frame()
 	{
 
 		camera_id cam = _cameras->get_camera();

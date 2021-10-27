@@ -37,4 +37,40 @@ namespace efiilj
 		_reg.emplace(fcc, std::move(mgr));
 		printf("\n");
 	}
+
+	void manager_host::on_setup()
+	{
+		for (const auto& srv : _servers)
+			srv->on_setup();
+
+		for (const auto& com : _components)
+			com->on_setup();
+	}
+
+	void manager_host::on_begin_frame()
+	{
+		for (const auto& srv : _servers)
+			srv->on_begin_frame();
+
+		for (const auto& com : _components)
+			com->on_begin_frame();
+	}
+
+	void manager_host::on_frame()
+	{
+		for (const auto& srv : _servers)
+			srv->on_frame();
+
+		for (const auto& com : _components)
+			com->on_frame();
+	}
+
+	void manager_host::on_end_frame()
+	{
+		for (const auto& srv : _servers)
+			srv->on_end_frame();
+
+		for (const auto& com : _components)
+			com->on_end_frame();
+	}
 }

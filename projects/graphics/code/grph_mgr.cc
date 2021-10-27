@@ -25,10 +25,10 @@ namespace efiilj
 		_data.loaded.emplace_back(false);
 	}
 
-	void graphics_manager::draw_gui()
+	void graphics_manager::on_editor_gui()
 	{}
 
-	void graphics_manager::draw_gui(graphics_id idx)
+	void graphics_manager::on_editor_gui(graphics_id idx)
 	{}
 
 	void graphics_manager::on_register(std::shared_ptr<manager_host> host)
