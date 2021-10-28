@@ -59,33 +59,21 @@ namespace efiilj
 		void render_all();
 
 		shader_id get_fallback_shader()
-		{
-			return _fallback_primary;
-		}
+		{ return _fallback_primary; }
 
 		void set_fallback_shader(shader_id sid)
-		{
-			_fallback_primary = sid;
-		}
+		{ _fallback_primary = sid; }
 
 		bool get_error(render_id idx) const
-		{
-			return _data.error[idx];
-		}
+		{ return _data.error[idx]; }
 
 		void set_error(render_id idx, bool state)
-		{
-			_data.error[idx] = state;
-		}
+		{ _data.error[idx] = state; }
 
 		bool get_visible(render_id idx)
-		{
-			return _data.visible[idx];
-		}
+		{ return _data.visible[idx]; }
 
 		void set_visible(render_id idx, bool state)
-		{
-			_data.visible[idx] = state;
-		}
+		{ _data.visible[idx] = state; }
 	};
 }

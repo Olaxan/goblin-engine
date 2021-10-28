@@ -80,10 +80,10 @@ namespace efiilj
 				: ComponentDataBase<bool>(default_value)
 			{ }
 
-			std::vector<bool>::reference operator [] (std::size_t i)
+			std::vector<bool>::reference operator [] (int i)
 			{ return _data[i]; }
 
-			bool operator [] (std::size_t i) const
+			std::vector<bool>::const_reference operator [] (int i) const
 			{ return _data[i]; }
 
 	};
