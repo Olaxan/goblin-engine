@@ -15,20 +15,6 @@ namespace efiilj
 	transform_manager::~transform_manager()
 	{}
 
-	void transform_manager::extend_defaults(transform_id)
-	{
-		_data.model.emplace_back(matrix4());
-		_data.inverse.emplace_back(matrix4());
-		_data.position.emplace_back(vector4());
-		_data.offset.emplace_back(vector4());
-		_data.scale.emplace_back(vector4(1.0f, 1.0f, 1.0f, 1.0f));
-		_data.rotation.emplace_back(quaternion());
-		_data.parent.emplace_back(-1);
-		_data.children.emplace_back();
-		_data.model_updated.emplace_back(true);
-		_data.inverse_updated.emplace_back(true);
-	}
-
 	void transform_manager::on_editor_gui()
 	{ }
 
@@ -79,11 +65,25 @@ namespace efiilj
 
 	void transform_manager::on_register(std::shared_ptr<manager_host> host) //NOLINT
 	{
+		add_data(
+				&_data.model,
+				&_data.inverse,
+				&_data.position,
+				&_data.offset,
+				&_data.scale,
+				&_data.rotation,
+				&_data.parent,
+				&_data.children,
+				&_data.model_updated,
+				&_data.inverse_updated);
+
+		_data.scale.set_default(vector4(1, 1, 1, 1));
+		_data.parent.set_default(-1);
 	}
 
 	void transform_manager::update_models()
 	{
-		for (const transform_id& idx : _instances)
+		for (const transform_id idx : get_instances())
 		{
 			if (_data.model_updated[idx])
 				continue;

@@ -15,13 +15,20 @@ namespace efiilj
 		printf("Light manager exit\n");
 	}
 
-	void light_manager::extend_defaults(light_id new_id)
+	void light_manager::extend_data(light_id new_id)
 	{
 		_data.type.emplace_back(light_type::directional);
 		_data.base.emplace_back(light_base{vector3(1.0f, 1.0f, 1.0f), 0.1f, 0.1f});
 		_data.attenuation.emplace_back(attenuation_data{0, 0, 0.1f});
 		_data.cutoff.emplace_back(cutoff_data{0.1f, 0.2f});
 		_data.transform.emplace_back(-1);
+	}
+
+	void light_manager::on_activate(light_id idx)
+	{
+		entity_id eid = get_entity(idx);
+		transform_id trf_id = _transforms->get_component(eid);
+		_data.transform[idx] = trf_id;
 	}
 
 	void light_manager::on_editor_gui()

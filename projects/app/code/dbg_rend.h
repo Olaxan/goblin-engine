@@ -69,12 +69,16 @@ namespace efiilj
 			debug_renderer();
 			~debug_renderer();
 
-			void extend_defaults(debug_id idx) override;
+			void extend_data(debug_id) override;
+			void pack_data(debug_id, debug_id) override;
+
 			void on_editor_gui() override;
 			void on_editor_gui(debug_id idx) override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
 			void on_setup() override;
+
+			void on_activate(debug_id idx) override;
 
 			void on_begin_frame() override;
 			void on_frame() override;

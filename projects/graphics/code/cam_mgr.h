@@ -4,6 +4,7 @@
 #include "trfm_mgr.h"
 #include "ifmgr.h"
 #include "ray.h"
+#include "mgrdata.h"
 
 #include <vector>
 #include <memory>
@@ -21,19 +22,19 @@ namespace efiilj
 
 		struct CameraData
 		{
-			std::vector<float> width;
-			std::vector<float> height;
-			std::vector<float> fov;
-			std::vector<float> near;
-			std::vector<float> far;
+			ComponentData<float> width;
+			ComponentData<float> height;
+			ComponentData<float> fov;
+			ComponentData<float> near;
+			ComponentData<float> far;
 
-			std::vector<matrix4> perspective;
-			std::vector<matrix4> p_inverse;
-			std::vector<matrix4> view;
+			ComponentData<matrix4> perspective;
+			ComponentData<matrix4> p_inverse;
+			ComponentData<matrix4> view;
 
 			std::vector<transform_id> transform;
 		} _data;
-
+		
 		std::shared_ptr<transform_manager> _transforms;
 
 		void setup_ubo();
@@ -49,12 +50,13 @@ namespace efiilj
 		camera_manager();
 		~camera_manager() = default;
 
-		void extend_defaults(camera_id eid) override;
-
 		void on_editor_gui() override;
 		void on_editor_gui(camera_id idx) override;
 		
 		void on_register(std::shared_ptr<manager_host> host) override;
+		void on_setup() override;
+
+		void on_activate(camera_id) override;
 
 		void on_begin_frame() override;
 

@@ -18,7 +18,7 @@ namespace efiilj
 	simulator::~simulator()
 	{}
 
-	void simulator::extend_defaults(physics_id idx)
+	void simulator::extend_data(physics_id idx)
 	{
 		_data.current.emplace_back();
 		_data.previous.emplace_back();
@@ -30,6 +30,20 @@ namespace efiilj
 		_data.inverse_mass.emplace_back(0.1f);
 		_data.restitution.emplace_back(0.5f);
 		_data.friction.emplace_back(0.5f);
+	}
+
+	void simulator::pack_data(physics_id to, physics_id from)
+	{
+		_data.current[to] = _data.current[from];
+		_data.previous[to] = _data.previous[from];
+		_data.com[to] = _data.com[from];
+		_data.impulses[to] = _data.impulses[from];
+		_data.inertia[to] = _data.inertia[from];
+		_data.inverse_inertia[to] = _data.inverse_inertia[from];
+		_data.mass[to] = _data.mass[from];
+		_data.inverse_mass[to] = _data.inverse_mass[from];
+		_data.restitution[to] = _data.restitution[from];
+		_data.friction[to] = _data.friction[from];
 	}
 
 	void simulator::on_editor_gui()

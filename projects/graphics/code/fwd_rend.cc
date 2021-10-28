@@ -13,12 +13,6 @@ namespace efiilj
 		_name = "Forward renderer";
 	}  
 
-	void forward_renderer::extend_defaults(render_id)
-	{
-		_data.visible.emplace_back(true);
-		_data.error.emplace_back(false);
-	}
-
 	void forward_renderer::on_editor_gui()
 	{ }
 
@@ -57,6 +51,11 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
+
+		add_data(
+				_data.error,
+				_data.visible
+				);
 	}
 
 	void forward_renderer::on_setup()

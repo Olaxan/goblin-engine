@@ -27,8 +27,8 @@ namespace efiilj
 
 		struct RenderData
 		{
-			std::vector<bool> visible;
-			std::vector<bool> error;
+			ComponentData<bool> visible;
+			ComponentData<bool> error;
 		} _data;
 
 		std::shared_ptr<camera_manager> _cameras;
@@ -44,8 +44,6 @@ namespace efiilj
 
 		forward_renderer(const renderer_settings& set);
 		~forward_renderer() = default;
-
-		void extend_defaults(render_id new_id) override;
 
 		void on_register(std::shared_ptr<manager_host> host) override;
 		void on_setup() override;

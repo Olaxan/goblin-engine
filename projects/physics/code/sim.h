@@ -116,7 +116,9 @@ namespace efiilj
 		~simulator();
 
 		// Virtual
-		void extend_defaults(physics_id) override;
+		void extend_data(physics_id) override;
+		void pack_data(physics_id, physics_id) override;
+
 		void on_editor_gui() override;
 		void on_editor_gui(physics_id) override;
 

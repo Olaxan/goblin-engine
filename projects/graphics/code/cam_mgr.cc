@@ -16,25 +16,8 @@ namespace efiilj
 	camera_manager::camera_manager()
 	: _ubo(0), _current(0) 
 	{
-		setup_ubo();
 		printf("Init camera...\n");
 		_name = "Camera";
-	}
-
-	void camera_manager::extend_defaults(camera_id new_id)
-	{
-		_data.width.emplace_back(DEFAULT_WIDTH);
-		_data.height.emplace_back(DEFAULT_HEIGHT);
-		_data.fov.emplace_back(DEFAULT_FOV);
-		_data.near.emplace_back(DEFAULT_NEAR);
-		_data.far.emplace_back(DEFAULT_FAR);
-		_data.perspective.emplace_back();
-		_data.p_inverse.emplace_back();
-		_data.view.emplace_back();
-		_data.transform.emplace_back(-1);
-
-		update_perspective(new_id);
-		push_perspective();
 	}
 
 	void camera_manager::on_editor_gui()
@@ -104,6 +87,29 @@ namespace efiilj
 	void camera_manager::on_register(std::shared_ptr<manager_host> host)
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+
+		add_data(
+				&_data.width,
+				&_data.height,
+				&_data.fov,
+				&_data.near,
+				&_data.far,
+				&_data.perspective,
+				&_data.p_inverse,
+				&_data.view,
+				&_data.transform
+			);
+	}
+
+	void camera_manager::on_setup()
+	{
+		setup_ubo();
+	}
+
+	void camera_manager::on_activate(camera_id idx)
+	{
+		update_perspective(idx);
+		push_perspective();
 	}
 
 	void camera_manager::on_begin_frame()

@@ -33,11 +33,13 @@ namespace efiilj
 			light_manager();
 			~light_manager();
 
-			void extend_defaults(light_id) override;
+			void extend_data(light_id) override;
 			void on_editor_gui() override;
 			void on_editor_gui(light_id idx) override;
 
 			void on_register(std::shared_ptr<manager_host> host) override;
+
+			void on_activate(light_id) override;
 
 			void update_falloff(light_id idx);
 

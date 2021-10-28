@@ -66,7 +66,7 @@ namespace efiilj
 		}
 	}
 
-	void debug_renderer::extend_defaults(debug_id idx)
+	void debug_renderer::extend_data(debug_id idx)
 	{
 		_data.bbox.emplace_back(-1);
 		_data.draw_bounds.emplace_back(true);
@@ -74,8 +74,16 @@ namespace efiilj
 		_data.draw_penetration.emplace_back(true);
 		_data.draw_impulses.emplace_back(true);
 		_data.draw_minowski.emplace_back(false);
-		
-		create_bbox_mesh(idx);
+	}
+
+	void debug_renderer::pack_data(debug_id to, debug_id from)
+	{
+		_data.bbox[to] = _data.bbox[from];
+		_data.draw_bounds[to] = _data.draw_bounds[from];
+		_data.draw_com[to] = _data.draw_com[from];
+		_data.draw_impulses[to] = _data.draw_impulses[from];
+		_data.draw_minowski[to] = _data.draw_minowski[from];
+		_data.draw_penetration[to] = _data.draw_penetration[from];
 	}
 
 	void debug_renderer::on_editor_gui()
@@ -134,6 +142,11 @@ namespace efiilj
 		sphere = loader.get_mesh();
 
 		create_line_mesh();
+	}
+
+	void debug_renderer::on_activate(debug_id idx)
+	{
+		create_bbox_mesh(idx);
 	}
 
 	void debug_renderer::on_begin_frame()

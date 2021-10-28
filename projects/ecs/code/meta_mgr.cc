@@ -16,12 +16,6 @@ namespace efiilj
 		printf("Metadata manager exit\n");
 	}
 
-	void meta_manager::extend_defaults(meta_id new_id)
-	{
-		_data.name.emplace_back();
-		_data.description.emplace_back();
-	}
-
 	void meta_manager::on_editor_gui() {}
 
 	void meta_manager::on_editor_gui(meta_id idx)
@@ -33,5 +27,10 @@ namespace efiilj
 		}
 	}
 
-	void meta_manager::on_register(std::shared_ptr<manager_host> host) {}
+	void meta_manager::on_register(std::shared_ptr<manager_host> host)
+	{
+		add_data(
+				&_data.description,
+				&_data.name);
+	}
 }

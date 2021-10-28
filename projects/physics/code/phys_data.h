@@ -217,7 +217,9 @@ namespace efiilj
 			SupportPoint support(collider_id, collider_id, const vector3& dir) const;
 			vector3 get_furthest_point(collider_id, const vector3& dir) const;
 
-			void extend_defaults(collider_id) override;
+			void extend_data(collider_id) override;
+			void pack_data(collider_id, collider_id) override;
+
 			void on_register(std::shared_ptr<manager_host> host) override;
 
 			void on_editor_gui() override;

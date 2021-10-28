@@ -24,12 +24,20 @@ namespace efiilj
 		printf("Collider manager exit\n");
 	}
 
-	void collider_manager::extend_defaults(collider_id idx)
+	void collider_manager::extend_data(collider_id idx)
 	{
 		_data.mesh_bounds.emplace_back();
 		_data.broad_collisions.emplace_back();
 		_data.narrow_collisions.emplace_back();
 		_data.collisions.emplace_back();
+	}
+
+	void collider_manager::pack_data(collider_id to, collider_id from)
+	{
+		_data.mesh_bounds[to] = _data.mesh_bounds[from];
+		_data.broad_collisions[to] = _data.broad_collisions[from];
+		_data.narrow_collisions[to] = _data.narrow_collisions[from];
+		_data.collisions[to] = _data.collisions[from];
 	}
 
 	void collider_manager::on_register(std::shared_ptr<manager_host> host)
@@ -260,7 +268,7 @@ namespace efiilj
 
 		transform_id trf_id = _transforms->get_component(eid);
 
-		assert(("Invalid transform id, get_furthest_point!", //NOLINT
+		assert(("GJK / EPA: Support, invalid transform id!", //NOLINT
 					_transforms->is_valid(trf_id)));
 
 		vector3 pos = _transforms->get_position(trf_id);
@@ -580,12 +588,8 @@ check_face:
 
 		for (auto idx : _instances)
 		{
-			//for (auto col : _instances)
 			for (auto col : _data.broad_collisions[idx])
 			{
-
-				if (col == idx)
-					continue;
 
 				if (collides_with(idx, col))
 					continue;
@@ -605,11 +609,6 @@ check_face:
 
 	void collider_manager::test_scene()
 	{
-		for (auto& idx : _instances)
-		{
-			update_bounds(idx);
-		}
-
 		update_broad();
 		update_narrow();
 	}

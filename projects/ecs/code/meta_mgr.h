@@ -16,16 +16,14 @@ namespace efiilj
 
 			struct MetaData
 			{
-				std::vector<std::string> name;
-				std::vector<std::string> description;
+				ComponentData<std::string> name;
+				ComponentData<std::string> description;
 			} _data;
 
 		public:
 
 			meta_manager();
 			~meta_manager();
-
-			void extend_defaults(meta_id new_id) override;
 
 			void on_editor_gui() override;
 			void on_editor_gui(meta_id idx) override;

@@ -57,7 +57,7 @@ namespace efiilj
 		ImGui::BulletText("FBO: %d, UBO: %d", rbo_, ubo_);
 		ImGui::BulletText("Default primary: %d / %u", _fallback_primary, s1);
 		ImGui::BulletText("Default secondary: %d / %u", _fallback_secondary, s2);
-		ImGui::BulletText("Nodes: %lu", _instances.size());
+		ImGui::BulletText("Nodes: %lu", get_instances().size());
 		ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
 
 		bool err = _data.error[idx];
@@ -275,7 +275,7 @@ namespace efiilj
 		attach_textures(tex_type::component_draw);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		for (auto& idx : _instances)
+		for (auto& idx : get_instances())
 		{
 			render(idx);
 		}

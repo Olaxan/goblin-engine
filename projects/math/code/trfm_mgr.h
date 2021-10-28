@@ -16,20 +16,20 @@ namespace efiilj
 
 			struct TransformData
 			{
-				std::vector<matrix4> model;
-				std::vector<matrix4> inverse;
+				ComponentData<matrix4> model;
+				ComponentData<matrix4> inverse;
 
-				std::vector<vector4> position;
-				std::vector<vector4> offset;
-				std::vector<vector4> scale;
-				std::vector<quaternion> rotation;
+				ComponentData<vector4> position;
+				ComponentData<vector4> offset;
+				ComponentData<vector4> scale;
+				ComponentData<quaternion> rotation;
 
-				std::vector<transform_id> parent;
+				ComponentData<transform_id> parent;
 
-				std::vector<bool> model_updated;
-				std::vector<bool> inverse_updated;
+				ComponentData<bool> model_updated;
+				ComponentData<bool> inverse_updated;
 
-				std::vector<std::set<transform_id>> children;
+				ComponentData<std::set<transform_id>> children;
 
 			} _data;
 
@@ -37,8 +37,6 @@ namespace efiilj
 
 			transform_manager();
 			~transform_manager();
-
-			void extend_defaults(transform_id new_id) override;
 
 			void on_editor_gui() override;
 			void on_editor_gui(transform_id idx) override;
