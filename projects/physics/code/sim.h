@@ -67,19 +67,19 @@ namespace efiilj
 
 			struct PhysicsData
 			{
-				std::vector<PhysicsState> current;
-				std::vector<PhysicsState> previous;
+				ComponentData<PhysicsState> current;
+				ComponentData<PhysicsState> previous;
 
-				std::vector<std::vector<PointForce>> impulses;
-				std::vector<std::vector<PointForce>> forces;
+				ComponentData<std::vector<PointForce>> impulses;
+				ComponentData<std::vector<PointForce>> forces;
 
-				std::vector<vector3> com;
-				std::vector<float> mass;
-				std::vector<float> inverse_mass;
-				std::vector<float> inertia;
-				std::vector<float> inverse_inertia;
-				std::vector<float> restitution;
-				std::vector<float> friction;
+				ComponentData<vector3> com;
+				ComponentData<float> mass;
+				ComponentData<float> inverse_mass;
+				ComponentData<float> inertia;
+				ComponentData<float> inverse_inertia;
+				ComponentData<float> restitution;
+				ComponentData<float> friction;
 			} _data;
 
 			float t = 0.0f;
@@ -116,9 +116,6 @@ namespace efiilj
 		~simulator();
 
 		// Virtual
-		void extend_data(physics_id) override;
-		void pack_data(physics_id, physics_id) override;
-
 		void on_editor_gui() override;
 		void on_editor_gui(physics_id) override;
 

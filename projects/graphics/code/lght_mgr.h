@@ -19,11 +19,11 @@ namespace efiilj
 
 			struct LightData
 			{
-				std::vector<light_type> type;
-				std::vector<light_base> base;
-				std::vector<attenuation_data> attenuation;
-				std::vector<cutoff_data> cutoff;
-				std::vector<transform_id> transform;
+				ComponentData<light_type> type;
+				ComponentData<light_base> base;
+				ComponentData<attenuation_data> attenuation;
+				ComponentData<cutoff_data> cutoff;
+				ComponentData<transform_id> transform;
 			} _data;
 
 			std::shared_ptr<transform_manager> _transforms;
@@ -33,7 +33,6 @@ namespace efiilj
 			light_manager();
 			~light_manager();
 
-			void extend_data(light_id) override;
 			void on_editor_gui() override;
 			void on_editor_gui(light_id idx) override;
 

@@ -21,7 +21,6 @@
 #include "mesh_mgr.h"
 #include "trfm_mgr.h"
 #include "lght_mgr.h"
-#include "grph_mgr.h"
 #include "shdr_mgr.h"
 #include "mtrl_mgr.h"
 #include "def_rend.h"
@@ -64,7 +63,6 @@ namespace efiilj
 		std::shared_ptr<meta_manager> metadata;
 		std::shared_ptr<transform_manager> transforms;
 		std::shared_ptr<camera_manager> cameras;
-		std::shared_ptr<graphics_manager> graphics;
 		std::shared_ptr<forward_renderer> rfwd;
 		std::shared_ptr<debug_renderer> rdbg;
 		std::shared_ptr<deferred_renderer> rdef;

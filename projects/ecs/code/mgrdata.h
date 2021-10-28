@@ -10,7 +10,7 @@ namespace efiilj
 		virtual void pack(std::size_t to, std::size_t from) = 0;
 	};
 
-	template<class U>
+	template<typename U>
 	class ComponentDataBase : public Extensible
 	{
 		protected:
@@ -58,8 +58,12 @@ namespace efiilj
 	{ 
 		public:
 
+			ComponentData()
+				: ComponentDataBase<U>()
+			{ }
+
 			ComponentData(U default_value)
-				: ComponentDataBase(default_value)
+				: ComponentDataBase<U>(default_value)
 			{ }
 	};
 
@@ -67,6 +71,14 @@ namespace efiilj
 	class ComponentData<bool> : public ComponentDataBase<bool>
 	{
 		public:
+
+			ComponentData()
+				: ComponentDataBase<bool>()
+			{ }
+
+			ComponentData(bool default_value)
+				: ComponentDataBase<bool>(default_value)
+			{ }
 
 			std::vector<bool>::reference operator [] (std::size_t i)
 			{ return _data[i]; }

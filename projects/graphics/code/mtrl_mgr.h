@@ -17,7 +17,7 @@ namespace efiilj
 
 			struct MaterialInstanceData
 			{
-				std::vector<material_id> id;
+				ComponentData<material_id> id;
 			} _data;
 
 			std::shared_ptr<material_server> _materials;
@@ -28,7 +28,6 @@ namespace efiilj
 			material_manager();
 			~material_manager();
 
-			void extend_defaults(material_instance_id new_id) override;
 			void on_editor_gui() override;
 			void on_editor_gui(material_instance_id idx) override;
 

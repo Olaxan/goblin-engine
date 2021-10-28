@@ -15,11 +15,6 @@ namespace efiilj
 		printf("Material instance manager exit\n");
 	}
 
-	void material_manager::extend_defaults(material_instance_id new_id)
-	{
-		_data.id.emplace_back(-1);
-	}
-
 	void material_manager::on_editor_gui() {}
 
 	void material_manager::on_editor_gui(material_instance_id idx)
@@ -41,6 +36,8 @@ namespace efiilj
 	{
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_textures = host->get_manager_from_fcc<texture_server>('TXSR');
+
+		add_data(&_data.id);
 	}
 
 	material_id material_manager::get_material(material_instance_id idx)

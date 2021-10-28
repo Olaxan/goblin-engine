@@ -18,34 +18,6 @@ namespace efiilj
 	simulator::~simulator()
 	{}
 
-	void simulator::extend_data(physics_id idx)
-	{
-		_data.current.emplace_back();
-		_data.previous.emplace_back();
-		_data.com.emplace_back();
-		_data.impulses.emplace_back();
-		_data.inertia.emplace_back(1.0f);
-		_data.inverse_inertia.emplace_back(0.1f);
-		_data.mass.emplace_back(1.0f);
-		_data.inverse_mass.emplace_back(0.1f);
-		_data.restitution.emplace_back(0.5f);
-		_data.friction.emplace_back(0.5f);
-	}
-
-	void simulator::pack_data(physics_id to, physics_id from)
-	{
-		_data.current[to] = _data.current[from];
-		_data.previous[to] = _data.previous[from];
-		_data.com[to] = _data.com[from];
-		_data.impulses[to] = _data.impulses[from];
-		_data.inertia[to] = _data.inertia[from];
-		_data.inverse_inertia[to] = _data.inverse_inertia[from];
-		_data.mass[to] = _data.mass[from];
-		_data.inverse_mass[to] = _data.inverse_mass[from];
-		_data.restitution[to] = _data.restitution[from];
-		_data.friction[to] = _data.friction[from];
-	}
-
 	void simulator::on_editor_gui()
 	{}
 
@@ -117,6 +89,26 @@ namespace efiilj
 		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
+
+		add_data(
+			&_data.current,
+			&_data.previous,
+			&_data.com,
+			&_data.impulses,
+			&_data.inertia,
+			&_data.inverse_inertia,
+			&_data.mass,
+			&_data.inverse_mass,
+			&_data.restitution,
+			&_data.friction
+				);
+
+		_data.mass.set_default(1.0f);
+		_data.inverse_mass.set_default(0.1f);
+		_data.inertia.set_default(1.0f);
+		_data.inverse_inertia.set_default(0.1f);
+		_data.friction.set_default(0.5f);
+		_data.restitution.set_default(0.5f);
 	}
 
 	void simulator::on_activate(physics_id idx) 
@@ -138,7 +130,7 @@ namespace efiilj
 
 		accumulator += dt_seconds;
 
-		for (const auto& idx : _instances)
+		for (const auto& idx : get_instances())
 			read_transform(idx, _data.current[idx]);
 	}
 
@@ -201,13 +193,13 @@ namespace efiilj
 
 	void simulator::recalculate_com(physics_id idx)
 	{
-		entity_id eid = _entities[idx];
+		entity_id eid = get_entity(idx);
 		set_com(idx, calculate_com(eid));
 	}
 
 	void simulator::set_com(physics_id idx, const vector3& com)
 	{
-		entity_id eid = _entities[idx];
+		entity_id eid = get_entity(idx);
 
 		_data.com[idx] = com;
 
@@ -235,7 +227,7 @@ namespace efiilj
 
 	void simulator::read_transform(physics_id idx, PhysicsState& state)
 	{
-		entity_id eid = _entities[idx];
+		entity_id eid = get_entity(idx);
 		transform_id trf_id = _transforms->get_component(eid);
 
 		if (_transforms->is_valid(trf_id))
@@ -247,7 +239,7 @@ namespace efiilj
 
 	void simulator::write_transform(physics_id idx, PhysicsState& state)
 	{
-		entity_id eid = _entities[idx];
+		entity_id eid = get_entity(idx);
 		transform_id trf_id = _transforms->get_component(eid);
 
 		if (_transforms->is_valid(trf_id))
@@ -266,7 +258,7 @@ namespace efiilj
 		while (accumulator >= dt)
 		{
 			// March entire simulation forward one timestep
-			for (const auto& idx : _instances)
+			for (const auto& idx : get_instances())
 			{
 				apply_impulses(idx, _data.current[idx]);
 				_data.previous[idx] = _data.current[idx];

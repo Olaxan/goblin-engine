@@ -23,12 +23,12 @@ namespace efiilj
 
 			struct DebugData
 			{
-				std::vector<mesh_id> bbox;
-				std::vector<bool> draw_bounds;
-				std::vector<bool> draw_com;
-				std::vector<bool> draw_penetration;
-				std::vector<bool> draw_impulses;
-				std::vector<bool> draw_minowski;
+				ComponentData<mesh_id> bbox;
+				ComponentData<bool> draw_bounds;
+				ComponentData<bool> draw_com;
+				ComponentData<bool> draw_penetration;
+				ComponentData<bool> draw_impulses;
+				ComponentData<bool> draw_minowski;
 			} _data;
 
 			struct DebugSphere 
@@ -68,9 +68,6 @@ namespace efiilj
 
 			debug_renderer();
 			~debug_renderer();
-
-			void extend_data(debug_id) override;
-			void pack_data(debug_id, debug_id) override;
 
 			void on_editor_gui() override;
 			void on_editor_gui(debug_id idx) override;

@@ -15,12 +15,6 @@ namespace efiilj
 		printf("Mesh instance manager exit\n");
 	}
 
-	void mesh_manager::extend_defaults(mesh_instance_id)
-	{
-		_data.mesh.emplace_back(-1);
-		_data.material.emplace_back(-1);
-	}
-
 	void mesh_manager::on_editor_gui()
 	{
 
@@ -63,5 +57,9 @@ namespace efiilj
 	{
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');	
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
+
+		add_data(
+				&_data.material,
+				&_data.mesh);
 	}
 }

@@ -15,15 +15,6 @@ namespace efiilj
 		printf("Light manager exit\n");
 	}
 
-	void light_manager::extend_data(light_id new_id)
-	{
-		_data.type.emplace_back(light_type::directional);
-		_data.base.emplace_back(light_base{vector3(1.0f, 1.0f, 1.0f), 0.1f, 0.1f});
-		_data.attenuation.emplace_back(attenuation_data{0, 0, 0.1f});
-		_data.cutoff.emplace_back(cutoff_data{0.1f, 0.2f});
-		_data.transform.emplace_back(-1);
-	}
-
 	void light_manager::on_activate(light_id idx)
 	{
 		entity_id eid = get_entity(idx);
@@ -93,6 +84,13 @@ namespace efiilj
 	void light_manager::on_register(std::shared_ptr<manager_host> host)
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+
+		add_data(
+				&_data.attenuation,
+				&_data.base,
+				&_data.cutoff,
+				&_data.transform,
+				&_data.type);
 	}
 
 	void light_manager::update_falloff(light_id idx)

@@ -21,7 +21,7 @@ namespace efiilj
 		unsigned int s1 = _shaders->get_program_id(_fallback_primary);
 
 		ImGui::BulletText("Default primary: %d / %u", _fallback_primary, s1);
-		ImGui::BulletText("Nodes: %lu", _instances.size());
+		ImGui::BulletText("Nodes: %lu", get_instances().size());
 		ImGui::BulletText("Width: %u, Height: %u", settings_.width, settings_.height);
 
 		bool err = _data.error[idx];
@@ -53,8 +53,8 @@ namespace efiilj
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 
 		add_data(
-				_data.error,
-				_data.visible
+				&_data.error,
+				&_data.visible
 				);
 	}
 
@@ -123,7 +123,7 @@ namespace efiilj
 
 	void forward_renderer::render_all()
 	{
-		for (auto& idx : _instances)
+		for (auto idx : get_instances())
 		{
 			render(idx);
 		}

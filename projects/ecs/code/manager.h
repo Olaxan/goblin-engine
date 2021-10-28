@@ -221,7 +221,7 @@ namespace efiilj
 			inline bool get_alive(T idx) const
 			{ return _com.alive[idx]; }
 
-			const std::vector<T>& get_instances()
+			const std::vector<T>& get_instances() const
 			{ return _com.instances; }
 
 			typename std::pair< 

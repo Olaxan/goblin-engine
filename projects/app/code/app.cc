@@ -90,7 +90,6 @@ namespace efiilj
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>();
 		lights = std::make_shared<light_manager>();
-		graphics = std::make_shared<graphics_manager>();
 		material_instances = std::make_shared<material_manager>();
 		mesh_instances = std::make_shared<mesh_manager>();
 
@@ -112,7 +111,6 @@ namespace efiilj
 
 		managers->register_manager(cameras, 'CAMS');
 		managers->register_manager(lights, 'LGHT');
-		managers->register_manager(graphics, 'GRFX');
 		managers->register_manager(mesh_instances, 'MEMR');
 		managers->register_manager(material_instances, 'MAMR');
 
@@ -210,7 +208,7 @@ namespace efiilj
 		transform_id test_trf = transforms->get_component(node);
 		transforms->set_scale(test_trf, 10.0f);
 		transforms->set_position(test_trf, vector3(-2.0f, 0, 0));
-		graphics_id test_gfx = rdef->register_entity(node);
+		render_id test_gfx = rdef->register_entity(node);
 		collider_id test_col = colliders->register_entity(node);
 		physics_id test_rb = sim->register_entity(node);
 		gltf->unload(test_mdl);

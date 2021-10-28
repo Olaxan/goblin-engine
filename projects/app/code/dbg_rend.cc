@@ -66,26 +66,6 @@ namespace efiilj
 		}
 	}
 
-	void debug_renderer::extend_data(debug_id idx)
-	{
-		_data.bbox.emplace_back(-1);
-		_data.draw_bounds.emplace_back(true);
-		_data.draw_com.emplace_back(true);
-		_data.draw_penetration.emplace_back(true);
-		_data.draw_impulses.emplace_back(true);
-		_data.draw_minowski.emplace_back(false);
-	}
-
-	void debug_renderer::pack_data(debug_id to, debug_id from)
-	{
-		_data.bbox[to] = _data.bbox[from];
-		_data.draw_bounds[to] = _data.draw_bounds[from];
-		_data.draw_com[to] = _data.draw_com[from];
-		_data.draw_impulses[to] = _data.draw_impulses[from];
-		_data.draw_minowski[to] = _data.draw_minowski[from];
-		_data.draw_penetration[to] = _data.draw_penetration[from];
-	}
-
 	void debug_renderer::on_editor_gui()
 	{
 
@@ -133,6 +113,14 @@ namespace efiilj
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
 		_sim = host->get_manager_from_fcc<simulator>('PHYS');
+
+		add_data(
+				&_data.bbox,
+				&_data.draw_bounds,
+				&_data.draw_com,
+				&_data.draw_impulses,
+				&_data.draw_minowski,
+				&_data.draw_penetration);
 	}
 
 	void debug_renderer::on_setup()
@@ -261,7 +249,7 @@ namespace efiilj
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (const auto& idx : _instances)
+		for (const auto& idx : get_instances())
 		{
 			if (_data.draw_bounds[idx])
 			{

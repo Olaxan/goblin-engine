@@ -24,27 +24,17 @@ namespace efiilj
 		printf("Collider manager exit\n");
 	}
 
-	void collider_manager::extend_data(collider_id idx)
-	{
-		_data.mesh_bounds.emplace_back();
-		_data.broad_collisions.emplace_back();
-		_data.narrow_collisions.emplace_back();
-		_data.collisions.emplace_back();
-	}
-
-	void collider_manager::pack_data(collider_id to, collider_id from)
-	{
-		_data.mesh_bounds[to] = _data.mesh_bounds[from];
-		_data.broad_collisions[to] = _data.broad_collisions[from];
-		_data.narrow_collisions[to] = _data.narrow_collisions[from];
-		_data.collisions[to] = _data.collisions[from];
-	}
-
 	void collider_manager::on_register(std::shared_ptr<manager_host> host)
 	{
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
+
+		add_data(
+				&_data.broad_collisions,
+				&_data.narrow_collisions,
+				&_data.collisions,
+				&_data.mesh_bounds);
 	}
 
 	void collider_manager::on_activate(collider_id idx)
@@ -116,7 +106,7 @@ namespace efiilj
 	bool collider_manager::update_bounds(collider_id idx)
 	{
 
-		entity_id eid = _entities[idx];
+		entity_id eid = get_entity(idx);
 
 		transform_id trf_id = _transforms->get_component(eid);
 
@@ -215,7 +205,7 @@ namespace efiilj
 
 		clear_sweep();
 
-		for (const auto& idx : _instances)
+		for (const auto& idx : get_instances())
 		{
 			const auto& bounds = get_bounds_world(idx);
 
@@ -235,7 +225,7 @@ namespace efiilj
 		check_axis_sweep(_sweep_y, _sweep_hits_y);
 		check_axis_sweep(_sweep_z, _sweep_hits_z);
 
-		for (const auto& idx : _instances)
+		for (const auto& idx : get_instances())
 		{
 			std::set<collider_id> s1;
 			std::set<collider_id> s2;
@@ -580,13 +570,13 @@ check_face:
 	void collider_manager::update_narrow()
 	{
 
-		for (auto idx : _instances)
+		for (auto idx : get_instances())
 		{
 			_data.narrow_collisions[idx].clear();
 			_data.collisions[idx].clear();
 		}
 
-		for (auto idx : _instances)
+		for (auto idx : get_instances())
 		{
 			for (auto col : _data.broad_collisions[idx])
 			{
@@ -637,7 +627,7 @@ check_face:
 		bool ret = false;
 		trace_hit temp_result;
 
-		for (const auto& idx : _instances)
+		for (auto idx : get_instances())
 		{
 			if (test_hit(idx, ray, temp_result))
 			{
@@ -662,7 +652,7 @@ check_face:
 		vector3 near_hit;
 		vector3 near_norm;
 
-		entity_id eid = _entities[idx];
+		entity_id eid = get_entity(idx);
 
 		if (!get_bounds_world(idx).ray_intersection(ray, near_hit))
 			return false;
@@ -711,8 +701,8 @@ check_face:
 
 	bool collider_manager::ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& test, vector3& hit, vector3& norm) const
 	{
-
-		transform_id trf_id = _transforms->get_component(_entities[idx]);
+		entity_id eid = get_entity(idx);
+		transform_id trf_id = _transforms->get_component(eid);
 		
 		if (!_transforms->is_valid(trf_id))
 		{

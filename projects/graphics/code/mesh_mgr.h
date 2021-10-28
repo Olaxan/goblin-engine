@@ -16,8 +16,8 @@ namespace efiilj
 
 			struct MeshInstanceData
 			{
-				std::vector<mesh_id> mesh;
-				std::vector<material_id> material;
+				ComponentData<mesh_id> mesh;
+				ComponentData<material_id> material;
 			} _data;
 
 			std::shared_ptr<mesh_server> _meshes;
@@ -28,7 +28,6 @@ namespace efiilj
 			mesh_manager();
 			~mesh_manager();
 
-			void extend_defaults(mesh_instance_id) override;
 			void on_editor_gui() override;
 			void on_editor_gui(mesh_instance_id idx) override;
 
