@@ -7,7 +7,7 @@ namespace efiilj
 	struct Extensible
 	{ 
 		virtual void extend() = 0;
-		virtual void pack(std::size_t to, std::size_t from) = 0;
+		virtual void pack(int to, int from) = 0;
 	};
 
 	template<typename U>
@@ -32,7 +32,7 @@ namespace efiilj
 			void set_default(U value)
 			{ _default_value = value; _has_default = true; }
 
-			void pack(std::size_t to, std::size_t from) override
+			void pack(int to, int from) override
 			{ _data[to] = _data[from]; }
 
 			void extend() override
@@ -43,13 +43,13 @@ namespace efiilj
 					_data.emplace_back();
 			}
 
-			void reset_default(std::size_t idx)
+			void reset_default(int idx)
 			{ _data[idx] = _default_value; }
 
-			const U& operator [] (std::size_t i) const
+			const U& operator [] (int i) const
 			{ return _data[i]; }
 
-			U& operator [] (std::size_t i)
+			U& operator [] (int i)
 			{ return _data[i]; }
 	};
 

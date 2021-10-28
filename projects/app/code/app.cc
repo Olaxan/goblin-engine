@@ -128,13 +128,13 @@ namespace efiilj
 
 		entity_id cam_ent = entities->create();
 		transform_id cam_trf_id = transforms->register_entity(cam_ent);
-		camera_id cam_cam_id = cameras->register_entity(cam_ent);
+		camera_id cam_id = cameras->register_entity(cam_ent);
 		meta_id cam_meta_id = metadata->register_entity(cam_ent);
 
-		cameras->set_transform(cam_cam_id, cam_trf_id);
-		cameras->set_size(cam_cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
-		cameras->set_fov(cam_cam_id, 1.2f);
-		cameras->set_camera(cam_cam_id);
+		cameras->set_transform(cam_id, cam_trf_id);
+		cameras->set_size(cam_id, WINDOW_WIDTH, WINDOW_HEIGHT);
+		cameras->set_fov(cam_id, 1.2f);
+		cameras->set_camera(cam_id);
 
 		metadata->set_name(cam_meta_id, "Main camera");
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");

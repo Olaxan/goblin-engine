@@ -88,7 +88,7 @@ namespace efiilj
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 
-		add_data(
+		add_data({
 				&_data.width,
 				&_data.height,
 				&_data.fov,
@@ -98,7 +98,7 @@ namespace efiilj
 				&_data.p_inverse,
 				&_data.view,
 				&_data.transform
-			);
+				});
 	}
 
 	void camera_manager::on_setup()
@@ -108,8 +108,6 @@ namespace efiilj
 
 	void camera_manager::on_activate(camera_id idx)
 	{
-		update_perspective(idx);
-		push_perspective();
 	}
 
 	void camera_manager::on_begin_frame()
@@ -180,12 +178,16 @@ namespace efiilj
 		return _current;
 	}
 	
-	bool camera_manager::set_camera(camera_id active)
+	bool camera_manager::set_camera(camera_id idx)
 	{
-		if (is_valid(active))
+		if (is_valid(idx))
 		{
-			_current = active;
+			_current = idx;
+
+			update_perspective(idx);
+			push_perspective();
 			push_view();
+
 			return true;
 		}
 
@@ -261,25 +263,14 @@ namespace efiilj
 	}
 
 	const matrix4& camera_manager::get_perspective(camera_id idx) const
-	{
-		return _data.view[idx];
-	}
+	{ return _data.view[idx]; }
 
 	const matrix4& camera_manager::get_view(camera_id idx) const
-	{
-		return _data.perspective[idx];
-	}
+	{ return _data.perspective[idx]; }
 	
 	transform_id camera_manager::get_transform(camera_id idx) const
-	{
-		return _data.transform[idx];
-	}
+	{ return _data.transform[idx]; }
 
 	void camera_manager::set_transform(camera_id idx, transform_id trf)
-	{
-		_data.transform[idx] = trf;
-		update_view(idx);
-		push_view();
-	}
-	
+	{ _data.transform[idx] = trf; }
 }

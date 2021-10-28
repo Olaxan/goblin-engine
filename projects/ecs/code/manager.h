@@ -86,12 +86,6 @@ namespace efiilj
 				_ds.emplace_back(data);
 			}
 
-			void add_data(Extensible* data, Extensible* args...)
-			{
-				add_data(data);
-				add_data(args);
-			}
-
 			void add_data( std::initializer_list<Extensible*> list )
 			{
 				for( auto data : list )

@@ -32,7 +32,7 @@ namespace efiilj
 			ComponentData<matrix4> p_inverse;
 			ComponentData<matrix4> view;
 
-			std::vector<transform_id> transform;
+			ComponentData<transform_id> transform;
 		} _data;
 		
 		std::shared_ptr<transform_manager> _transforms;
