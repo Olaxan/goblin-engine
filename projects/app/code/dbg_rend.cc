@@ -114,13 +114,13 @@ namespace efiilj
 		_colliders = host->get_manager_from_fcc<collider_manager>('RAYS');
 		_sim = host->get_manager_from_fcc<simulator>('PHYS');
 
-		add_data(
+		add_data({
 				&_data.bbox,
 				&_data.draw_bounds,
 				&_data.draw_com,
 				&_data.draw_impulses,
 				&_data.draw_minowski,
-				&_data.draw_penetration);
+				&_data.draw_penetration});
 	}
 
 	void debug_renderer::on_setup()

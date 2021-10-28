@@ -90,7 +90,7 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 
-		add_data(
+		add_data({
 			&_data.current,
 			&_data.previous,
 			&_data.com,
@@ -100,8 +100,7 @@ namespace efiilj
 			&_data.mass,
 			&_data.inverse_mass,
 			&_data.restitution,
-			&_data.friction
-				);
+			&_data.friction});
 
 		_data.mass.set_default(1.0f);
 		_data.inverse_mass.set_default(0.1f);

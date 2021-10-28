@@ -30,11 +30,11 @@ namespace efiilj
 		_mesh_instances = host->get_manager_from_fcc<mesh_manager>('MEMR');
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 
-		add_data(
+		add_data({
 				&_data.broad_collisions,
 				&_data.narrow_collisions,
 				&_data.collisions,
-				&_data.mesh_bounds);
+				&_data.mesh_bounds});
 	}
 
 	void collider_manager::on_activate(collider_id idx)

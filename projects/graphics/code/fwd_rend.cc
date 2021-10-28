@@ -52,10 +52,10 @@ namespace efiilj
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 		_shaders = host->get_manager_from_fcc<shader_server>('SHDR');
 
-		add_data(
+		add_data({
 				&_data.error,
 				&_data.visible
-				);
+				});
 	}
 
 	void forward_renderer::on_setup()

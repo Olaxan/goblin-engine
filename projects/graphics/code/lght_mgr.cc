@@ -85,12 +85,12 @@ namespace efiilj
 	{
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 
-		add_data(
+		add_data({
 				&_data.attenuation,
 				&_data.base,
 				&_data.cutoff,
 				&_data.transform,
-				&_data.type);
+				&_data.type});
 	}
 
 	void light_manager::update_falloff(light_id idx)

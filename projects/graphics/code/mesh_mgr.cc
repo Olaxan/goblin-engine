@@ -58,8 +58,8 @@ namespace efiilj
 		_meshes = host->get_manager_from_fcc<mesh_server>('MESR');	
 		_materials = host->get_manager_from_fcc<material_server>('MASR');
 
-		add_data(
+		add_data({
 				&_data.material,
-				&_data.mesh);
+				&_data.mesh});
 	}
 }

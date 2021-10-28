@@ -29,8 +29,8 @@ namespace efiilj
 
 	void meta_manager::on_register(std::shared_ptr<manager_host> host)
 	{
-		add_data(
+		add_data({
 				&_data.description,
-				&_data.name);
+				&_data.name});
 	}
 }

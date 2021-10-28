@@ -65,7 +65,7 @@ namespace efiilj
 
 	void transform_manager::on_register(std::shared_ptr<manager_host> host) //NOLINT
 	{
-		add_data(
+		add_data({
 				&_data.model,
 				&_data.inverse,
 				&_data.position,
@@ -75,7 +75,7 @@ namespace efiilj
 				&_data.parent,
 				&_data.children,
 				&_data.model_updated,
-				&_data.inverse_updated);
+				&_data.inverse_updated});
 
 		_data.scale.set_default(vector4(1, 1, 1, 1));
 		_data.parent.set_default(-1);
