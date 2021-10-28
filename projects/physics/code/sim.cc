@@ -109,6 +109,7 @@ namespace efiilj
 	{
 		set_mass(idx, 1.0f);
 		set_inertia_as_cube(idx, 1.0f);
+		recalculate_com(idx);
 	}
 
 	void simulator::on_begin_frame()

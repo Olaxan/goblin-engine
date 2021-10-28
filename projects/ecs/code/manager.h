@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity.h"
+#include "mgr_host.h"
 #include "comp.h"
 
 #include <vector>
@@ -18,6 +19,8 @@ namespace efiilj
 	{
 		protected:
 
+			std::shared_ptr<manager_host> _dispatcher;
+
 			std::multimap<entity_id, T> _instance_mapping;
 
 			std::vector<T> _instances;
@@ -34,6 +37,11 @@ namespace efiilj
 			virtual void on_editor_gui(T) {};
 
 		public:
+
+			void set_dispatcher(std::shared_ptr<manager_host> dispatcher)
+			{
+				_dispatcher = std::move(dispatcher);
+			}
 
 			T register_entity(entity_id eid)
 			{

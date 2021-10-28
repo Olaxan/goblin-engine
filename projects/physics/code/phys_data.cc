@@ -27,12 +27,9 @@ namespace efiilj
 	void collider_manager::extend_defaults(collider_id idx)
 	{
 		_data.mesh_bounds.emplace_back();
-		_data.bounds_updated.emplace_back(false);
 		_data.broad_collisions.emplace_back();
 		_data.narrow_collisions.emplace_back();
 		_data.collisions.emplace_back();
-
-		update_bounds(idx);
 	}
 
 	void collider_manager::on_register(std::shared_ptr<manager_host> host)
@@ -42,12 +39,14 @@ namespace efiilj
 		_transforms = host->get_manager_from_fcc<transform_manager>('TRFM');
 	}
 
+	void collider_manager::on_activate(collider_id idx)
+	{
+		update_bounds(idx);
+	}
+
 	void collider_manager::on_begin_frame()
 	{
-		for (auto& idx : _instances)
-		{
-			update_bounds(idx);
-		}
+		//test_scene();
 	}
 
 	void collider_manager::on_editor_gui()
@@ -61,20 +60,19 @@ namespace efiilj
 		if (ImGui::Button("Recalculate AABB"))
 			update_bounds(idx);
 
-		// I don't care about efficienty,
-		// just want to make sure no weirdness tricks me
-		std::stringstream ss1;
-		std::stringstream ss2;
+		std::stringstream ss;
 
 		for (auto col : _data.broad_collisions[idx])
-			ss1 << col << ", ";
+			ss << col << ", ";
 
-		ImGui::Text("Broad: %s", ss1.str().c_str());
+		ImGui::Text("Broad: %s", ss.str().c_str());
+
+		ss.clear();
 
 		for (auto col : _data.narrow_collisions[idx])
-			ss2 << col << ", ";
+			ss << col << ", ";
 
-		ImGui::Text("Narrow: %s", ss2.str().c_str());
+		ImGui::Text("Narrow: %s", ss.str().c_str());
 
 		entity_id eid = get_entity(idx);
 		transform_id trf_id = _transforms->get_component(eid);
@@ -135,15 +133,13 @@ namespace efiilj
 		{
 			mesh_id mid = _mesh_instances->get_mesh(it->second);
 
-			if (!_meshes->is_valid(mid))
-				continue;
+			assert(("BOUNDS: Invalid mesh id!", _meshes->is_valid(mid)));
 
 			min = vector3::min(min, _meshes->get_min(mid));
 			max = vector3::max(max, _meshes->get_max(mid));
 		}
 
 		_data.mesh_bounds[idx] = bounds(min, max);
-		_data.bounds_updated[idx] = true;
 
 		return true;
 
@@ -165,6 +161,17 @@ namespace efiilj
 		return b.get_transformed_bounds(model);
 	}
 	
+	void collider_manager::clear_sweep()
+	{
+		_sweep_x.clear();
+		_sweep_y.clear();
+		_sweep_z.clear();
+
+		_sweep_hits_x.clear();
+		_sweep_hits_y.clear();
+		_sweep_hits_z.clear();
+	}
+
 	void collider_manager::check_axis_sweep(const std::set<point, point_comp>& points, std::map<collider_id, std::set<collider_id>>& hits) const
 	{
 
@@ -198,46 +205,44 @@ namespace efiilj
 	void collider_manager::update_broad()
 	{
 
-		std::set<point, point_comp> points_x;
-		std::set<point, point_comp> points_y;
-		std::set<point, point_comp> points_z;
+		clear_sweep();
 
 		for (const auto& idx : _instances)
 		{
 			const auto& bounds = get_bounds_world(idx);
 
-			points_x.emplace(idx, bounds.min.x);
-			points_x.emplace(idx, bounds.max.x);
+			_sweep_x.emplace(idx, bounds.min.x);
+			_sweep_x.emplace(idx, bounds.max.x);
 
-			points_y.emplace(idx, bounds.min.y);
-			points_y.emplace(idx, bounds.max.y);
+			_sweep_y.emplace(idx, bounds.min.y);
+			_sweep_y.emplace(idx, bounds.max.y);
 
-			points_z.emplace(idx, bounds.min.z);
-			points_z.emplace(idx, bounds.max.z);
+			_sweep_z.emplace(idx, bounds.min.z);
+			_sweep_z.emplace(idx, bounds.max.z);
 
 			_data.broad_collisions[idx].clear();
 		}
 
-		std::map<collider_id, std::set<collider_id>> hits_x;
-		std::map<collider_id, std::set<collider_id>> hits_y;
-		std::map<collider_id, std::set<collider_id>> hits_z;
-
-		check_axis_sweep(points_x, hits_x);
-		check_axis_sweep(points_y, hits_y);
-		check_axis_sweep(points_z, hits_z);
+		check_axis_sweep(_sweep_x, _sweep_hits_x);
+		check_axis_sweep(_sweep_y, _sweep_hits_y);
+		check_axis_sweep(_sweep_z, _sweep_hits_z);
 
 		for (const auto& idx : _instances)
 		{
-			std::set<collider_id> ixy;
-			std::set<collider_id> ixyz;
+			std::set<collider_id> s1;
+			std::set<collider_id> s2;
 
-			std::set_intersection(hits_x[idx].begin(), hits_x[idx].end(), hits_y[idx].begin(), hits_y[idx].end(),
-					std::inserter(ixy, ixy.begin()));
+			std::set_intersection(
+					_sweep_hits_x[idx].begin(), _sweep_hits_x[idx].end(), 
+					_sweep_hits_y[idx].begin(), _sweep_hits_y[idx].end(),
+					std::inserter(s1, s1.begin()));
 
-			std::set_intersection(ixy.begin(), ixy.end(), hits_z[idx].begin(), hits_z[idx].end(),
-					std::inserter(ixyz, ixyz.begin()));
+			std::set_intersection(
+					s1.begin(), s1.end(), 
+					_sweep_hits_z[idx].begin(), _sweep_hits_z[idx].end(),
+					std::inserter(s2, s2.begin()));
 
-			_data.broad_collisions[idx] = ixyz;
+			_data.broad_collisions[idx] = s2;
 		}
 	}
 
@@ -575,8 +580,12 @@ check_face:
 
 		for (auto idx : _instances)
 		{
+			//for (auto col : _instances)
 			for (auto col : _data.broad_collisions[idx])
 			{
+
+				if (col == idx)
+					continue;
 
 				if (collides_with(idx, col))
 					continue;
@@ -596,6 +605,11 @@ check_face:
 
 	void collider_manager::test_scene()
 	{
+		for (auto& idx : _instances)
+		{
+			update_bounds(idx);
+		}
+
 		update_broad();
 		update_narrow();
 	}

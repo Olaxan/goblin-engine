@@ -163,7 +163,6 @@ namespace efiilj
 		colliders->register_entity(e_cube);
 		physics_id rb_cube = sim->register_entity(e_cube);
 
-		sim->recalculate_com(rb_cube);
 		sim->set_static(rb_cube, true);
 
 		// Testcube
@@ -192,8 +191,6 @@ namespace efiilj
 			colliders->register_entity(eid);
 			physics_id rb_testcube = sim->register_entity(eid);
 
-			sim->recalculate_com(rb_testcube);
-
 			meta_id mid = metadata->register_entity(eid);
 			metadata->set_name(mid, "Cube " + std::to_string(i));
 		}
@@ -216,7 +213,6 @@ namespace efiilj
 		graphics_id test_gfx = rdef->register_entity(node);
 		collider_id test_col = colliders->register_entity(node);
 		physics_id test_rb = sim->register_entity(node);
-		sim->recalculate_com(test_rb);
 		gltf->unload(test_mdl);
 #endif
 
@@ -242,8 +238,6 @@ namespace efiilj
 		rfwd->register_entity(e_sphere);
 		colliders->register_entity(e_sphere);
 		physics_id rb_sphere = sim->register_entity(e_sphere);
-
-		sim->recalculate_com(rb_sphere);
 
 #endif
 

@@ -19,6 +19,14 @@ namespace efiilj
 		struct { char a, b, c, d; };
 	};
 
+	enum message_type
+	{
+		com_register,
+		com_unregister,
+		com_error,
+		MESSAGE_TYPE_COUNT
+	};
+
 	class manager_host : public std::enable_shared_from_this<manager_host>
 	{
 		private:
@@ -55,5 +63,6 @@ namespace efiilj
 			void on_begin_frame();
 			void on_frame();
 			void on_end_frame();
+
 	};
 }

@@ -179,20 +179,17 @@ namespace efiilj
 			  { return lhs.second < rhs.second; }
 			};	
 
+			std::set<point, point_comp> _sweep_x;
+			std::set<point, point_comp> _sweep_y;
+			std::set<point, point_comp> _sweep_z;
 
-			void check_axis_sweep(const std::set<point, point_comp>& points, std::map<collider_id, std::set<collider_id>>& hits) const;
-
-			bool point_inside_bounds(collider_id idx, const vector3& point) const;
-			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
-
-			bool update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const;
-			bool gjk(collider_id col1, collider_id col2, Simplex& simplex) const;
-			bool epa(collider_id col1, collider_id col2, const Simplex& simplex, Collision& result) const;
+			std::map<collider_id, std::set<collider_id>> _sweep_hits_x;
+			std::map<collider_id, std::set<collider_id>> _sweep_hits_y;
+			std::map<collider_id, std::set<collider_id>> _sweep_hits_z;
 
 			struct PhysicsData
 			{
 				std::vector<bounds> mesh_bounds;
-				std::vector<bool> bounds_updated;
 				std::vector<std::set<collider_id>> broad_collisions;
 				std::vector<std::set<collider_id>> narrow_collisions;
 				std::vector<std::vector<Collision>> collisions;
@@ -201,6 +198,16 @@ namespace efiilj
 			std::shared_ptr<mesh_server> _meshes;
 			std::shared_ptr<mesh_manager> _mesh_instances;
 			std::shared_ptr<transform_manager> _transforms;
+
+			void clear_sweep();
+			void check_axis_sweep(const std::set<point, point_comp>& points, std::map<collider_id, std::set<collider_id>>& hits) const;
+
+			bool update_simplex(SupportPoint simplex[4], int& dim, vector3& dir) const;
+			bool gjk(collider_id col1, collider_id col2, Simplex& simplex) const;
+			bool epa(collider_id col1, collider_id col2, const Simplex& simplex, Collision& result) const;
+
+			bool point_inside_bounds(collider_id idx, const vector3& point) const;
+			bool ray_intersect_triangle(collider_id idx, mesh_id mid, const ray& ray, vector3& hit, vector3& norm) const;
 
 		public:
 
@@ -215,6 +222,8 @@ namespace efiilj
 
 			void on_editor_gui() override;
 			void on_editor_gui(collider_id) override;
+
+			void on_activate(collider_id idx) override;
 			void on_begin_frame() override;
 
 			bool update_bounds(collider_id idx);
