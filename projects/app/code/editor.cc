@@ -17,7 +17,7 @@ namespace efiilj
 		printf("Editor exit\n");
 	}
 
-	void entity_editor::draw_node(entity_id id, int depth, int& node_clicked)
+	void entity_editor::draw_node(entity_id eid, int depth, int& node_clicked)
 	{
 
 		std::stringstream ss;
@@ -25,18 +25,18 @@ namespace efiilj
 		std::vector<transform_id> child_nodes;
 
 		ImGuiTreeNodeFlags node_flags = _base_flags;
-		const bool is_selected = (_selection_mask & (1 << id)) != 0;
+		const bool is_selected = (_selection_mask & (1 << eid)) != 0;
 
 		if (is_selected)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
-		meta_id met_id = _metadata->get_component(id);
-		transform_id trf_id = _transforms->get_component(id);
+		meta_id met_id = _metadata->get_component(eid);
+		transform_id trf_id = _transforms->get_component(eid);
 
 		if (_metadata->is_valid(met_id))
 			ss <<  _metadata->get_name(met_id);
 		else
-			ss << "Entity " << id;
+			ss << "Entity " << eid;
 
 		if (_transforms->is_valid(trf_id))
 		{
@@ -59,11 +59,11 @@ namespace efiilj
 			node_flags |= ImGuiTreeNodeFlags_Leaf;
 
 		bool node_open = ImGui::TreeNodeEx(
-				reinterpret_cast<void*>(id), node_flags, 
+				reinterpret_cast<void*>(eid), node_flags, 
 				"%s", ss.str().c_str());
 
 		if (ImGui::IsItemClicked())
-			node_clicked = id;
+			node_clicked = eid;
 
 		if (ImGui::BeginDragDropSource())
 		{
@@ -103,9 +103,9 @@ namespace efiilj
 
 			int node_clicked = -1;
 
-			for (const auto& id : ids)
+			for (auto eid : ids)
 			{
-				draw_node(id, 0, node_clicked);
+				draw_node(eid, 0, node_clicked);
 			}
 
 			if (node_clicked != -1)
@@ -127,29 +127,27 @@ namespace efiilj
 				mgr->draw_entity_gui(_selected_entity);
 			}
 
-			static bool is_add_comp_open = false;
-
 			if (_selected_entity != -1)
 			{
 
-				if (is_add_comp_open)
+				if (_is_add_comp_open)
 				{
 					ImGui::BeginChild("Add component", ImVec2(0, 128), true);
 					if (ImGui::SmallButton("Close"))
-						is_add_comp_open = false;
+						_is_add_comp_open = false;
 
 					for (const auto& mgr : _managers)
 					{
-						if (ImGui::Selectable(mgr->get_name().c_str()))
+						if (ImGui::Selectable(mgr->get_component_name().c_str()))
 						{
 							mgr->register_from_editor(_selected_entity);
-							is_add_comp_open = false;
+							_is_add_comp_open = false;
 						}
 					}
 					ImGui::EndChild();
 				}
 				else if (ImGui::Button("Add component"))
-					is_add_comp_open = true;
+					_is_add_comp_open = true;
 			}
 
             ImGui::EndChild();

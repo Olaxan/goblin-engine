@@ -108,6 +108,7 @@ namespace efiilj
 
 	void camera_manager::on_activate(camera_id idx)
 	{
+
 	}
 
 	void camera_manager::on_begin_frame()

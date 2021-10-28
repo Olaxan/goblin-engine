@@ -23,12 +23,12 @@ namespace efiilj
 
 			struct DebugData
 			{
-				ComponentData<mesh_id> bbox;
-				ComponentData<bool> draw_bounds;
-				ComponentData<bool> draw_com;
-				ComponentData<bool> draw_penetration;
-				ComponentData<bool> draw_impulses;
-				ComponentData<bool> draw_minowski;
+				ComponentData<mesh_id> bbox { -1 };
+				ComponentData<bool> draw_bounds { true };
+				ComponentData<bool> draw_com { true };
+				ComponentData<bool> draw_penetration { true };
+				ComponentData<bool> draw_impulses { true };
+				ComponentData<bool> draw_minowski { false };
 			} _data;
 
 			struct DebugSphere 

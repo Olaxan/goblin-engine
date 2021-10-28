@@ -100,9 +100,8 @@ namespace efiilj
 		const matrix4& model = _transforms->get_model(trf_id);
 		const auto& meshes = _mesh_instances->get_components(eid);
 		
-		for (auto it = meshes.first; it != meshes.second; it++)
+		for (auto miid : meshes)
 		{
-			mesh_instance_id miid = it->second;
 			mesh_id mid = _mesh_instances->get_mesh(miid);
 			_meshes->bind(mid);
 

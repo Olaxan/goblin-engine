@@ -125,11 +125,11 @@ namespace efiilj
 				std::numeric_limits<float>::min()
 			 );
 
-		auto range = _mesh_instances->get_components(eid);
+		const auto& mesh_instances = _mesh_instances->get_components(eid);
 
-		for (auto it = range.first; it != range.second; it++)
+		for (auto miid : mesh_instances)
 		{
-			mesh_id mid = _mesh_instances->get_mesh(it->second);
+			mesh_id mid = _mesh_instances->get_mesh(miid);
 
 			assert(("BOUNDS: Invalid mesh id!", _meshes->is_valid(mid)));
 
@@ -266,11 +266,10 @@ namespace efiilj
 		vector3 furthest_point = vector3();
 		float max_dot = std::numeric_limits<float>::min();
 
-		auto range = _mesh_instances->get_components(eid);
+		const auto& mesh_instances = _mesh_instances->get_components(eid);
 
-		for (auto it = range.first; it != range.second; it++)
+		for (auto miid : mesh_instances)
 		{
-			mesh_instance_id miid = it->second;
 			mesh_id mid = _mesh_instances->get_mesh(miid);
 
 			const auto& points = _meshes->get_positions(mid);
@@ -664,10 +663,10 @@ check_face:
 
 		const matrix4& model = _transforms->get_model(trf_id);
 
-		auto range = _mesh_instances->get_components(eid);
-		for (auto it = range.first; it != range.second; it++)
+		const auto& mesh_instances = _mesh_instances->get_components(eid);
+		for (auto miid : mesh_instances)
 		{
-			mesh_id mid = _mesh_instances->get_mesh(it->second);
+			mesh_id mid = _mesh_instances->get_mesh(miid);
 
 			bounds b = _meshes->get_bounds(mid);
 			bounds bt = b.get_transformed_bounds(model);

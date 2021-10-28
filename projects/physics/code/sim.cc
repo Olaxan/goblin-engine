@@ -155,15 +155,15 @@ namespace efiilj
 		if (!_transforms->is_valid(trf_id))
 			return com;
 
-		auto range = _mesh_instances->get_components(eid);
-		size_t mesh_count = std::distance(range.first, range.second);
+		const auto& mesh_instances = _mesh_instances->get_components(eid);
+		size_t mesh_count = mesh_instances.size();
 
 		if (mesh_count > 0)
 		{
 			// Sum up all mesh centers of this entity
-			for (auto it = range.first; it != range.second; it++)
+			for (auto miid : mesh_instances)
 			{
-				mesh_id mid = _mesh_instances->get_mesh(it->second);
+				mesh_id mid = _mesh_instances->get_mesh(miid);
 				com += _meshes->get_center(mid);
 			}
 

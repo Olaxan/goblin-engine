@@ -27,8 +27,8 @@ namespace efiilj
 
 		struct RenderData
 		{
-			ComponentData<bool> visible;
-			ComponentData<bool> error;
+			ComponentData<bool> visible { true };
+			ComponentData<bool> error	{ false };
 		} _data;
 
 		std::shared_ptr<camera_manager> _cameras;

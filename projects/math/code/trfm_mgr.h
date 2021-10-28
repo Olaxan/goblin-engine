@@ -16,15 +16,14 @@ namespace efiilj
 
 			struct TransformData
 			{
+				ComponentData<vector4> position { vector4() };
+				ComponentData<vector4> offset { vector4() };
+				ComponentData<vector4> scale { vector4(1.0f, 1.0f, 1.0f, 1.0f) };
+				ComponentData<quaternion> rotation { quaternion() };
+				ComponentData<transform_id> parent { -1 };
+
 				ComponentData<matrix4> model;
 				ComponentData<matrix4> inverse;
-
-				ComponentData<vector4> position;
-				ComponentData<vector4> offset;
-				ComponentData<vector4> scale;
-				ComponentData<quaternion> rotation;
-
-				ComponentData<transform_id> parent;
 
 				ComponentData<bool> model_updated;
 				ComponentData<bool> inverse_updated;

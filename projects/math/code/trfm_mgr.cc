@@ -76,9 +76,6 @@ namespace efiilj
 				&_data.children,
 				&_data.model_updated,
 				&_data.inverse_updated});
-
-		_data.scale.set_default(vector4(1, 1, 1, 1));
-		_data.parent.set_default(-1);
 	}
 
 	void transform_manager::update_models()

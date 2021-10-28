@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
+#include <set>
 
 #include "imgui.h"
 
@@ -22,7 +24,8 @@ namespace efiilj
 
 			std::shared_ptr<manager_host> _dispatcher;
 
-			std::multimap<entity_id, T> _instance_mapping;
+			//std::multimap<entity_id, T> _instance_mapping;
+			std::unordered_map<entity_id, std::set<T>> _instance_mapping;
 
 			size_t count = 0;
 
@@ -30,9 +33,9 @@ namespace efiilj
 			{
 				std::vector<T> instances;
 				std::vector<entity_id> entities;
-				std::vector<bool> enabled;
-				std::vector<bool> alive;
-				std::vector<bool> error;
+				std::vector<bool> enabled { true };
+				std::vector<bool> alive { true };
+				std::vector<bool> error { false };
 			} _com;
 
 			std::vector<Extensible*> _ds;
@@ -50,7 +53,7 @@ namespace efiilj
 			void pack_com(T to, T from)
 			{
 				_com.instances[to] = _com.instances[from];	
-				_com.entitites[to] = _com.entitites[from];	
+				_com.entities[to] = _com.entities[from];	
 				_com.enabled[to] = _com.enabled[from];	
 				_com.alive[to] = _com.alive[from];	
 				_com.error[to] = _com.error[from];	
@@ -65,7 +68,7 @@ namespace efiilj
 				_com.error.emplace_back(false);
 			}
 
-			void pack_data(size_t to, size_t from)
+			void pack_data(int to, int from)
 			{
 				for (Extensible*& data : _ds)
 				{
@@ -76,9 +79,7 @@ namespace efiilj
 			void extend_data()
 			{
 				for (Extensible*& data : _ds)
-				{
 					data->extend();
-				}
 			}
 
 			void add_data(Extensible* data)
@@ -89,9 +90,7 @@ namespace efiilj
 			void add_data( std::initializer_list<Extensible*> list )
 			{
 				for( auto data : list )
-				{
 					add_data(data);
-				}
 			}
 
 		public:
@@ -115,7 +114,7 @@ namespace efiilj
 				}
 
 				// Add entity id to instance map
-				_instance_mapping.emplace(eid, new_id);
+				_instance_mapping[eid].emplace(new_id);
 
 				count++;
 
@@ -126,28 +125,43 @@ namespace efiilj
 
 			bool unregister_entity(entity_id eid)
 			{
-				auto range = get_components(eid);
+				auto components = get_components(eid);
 
-				for (auto it = range.first; it != range.second; it++)
-					remove_component(it->second);
+				for (auto idx : components)
+					remove_component(idx);
 			}
 
-			bool remove_component(T idx)
+			void remove_component(T idx)
 			{
-				_com.alive[idx] = false;
+				//_com.alive[idx] = false;
 				on_deactivate(idx);
+				destroy(idx);
+			}
+
+			void reset_component(T idx)
+			{
+				for (Extensible*& data : _ds)
+					data->reset_default(idx);
 			}
 
 			void destroy(T idx)
 			{
 				on_destroy(idx);
 
-				T last = _com.instances.back();	
-				pack_com(idx, last);
-				pack_data(idx, last);
+				T last = _com.instances[count - 1];
 
-				_instance_mapping[idx] = _instance_mapping[last];
-				_instance_mapping.erase(last);
+				entity_id eid = get_entity(idx);
+				entity_id last_eid = get_entity(last);
+
+				if (idx != last)
+				{
+					pack_com(idx, last);
+					pack_data(idx, last);
+					_instance_mapping[last_eid].erase(last);
+					_instance_mapping[last_eid].emplace(idx);
+				}
+
+				_instance_mapping[eid].erase(idx);
 
 				count--;
 			}
@@ -159,15 +173,13 @@ namespace efiilj
 
 			void draw_entity_gui(entity_id eid) override
 			{
-				auto range = get_components(eid);
+				const auto& components = get_components(eid);
 
-				for (auto it = range.first; it != range.second; it++)
+				for (auto idx : components)
 				{
-					T idx = it->second;
-
 					ImGui::PushID(idx);
 
-					if (ImGui::TreeNode(get_name().c_str()))
+					if (ImGui::TreeNode(get_component_name().c_str()))
 					{
 						bool enabled = _com.enabled[idx];
 						if (ImGui::Checkbox("Enabled", &enabled))
@@ -175,8 +187,18 @@ namespace efiilj
 
 						ImGui::SameLine();
 
+						if (ImGui::SmallButton("Reset"))
+							reset_component(idx);
+
+						ImGui::SameLine();
+
 						if (ImGui::SmallButton("Remove"))
+						{
 							remove_component(idx);
+							ImGui::TreePop();
+							ImGui::PopID();
+							return;
+						}
 
 						if (get_error(idx))
 						{
@@ -188,19 +210,15 @@ namespace efiilj
 						ImGui::TreePop();
 					}
 
-					ImGui::SameLine();
-
 					ImGui::PopID();
 					ImGui::Separator();
 				}
 			}
 			
 			virtual bool is_valid(T idx) const
-			{
-				return (idx >= 0 && idx < static_cast<int>(_com.instances.size()));
-			}
+			{ return (idx >= 0 && idx < static_cast<int>(count)); }
 
-			inline const std::string& get_name() const override
+			inline const std::string& get_component_name() const override
 			{ return _name; }
 
 			inline const entity_id& get_entity(T idx) const
@@ -218,18 +236,13 @@ namespace efiilj
 			const std::vector<T>& get_instances() const
 			{ return _com.instances; }
 
-			typename std::pair< 
-				typename std::multimap<entity_id, T>::iterator, 
-				typename std::multimap<entity_id, T>::iterator >
-			get_components(entity_id eid)
-			{
-				return _instance_mapping.equal_range(eid);
-			}
+			const std::set<T>& get_components(entity_id eid)
+			{ return _instance_mapping[eid]; }
 
 			T get_component(entity_id eid)
 			{
-				auto it = _instance_mapping.find(eid);
-				return it == _instance_mapping.end() ? -1 : it->second;
+				const auto& components = _instance_mapping[eid];
+				return (components.size() > 0) ? *components.begin() : -1;
 			}
 	};
 }

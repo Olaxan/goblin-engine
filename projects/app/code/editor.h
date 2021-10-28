@@ -29,6 +29,8 @@ namespace efiilj
 			void draw_node(entity_id id, int depth, int& node_clicked);
 			void draw_add_component();
 
+			bool _is_add_comp_open = false;
+
 		public:
 
 			entity_editor(std::shared_ptr<entity_manager> ent, std::shared_ptr<manager_host> mgr_host);

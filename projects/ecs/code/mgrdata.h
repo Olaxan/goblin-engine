@@ -8,6 +8,7 @@ namespace efiilj
 	{ 
 		virtual void extend() = 0;
 		virtual void pack(int to, int from) = 0;
+		virtual void reset_default(int idx) = 0;
 	};
 
 	template<typename U>
@@ -43,8 +44,11 @@ namespace efiilj
 					_data.emplace_back();
 			}
 
-			void reset_default(int idx)
-			{ _data[idx] = _default_value; }
+			void reset_default(int idx) override
+			{ 
+				if (_has_default)
+					_data[idx] = _default_value; 
+			}
 
 			const U& operator [] (int i) const
 			{ return _data[i]; }

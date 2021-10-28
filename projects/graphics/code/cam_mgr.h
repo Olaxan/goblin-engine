@@ -22,17 +22,17 @@ namespace efiilj
 
 		struct CameraData
 		{
-			ComponentData<float> width;
-			ComponentData<float> height;
-			ComponentData<float> fov;
-			ComponentData<float> near;
-			ComponentData<float> far;
+			ComponentData<transform_id> transform { -1 };
+
+			ComponentData<float> width 	{ 800 };
+			ComponentData<float> height { 600 };
+			ComponentData<float> fov 	{ 1.2f };
+			ComponentData<float> near 	{ 0.1f };
+			ComponentData<float> far 	{ 100.0f };
 
 			ComponentData<matrix4> perspective;
 			ComponentData<matrix4> p_inverse;
 			ComponentData<matrix4> view;
-
-			ComponentData<transform_id> transform;
 		} _data;
 		
 		std::shared_ptr<transform_manager> _transforms;
