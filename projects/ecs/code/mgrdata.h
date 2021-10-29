@@ -7,6 +7,7 @@ namespace efiilj
 	struct Extensible
 	{ 
 		virtual void extend() = 0;
+		virtual void trim() = 0;
 		virtual void pack(int to, int from) = 0;
 		virtual void reset_default(int idx) = 0;
 	};
@@ -44,11 +45,22 @@ namespace efiilj
 					_data.emplace_back();
 			}
 
+			void trim() override
+			{
+				_data.pop_back();
+			}
+
 			void reset_default(int idx) override
 			{ 
 				if (_has_default)
 					_data[idx] = _default_value; 
 			}
+
+			const std::vector<U>& data() const
+			{ return _data; }
+
+			std::size_t size() const
+			{ return _data.size(); }
 
 			const U& operator [] (int i) const
 			{ return _data[i]; }

@@ -17,6 +17,7 @@ namespace efiilj
 
 	void manager_host::register_manager(std::shared_ptr<registrable> mgr, int fcc)
 	{
+		mgr->init();
 		mgr->on_register(shared_from_this());
 
 		fourcc f = { fcc };

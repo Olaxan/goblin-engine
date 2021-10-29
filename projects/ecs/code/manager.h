@@ -24,19 +24,18 @@ namespace efiilj
 
 			std::shared_ptr<manager_host> _dispatcher;
 
-			//std::multimap<entity_id, T> _instance_mapping;
 			std::unordered_map<entity_id, std::set<T>> _instance_mapping;
-
-			size_t count = 0;
 
 			struct
 			{
-				std::vector<T> instances;
-				std::vector<entity_id> entities;
-				std::vector<bool> enabled { true };
-				std::vector<bool> alive { true };
-				std::vector<bool> error { false };
+				ComponentData<T> instances;
+				ComponentData<entity_id> entities;
+				ComponentData<bool> enabled { true };
+				ComponentData<bool> alive { true };
+				ComponentData<bool> error { false };
 			} _com;
+
+			size_t count = 0;
 
 			std::vector<Extensible*> _ds;
 
@@ -50,36 +49,22 @@ namespace efiilj
 			virtual void on_editor_gui() override {}
 			virtual void on_editor_gui(T) {};
 
-			void pack_com(T to, T from)
-			{
-				_com.instances[to] = _com.instances[from];	
-				_com.entities[to] = _com.entities[from];	
-				_com.enabled[to] = _com.enabled[from];	
-				_com.alive[to] = _com.alive[from];	
-				_com.error[to] = _com.error[from];	
-			}
-
-			void extend_com(T idx, entity_id eid)
-			{
-				_com.instances.emplace_back(idx);
-				_com.entities.emplace_back(eid);
-				_com.enabled.emplace_back(true);
-				_com.alive.emplace_back(true);
-				_com.error.emplace_back(false);
-			}
-
 			void pack_data(int to, int from)
 			{
 				for (Extensible*& data : _ds)
-				{
 					data->pack(to, from);
-				}
 			}
 
 			void extend_data()
 			{
 				for (Extensible*& data : _ds)
 					data->extend();
+			}
+
+			void trim_data()
+			{
+				for (Extensible*& data : _ds)
+					data->trim();
 			}
 
 			void add_data(Extensible* data)
@@ -91,6 +76,16 @@ namespace efiilj
 			{
 				for( auto data : list )
 					add_data(data);
+			}
+
+			void init() override
+			{
+				add_data({
+						&_com.instances,
+						&_com.entities,
+						&_com.enabled,
+						&_com.alive,
+						&_com.error});
 			}
 
 		public:
@@ -108,10 +103,10 @@ namespace efiilj
 
 				// If we need the space, extend vectors
 				if (free <= count)
-				{
-					extend_com(new_id, eid);
 					extend_data();
-				}
+
+				_com.entities[new_id] = eid;
+				_com.instances[new_id] = new_id;
 
 				// Add entity id to instance map
 				_instance_mapping[eid].emplace(new_id);
@@ -155,7 +150,6 @@ namespace efiilj
 
 				if (idx != last)
 				{
-					pack_com(idx, last);
 					pack_data(idx, last);
 					_instance_mapping[last_eid].erase(last);
 					_instance_mapping[last_eid].emplace(idx);
@@ -163,6 +157,7 @@ namespace efiilj
 
 				_instance_mapping[eid].erase(idx);
 
+				trim_data();
 				count--;
 			}
 
@@ -234,7 +229,7 @@ namespace efiilj
 			{ return _com.alive[idx]; }
 
 			const std::vector<T>& get_instances() const
-			{ return _com.instances; }
+			{ return _com.instances.data(); }
 
 			const std::set<T>& get_components(entity_id eid)
 			{ return _instance_mapping[eid]; }

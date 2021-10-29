@@ -11,6 +11,8 @@ namespace efiilj
 	{
 		public:
 
+			virtual void init() { };
+
 			virtual void on_register(std::shared_ptr<manager_host>) { };
 			virtual void on_setup() { };
 			virtual void on_begin_frame() { };
