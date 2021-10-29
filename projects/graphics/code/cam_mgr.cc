@@ -187,6 +187,7 @@ namespace efiilj
 
 			update_perspective(idx);
 			push_perspective();
+			update_view(idx);
 			push_view();
 
 			return true;

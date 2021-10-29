@@ -45,6 +45,7 @@ namespace efiilj
 			virtual void on_deactivate(T) { }
 			virtual void on_validate(T) { }
 			virtual void on_destroy(T) { }
+			virtual void on_message(message_type, entity_id) { }
 
 			virtual void on_editor_gui() override {}
 			virtual void on_editor_gui(T) {};
@@ -90,7 +91,7 @@ namespace efiilj
 
 		public:
 
-			void set_dispatcher(std::shared_ptr<manager_host> dispatcher)
+			void set_dispatcher(std::shared_ptr<manager_host> dispatcher) override
 			{
 				_dispatcher = std::move(dispatcher);
 			}
@@ -128,9 +129,10 @@ namespace efiilj
 
 			void remove_component(T idx)
 			{
-				//_com.alive[idx] = false;
+				entity_id eid = get_entity(idx);
 				on_deactivate(idx);
 				destroy(idx);
+				_dispatcher->validate(eid);
 			}
 
 			void reset_component(T idx)
@@ -177,7 +179,7 @@ namespace efiilj
 					if (ImGui::TreeNode(get_component_name().c_str()))
 					{
 						bool enabled = _com.enabled[idx];
-						if (ImGui::Checkbox("Enabled", &enabled))
+						if (ImGui::Checkbox("", &enabled))
 							_com.enabled[idx] = enabled;
 
 						ImGui::SameLine();
@@ -194,6 +196,8 @@ namespace efiilj
 							ImGui::PopID();
 							return;
 						}
+
+						ImGui::Spacing();
 
 						if (get_error(idx))
 						{
@@ -222,8 +226,14 @@ namespace efiilj
 			inline bool get_error(T idx) const
 			{ return _com.error[idx]; }
 
+			inline void set_error(T idx, bool error = true)
+			{ _com.error[idx] = error; }
+
 			inline bool get_enabled(T idx) const
 			{ return _com.enabled[idx]; }
+
+			inline void set_enabled(T idx, bool enabled = true)
+			{ _com.enabled[idx] = enabled; }
 
 			inline bool get_alive(T idx) const
 			{ return _com.alive[idx]; }

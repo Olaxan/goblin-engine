@@ -38,7 +38,9 @@ namespace efiilj
 		else
 			ss << "Entity " << eid;
 
-		if (_transforms->is_valid(trf_id))
+		bool has_transform = _transforms->is_valid(trf_id);
+
+		if (has_transform)
 		{
 			// Skip if invoked by main loop and we're a child
 			// since we'll be drawn by our parent
@@ -76,7 +78,8 @@ namespace efiilj
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TRF_ENTITY"))
 			{
 				transform_id drag_trf = *static_cast<const transform_id*>(payload->Data);
-				_transforms->set_parent(drag_trf, trf_id);
+				if (has_transform && _transforms->is_valid(drag_trf))
+					_transforms->set_parent(drag_trf, trf_id);
 			}
 			ImGui::EndDragDropTarget();
 		}

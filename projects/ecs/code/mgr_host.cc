@@ -25,6 +25,7 @@ namespace efiilj
 
 		if (std::shared_ptr<component_base> cmp = std::dynamic_pointer_cast<component_base>(mgr))
 		{
+			cmp->set_dispatcher(shared_from_this());
 			_components.emplace_back(cmp);
 			printf("[COMPONENT]");
 		}
@@ -39,7 +40,19 @@ namespace efiilj
 		printf("\n");
 	}
 
-	void manager_host::on_setup()
+	void manager_host::message(message_type msg, entity_id eid) const
+	{
+		for (const auto& mgr : _components)
+			mgr->on_message(msg, eid);
+	}
+
+	void manager_host::validate(entity_id eid) const
+	{
+		for (const auto& mgr : _components)
+			mgr->on_validate(eid);
+	}
+
+	void manager_host::setup()
 	{
 		for (const auto& srv : _servers)
 			srv->on_setup();
@@ -48,7 +61,7 @@ namespace efiilj
 			com->on_setup();
 	}
 
-	void manager_host::on_begin_frame()
+	void manager_host::begin_frame()
 	{
 		for (const auto& srv : _servers)
 			srv->on_begin_frame();
@@ -57,7 +70,7 @@ namespace efiilj
 			com->on_begin_frame();
 	}
 
-	void manager_host::on_frame()
+	void manager_host::frame()
 	{
 		for (const auto& srv : _servers)
 			srv->on_frame();
@@ -66,7 +79,7 @@ namespace efiilj
 			com->on_frame();
 	}
 
-	void manager_host::on_end_frame()
+	void manager_host::end_frame()
 	{
 		for (const auto& srv : _servers)
 			srv->on_end_frame();

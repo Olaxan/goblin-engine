@@ -33,10 +33,10 @@ namespace efiilj
 			return;
 		}
 
-		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Light %d", idx);
-
 		if (ImGui::TreeNode("Light data"))
 		{
+
+			ImGui::Text("Transform %d", _data.transform[idx]);
 
 			ImGui::Text("Type");
 
@@ -91,6 +91,18 @@ namespace efiilj
 				&_data.cutoff,
 				&_data.transform,
 				&_data.type});
+	}
+
+	void light_manager::on_validate(entity_id eid)
+	{
+		const auto& lights = get_components(eid);
+
+		for (auto idx : lights)
+		{
+			_data.transform[idx] = _transforms->get_component(eid);
+			if (_data.transform[idx] == -1)
+				set_error(idx);
+		}
 	}
 
 	void light_manager::update_falloff(light_id idx)

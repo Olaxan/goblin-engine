@@ -66,6 +66,7 @@ namespace efiilj
 		ImGui::Text("Broad: %s", ss.str().c_str());
 
 		ss.clear();
+		ss.str("");
 
 		for (auto col : _data.narrow_collisions[idx])
 			ss << col << ", ";
@@ -131,7 +132,8 @@ namespace efiilj
 		{
 			mesh_id mid = _mesh_instances->get_mesh(miid);
 
-			assert(("BOUNDS: Invalid mesh id!", _meshes->is_valid(mid)));
+			if (!_meshes->is_valid(mid))
+				continue;
 
 			min = vector3::min(min, _meshes->get_min(mid));
 			max = vector3::max(max, _meshes->get_max(mid));
@@ -258,12 +260,13 @@ namespace efiilj
 
 		transform_id trf_id = _transforms->get_component(eid);
 
-		assert(("GJK / EPA: Support, invalid transform id!", //NOLINT
-					_transforms->is_valid(trf_id)));
+		vector3 furthest_point = vector3();
+
+		if (!_transforms->is_valid(trf_id))
+			return furthest_point;
 
 		vector3 pos = _transforms->get_position(trf_id);
 		vector3 inv_dir = _transforms->get_model_inv(trf_id) * (dir + pos);
-		vector3 furthest_point = vector3();
 		float max_dot = std::numeric_limits<float>::min();
 
 		const auto& mesh_instances = _mesh_instances->get_components(eid);

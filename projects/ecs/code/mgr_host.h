@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ifmgr.h"
+#include "msg.h"
 
 #include <memory>
 #include <vector>
@@ -17,14 +18,6 @@ namespace efiilj
 		int code;
 		char name[4];
 		struct { char a, b, c, d; };
-	};
-
-	enum message_type
-	{
-		com_register,
-		com_unregister,
-		com_error,
-		MESSAGE_TYPE_COUNT
 	};
 
 	class manager_host : public std::enable_shared_from_this<manager_host>
@@ -49,20 +42,20 @@ namespace efiilj
 				return std::dynamic_pointer_cast<T>(_reg[fcc]);
 			}
 
-			const std::vector<std::shared_ptr<component_base>>& get_components()
-			{
-				return _components;
-			}
-			
-			const std::vector<std::shared_ptr<server_base>>& get_servers()
-			{
-				return _servers;
-			}
+			void setup();
 
-			void on_setup();
-			void on_begin_frame();
-			void on_frame();
-			void on_end_frame();
+			void message(message_type msg, entity_id eid) const;
+			void validate(entity_id eid) const;
+
+			void begin_frame();
+			void frame();
+			void end_frame();
+
+			const std::vector<std::shared_ptr<component_base>>& get_components() const
+			{ return _components; }
+			
+			const std::vector<std::shared_ptr<server_base>>& get_servers() const
+			{ return _servers; }
 
 	};
 }

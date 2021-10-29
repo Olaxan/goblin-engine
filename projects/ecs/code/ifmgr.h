@@ -1,6 +1,7 @@
 #pragma once
 
 #include "eid.h"
+#include "msg.h"
 #include <memory>
 #include <string>
 
@@ -29,10 +30,15 @@ namespace efiilj
 	{
 		public:
 
-			virtual void on_editor_gui() = 0;
-
+			virtual void set_dispatcher(std::shared_ptr<manager_host>) { }
 			virtual void draw_entity_gui(entity_id eid) = 0;
 			virtual void register_from_editor(entity_id eid) = 0;
+
 			virtual const std::string& get_component_name() const = 0;
+
+			virtual void on_editor_gui() { };
+			virtual void on_message(message_type, entity_id) { };
+			virtual void on_validate(entity_id) { };
+
 	};
 }

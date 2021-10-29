@@ -124,6 +124,8 @@ namespace efiilj
 
 		editor = std::make_shared<entity_editor>(entities, managers);
 
+		managers->setup();
+
 		// Camera entity
 
 		entity_id cam_ent = entities->create();
@@ -255,6 +257,8 @@ namespace efiilj
 
 		rfwd->register_entity(e_hitmarker);
 
+		rdbg->set_shader(rfwd->get_fallback_shader());
+
 		// Lights
 		
 		entity_id e_sun = entities->create();
@@ -341,9 +345,6 @@ namespace efiilj
 			}
 		});
 
-		managers->on_setup();
-		rdbg->set_shader(rfwd->get_fallback_shader());
-
 		while (this->window_->IsOpen())
 		{
 
@@ -393,27 +394,9 @@ namespace efiilj
 			if (keys.find(GLFW_KEY_ESCAPE) != keys.end())
 				window_->Close();
 
-			//cameras->update();
-			//colliders->update();
-
-			managers->on_begin_frame();
-			managers->on_frame();
-			managers->on_end_frame();
-
-			//sim->begin_frame();
-			//rdef->begin_frame();
-		    //rfwd->begin_frame();
-			//rdbg->begin_frame();
-
-			//sim->simulate();
-			//rdef->render_frame();
-		    //rfwd->render_frame();
-			//rdbg->render_frame();
-
-			//sim->end_frame();
-			//rdef->end_frame();
-			//rfwd->end_frame();
-			//rdbg->end_frame();
+			managers->begin_frame();
+			managers->frame();
+			managers->end_frame();
 
 			this->window_->SwapBuffers();
 			
