@@ -8,9 +8,7 @@ namespace efiilj
 {
 	entity_editor::entity_editor(std::shared_ptr<entity_manager> ents, std::shared_ptr<manager_host> mgr_host)
 		: _selected_entity(-1), _mgr_host(std::move(mgr_host)), _entities(std::move(ents))
-	{
-		get_managers();	
-	}
+	{ }
 
 	entity_editor::~entity_editor()
 	{
@@ -158,7 +156,7 @@ namespace efiilj
         }
 	}
 
-	void entity_editor::get_managers()
+	void entity_editor::setup()
 	{
 		_managers = _mgr_host->get_components();
 		_metadata = _mgr_host->get_manager_from_fcc<meta_manager>('META');

@@ -31,10 +31,8 @@ namespace efiilj
 		/// <param name="x">Top value</param>
 		/// <param name="y">Bottom value</param>
 		explicit vector2(const float x = 0, const float y = 0)
-		{
-			this->x = x;
-			this->y = y;
-		}
+			: x(x), y(y)
+		{ }
 
 		/// <summary>
 		/// Constructs a copy of the specified Vector2.

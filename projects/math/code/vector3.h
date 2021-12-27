@@ -37,12 +37,8 @@ namespace efiilj
 		/// <param name="y">Middle value</param>
 		/// <param name="z">Bottom value</param>
 		vector3(float x, float y = 0.0f, float z = 0.0f)
-			: x(arr_[0]), y(arr_[1]), z(arr_[2])
-		{ 
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
+			: x(x), y(y), z(z)
+		{ }
 
 		/// <summary>
 		/// Inserts the specified Vector2 into the top of a new Vector3.
@@ -61,11 +57,8 @@ namespace efiilj
 		{ }
 
 		vector3()
-		{
-			this->x = 0;
-			this->y = 0;
-			this->z = 0;
-		}
+			: x(0), y(0), z(0)
+		{ }
 
 		vector3(vector3&& move) noexcept
 		{

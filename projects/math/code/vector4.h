@@ -41,13 +41,9 @@ namespace efiilj
 		/// <param name="y">Second value</param>
 		/// <param name="z">Third value</param>
 		/// <param name="w">Fourth value</param>
-		vector4(const float x, const float y, const float z, const float w)
-		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-			this->w = w;
-		}
+		vector4(float x, float y, float z, float w)
+			: x(x), y(y), z(z), w(w)
+		{ }
 
 		/// <summary>
 		/// Creates a homogeneous 3D vector with the specified w value.

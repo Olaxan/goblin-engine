@@ -77,57 +77,62 @@ namespace efiilj
 		set.default_fallback_path_primary = "../res/shaders/default_primary.sdr";
 		set.default_fallback_path_secondary = "../res/shaders/default_secondary.sdr";
 
+		// The manager host acts as a shared dispatcher for all managers
 		managers = std::make_shared<manager_host>();
-
+		// The entity manager handles the pool of entity ID:s
 		entities = std::make_shared<entity_manager>();
+		// The editor handles GUI invokation and scene graph visualization
+		editor = std::make_shared<entity_editor>(entities, managers);
 
+		// Servers -- hold resources which may be re-used between components
 		shaders = std::make_shared<shader_server>();
 		textures = std::make_shared<texture_server>();
 		meshes = std::make_shared<mesh_server>();
 		materials = std::make_shared<material_server>();
+		gltf = std::make_shared<gltf_model_server>();
 
+		// Managers -- hold data which is unique to a single component, 
+		// which may (but doesn't need to) refer to shared data in servers.
 		metadata = std::make_shared<meta_manager>();
 		transforms = std::make_shared<transform_manager>();
 		cameras = std::make_shared<camera_manager>();
 		lights = std::make_shared<light_manager>();
 		material_instances = std::make_shared<material_manager>();
 		mesh_instances = std::make_shared<mesh_manager>();
-
 		rdef = std::make_shared<deferred_renderer>(set);
 		rfwd = std::make_shared<forward_renderer>(set);
 		rdbg = std::make_shared<debug_renderer>();
 		colliders = std::make_shared<collider_manager>();
 		sim = std::make_shared<simulator>();
-		gltf = std::make_shared<gltf_model_server>();
+		scripts = std::make_shared<script_manager>();
 
+		// Register all servers and managers with FCC:s to identify them
 		managers->register_manager(entities, 'ENTS');
 		managers->register_manager(transforms, 'TRFM');
 		managers->register_manager(metadata, 'META');
-
 		managers->register_manager(shaders, 'SHDR');
 		managers->register_manager(textures, 'TXSR');
 		managers->register_manager(meshes, 'MESR');
 		managers->register_manager(materials, 'MASR');
-
 		managers->register_manager(cameras, 'CAMS');
 		managers->register_manager(lights, 'LGHT');
 		managers->register_manager(mesh_instances, 'MEMR');
 		managers->register_manager(material_instances, 'MAMR');
-
 		managers->register_manager(colliders, 'RAYS');
 		managers->register_manager(sim, 'PHYS');
 		managers->register_manager(rdef, 'RDEF');
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(rdbg, 'RDBG');
-
 		managers->register_manager(gltf, 'GLTF');
+		managers->register_manager(scripts, 'SCRP');
 
-		editor = std::make_shared<entity_editor>(entities, managers);
-
+		// Run setup on all registered managers
 		managers->setup();
+		editor->setup();
 
+		// ==== BEGIN DEMO SETUP ==== //
+	
 		// Camera entity
-
 		entity_id cam_ent = entities->create();
 		transform_id cam_trf_id = transforms->register_entity(cam_ent);
 		camera_id cam_id = cameras->register_entity(cam_ent);
@@ -140,6 +145,9 @@ namespace efiilj
 
 		metadata->set_name(cam_meta_id, "Main camera");
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
+
+		script_id cam_script = scripts->register_entity(cam_ent);
+		scripts->set_uri(cam_script, "../res/scripts/test.py");
 
 		// Ground
 	

@@ -36,8 +36,8 @@ namespace efiilj
 			entity_editor(std::shared_ptr<entity_manager> ent, std::shared_ptr<manager_host> mgr_host);
 			~entity_editor();
 
-			void get_managers();
 			void show_entity_gui();
+			void setup();
 
 			void set_selected(entity_id eid)
 			{

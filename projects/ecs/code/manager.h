@@ -43,9 +43,9 @@ namespace efiilj
 
 			virtual void on_activate(T) { }
 			virtual void on_deactivate(T) { }
-			virtual void on_validate(T) { }
 			virtual void on_destroy(T) { }
-			virtual void on_message(message_type, entity_id) { }
+			virtual void on_validate(T) override { }
+			virtual void on_message(message_type, entity_id) override { }
 
 			virtual void on_editor_gui() override {}
 			virtual void on_editor_gui(T) {};
