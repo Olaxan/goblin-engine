@@ -29,7 +29,6 @@
 #include "sim.h"
 #include "phys_data.h"
 #include "editor.h"
-#include "script_mgr.h"
 
 #include <memory>
 
@@ -75,7 +74,6 @@ namespace efiilj
 		std::shared_ptr<simulator> sim;
 
 		std::shared_ptr<gltf_model_server> gltf;
-		std::shared_ptr<script_manager> scripts;
 		
 	public:
 

@@ -104,7 +104,6 @@ namespace efiilj
 		rdbg = std::make_shared<debug_renderer>();
 		colliders = std::make_shared<collider_manager>();
 		sim = std::make_shared<simulator>();
-		scripts = std::make_shared<script_manager>();
 
 		// Register all servers and managers with FCC:s to identify them
 		managers->register_manager(entities, 'ENTS');
@@ -124,7 +123,6 @@ namespace efiilj
 		managers->register_manager(rfwd, 'RFWD');
 		managers->register_manager(rdbg, 'RDBG');
 		managers->register_manager(gltf, 'GLTF');
-		managers->register_manager(scripts, 'SCRP');
 
 		// Run setup on all registered managers
 		managers->setup();
@@ -145,9 +143,6 @@ namespace efiilj
 
 		metadata->set_name(cam_meta_id, "Main camera");
 		metadata->set_description(cam_meta_id, "This is the main camera of the application.");
-
-		script_id cam_script = scripts->register_entity(cam_ent);
-		scripts->set_uri(cam_script, "../res/scripts/test.py");
 
 		// Ground
 	
