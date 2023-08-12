@@ -49,6 +49,4 @@ ADD_LIBRARY(tinygltf STATIC
 TARGET_INCLUDE_DIRECTORIES(tinygltf PUBLIC tinygltf)
 SET_TARGET_PROPERTIES(tinygltf PROPERTIES FOLDER "exts/tinygltf")
 
-ADD_SUBDIRECTORY(pybind11)
-
-TARGET_LINK_LIBRARIES(exts INTERFACE pybind11::embed stb imgui tinygltf)
+TARGET_LINK_LIBRARIES(exts INTERFACE stb imgui tinygltf)
